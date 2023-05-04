@@ -58,6 +58,7 @@ export function useCalendarProps(props: CalendarPropsOptions, state: CalendarSta
             previousFocused.current = false;
         },
         extraProps: {
+            // FIXME: use i18n
             'aria-label': 'Previous',
         },
     };
@@ -84,6 +85,7 @@ export function useCalendarProps(props: CalendarPropsOptions, state: CalendarSta
             nextFocused.current = false;
         },
         extraProps: {
+            // FIXME: use i18n
             'aria-label': 'Next',
         },
     };

@@ -1,12 +1,23 @@
+import React from 'react';
+
+import {settings} from '@gravity-ui/date-utils';
 import {Lang, configure} from '@gravity-ui/uikit';
 import type {Decorator} from '@storybook/react';
 
-export const withLang: Decorator = (Story, context) => {
+export const WithLang: Decorator = (Story, context) => {
     const lang = context.globals.lang;
+    const [key, forceRender] = React.useState(0);
 
-    configure({
-        lang: lang as Lang,
-    });
+    React.useEffect(() => {
+        configure({
+            lang: lang as Lang,
+        });
 
-    return <Story key={lang} {...context} />;
+        settings.loadLocale(lang).then(() => {
+            settings.setLocale(lang);
+            forceRender((c) => c + 1);
+        });
+    }, [lang]);
+
+    return <Story key={key} {...context} />;
 };

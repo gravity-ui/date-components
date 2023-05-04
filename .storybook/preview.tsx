@@ -9,15 +9,15 @@ import type {Decorator, Preview} from '@storybook/react';
 
 import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator';
 
-import {withLang} from './decorators/withLang';
-import {withMobile} from './decorators/withMobile';
+import {WithLang} from './decorators/withLang';
+import {WithMobile} from './decorators/withMobile';
 import {themes} from './theme';
 
 configure({
     lang: Lang.En,
 });
 
-const withContextProvider: Decorator = (Story, context) => {
+const WithContextProvider: Decorator = (Story, context) => {
     return (
         <React.StrictMode>
             <ThemeProvider theme={context.globals.theme}>
@@ -52,7 +52,7 @@ const preview: Preview = {
             },
         },
     },
-    decorators: [withMobile, withLang, withContextProvider],
+    decorators: [WithMobile, WithLang, WithContextProvider],
     globalTypes: {
         theme: {
             defaultValue: 'light',
