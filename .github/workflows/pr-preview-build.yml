@@ -34,7 +34,7 @@ jobs:
               pr="${{ github.event.pull_request.number }}"
           fi
           echo $pr > ./pr-id.txt
-          shell: bash
+        shell: bash
       - name: Create PR Artifact
         uses: actions/upload-artifact@v2
         with:
