@@ -1,19 +1,10 @@
 {
-  "extends": "@gravity-ui/tsconfig/tsconfig",
+  "extends": "@gravity-ui/tsconfig",
   "compilerOptions": {
-    "declaration": true,
     "resolveJsonModule": true,
-    "outDir": "dist",
+    "verbatimModuleSyntax": true,
     "module": "esnext",
-    "jsx": "react"
+    "jsx": "react-jsx"
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "**/__tests__",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-  ]
+  "include": ["**/*.ts", "**/*.tsx", ".storybook/**/*.ts", ".storybook/**/*.tsx"]
 }

@@ -1,0 +1,104 @@
+@use '@gravity-ui/uikit/styles/mixins';
+
+$offset-xs: 4px;
+$offset-s: 8px;
+$offset-m: 16px;
+$offset-l: 40px;
+
+$root: '.g-storybook-docs-decorator';
+
+#{$root} {
+    &[class][class][class] {
+        .sbdocs-p,
+        .sbdocs-li,
+        .sbdocs-a {
+            @include mixins.text-body-2;
+        }
+
+        .sbdocs-wrapper {
+            padding: 0 $offset-l;
+        }
+
+        .sbdocs-content {
+            max-width: 800px;
+        }
+
+        .sbdocs-p,
+        .sbdocs-ul,
+        .sbdocs-ol {
+            margin: $offset-xs 0;
+
+            & + .sbdocs-p,
+            & + .sbdocs-ul,
+            & + .sbdocs-ol {
+                margin-top: $offset-s;
+            }
+        }
+
+        .sbdocs-li + .sbdocs-li {
+            margin-top: $offset-xs;
+        }
+
+        .sbdocs-ul,
+        .sbdocs-ol {
+            padding-left: $offset-m;
+        }
+
+        .sbdocs-h1 {
+            @include mixins.text-display-3;
+        }
+
+        .sbdocs-h2 {
+            padding: 0;
+
+            border: 0;
+            @include mixins.text-display-1;
+        }
+
+        .sbdocs-h3 {
+            @include mixins.text-header-2;
+        }
+
+        .sbdocs-h1,
+        .sbdocs-h2,
+        .sbdocs-h3 {
+            margin-top: $offset-l;
+            margin-bottom: $offset-m;
+        }
+
+        .sbdocs-a {
+            cursor: pointer;
+            text-decoration: none;
+
+            color: var(--yc-color-text-link);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+            &:hover {
+                color: var(--yc-color-text-link-hover);
+            }
+        }
+
+        .sbdocs-p code {
+            padding: 1px 4px;
+
+            line-height: 1;
+
+            color: var(--yc-color-text-misc);
+            background: var(--yc-color-base-misc);
+            @include mixins.text-code-inline-2;
+        }
+
+        .docblock-source {
+            margin: $offset-m 0;
+        }
+
+        .docs-example {
+            margin: $offset-m 0;
+        }
+    }
+
+    &__canvas[class] {
+        background: var(--yc-color-base-background);
+    }
+}
