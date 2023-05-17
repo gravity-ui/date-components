@@ -8,6 +8,35 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - uses: gravity-ui/preview-build-action@v1
-      env:
-        TS_NODE_PROJECT: .storybook/tsconfig.json
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.5'
+      - name: Install Packages
+        run: npm ci
+        shell: bash
+      - name: Build Storybook
+        run: npx storybook build
+        shell: bash
+      - name: Create Static Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: static
+          path: ./storybook-static
+      - name: Save PR ID
+        run: |
+          pr="${{ inputs.pr }}"
+          if [[ -z "$pr" ]]; then
+              pr="${{ github.event.pull_request.number }}"
+          fi
+          echo $pr > ./pr-id.txt
+        shell: bash
+      - name: Create PR Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: pr
+          path: ./pr-id.txt
