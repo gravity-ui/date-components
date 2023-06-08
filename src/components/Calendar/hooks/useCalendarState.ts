@@ -18,7 +18,7 @@ export interface CalendarStateOptions {
     maxValue?: DateTime;
     isDateUnavailable?: (date: DateTime) => boolean;
     autoFocus?: boolean;
-    focusedValue?: DateTime;
+    focusedValue?: DateTime | null;
     defaultFocusedValue?: DateTime;
     onFocusUpdate?: (date: DateTime) => void;
     mode?: 'days' | 'months' | 'years';
@@ -35,7 +35,7 @@ export function useCalendarState(props: CalendarStateOptions) {
 
     const focusedValue = React.useMemo(() => {
         if (!props.focusedValue) {
-            return undefined;
+            return props.focusedValue;
         }
         return constrainValue(props.focusedValue, minValue, maxValue);
     }, [props.focusedValue, minValue, maxValue]);
@@ -45,15 +45,14 @@ export function useCalendarState(props: CalendarStateOptions) {
             (props.defaultFocusedValue ? props.defaultFocusedValue : value) || dateTime({timeZone});
         return constrainValue(defaultValue, minValue, maxValue);
     }, [maxValue, minValue, props.defaultFocusedValue, timeZone, value]);
-    const [focusedDate, setFocusedDate] = useControlledState(
+    const [focusedDateInner, setFocusedDate] = useControlledState(
         focusedValue,
         defaultFocusedValue,
         props.onFocusUpdate,
     );
 
-    if (!focusedDate) {
-        throw new Error('Focused date is not set.');
-    }
+    const focusedDate =
+        focusedDateInner ?? constrainValue(dateTime({timeZone}), minValue, maxValue);
 
     if (isInvalid(focusedDate, minValue, maxValue)) {
         // If the focused date was moved to an invalid value, it can't be focused, so constrain it.
