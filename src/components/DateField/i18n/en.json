@@ -1,0 +1,10 @@
+{
+  "year_placeholder": "Y",
+  "month_placeholder": "M",
+  "weekday_placeholder": "E",
+  "day_placeholder": "D",
+  "hour_placeholder": "h",
+  "minute_placeholder": "m",
+  "second_placeholder": "s",
+  "dayPeriod_placeholder": "aa"
+}
