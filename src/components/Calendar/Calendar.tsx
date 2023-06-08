@@ -49,7 +49,7 @@ export interface CalendarProps {
      */
     autoFocus?: boolean;
     /** Controls the currently focused date within the calendar. */
-    focusedValue?: DateTime;
+    focusedValue?: DateTime | null;
     /** The date that is focused when the calendar first mounts (uncontrolled). */
     defaultFocusedValue?: DateTime;
     /** Handler that is called when the focused date changes. */
