@@ -189,7 +189,9 @@ function getSectionPlaceholder(
         }
 
         case 'weekday': {
-            return i18n('weekday_placeholder');
+            return i18n('weekday_placeholder').repeat(
+                sectionConfig.contentType === 'letter' ? 4 : 2,
+            );
         }
 
         case 'hour': {
@@ -278,6 +280,7 @@ function addFormatSection(sections: DateFieldSectionWithoutPosition[], token: st
         ...sectionConfig,
         format: token,
         placeholder: getSectionPlaceholder(sectionConfig, token),
+        options: getSectionOptions(sectionConfig, token),
         hasLeadingZeros,
     });
 }
@@ -294,6 +297,45 @@ function addLiteralSection(sections: DateFieldSectionWithoutPosition[], token: s
         placeholder: token,
         hasLeadingZeros: false,
     });
+}
+
+function getSectionOptions(
+    section: Pick<DateFieldSectionWithoutPosition, 'type' | 'contentType'>,
+    token: string,
+) {
+    switch (section.type) {
+        case 'month': {
+            const format = section.contentType === 'letter' ? token : 'MMMM';
+            let date = dateTime().startOf('year');
+            const options: string[] = [];
+            for (let i = 0; i < 12; i++) {
+                options.push(date.format(format).toLocaleUpperCase());
+                date = date.add(1, 'months');
+            }
+            return options;
+        }
+        case 'dayPeriod': {
+            const amDayPeriod = dateTime().hour(0);
+            const pmDayPeriod = amDayPeriod.hour(12);
+            const options = [
+                amDayPeriod.format(token).toLocaleUpperCase(),
+                pmDayPeriod.format(token).toLocaleUpperCase(),
+            ];
+            return options;
+        }
+        case 'weekday': {
+            const format = section.contentType === 'letter' ? token : 'dddd';
+            let date = dateTime().day(0);
+            const options: string[] = [];
+            for (let i = 0; i < 7; i++) {
+                options.push(date.format(format).toLocaleUpperCase());
+                date = date.add(1, 'day');
+            }
+            return options;
+        }
+    }
+
+    return undefined;
 }
 
 interface PlaceholderValueOptions {
@@ -323,4 +365,11 @@ export function isInvalid(
     }
 
     return false;
+}
+
+export function mergeDateTime(date: DateTime, time: DateTime) {
+    return date
+        .set('hours', time.hour())
+        .set('minutes', time.minute())
+        .set('seconds', time.second());
 }

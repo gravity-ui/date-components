@@ -58,6 +58,19 @@ export function useDateFieldProps(
         setInnerState({});
     }
 
+    const inputMode = React.useMemo(() => {
+        if (!state.selectedSectionIndexes) {
+            return 'text';
+        }
+
+        const activeSection = state.sections[state.selectedSectionIndexes.startIndex];
+        if (!activeSection || activeSection.contentType === 'letter') {
+            return 'text';
+        }
+
+        return 'tel';
+    }, [state.selectedSectionIndexes, state.sections]);
+
     return {
         inputProps: {
             value: state.text,
@@ -148,7 +161,7 @@ export function useDateFieldProps(
             onKeyPress: props.onKeyPress,
             onKeyUp: props.onKeyUp,
             controlProps: {
-                inputMode: 'tel',
+                inputMode,
                 onClick() {
                     syncSelectionFromDOM();
                 },
@@ -162,6 +175,32 @@ export function useDateFieldProps(
                     // eslint-disable-next-line no-eq-null, eqeqeq
                     if (key != null) {
                         state.onInput(key);
+                    }
+                },
+                onPaste(e: React.ClipboardEvent) {
+                    if (state.readOnly) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    const pastedValue = e.clipboardData.getData('text');
+                    if (state.setValueFromString(pastedValue)) {
+                        e.preventDefault();
+                    } else if (
+                        state.selectedSectionIndexes &&
+                        state.selectedSectionIndexes.startIndex ===
+                            state.selectedSectionIndexes.endIndex
+                    ) {
+                        const activeSection =
+                            state.sections[state.selectedSectionIndexes.startIndex];
+
+                        const isValidValue =
+                            Boolean(activeSection) &&
+                            ((activeSection.contentType === 'digit' && /^\d+$/.test(pastedValue)) ||
+                                activeSection.contentType === 'letter');
+                        if (!isValidValue) {
+                            e.preventDefault();
+                        }
                     }
                 },
             },

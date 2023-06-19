@@ -33,6 +33,10 @@ export interface DateFieldSection {
      * Will determine if we should apply a digit-based editing or a letter-based editing.
      */
     contentType: 'digit' | 'letter';
+    /**
+     * Available values
+     */
+    options?: string[];
     /** The minimum numeric value for the segment, if applicable. */
     minValue?: number;
     /** The maximum numeric value for the segment, if applicable. */

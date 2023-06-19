@@ -9,7 +9,7 @@ import type {
     DateFieldSectionType,
     DateFieldSectionWithoutPosition,
 } from '../types';
-import {createPlaceholderValue, isInvalid, splitFormatIntoSections} from '../utils';
+import {createPlaceholderValue, isInvalid, mergeDateTime, splitFormatIntoSections} from '../utils';
 
 type ValidationState = 'invalid' | 'valid';
 
@@ -109,6 +109,8 @@ export type DateFieldState = {
     clearAll: () => void;
     /** Handles input key in the currently selected segment */
     onInput: (key: string) => void;
+    //** Tries to set value from str. Supports date in input format or ISO */
+    setValueFromString: (str: string) => boolean;
 };
 
 export function useDateFieldState(props: DateFieldStateOptions): DateFieldState {
@@ -121,7 +123,8 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         });
     });
 
-    const sections = useFormatSections(props.format);
+    const format = props.format || 'L';
+    const sections = useFormatSections(format);
     const allSegments: typeof EDITABLE_SEGMENTS = React.useMemo(
         () =>
             sections
@@ -145,6 +148,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     }
 
     if (!value && Object.keys(validSegments).length === Object.keys(allSegments).length) {
+        validSegments = {};
         setValidSegments(validSegments);
         setPlaceholderDate(createPlaceholderValue({timeZone: props.timeZone}));
     }
@@ -408,8 +412,79 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
             }
 
             const section = this.sections[sectionIndex];
+            let newValue = enteredKeys.current + key;
 
-            const newValue = enteredKeys.current + key;
+            const onInputNumber = (numberValue: number) => {
+                let sectionValue = section.type === 'month' ? numberValue - 1 : numberValue;
+                const allowsZero = section.minValue === 0;
+                if (
+                    section.type === 'hour' &&
+                    (section.minValue === 12 || section.maxValue === 11)
+                ) {
+                    if (numberValue > 12) {
+                        sectionValue = Number(key);
+                    }
+                    if (section.minValue === 12 && sectionValue > 1) {
+                        sectionValue += 12;
+                    }
+                } else if (sectionValue > (section.maxValue ?? 0)) {
+                    sectionValue = Number(key) - (section.type === 'month' ? 1 : 0);
+                    newValue = key;
+                    if (sectionValue > (section.maxValue ?? 0)) {
+                        enteredKeys.current = '';
+                        return;
+                    }
+                }
+
+                const shouldSetValue = sectionValue > 0 || (sectionValue === 0 && allowsZero);
+                if (shouldSetValue) {
+                    setSection(section, sectionValue);
+                }
+
+                if (
+                    Number(numberValue + '0') > (section.maxValue ?? 0) ||
+                    newValue.length >= String(section.maxValue).length
+                ) {
+                    enteredKeys.current = '';
+                    if (shouldSetValue) {
+                        this.focusNextSection();
+                    }
+                } else {
+                    enteredKeys.current = newValue;
+                }
+            };
+
+            const onInputString = (stringValue: string) => {
+                const options = section.options ?? [];
+                let sectionValue = stringValue.toLocaleUpperCase();
+                let foundOptions = options.filter((v) => v.startsWith(sectionValue));
+                if (foundOptions.length === 0) {
+                    if (stringValue !== key) {
+                        sectionValue = key.toLocaleUpperCase();
+                        foundOptions = options.filter((v) => v.startsWith(sectionValue));
+                    }
+                    if (foundOptions.length === 0) {
+                        enteredKeys.current = '';
+                        return;
+                    }
+                }
+                const foundValue = foundOptions[0];
+                const index = options.indexOf(foundValue);
+
+                if (section.type === 'dayPeriod') {
+                    setSection(section, index === 1 ? 12 : 0);
+                } else {
+                    setSection(section, index);
+                }
+
+                if (foundOptions.length > 1) {
+                    enteredKeys.current = newValue;
+                } else {
+                    enteredKeys.current = '';
+                    this.focusNextSection();
+                }
+            };
+
             switch (section.type) {
                 case 'day':
                 case 'hour':
@@ -420,80 +495,50 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
                         return;
                     }
                     const numberValue = Number(newValue);
-                    let sectionValue = numberValue;
-                    const allowsZero = section.minValue === 0;
-                    if (
-                        section.type === 'hour' &&
-                        (section.minValue === 12 || section.maxValue === 11)
-                    ) {
-                        if (numberValue > 12) {
-                            sectionValue = Number(key);
-                        }
-                        if (section.minValue === 12 && sectionValue > 1) {
-                            sectionValue += 12;
-                        }
-                    } else if (numberValue > (section.maxValue ?? 0)) {
-                        sectionValue = Number(key);
-                    }
-
-                    if (isNaN(sectionValue)) {
-                        return;
-                    }
-
-                    const shouldSetValue = sectionValue !== 0 || allowsZero;
-                    if (shouldSetValue) {
-                        setSection(section, sectionValue);
-                    }
-
-                    if (
-                        Number(numberValue + '0') > (section.maxValue ?? 0) ||
-                        newValue.length >= String(section.maxValue).length
-                    ) {
-                        enteredKeys.current = '';
-                        if (shouldSetValue) {
-                            this.focusNextSection();
-                        }
-                    } else {
-                        enteredKeys.current = newValue;
-                    }
+                    onInputNumber(numberValue);
                     break;
                 }
+                case 'dayPeriod': {
+                    onInputString(newValue);
+                    break;
+                }
+                case 'weekday':
                 case 'month': {
-                    const min = section.minValue ?? 0;
-                    const max = section.maxValue ?? 0;
-
-                    let sectionValue = -1;
-
-                    const numberValue = Number(newValue);
-                    if (isNaN(numberValue)) {
+                    if (Number.isInteger(Number(newValue))) {
+                        const numberValue = Number(newValue);
+                        onInputNumber(numberValue);
                     } else {
-                        sectionValue = numberValue - 1;
-                        if (sectionValue > (max ?? 0)) {
-                            sectionValue = Number(key) - 1;
-                        }
-                    }
-
-                    const shouldSetValue = sectionValue >= min && sectionValue <= max;
-                    if (shouldSetValue) {
-                        setSection(section, sectionValue);
-                    }
-
-                    if (
-                        Number(numberValue + '0') > (section.maxValue ?? 0) ||
-                        newValue.length >= String(section.maxValue).length
-                    ) {
-                        enteredKeys.current = '';
-                        if (shouldSetValue) {
-                            this.focusNextSection();
-                        }
-                    } else {
-                        enteredKeys.current = newValue;
+                        onInputString(newValue);
                     }
                     break;
                 }
             }
         },
+        setValueFromString(str: string) {
+            let date = parseDate({input: str, format, timeZone: props.timeZone});
+            if (isValid(date)) {
+                if (props.timeZone && !isDateStringWithTimeZone(str)) {
+                    const time = parseDate({input: str, format});
+                    date = mergeDateTime(date, time);
+                }
+                setDate(date);
+                return true;
+            }
+            return false;
+        },
     };
+}
+
+function parseDate(options: {input: string; format: string; timeZone?: string}) {
+    let date = dateTime(options);
+    if (!isValid(date)) {
+        date = dateTime({...options, format: undefined});
+    }
+    return date;
+}
+
+function isDateStringWithTimeZone(str: string) {
+    return /z$/i.test(str) || /[+-]\d\d:\d\d$/.test(str);
 }
 
 function addSegment(section: DateFieldSection, date: DateTime, amount: number) {
@@ -517,6 +562,7 @@ function setSegment(section: DateFieldSection, date: DateTime, amount: number) {
     const type = section.type;
     switch (type) {
         case 'day':
+        case 'weekday':
         case 'month':
         case 'year': {
             return date.set(getDurationUnitFromSectionType(type), amount);
@@ -567,8 +613,8 @@ function getCurrentEditableSectionIndex(
     return section ? currentIndex : -1;
 }
 
-function useFormatSections(format?: string) {
-    const usedFormat = format || 'L';
+function useFormatSections(format: string) {
+    const usedFormat = format;
     const [sections, setSections] = React.useState(() => splitFormatIntoSections(usedFormat));
 
     const [previousFormat, setFormat] = React.useState(usedFormat);

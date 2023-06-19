@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {createPlaceholderValue} from '../../DateField/utils';
+import {createPlaceholderValue, splitFormatIntoSections} from '../../DateField/utils';
 import {useControlledState} from '../../hooks/useControlledState';
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
 
@@ -25,8 +25,14 @@ export interface DatePickerState {
     timeValue: DateTime | null;
     /** Sets the time portion of the value. */
     setTimeValue(value: DateTime | null): void;
+    /** Format of the date when rendered in the input. */
+    format: string;
+    /** Whether the date picker supports selecting a date. */
+    hasDate: boolean;
     /** Whether the date picker supports selecting a time. */
     hasTime: boolean;
+    /** Format of the time when rendered in the input. */
+    timeFormat?: string;
     /** Whether the calendar popover is currently open. */
     isOpen: boolean;
     /** Sets whether the calendar popover is open. */
@@ -39,7 +45,8 @@ export interface DatePickerStateOptions {
     onUpdate?: (value: DateTime | null) => void;
     placeholderValue?: DateTime;
     timeZone?: string;
-    hasTime: boolean;
+    format?: string;
+    timeFormat?: string;
 }
 
 export function useDatePickerState(props: DatePickerStateOptions): DatePickerState {
@@ -52,7 +59,25 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     let selectedDate = selectedDateInner;
     let selectedTime = selectedTimeInner;
 
-    const hasTime = props.hasTime;
+    const format = props.format || 'L';
+    const {hasDate, hasTime, timeFormat} = React.useMemo(() => {
+        const sections = splitFormatIntoSections(format);
+        let hasDate = false;
+        let hasHours = false;
+        let hasMinutes = false;
+        let hasSeconds = false;
+        for (const s of sections) {
+            hasHours ||= s.type === 'hour';
+            hasMinutes ||= s.type === 'minute';
+            hasSeconds ||= s.type === 'second';
+            hasDate ||= ['day', 'month', 'year'].includes(s.type);
+        }
+        return {
+            hasTime: hasHours || hasMinutes || hasSeconds,
+            timeFormat: hasSeconds ? 'LTS' : 'LT',
+            hasDate,
+        };
+    }, [format]);
 
     if (value) {
         selectedDate = value;
@@ -102,7 +127,10 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         timeValue: selectedTime,
         setDateValue: selectDate,
         setTimeValue: selectTime,
+        format,
+        hasDate,
         hasTime,
+        timeFormat,
         isOpen,
         setOpen(newIsOpen) {
             if (!newIsOpen && !value && selectedDate && hasTime) {

@@ -29,7 +29,13 @@ export const Default: Story = {
                 ? dateTimeParse(args.placeholderValue, {timeZone})
                 : undefined,
         };
-        return <DatePicker {...props} />;
+        return (
+            // eslint-disable-next-line jsx-a11y/label-has-associated-control
+            <label>
+                <span style={{marginRight: 4}}>Event date</span>
+                <DatePicker {...props} />
+            </label>
+        );
     },
     args: {
         onUpdate: (res) => {
