@@ -1,0 +1,10 @@
+{
+  "year_placeholder": "Г",
+  "month_placeholder": "М",
+  "weekday_placeholder": "ДН",
+  "day_placeholder": "Д",
+  "hour_placeholder": "ч",
+  "minute_placeholder": "м",
+  "second_placeholder": "с",
+  "dayPeriod_placeholder": "(д|п)п"
+}

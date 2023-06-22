@@ -2,6 +2,8 @@ import React from 'react';
 
 import type {ButtonProps} from '@gravity-ui/uikit';
 
+import {i18n} from '../i18n';
+
 import type {CalendarState} from './useCalendarState';
 
 export interface CalendarPropsOptions {
@@ -58,8 +60,7 @@ export function useCalendarProps(props: CalendarPropsOptions, state: CalendarSta
             previousFocused.current = false;
         },
         extraProps: {
-            // FIXME: use i18n
-            'aria-label': 'Previous',
+            'aria-label': i18n('Previous'),
         },
     };
 
@@ -85,8 +86,7 @@ export function useCalendarProps(props: CalendarPropsOptions, state: CalendarSta
             nextFocused.current = false;
         },
         extraProps: {
-            // FIXME: use i18n
-            'aria-label': 'Next',
+            'aria-label': i18n('Next'),
         },
     };
 
