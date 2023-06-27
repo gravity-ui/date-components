@@ -2,15 +2,12 @@ import React from 'react';
 
 import type {ButtonProps} from '@gravity-ui/uikit';
 
+import type {AccessibilityProps} from '../../types';
 import {i18n} from '../i18n';
 
 import type {CalendarState} from './useCalendarState';
 
-export interface CalendarPropsOptions {
-    id?: string;
-    'aria-label'?: string;
-    'aria-describedby'?: string;
-}
+export interface CalendarPropsOptions extends AccessibilityProps {}
 
 export function useCalendarProps(props: CalendarPropsOptions, state: CalendarState) {
     const title =
@@ -22,7 +19,9 @@ export function useCalendarProps(props: CalendarPropsOptions, state: CalendarSta
         role: 'group',
         id: props.id,
         'aria-label': [props['aria-label'], title].filter(Boolean).join(', '),
+        'aria-labelledby': props['aria-labelledby'] || undefined,
         'aria-describedby': props['aria-describedby'] || undefined,
+        'aria-details': props['aria-details'] || undefined,
     };
 
     const modeDisabled = state.disabled || state.mode === 'years';
