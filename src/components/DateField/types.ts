@@ -86,7 +86,6 @@ export type InputBaseProps = Pick<
     | 'label'
     | 'leftContent'
     | 'rightContent'
-    | 'id'
     | 'name'
     | 'onBlur'
     | 'onFocus'

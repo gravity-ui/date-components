@@ -2,6 +2,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {TextInput} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
+import type {AccessibilityProps} from '../types';
 
 import {useDateFieldProps} from './hooks/useDateFieldProps';
 import {useDateFieldState} from './hooks/useDateFieldState';
@@ -11,7 +12,7 @@ import './DateField.scss';
 
 const b = block('date-field');
 
-export interface DateFieldProps extends InputBaseProps {
+export interface DateFieldProps extends InputBaseProps, AccessibilityProps {
     /** The current value (controlled). */
     value?: DateTime | null;
     /** The default value (uncontrolled). */
