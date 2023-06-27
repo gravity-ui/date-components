@@ -161,6 +161,10 @@ export function useDateFieldProps(
             onKeyPress: props.onKeyPress,
             onKeyUp: props.onKeyUp,
             controlProps: {
+                'aria-label': props['aria-label'] || undefined,
+                'aria-labelledby': props['aria-labelledby'] || undefined,
+                'aria-describedby': props['aria-describedby'] || undefined,
+                'aria-details': props['aria-details'] || undefined,
                 inputMode,
                 onClick() {
                     syncSelectionFromDOM();

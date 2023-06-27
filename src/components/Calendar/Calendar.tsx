@@ -4,6 +4,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {ArrowToggle, Button} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
+import type {AccessibilityProps} from '../types';
 
 import {useCalendarCellProps} from './hooks/useCalendarCellProps';
 import {useCalendarGridProps} from './hooks/useCalendarGridProps';
@@ -22,7 +23,7 @@ export interface CalendarInstance {
     focus: () => void;
 }
 
-export interface CalendarProps {
+export interface CalendarProps extends AccessibilityProps {
     /** The current value (controlled). */
     value?: DateTime | null;
     /** The default value (uncontrolled). */
@@ -62,12 +63,6 @@ export interface CalendarProps {
      * @default m
      */
     size?: CalendarSize;
-    /** The element's unique identifier. */
-    id?: string;
-    /** Defines a string value that labels the current element. */
-    'aria-label'?: string;
-    /** Identifies the element (or elements) that describes the object. */
-    'aria-describedby'?: string;
 }
 export const Calendar = React.forwardRef<CalendarInstance, CalendarProps>(function Calendar(
     props: CalendarProps,

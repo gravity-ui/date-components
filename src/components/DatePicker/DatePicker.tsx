@@ -6,6 +6,7 @@ import type {TextInputProps} from '@gravity-ui/uikit';
 
 import {DateField} from '../DateField';
 import type {DateFieldProps} from '../DateField';
+import type {AccessibilityProps} from '../types';
 
 import {DesktopCalendar, DesktopCalendarButton} from './DesktopCalendar';
 import {MobileCalendar, MobileCalendarIcon} from './MobileCalendar';
@@ -14,7 +15,7 @@ import {b} from './utils';
 
 import './DatePicker.scss';
 
-export interface DatePickerProps {
+export interface DatePickerProps extends AccessibilityProps {
     /** The current value (controlled). */
     value?: DateTime | null;
     /** The default value (uncontrolled). */
@@ -51,8 +52,6 @@ export interface DatePickerProps {
     error?: TextInputProps['error'];
     /** Class name applied to the root element. */
     className?: string;
-    /** Id applied to the input element */
-    id?: string;
     /** Inner TextInput label */
     label?: TextInputProps['label'];
 }
