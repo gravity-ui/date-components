@@ -31,4 +31,12 @@ export const Default: Story = {
             });
         },
     },
+    argTypes: {
+        validationState: {
+            options: ['invalid', 'none'],
+            mapping: {
+                none: undefined,
+            },
+        },
+    },
 };

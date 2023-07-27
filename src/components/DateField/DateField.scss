@@ -3,5 +3,7 @@
 $block: '.#{variables.$ns}date-field';
 
 #{$block} {
+    display: inline-block;
+
     width: auto;
 }

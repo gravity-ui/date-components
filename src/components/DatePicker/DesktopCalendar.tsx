@@ -1,15 +1,16 @@
 import React from 'react';
 
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
-import {Button, Icon, Popup, useOnFocusOutside} from '@gravity-ui/uikit';
+import {Button, Icon, Popup, useFocusWithin} from '@gravity-ui/uikit';
 
 import {Calendar} from '../Calendar';
 import {DateField} from '../DateField';
+import {getButtonSizeForInput} from '../utils/getButtonSizeForInput';
 
 import type {DatePickerProps} from './DatePicker';
 import type {DatePickerState} from './hooks/useDatePickerState';
 import {i18n} from './i18n';
-import {b, getButtonSize} from './utils';
+import {b} from './utils';
 
 interface DesktopCalendarProps {
     anchorRef: React.RefObject<HTMLElement>;
@@ -17,11 +18,11 @@ interface DesktopCalendarProps {
     state: DatePickerState;
 }
 export function DesktopCalendar({anchorRef, props, state}: DesktopCalendarProps) {
-    const {onFocus, onBlur} = useOnFocusOutside({
-        onFocusOutside: () => {
+    const {focusWithinProps} = useFocusWithin({
+        isDisabled: !state.isOpen,
+        onBlurWithin: () => {
             state.setOpen(false);
         },
-        enabled: state.isOpen,
     });
 
     if (!state.hasDate) {
@@ -37,7 +38,7 @@ export function DesktopCalendar({anchorRef, props, state}: DesktopCalendarProps)
             }}
             restoreFocus
         >
-            <div onFocus={onFocus} onBlur={onBlur} className={b('popup-content')} tabIndex={-1}>
+            <div {...focusWithinProps} className={b('popup-content')}>
                 <Calendar
                     // eslint-disable-next-line jsx-a11y/no-autofocus
                     autoFocus
@@ -51,6 +52,7 @@ export function DesktopCalendar({anchorRef, props, state}: DesktopCalendarProps)
                     value={state.dateValue}
                     minValue={props.minValue}
                     maxValue={props.maxValue}
+                    isDateUnavailable={props.isDateUnavailable}
                     timeZone={props.timeZone}
                 />
                 {state.hasTime && (
@@ -87,7 +89,7 @@ export function DesktopCalendarButton({props, state}: DesktopCalendarButtonProps
     return (
         <Button
             view="flat"
-            size={getButtonSize(props.size)}
+            size={getButtonSizeForInput(props.size)}
             disabled={props.disabled}
             extraProps={{
                 'aria-label': i18n('Calendar'),

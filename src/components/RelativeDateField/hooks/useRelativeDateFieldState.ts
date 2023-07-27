@@ -2,21 +2,25 @@ import React from 'react';
 
 import {dateTimeParse, isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
-import type {TextInputProps} from '@gravity-ui/uikit';
 
 import {useControlledState} from '../../hooks/useControlledState';
+import type {InputBase, Validation, ValueBase} from '../../types';
 
 export interface RelativeDateFieldState {
     /** The current field value. */
-    value: string;
-    /** */
-    setValue: (v: string) => void;
+    value: string | null;
+    /** Sets the field value */
+    setValue: (v: string | null) => void;
+    /** Current user input */
+    text: string;
+    /** Sets text */
+    setText: (t: string) => void;
     /** */
     parsedDate: DateTime | null;
     /** */
     lastCorrectDate: DateTime | null;
     /** */
-    validationStatus?: 'invalid';
+    validationState?: 'invalid';
     /**
      * Whether the field is disabled.
      */
@@ -27,25 +31,11 @@ export interface RelativeDateFieldState {
     readOnly?: boolean;
 }
 
-interface RelativeDateFieldOptions {
-    /** The current value (controlled). */
-    value?: string | null;
-    /** The default value (uncontrolled). */
-    defaultValue?: string;
-    /** Handler that is called when the value changes. */
-    onUpdate?: (value: string | null) => void;
-    /**
-     * Whether the field is disabled.
-     * @default false
-     */
-    disabled?: boolean;
-    /**
-     * Whether the value is immutable.
-     * @default false
-     */
-    readOnly?: boolean;
-    /** Validation error */
-    error?: TextInputProps['error'];
+export interface RelativeDateFieldOptions
+    extends ValueBase<string, string | null>,
+        InputBase,
+        Validation {
+    timeZone?: string;
 }
 export function useRelativeDateFieldState(props: RelativeDateFieldOptions): RelativeDateFieldState {
     const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
@@ -76,22 +66,30 @@ export function useRelativeDateFieldState(props: RelativeDateFieldOptions): Rela
         if (!value) {
             return null;
         }
-        return dateTimeParse(value) ?? null;
-    }, [value]);
+        return dateTimeParse(value, {timeZone: props.timeZone}) ?? null;
+    }, [value, props.timeZone]);
 
     const [lastCorrectDate, setLastCorrectDate] = React.useState(parsedDate);
     if (parsedDate && parsedDate !== lastCorrectDate) {
         setLastCorrectDate(parsedDate);
     }
 
-    const validationStatus = text && !parsedDate ? 'invalid' : undefined;
+    const validationState = props.validationState || (text && !parsedDate) ? 'invalid' : undefined;
 
     return {
-        value: text,
-        setValue: handleTextChange,
+        value: value ?? null,
+        setValue(v: string | null) {
+            if (props.disabled || props.readOnly) {
+                return;
+            }
+
+            setValue(v);
+        },
+        text,
+        setText: handleTextChange,
         parsedDate,
         lastCorrectDate,
-        validationStatus,
+        validationState,
         disabled: props.disabled,
         readOnly: props.readOnly,
     };

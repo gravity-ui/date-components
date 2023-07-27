@@ -1,5 +1,3 @@
-import type {TextInputProps} from '@gravity-ui/uikit';
-
 export type DateFieldSectionType = Exclude<Intl.DateTimeFormatPartTypes, 'era'>;
 
 export type DateFormatTokenMap = {
@@ -80,24 +78,3 @@ export type DateFieldSectionWithoutPosition<TSection extends DateFieldSection = 
         | 'previousEditableSection'
         | 'nextEditableSection'
     >;
-
-export type InputBaseProps = Pick<
-    TextInputProps,
-    | 'label'
-    | 'leftContent'
-    | 'rightContent'
-    | 'name'
-    | 'onBlur'
-    | 'onFocus'
-    | 'onKeyDown'
-    | 'onKeyPress'
-    | 'onKeyUp'
-    | 'placeholder'
-    | 'pin'
-    | 'tabIndex'
-    | 'view'
-    | 'size'
-    | 'hasClear'
-    | 'error'
-    | 'autoFocus'
->;

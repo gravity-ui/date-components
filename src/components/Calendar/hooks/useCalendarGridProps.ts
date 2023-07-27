@@ -37,9 +37,9 @@ export function useCalendarGridProps(state: CalendarState) {
             } else if (e.key === 'ArrowUp') {
                 state.focusPreviousRow();
             } else if (e.key === 'PageDown') {
-                state.focusNextPage();
+                state.focusNextPage(e.shiftKey);
             } else if (e.key === 'PageUp') {
-                state.focusPreviousPage();
+                state.focusPreviousPage(e.shiftKey);
             } else if (e.key === 'End') {
                 state.focusSectionEnd();
             } else if (e.key === 'Home') {
