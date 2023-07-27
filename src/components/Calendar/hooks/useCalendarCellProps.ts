@@ -60,7 +60,7 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState) {
 
     let formattedDate = date.format('D');
     if (state.mode === 'months') {
-        formattedDate = date.format('MMMM');
+        formattedDate = date.format('MMM');
     } else if (state.mode === 'years') {
         formattedDate = date.format('YYYY');
     }

@@ -84,12 +84,14 @@ export function useDateFieldProps(
             leftContent: props.leftContent,
             rightContent: props.rightContent,
             pin: props.pin,
-            tabIndex: props.tabIndex,
             autoFocus: props.autoFocus,
             controlRef: inputRef,
             autoComplete: 'off',
             type: 'text',
-            error: props.error ?? state.validationState === 'invalid',
+            // @ts-expect-error
+            error:
+                (state.validationState === 'invalid' && props.errorMessage) ||
+                state.validationState === 'invalid',
             onUpdate(value) {
                 if (!value) {
                     state.clearAll();
@@ -138,10 +140,10 @@ export function useDateFieldProps(
                 } else if (e.key === 'End') {
                     e.preventDefault();
                     state.focusLastSection();
-                } else if (e.key === 'ArrowUp') {
+                } else if (e.key === 'ArrowUp' && !e.altKey) {
                     e.preventDefault();
                     state.increment();
-                } else if (e.key === 'ArrowDown') {
+                } else if (e.key === 'ArrowDown' && !e.altKey) {
                     e.preventDefault();
                     state.decrement();
                 } else if (e.key === 'PageUp') {
@@ -158,13 +160,13 @@ export function useDateFieldProps(
                     setSelectedSections('all');
                 }
             },
-            onKeyPress: props.onKeyPress,
             onKeyUp: props.onKeyUp,
             controlProps: {
                 'aria-label': props['aria-label'] || undefined,
                 'aria-labelledby': props['aria-labelledby'] || undefined,
                 'aria-describedby': props['aria-describedby'] || undefined,
                 'aria-details': props['aria-details'] || undefined,
+                'aria-disabled': state.disabled || undefined,
                 inputMode,
                 onClick() {
                     syncSelectionFromDOM();

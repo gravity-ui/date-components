@@ -71,6 +71,12 @@ export const Default: Story = {
                 type: 'text',
             },
         },
+        validationState: {
+            options: ['invalid', 'none'],
+            mapping: {
+                none: undefined,
+            },
+        },
     },
 };
 

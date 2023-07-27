@@ -26,15 +26,23 @@ export function useRelativeDateFieldProps(
         setFocusedDate(state.lastCorrectDate);
     }
 
+    let error: React.ReactNode;
+    if (props.validationState === 'invalid') {
+        error = props.errorMessage || true;
+    } else {
+        error = state.validationState === 'invalid';
+    }
+
     return {
         inputProps: {
             size: props.size,
             autoFocus: props.autoFocus,
-            value: state.value,
-            onUpdate: state.setValue,
+            value: state.text,
+            onUpdate: state.setText,
             disabled: state.disabled,
             hasClear: props.hasClear,
-            error: props.error ?? state.validationStatus === 'invalid',
+            //@ts-expect-error TODO: use new TextInput API
+            error,
             label: props.label,
             id: props.id,
             leftContent: props.leftContent,
@@ -51,6 +59,7 @@ export function useRelativeDateFieldProps(
                 'aria-labelledby': props['aria-labelledby'] || undefined,
                 'aria-describedby': props['aria-describedby'] || undefined,
                 'aria-details': props['aria-details'] || undefined,
+                'aria-disabled': state.disabled || undefined,
             },
         },
         calendarProps: {

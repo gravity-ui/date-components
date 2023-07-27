@@ -4,6 +4,8 @@ import {dateTime, isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {useControlledState} from '../../hooks/useControlledState';
+import type {DateFieldBase} from '../../types/datePicker';
+import type {ValidationState} from '../../types/inputs';
 import type {
     DateFieldSection,
     DateFieldSectionType,
@@ -11,21 +13,7 @@ import type {
 } from '../types';
 import {createPlaceholderValue, isInvalid, mergeDateTime, splitFormatIntoSections} from '../utils';
 
-type ValidationState = 'invalid' | 'valid';
-
-interface DateFieldStateOptions {
-    value?: DateTime | null;
-    defaultValue?: DateTime;
-    onUpdate?: (value: DateTime | null) => void;
-    placeholderValue?: DateTime;
-    minValue?: DateTime;
-    maxValue?: DateTime;
-    disabled?: boolean;
-    readOnly?: boolean;
-    timeZone?: string;
-    format?: string;
-    validationState?: ValidationState;
-}
+export interface DateFieldStateOptions extends DateFieldBase {}
 
 const EDITABLE_SEGMENTS: Partial<Record<DateFieldSectionType, boolean>> = {
     year: true,
@@ -56,7 +44,7 @@ const PAGE_STEP: Partial<Record<DateFieldSectionType, number>> = {
 
 export type DateFieldState = {
     /** The current field value. */
-    value?: DateTime | null;
+    value: DateTime | null;
     /** Is no part of value is filled. */
     isEmpty: boolean;
     /** The current used value. value or placeholderValue */
@@ -147,7 +135,11 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         setValidSegments({...allSegments});
     }
 
-    if (!value && Object.keys(validSegments).length === Object.keys(allSegments).length) {
+    if (
+        !value &&
+        Object.keys(validSegments).length > 0 &&
+        Object.keys(validSegments).length === Object.keys(allSegments).length
+    ) {
         validSegments = {};
         setValidSegments(validSegments);
         setPlaceholderDate(createPlaceholderValue({timeZone: props.timeZone}));
@@ -162,7 +154,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     const sectionsState = useSectionsState(sections, displayValue, validSegments);
 
     const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(() => {
-        return sectionsState.editableSections[0]?.nextEditableSection ?? -1;
+        return sectionsState.editableSections[0]?.previousEditableSection ?? -1;
     });
 
     const selectedSectionIndexes = React.useMemo<{
@@ -238,12 +230,12 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     const enteredKeys = React.useRef('');
 
     const validationState =
-        props.validationState || isInvalid(value, props.minValue, props.maxValue)
-            ? 'invalid'
-            : undefined;
+        props.validationState ||
+        (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : undefined) ||
+        (value && props.isDateUnavailable?.(value) ? 'invalid' : undefined);
 
     return {
-        value,
+        value: value ?? null,
         isEmpty: Object.keys(validSegments).length === 0,
         displayValue,
         setValue,

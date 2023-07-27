@@ -4,13 +4,13 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {ArrowToggle, Button} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
-import type {AccessibilityProps} from '../types';
+import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
 
 import {useCalendarCellProps} from './hooks/useCalendarCellProps';
 import {useCalendarGridProps} from './hooks/useCalendarGridProps';
 import {useCalendarProps} from './hooks/useCalendarProps';
 import {useCalendarState} from './hooks/useCalendarState';
-import type {CalendarState} from './hooks/useCalendarState';
+import type {CalendarState, CalendarStateOptions} from './hooks/useCalendarState';
 import {getDaysInPeriod, getWeekDays} from './utils';
 
 import './Calendar.scss';
@@ -23,41 +23,12 @@ export interface CalendarInstance {
     focus: () => void;
 }
 
-export interface CalendarProps extends AccessibilityProps {
-    /** The current value (controlled). */
-    value?: DateTime | null;
-    /** The default value (uncontrolled). */
-    defaultValue?: DateTime;
-    /** Handler that is called when the value changes. */
-    onUpdate?: (date: DateTime) => void;
-    /** The minimum allowed date that a user may select. */
-    minValue?: DateTime;
-    /** The maximum allowed date that a user may select. */
-    maxValue?: DateTime;
-    /**
-     * Whether the calendar is disabled.
-     * @default false
-     */
-    disabled?: boolean;
-    /**
-     * Whether the calendar value is immutable.
-     * @default false
-     */
-    readOnly?: boolean;
-    /**
-     * Whether to automatically focus the calendar when it mounts.
-     * @default false
-     */
-    autoFocus?: boolean;
-    /** Controls the currently focused date within the calendar. */
-    focusedValue?: DateTime | null;
-    /** The date that is focused when the calendar first mounts (uncontrolled). */
-    defaultFocusedValue?: DateTime;
-    /** Handler that is called when the focused date changes. */
-    onFocusUpdate?: (value: DateTime) => void;
-    timeZone?: string;
-    /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
-    isDateUnavailable?: (date: DateTime) => boolean;
+export interface CalendarProps
+    extends CalendarStateOptions,
+        DomProps,
+        StyleProps,
+        FocusEvents,
+        AccessibilityProps {
     /**
      * The size of the element.
      * @default m

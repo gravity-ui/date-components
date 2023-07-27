@@ -4,6 +4,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import {createPlaceholderValue, splitFormatIntoSections} from '../../DateField/utils';
 import {useControlledState} from '../../hooks/useControlledState';
+import type {InputBase, ValueBase} from '../../types';
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
 
 export interface DatePickerState {
@@ -25,6 +26,10 @@ export interface DatePickerState {
     timeValue: DateTime | null;
     /** Sets the time portion of the value. */
     setTimeValue(value: DateTime | null): void;
+    /** Whether the field is read only. */
+    readOnly?: boolean;
+    /** Whether the field is disabled. */
+    disabled?: boolean;
     /** Format of the date when rendered in the input. */
     format: string;
     /** Whether the date picker supports selecting a date. */
@@ -39,17 +44,14 @@ export interface DatePickerState {
     setOpen(isOpen: boolean): void;
 }
 
-export interface DatePickerStateOptions {
-    value?: DateTime | null;
-    defaultValue?: DateTime;
-    onUpdate?: (value: DateTime | null) => void;
+export interface DatePickerStateOptions extends ValueBase<DateTime>, InputBase {
     placeholderValue?: DateTime;
     timeZone?: string;
     format?: string;
-    timeFormat?: string;
 }
 
 export function useDatePickerState(props: DatePickerStateOptions): DatePickerState {
+    const {disabled, readOnly} = props;
     const [isOpen, setOpen] = React.useState(false);
 
     const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
@@ -87,6 +89,10 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     }
 
     const commitValue = (date: DateTime, time: DateTime) => {
+        if (disabled || readOnly) {
+            return;
+        }
+
         setValue(mergeDateTime(date, time));
         setSelectedDate(null);
         setSelectedTime(null);
@@ -94,6 +100,10 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
 
     // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
     const selectDate = (newValue: DateTime) => {
+        if (disabled || readOnly) {
+            return;
+        }
+
         const shouldClose = !hasTime;
         if (hasTime) {
             if (selectedTime || shouldClose) {
@@ -114,6 +124,10 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     };
 
     const selectTime = (newValue: DateTime) => {
+        if (disabled || readOnly) {
+            return;
+        }
+
         if (selectedDate) {
             commitValue(selectedDate, newValue);
         } else {
@@ -127,6 +141,8 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         timeValue: selectedTime,
         setDateValue: selectDate,
         setTimeValue: selectTime,
+        disabled,
+        readOnly,
         format,
         hasDate,
         hasTime,

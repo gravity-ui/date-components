@@ -1,19 +1,23 @@
 import React from 'react';
 
+import {useFocusWithin} from '@gravity-ui/uikit';
 import type {ButtonProps} from '@gravity-ui/uikit';
 
-import type {AccessibilityProps} from '../../types';
+import type {CalendarProps} from '../Calendar';
 import {i18n} from '../i18n';
 
 import type {CalendarState} from './useCalendarState';
 
-export interface CalendarPropsOptions extends AccessibilityProps {}
-
-export function useCalendarProps(props: CalendarPropsOptions, state: CalendarState) {
+export function useCalendarProps(props: CalendarProps, state: CalendarState) {
     const title =
         state.mode === 'years'
             ? `${state.startDate.year()} — ${state.endDate.year()}`
             : state.focusedDate.format(state.mode === 'days' ? 'MMMM YYYY' : 'YYYY');
+
+    const {focusWithinProps} = useFocusWithin({
+        onFocusWithin: props.onFocus,
+        onBlurWithin: props.onBlur,
+    });
 
     const calendarProps: React.HTMLAttributes<HTMLElement> = {
         role: 'group',
@@ -22,6 +26,8 @@ export function useCalendarProps(props: CalendarPropsOptions, state: CalendarSta
         'aria-labelledby': props['aria-labelledby'] || undefined,
         'aria-describedby': props['aria-describedby'] || undefined,
         'aria-details': props['aria-details'] || undefined,
+        'aria-disabled': state.disabled || undefined,
+        ...focusWithinProps,
     };
 
     const modeDisabled = state.disabled || state.mode === 'years';

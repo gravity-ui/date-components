@@ -1,12 +1,17 @@
 import React from 'react';
 
-import type {DateTime} from '@gravity-ui/date-utils';
-import {useMobile} from '@gravity-ui/uikit';
-import type {TextInputProps} from '@gravity-ui/uikit';
+import {TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
 
-import {DateField} from '../DateField';
-import type {DateFieldProps} from '../DateField';
-import type {AccessibilityProps} from '../types';
+import {useDateFieldProps, useDateFieldState} from '../DateField';
+import type {
+    AccessibilityProps,
+    DateFieldBase,
+    DomProps,
+    FocusableProps,
+    KeyboardEvents,
+    StyleProps,
+    TextInputProps,
+} from '../types';
 
 import {DesktopCalendar, DesktopCalendarButton} from './DesktopCalendar';
 import {MobileCalendar, MobileCalendarIcon} from './MobileCalendar';
@@ -15,48 +20,24 @@ import {b} from './utils';
 
 import './DatePicker.scss';
 
-export interface DatePickerProps extends AccessibilityProps {
-    /** The current value (controlled). */
-    value?: DateTime | null;
-    /** The default value (uncontrolled). */
-    defaultValue?: DateTime;
-    /** Handler that is called when the value changes. */
-    onUpdate?: (date: DateTime | null) => void;
-    placeholderValue?: DateTime;
-    /** The minimum allowed date that a user may select. */
-    minValue?: DateTime;
-    /** The maximum allowed date that a user may select. */
-    maxValue?: DateTime;
-    /**
-     * Whether the field is disabled.
-     * @default false
-     */
-    disabled?: boolean;
-    /**
-     * Whether the calendar value is immutable.
-     * @default false
-     */
-    readOnly?: boolean;
-    /** If true, the main element is focused during the first mount. */
-    autoFocus?: boolean;
-    size?: DateFieldProps['size'];
-    /** Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format) */
-    format?: string;
-    timeZone?: string;
-    /**
-     * Show clear button
-     * @default false
-     */
-    hasClear?: boolean;
-    /** Validation error */
-    error?: TextInputProps['error'];
-    /** Class name applied to the root element. */
-    className?: string;
-    /** Inner TextInput label */
-    label?: TextInputProps['label'];
-}
+export interface DatePickerProps
+    extends DateFieldBase,
+        TextInputProps,
+        FocusableProps,
+        KeyboardEvents,
+        DomProps,
+        StyleProps,
+        AccessibilityProps {}
 
-export function DatePicker({value, defaultValue, onUpdate, className, ...props}: DatePickerProps) {
+export function DatePicker({
+    value,
+    defaultValue,
+    onUpdate,
+    className,
+    onFocus,
+    onBlur,
+    ...props
+}: DatePickerProps) {
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
     const state = useDatePickerState({
@@ -68,20 +49,58 @@ export function DatePicker({value, defaultValue, onUpdate, className, ...props}:
 
     const [isMobile] = useMobile();
 
+    const [isActive, setActive] = React.useState(false);
+    const {focusWithinProps} = useFocusWithin({
+        onFocusWithin: onFocus,
+        onBlurWithin: onBlur,
+        onFocusWithinChange(isFocusWithin) {
+            setActive(isFocusWithin);
+        },
+    });
+
+    const fieldState = useDateFieldState({
+        value: state.value,
+        onUpdate: state.setValue,
+        disabled: state.disabled,
+        readOnly: state.readOnly,
+        validationState: props.validationState,
+        minValue: props.minValue,
+        maxValue: props.maxValue,
+        isDateUnavailable: props.isDateUnavailable,
+        format: state.format,
+        placeholderValue: props.placeholderValue,
+        timeZone: props.timeZone,
+    });
+
+    const {inputProps} = useDateFieldProps(fieldState, props);
+
     return (
-        <div ref={anchorRef} className={b(null, className)}>
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        <div
+            ref={anchorRef}
+            className={b(null, className)}
+            style={props.style}
+            {...focusWithinProps}
+            role="group"
+            aria-disabled={state.disabled || undefined}
+            onKeyDown={(e) => {
+                if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    state.setOpen(true);
+                }
+            }}
+        >
             {isMobile ? (
                 <MobileCalendar props={props} state={state} />
             ) : (
                 <DesktopCalendar anchorRef={anchorRef} props={props} state={state} />
             )}
-            <DateField
-                {...props}
+            <TextInput
+                {...inputProps}
+                value={fieldState.isEmpty && !isActive && props.placeholder ? '' : inputProps.value}
                 className={b('field', {mobile: isMobile})}
-                value={state.value}
-                onUpdate={state.setValue}
-                format={state.format}
-                hasClear={!isMobile && props.hasClear}
+                hasClear={!isMobile && inputProps.hasClear}
                 rightContent={
                     isMobile ? (
                         <MobileCalendarIcon props={props} state={state} />
