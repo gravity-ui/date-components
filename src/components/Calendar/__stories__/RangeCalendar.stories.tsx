@@ -1,31 +1,30 @@
+import React from 'react';
+
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
-import {Calendar} from '../Calendar';
+import type {RangeValue} from '../../types';
+import {RangeCalendar} from '../RangeCalendar';
 
-const meta: Meta<typeof Calendar> = {
-    title: 'Components/Calendar',
-    component: Calendar,
+const meta: Meta<typeof RangeCalendar> = {
+    title: 'Components/RangeCalendar',
+    component: RangeCalendar,
     tags: ['autodocs'],
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Calendar>;
+type Story = StoryObj<typeof RangeCalendar>;
 
 export const Default: Story = {
-    render: (args) => {
+    render: function Render(args) {
         const timeZone = args.timeZone;
         const props = {
             ...args,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
-            value: args.value ? dateTimeParse(args.value, {timeZone}) : undefined,
-            defaultValue: args.defaultValue
-                ? dateTimeParse(args.defaultValue, {timeZone})
-                : undefined,
             focusedValue: args.focusedValue
                 ? dateTimeParse(args.focusedValue, {timeZone})
                 : undefined,
@@ -34,7 +33,24 @@ export const Default: Story = {
                 : undefined,
             isDateUnavailable: getIsDateUnavailable(args.isDateUnavailable as unknown as string),
         };
-        return <Calendar {...props} />;
+
+        const [value, setValue] = React.useState<RangeValue<DateTime> | null>(null);
+        return (
+            <div>
+                <RangeCalendar
+                    {...props}
+                    value={value}
+                    onUpdate={(v) => {
+                        setValue(v);
+                        args.onUpdate?.(v);
+                    }}
+                />
+                <div>
+                    Selected range:{' '}
+                    {value ? `${value.start.format('L')} - ${value.end.format('L')}` : ''}
+                </div>
+            </div>
+        );
     },
     args: {
         onUpdate: (res) => {
@@ -44,7 +60,7 @@ export const Default: Story = {
                 type: 'success',
                 content: (
                     <div>
-                        <div>date: {res.format() || 'null'}</div>
+                        <div>date: {JSON.stringify(res, null, 2) || 'null'}</div>
                     </div>
                 ),
             });
@@ -57,16 +73,6 @@ export const Default: Story = {
             },
         },
         maxValue: {
-            control: {
-                type: 'text',
-            },
-        },
-        value: {
-            control: {
-                type: 'text',
-            },
-        },
-        defaultValue: {
             control: {
                 type: 'text',
             },

@@ -6,9 +6,12 @@ import type {ButtonProps} from '@gravity-ui/uikit';
 import type {CalendarProps} from '../Calendar';
 import {i18n} from '../i18n';
 
-import type {CalendarState} from './useCalendarState';
+import type {CalendarState, RangeCalendarState} from './types';
 
-export function useCalendarProps(props: CalendarProps, state: CalendarState) {
+const buttonDisabledClassName = 'yc-button_disabled g-button_disabled';
+
+// eslint-disable-next-line complexity
+export function useCalendarProps(props: CalendarProps, state: CalendarState | RangeCalendarState) {
     const title =
         state.mode === 'years'
             ? `${state.startDate.year()} — ${state.endDate.year()}`
@@ -33,18 +36,25 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState) {
     const modeDisabled = state.disabled || state.mode === 'years';
 
     const modeButtonProps: ButtonProps = {
-        disabled: modeDisabled,
-        onClick: () => {
-            state.zoomOut();
-            if (state.mode === 'months') {
-                state.setFocused(true);
-            }
+        disabled: state.disabled,
+        // FIXME: do not use button class name
+        className: modeDisabled ? buttonDisabledClassName : undefined,
+        onClick: modeDisabled
+            ? undefined
+            : () => {
+                  state.zoomOut();
+                  if (state.mode === 'months') {
+                      state.setFocused(true);
+                  }
+              },
+        extraProps: {
+            'aria-disabled': modeDisabled ? 'true' : undefined,
         },
         children: title,
     };
 
     const previousFocused = React.useRef(false);
-    const previousDisabled = state.disabled || state.isInvalid(state.startDate.add({days: -1}));
+    const previousDisabled = state.disabled || state.isPreviousPageInvalid();
 
     React.useLayoutEffect(() => {
         if (previousDisabled && previousFocused.current) {
@@ -54,23 +64,32 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState) {
     });
 
     const previousButtonProps: ButtonProps = {
-        disabled: previousDisabled,
-        onClick: () => {
-            state.focusPreviousPage();
-        },
-        onFocus: () => {
-            previousFocused.current = true;
-        },
-        onBlur: () => {
-            previousFocused.current = false;
-        },
+        disabled: state.disabled,
+        // FIXME: do not use button class name
+        className: previousDisabled ? buttonDisabledClassName : undefined,
+        onClick: previousDisabled
+            ? undefined
+            : () => {
+                  state.focusPreviousPage();
+              },
+        onFocus: previousDisabled
+            ? undefined
+            : () => {
+                  previousFocused.current = true;
+              },
+        onBlur: previousDisabled
+            ? undefined
+            : () => {
+                  previousFocused.current = false;
+              },
         extraProps: {
             'aria-label': i18n('Previous'),
+            'aria-disabled': previousDisabled ? 'true' : undefined,
         },
     };
 
     const nextFocused = React.useRef(false);
-    const nextDisabled = state.disabled || state.isInvalid(state.endDate.add({days: 1}));
+    const nextDisabled = state.disabled || state.isNextPageInvalid();
 
     React.useLayoutEffect(() => {
         if (nextDisabled && nextFocused.current) {
@@ -80,18 +99,27 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState) {
     });
 
     const nextButtonProps: ButtonProps = {
-        disabled: nextDisabled,
-        onClick: () => {
-            state.focusNextPage();
-        },
-        onFocus: () => {
-            nextFocused.current = true;
-        },
-        onBlur: () => {
-            nextFocused.current = false;
-        },
+        disabled: state.disabled,
+        // FIXME: do not use button class name
+        className: nextDisabled ? buttonDisabledClassName : undefined,
+        onClick: nextDisabled
+            ? undefined
+            : () => {
+                  state.focusNextPage();
+              },
+        onFocus: nextDisabled
+            ? undefined
+            : () => {
+                  nextFocused.current = true;
+              },
+        onBlur: nextDisabled
+            ? undefined
+            : () => {
+                  nextFocused.current = false;
+              },
         extraProps: {
             'aria-label': i18n('Next'),
+            'aria-disabled': previousDisabled ? 'true' : undefined,
         },
     };
 

@@ -70,12 +70,12 @@ $root: '.g-storybook-docs-decorator';
             cursor: pointer;
             text-decoration: none;
 
-            color: var(--yc-color-text-link);
+            color: var(--g-color-text-link);
             touch-action: manipulation;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
             &:hover {
-                color: var(--yc-color-text-link-hover);
+                color: var(--g-color-text-link-hover);
             }
         }
 
@@ -84,8 +84,8 @@ $root: '.g-storybook-docs-decorator';
 
             line-height: 1;
 
-            color: var(--yc-color-text-misc);
-            background: var(--yc-color-base-misc);
+            color: var(--g-color-text-misc);
+            background: var(--g-color-base-misc-light);
             @include mixins.text-code-inline-2;
         }
 
@@ -99,6 +99,6 @@ $root: '.g-storybook-docs-decorator';
     }
 
     &__canvas[class] {
-        background: var(--yc-color-base-background);
+        background: var(--g-color-base-background);
     }
 }

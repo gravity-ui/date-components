@@ -4,40 +4,15 @@ import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {useControlledState} from '../../hooks/useControlledState';
-import type {InputBase, ValueBase} from '../../types';
+import type {ValueBase} from '../../types';
 import {constrainValue} from '../utils';
 
-export type CalendarState = ReturnType<typeof useCalendarState>;
+import type {CalendarState, CalendarStateOptionsBase} from './types';
 
-export interface CalendarStateOptions extends ValueBase<DateTime>, InputBase {
-    /** The minimum allowed date that a user may select. */
-    minValue?: DateTime;
-    /** The maximum allowed date that a user may select. */
-    maxValue?: DateTime;
-    /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
-    isDateUnavailable?: (date: DateTime) => boolean;
-    /** */
-    timeZone?: string;
+export interface CalendarStateOptions extends ValueBase<DateTime>, CalendarStateOptionsBase {}
+export type {CalendarState} from './types';
 
-    /**
-     * Whether to automatically focus the calendar when it mounts.
-     * @default false
-     */
-    autoFocus?: boolean;
-    /** Controls the currently focused date within the calendar. */
-    focusedValue?: DateTime | null;
-    /** The date that is focused when the calendar first mounts (uncontrolled). */
-    defaultFocusedValue?: DateTime;
-    /** Handler that is called when the focused date changes. */
-    onFocusUpdate?: (date: DateTime) => void;
-    /** Controls what to show in calendar (days, months or years) */
-    mode?: 'days' | 'months' | 'years';
-    /** Initial mode to show in calendar (days, months or years) */
-    defaultMode?: 'days' | 'months' | 'years';
-    /** Handler that is called when the mode changes */
-    onUpdateMode?: (mode: 'days' | 'months' | 'years') => void;
-}
-export function useCalendarState(props: CalendarStateOptions) {
+export function useCalendarState(props: CalendarStateOptions): CalendarState {
     const {disabled, readOnly, minValue, maxValue, timeZone} = props;
     const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
     const [mode, setMode] = useControlledState(props.mode, props.defaultMode, props.onUpdateMode);
@@ -83,8 +58,9 @@ export function useCalendarState(props: CalendarStateOptions) {
         disabled,
         readOnly,
         value,
+        setValue,
         timeZone,
-        setValue(date: DateTime) {
+        selectDate(date: DateTime) {
             if (!disabled && !readOnly) {
                 const newValue = constrainValue(date, minValue, maxValue);
                 if (this.isCellUnavailable(newValue)) {
@@ -149,12 +125,20 @@ export function useCalendarState(props: CalendarStateOptions) {
             this.setMode(this.mode === 'days' ? 'months' : 'years');
         },
         selectFocusedDate() {
-            this.setValue(focusedDate);
+            this.selectDate(focusedDate);
         },
         isFocused,
         setFocused,
         isInvalid(date: DateTime) {
             return isInvalid(date, this.minValue, this.maxValue, this.mode);
+        },
+        isPreviousPageInvalid() {
+            const prev = this.startDate.add({days: -1});
+            return this.isInvalid(prev);
+        },
+        isNextPageInvalid() {
+            const next = this.endDate.add({days: 1});
+            return this.isInvalid(next);
         },
         isSelected(date: DateTime) {
             return (
