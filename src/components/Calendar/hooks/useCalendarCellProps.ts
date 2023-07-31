@@ -3,9 +3,9 @@ import React from 'react';
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import type {CalendarState} from './useCalendarState';
+import type {CalendarState, RangeCalendarState} from './types';
 
-export function useCalendarCellProps(date: DateTime, state: CalendarState) {
+export function useCalendarCellProps(date: DateTime, state: CalendarState | RangeCalendarState) {
     const ref = React.useRef<HTMLDivElement>(null);
 
     const isFocused = state.isCellFocused(date);
@@ -18,6 +18,12 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState) {
     const tabIndex = state.focusedDate.isSame(date, state.mode) ? 0 : -1;
     const isDisabled = state.isCellDisabled(date);
     const isSelected = state.isSelected(date);
+    const highlightedRange = 'highlightedRange' in state && state.highlightedRange;
+    const isRangeSelection = Boolean(highlightedRange && isSelected);
+    const isSelectionStart =
+        isSelected && highlightedRange && date.isSame(highlightedRange.start, state.mode);
+    const isSelectionEnd =
+        isSelected && highlightedRange && date.isSame(highlightedRange.end, state.mode);
     const isOutsideCurrentRange =
         state.mode === 'days' ? !state.focusedDate.isSame(date, 'month') : false;
     const isUnavailable = state.isCellUnavailable(date);
@@ -50,12 +56,24 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState) {
             ? () => {
                   state.setFocusedDate(date);
                   if (state.mode === 'days') {
-                      state.setValue(date);
+                      state.selectDate(date);
                   } else {
                       state.zoomIn();
                   }
               }
             : undefined,
+        onPointerEnter() {
+            if ('highlightDate' in state && isSelectable) {
+                if (isOutsideCurrentRange) {
+                    const newDate = date.isBefore(state.focusedDate)
+                        ? state.focusedDate.startOf('month')
+                        : state.focusedDate.endOf('month').startOf('date');
+                    state.highlightDate(newDate);
+                } else {
+                    state.highlightDate(date);
+                }
+            }
+        },
     };
 
     let formattedDate = date.format('D');
@@ -71,6 +89,9 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState) {
         formattedDate,
         isDisabled,
         isSelected,
+        isRangeSelection,
+        isSelectionStart,
+        isSelectionEnd,
         isOutsideCurrentRange,
         isUnavailable,
         isCurrent,

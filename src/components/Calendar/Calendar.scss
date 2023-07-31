@@ -38,7 +38,7 @@ $block: '.#{variables.$ns}calendar';
     }
 
     &__years-label {
-        color: var(--yc-color-text-secondary);
+        color: var(--g-color-text-secondary);
     }
 
     &__controls {
@@ -208,7 +208,7 @@ $block: '.#{variables.$ns}calendar';
         height: 100%;
 
         &_weekend {
-            color: var(--yc-color-text-danger);
+            color: var(--g-color-text-danger);
         }
     }
 
@@ -222,14 +222,14 @@ $block: '.#{variables.$ns}calendar';
         width: 100%;
         height: 100%;
 
-        font-weight: var(--yc-text-subheader-font-weight);
+        font-weight: var(--g-text-subheader-font-weight);
         cursor: pointer;
 
         border-radius: 4px;
         outline: none;
 
         &:focus {
-            box-shadow: 0 0 0 2px var(--yc-color-line-misc);
+            box-shadow: 0 0 0 2px var(--g-color-line-misc);
         }
 
         &:focus:not(:focus-visible) {
@@ -237,19 +237,24 @@ $block: '.#{variables.$ns}calendar';
         }
 
         &:hover {
-            background-color: var(--yc-color-base-generic);
+            background-color: var(--g-color-base-generic);
         }
 
         &_selected[class] {
-            background-color: var(--yc-color-base-selection);
+            background-color: var(--g-color-base-selection);
+        }
+
+        &_selected#{&}_selection-start,
+        &_selected#{&}_selection-end {
+            background-color: var(--g-color-base-brand);
         }
 
         &_weekend {
-            color: var(--yc-color-text-danger);
+            color: var(--g-color-text-danger);
         }
 
         &_out-of-boundary {
-            font-weight: var(--yc-text-body-font-weight);
+            font-weight: var(--g-text-body-font-weight);
 
             opacity: 0.6;
         }
@@ -266,23 +271,24 @@ $block: '.#{variables.$ns}calendar';
             content: '';
 
             border-radius: 50%;
-            background-color: var(--yc-color-text-primary);
+            background-color: var(--g-color-text-primary);
 
             transform: translateY(8px);
         }
 
         &_disabled {
-            font-weight: var(--yc-text-body-font-weight);
+            font-weight: var(--g-text-body-font-weight);
             pointer-events: none;
 
             opacity: 0.6;
         }
 
-        &_unavailable:not(&_disabled, &_out-of-boundary) {
-            font-weight: var(--yc-text-body-font-weight);
+        &_unavailable:not(&_disabled) {
+            font-weight: var(--g-text-body-font-weight);
+            cursor: default;
 
             opacity: 0.5;
-            background-color: var(--yc-color-base-generic);
+            background-color: var(--g-color-base-generic);
         }
     }
 }

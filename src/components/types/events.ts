@@ -7,9 +7,9 @@ export interface KeyboardEvents {
 
 export interface FocusEvents<Target = Element> {
     /** Handler that is called when the element receives focus. */
-    onFocus?: (e: React.FocusEvent<Target> | FocusEvent) => void;
+    onFocus?: (e: React.FocusEvent<Target>) => void;
     /** Handler that is called when the element loses focus. */
-    onBlur?: (e: React.FocusEvent<Target> | FocusEvent) => void;
+    onBlur?: (e: React.FocusEvent<Target>) => void;
 }
 
 export interface FocusableProps<Target = Element> extends FocusEvents<Target> {

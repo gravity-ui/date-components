@@ -1,15 +1,14 @@
 import React from 'react';
 
-import {useOnFocusOutside} from '@gravity-ui/uikit';
+import {useFocusWithin} from '@gravity-ui/uikit';
 
-import type {CalendarState} from './useCalendarState';
+import type {CalendarState, RangeCalendarState} from './types';
 
-export function useCalendarGridProps(state: CalendarState) {
-    const focusProps = useOnFocusOutside({
-        onFocusOutside: () => {
-            state.setFocused(false);
+export function useCalendarGridProps(state: CalendarState | RangeCalendarState) {
+    const {focusWithinProps} = useFocusWithin({
+        onFocusWithinChange: (isFocused) => {
+            state.setFocused(isFocused);
         },
-        enabled: state.isFocused,
     });
 
     const gridProps: React.HTMLAttributes<HTMLElement> = {
@@ -20,13 +19,7 @@ export function useCalendarGridProps(state: CalendarState) {
                 : state.focusedDate.format(state.mode === 'days' ? 'MMMM YYYY' : 'YYYY'),
         'aria-disabled': state.disabled ? 'true' : undefined,
         'aria-readonly': state.readOnly ? 'true' : undefined,
-        onFocus: () => {
-            state.setFocused(true);
-            focusProps.onFocus();
-        },
-        onBlur: (e) => {
-            focusProps.onBlur(e);
-        },
+        ...focusWithinProps,
         onKeyDown: (e) => {
             if (e.key === 'ArrowRight') {
                 state.focusNextCell();
