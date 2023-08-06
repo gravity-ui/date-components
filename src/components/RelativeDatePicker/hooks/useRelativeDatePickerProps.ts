@@ -1,14 +1,11 @@
 import React from 'react';
 
-import {
-    type ButtonProps,
-    type PopupProps,
-    type TextInputProps,
-    useForkRef,
-} from '@gravity-ui/uikit';
+import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
+import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {CalendarProps} from '../../Calendar';
-import {type DateFieldProps, useDateFieldProps} from '../../DateField';
+import type {Calendar, CalendarInstance} from '../../Calendar';
+import {useDateFieldProps} from '../../DateField';
+import type {DateFieldProps} from '../../DateField';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
 import {mergeProps} from '../../utils/mergeProps';
 import type {RelativeDatePickerProps} from '../RelativeDatePicker';
@@ -22,13 +19,13 @@ interface InnerRelativeDatePickerProps {
     modeSwitcherProps: ButtonProps;
     calendarButtonProps: ButtonProps;
     popupProps: PopupProps;
-    calendarProps: CalendarProps;
+    calendarProps: React.ComponentProps<typeof Calendar>;
     timeInputProps: DateFieldProps;
 }
 
 export function useRelativeDatePickerProps(
     state: RelativeDatePickerState,
-    props: RelativeDatePickerProps,
+    {onFocus, onBlur, ...props}: RelativeDatePickerProps,
 ): InnerRelativeDatePickerProps {
     const {mode, setMode, datePickerState, dateFieldState, relativeDateState} = state;
 
@@ -47,6 +44,15 @@ export function useRelativeDatePickerProps(
             setFocusedDate(datePickerState.dateValue);
         }
     }
+    const {focusWithinProps} = useFocusWithin({
+        onFocusWithin: onFocus,
+        onBlurWithin: onBlur,
+        onFocusWithinChange(isFocusWithin) {
+            if (!isFocusWithin) {
+                state.setActive(isFocusWithin);
+            }
+        },
+    });
 
     const [isOpen, setOpen] = React.useState(false);
     if (!state.isActive && isOpen) {
@@ -61,7 +67,11 @@ export function useRelativeDatePickerProps(
         }
     }
 
-    const commonInputProps: TextInputProps = {};
+    const commonInputProps: TextInputProps = {
+        onFocus: () => {
+            state.setActive(true);
+        },
+    };
 
     const {inputProps} = useDateFieldProps(dateFieldState, {
         ...props,
@@ -98,9 +108,12 @@ export function useRelativeDatePickerProps(
         mode === 'relative' ? relativeDateProps.controlRef : inputProps.controlRef,
     );
 
+    const calendarRef = React.useRef<CalendarInstance>(null);
+
     return {
         groupProps: {
             role: 'group',
+            ...focusWithinProps,
         },
         fieldProps: mergeProps(
             commonInputProps,
@@ -142,8 +155,14 @@ export function useRelativeDatePickerProps(
                 wasActiveBeforeClickRef.current = state.isActive;
             },
             onClick: () => {
+                state.setActive(true);
                 if (wasActiveBeforeClickRef.current) {
                     setOpen(!isOpen);
+                    if (!isOpen) {
+                        setTimeout(() => {
+                            calendarRef.current?.focus();
+                        });
+                    }
                 }
                 wasActiveBeforeClickRef.current = state.isActive;
             },
@@ -156,6 +175,7 @@ export function useRelativeDatePickerProps(
             restoreFocus: true,
         },
         calendarProps: {
+            ref: calendarRef,
             size: props.size === 's' ? 'm' : props.size,
             readOnly: props.readOnly,
             value: state.selectedDate,
