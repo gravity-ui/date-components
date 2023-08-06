@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Calendar as CalendarIcon, Function as FunctionIcon} from '@gravity-ui/icons';
-import {Button, Icon, Popup, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
+import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
@@ -33,7 +33,7 @@ export interface RelativeDatePickerProps
         StyleProps,
         AccessibilityProps {}
 
-export function RelativeDatePicker({onFocus, onBlur, ...props}: RelativeDatePickerProps) {
+export function RelativeDatePicker(props: RelativeDatePickerProps) {
     const state = useRelativeDatePickerState(props);
 
     const {
@@ -48,23 +48,10 @@ export function RelativeDatePicker({onFocus, onBlur, ...props}: RelativeDatePick
 
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
-    const {focusWithinProps} = useFocusWithin({
-        onFocusWithin: onFocus,
-        onBlurWithin: onBlur,
-        onFocusWithinChange(isFocusWithin) {
-            state.setActive(isFocusWithin);
-        },
-    });
-
     const [isMobile] = useMobile();
 
     return (
-        <div
-            ref={anchorRef}
-            className={b(null, props.className)}
-            {...groupProps}
-            {...focusWithinProps}
-        >
+        <div ref={anchorRef} className={b(null, props.className)} {...groupProps}>
             {isMobile && state.mode === 'absolute' && (
                 <MobileCalendar
                     state={state.datePickerState}
