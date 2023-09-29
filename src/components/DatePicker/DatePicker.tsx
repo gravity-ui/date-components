@@ -2,7 +2,7 @@ import React from 'react';
 
 import {TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
 
-import {useDateFieldProps, useDateFieldState} from '../DateField';
+import {useDateFieldProps, useDateFieldState} from '../DateField/index.js';
 import type {
     AccessibilityProps,
     DateFieldBase,
@@ -11,12 +11,12 @@ import type {
     KeyboardEvents,
     StyleProps,
     TextInputProps,
-} from '../types';
+} from '../types/index.js';
 
-import {DesktopCalendar, DesktopCalendarButton} from './DesktopCalendar';
-import {MobileCalendar, MobileCalendarIcon} from './MobileCalendar';
-import {useDatePickerState} from './hooks/useDatePickerState';
-import {b} from './utils';
+import {DesktopCalendar, DesktopCalendarButton} from './DesktopCalendar.js';
+import {MobileCalendar, MobileCalendarIcon} from './MobileCalendar.js';
+import {useDatePickerState} from './hooks/useDatePickerState.js';
+import {b} from './utils.js';
 
 import './DatePicker.scss';
 

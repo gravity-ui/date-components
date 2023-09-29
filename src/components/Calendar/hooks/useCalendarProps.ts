@@ -3,17 +3,17 @@ import React from 'react';
 import {useFocusWithin} from '@gravity-ui/uikit';
 import type {ButtonProps} from '@gravity-ui/uikit';
 
-import type {CalendarProps} from '../Calendar';
-import {i18n} from '../i18n';
+import type {CalendarProps} from '../Calendar.js';
+import {i18n} from '../i18n/index.js';
 
-import type {CalendarState, RangeCalendarState} from './types';
+import type {CalendarState, RangeCalendarState} from './types.js';
 
 const buttonDisabledClassName = 'yc-button_disabled g-button_disabled';
 
 // eslint-disable-next-line complexity
 export function useCalendarProps(props: CalendarProps, state: CalendarState | RangeCalendarState) {
     const title =
-        state.mode === 'years'
+        state.mode === 'years' || state.mode === 'quarters'
             ? `${state.startDate.year()} — ${state.endDate.year()}`
             : state.focusedDate.format(state.mode === 'days' ? 'MMMM YYYY' : 'YYYY');
 
@@ -33,7 +33,9 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
         ...focusWithinProps,
     };
 
-    const modeDisabled = state.disabled || state.mode === 'years';
+    const modeDisabled =
+        state.disabled ||
+        state.availableMods.indexOf(state.mode) + 1 === state.availableMods.length;
 
     const modeButtonProps: ButtonProps = {
         disabled: state.disabled,
@@ -43,7 +45,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
             ? undefined
             : () => {
                   state.zoomOut();
-                  if (state.mode === 'months') {
+                  if (state.mode === state.availableMods.at(-2)) {
                       state.setFocused(true);
                   }
               },

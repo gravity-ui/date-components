@@ -2,9 +2,10 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {createPlaceholderValue, splitFormatIntoSections} from '../../DateField/utils';
-import {useControlledState} from '../../hooks/useControlledState';
-import type {InputBase, ValueBase} from '../../types';
+import {splitFormatIntoSections} from '../../DateField/utils.js';
+import {useControlledState} from '../../hooks/useControlledState.js';
+import type {InputBase, ValueBase} from '../../types/index.js';
+import {createPlaceholderValue} from '../../utils/dates.js';
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
 
 export interface DatePickerState {

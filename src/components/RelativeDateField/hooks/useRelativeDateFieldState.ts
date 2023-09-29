@@ -3,8 +3,8 @@ import React from 'react';
 import {dateTimeParse, isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {useControlledState} from '../../hooks/useControlledState';
-import type {InputBase, Validation, ValueBase} from '../../types';
+import {useControlledState} from '../../hooks/useControlledState.js';
+import type {InputBase, Validation, ValueBase} from '../../types/index.js';
 
 export interface RelativeDateFieldState {
     /** The current field value. */

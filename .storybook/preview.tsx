@@ -7,11 +7,11 @@ import {Lang, MobileProvider, ThemeProvider, configure} from '@gravity-ui/uikit'
 import {MINIMAL_VIEWPORTS} from '@storybook/addon-viewport';
 import type {Decorator, Preview} from '@storybook/react';
 
-import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator';
+import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator.js';
 
-import {WithLang} from './decorators/withLang';
-import {WithMobile} from './decorators/withMobile';
-import {themes} from './theme';
+import {WithLang} from './decorators/withLang.js';
+import {WithMobile} from './decorators/withMobile.js';
+import {themes} from './theme.js';
 
 configure({
     lang: Lang.En,
@@ -42,7 +42,7 @@ const preview: Preview = {
         // actions: {
         //     argTypesRegex: '^on.*',
         // },
-        jsx: {showFunctions: true}, // To show functions in sources
+        jsx: {showFunctions: false}, // To show functions in sources
         viewport: {
             viewports: MINIMAL_VIEWPORTS,
         },
@@ -62,8 +62,8 @@ const preview: Preview = {
                 items: [
                     {value: 'light', right: '☼', title: 'Light'},
                     {value: 'dark', right: '☾', title: 'Dark'},
-                    {value: 'light-hc', right: '☼', title: 'High Contrast Light (beta)'},
-                    {value: 'dark-hc', right: '☾', title: 'High Contrast Dark (beta)'},
+                    {value: 'light-hc', right: '☼', title: 'High Contrast Light'},
+                    {value: 'dark-hc', right: '☾', title: 'High Contrast Dark'},
                 ],
             },
         },

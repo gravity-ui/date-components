@@ -1,7 +1,7 @@
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
-import {RelativeDateField} from '../RelativeDateField';
+import {RelativeDateField} from '../RelativeDateField.js';
 
 const meta: Meta<typeof RelativeDateField> = {
     title: 'Components/RelativeDateField',

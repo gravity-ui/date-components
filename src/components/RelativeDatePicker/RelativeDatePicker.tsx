@@ -3,10 +3,10 @@ import React from 'react';
 import {Calendar as CalendarIcon, Function as FunctionIcon} from '@gravity-ui/icons';
 import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
-import {block} from '../../utils/cn';
-import {Calendar} from '../Calendar';
-import {DateField} from '../DateField';
-import {MobileCalendar, MobileCalendarIcon} from '../DatePicker/MobileCalendar';
+import {block} from '../../utils/cn.js';
+import {Calendar} from '../Calendar/index.js';
+import {DateField} from '../DateField/index.js';
+import {MobileCalendar, MobileCalendarIcon} from '../DatePicker/MobileCalendar.js';
 import type {
     AccessibilityProps,
     DomProps,
@@ -14,11 +14,11 @@ import type {
     KeyboardEvents,
     StyleProps,
     TextInputProps,
-} from '../types';
+} from '../types/index.js';
 
-import {useRelativeDatePickerProps} from './hooks/useRelativeDatePickerProps';
-import {useRelativeDatePickerState} from './hooks/useRelativeDatePickerState';
-import type {RelativeDatePickerStateOptions} from './hooks/useRelativeDatePickerState';
+import {useRelativeDatePickerProps} from './hooks/useRelativeDatePickerProps.js';
+import {useRelativeDatePickerState} from './hooks/useRelativeDatePickerState.js';
+import type {RelativeDatePickerStateOptions} from './hooks/useRelativeDatePickerState.js';
 
 import './RelativeDatePicker.scss';
 

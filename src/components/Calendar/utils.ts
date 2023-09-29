@@ -1,6 +1,8 @@
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
+import type {CalendarLayout} from './hooks/types';
+
 export function constrainValue(
     value: DateTime,
     minValue: DateTime | undefined,
@@ -16,17 +18,17 @@ export function constrainValue(
     return value;
 }
 
-export function getDaysInPeriod(
-    startDate: DateTime,
-    _endDate: DateTime,
-    mode: 'days' | 'months' | 'years',
-) {
+export function getDaysInPeriod(startDate: DateTime, _endDate: DateTime, mode: CalendarLayout) {
     const days: DateTime[] = [];
 
     if (mode === 'days') {
         const currentDate = startDate.startOf('week');
         for (let i = 0; i < 42; i++) {
             days.push(currentDate.add({days: i}));
+        }
+    } else if (mode === 'quarters') {
+        for (let i = 0; i < 16; i++) {
+            days.push(startDate.add(i, 'quarters'));
         }
     } else {
         for (let i = 0; i < 12; i++) {
@@ -45,3 +47,5 @@ export function getWeekDays() {
     }
     return weekDays;
 }
+
+export const calendarLayouts: CalendarLayout[] = ['days', 'months', 'quarters', 'years'];

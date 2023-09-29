@@ -2,10 +2,10 @@ import React from 'react';
 
 import type {TextInputProps} from '@gravity-ui/uikit';
 
-import type {DateFieldProps} from '../DateField';
-import {CtrlCmd} from '../utils';
+import type {DateFieldProps} from '../DateField.js';
+import {CtrlCmd} from '../utils.js';
 
-import type {DateFieldState} from './useDateFieldState';
+import type {DateFieldState} from './useDateFieldState.js';
 
 export function useDateFieldProps(
     state: DateFieldState,

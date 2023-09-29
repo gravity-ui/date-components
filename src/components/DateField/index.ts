@@ -1,4 +1,4 @@
-export * from './DateField';
+export * from './DateField.js';
 
-export * from './hooks/useDateFieldState';
-export * from './hooks/useDateFieldProps';
+export * from './hooks/useDateFieldState.js';
+export * from './hooks/useDateFieldProps.js';

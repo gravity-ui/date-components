@@ -3,12 +3,12 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 
-import {block} from '../../utils/cn';
-import {createPlaceholderValue, mergeDateTime} from '../DateField/utils';
-import {getButtonSizeForInput} from '../utils/getButtonSizeForInput';
+import {block} from '../../utils/cn.js';
+import {createPlaceholderValue, mergeDateTime} from '../utils/dates.js';
+import {getButtonSizeForInput} from '../utils/getButtonSizeForInput.js';
 
-import type {DatePickerProps} from './DatePicker';
-import type {DatePickerState} from './hooks/useDatePickerState';
+import type {DatePickerProps} from './DatePicker.js';
+import type {DatePickerState} from './hooks/useDatePickerState.js';
 
 import './MobileCalendar.scss';
 

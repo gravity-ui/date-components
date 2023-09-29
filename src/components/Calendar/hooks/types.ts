@@ -1,8 +1,8 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import type {InputBase, RangeValue} from '../../types';
+import type {InputBase, RangeValue} from '../../types/index.js';
 
-export type CalendarLayout = 'days' | 'months' | 'years';
+export type CalendarLayout = 'days' | 'months' | 'quarters' | 'years';
 
 export interface CalendarStateOptionsBase extends InputBase {
     /** The minimum allowed date that a user may select. */
@@ -30,6 +30,8 @@ export interface CalendarStateOptionsBase extends InputBase {
     defaultMode?: CalendarLayout;
     /** Handler that is called when the mode changes */
     onUpdateMode?: (mode: CalendarLayout) => void;
+    /** Controls what modes to use */
+    modes?: Partial<Record<CalendarLayout, boolean>>;
 }
 
 interface CalendarStateBase {
@@ -49,7 +51,7 @@ interface CalendarStateBase {
     /** Selects the currently focused date. */
     selectFocusedDate(): void;
     /** Selects the given date. */
-    selectDate(date: DateTime): void;
+    selectDate(date: DateTime, force?: boolean): void;
     /** Moves focus to the next calendar date. */
     focusNextCell(): void;
     /** Moves focus to the previous calendar date. */
@@ -102,6 +104,7 @@ interface CalendarStateBase {
     readonly mode: CalendarLayout;
     /** Sets calendar layout */
     setMode(mode: CalendarLayout): void;
+    availableMods: CalendarLayout[];
     readonly startDate: DateTime;
     readonly endDate: DateTime;
 }

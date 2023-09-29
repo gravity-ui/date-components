@@ -2,7 +2,7 @@ import React from 'react';
 
 import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
 
-import {block} from '../../utils/cn';
+import {block} from '../../utils/cn.js';
 import type {
     AccessibilityProps,
     DomProps,
@@ -11,11 +11,11 @@ import type {
     StyleProps,
     TextInputExtendProps,
     TextInputProps,
-} from '../types';
+} from '../types/index.js';
 
-import {useDateFieldProps} from './hooks/useDateFieldProps';
-import {useDateFieldState} from './hooks/useDateFieldState';
-import type {DateFieldStateOptions} from './hooks/useDateFieldState';
+import {useDateFieldProps} from './hooks/useDateFieldProps.js';
+import {useDateFieldState} from './hooks/useDateFieldState.js';
+import type {DateFieldStateOptions} from './hooks/useDateFieldState.js';
 
 import './DateField.scss';
 

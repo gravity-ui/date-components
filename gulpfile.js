@@ -1,10 +1,13 @@
-const path = require('node:path');
+import path from 'node:path';
 
-const {task, src, dest, series, parallel} = require('gulp');
-const sass = require('gulp-dart-sass');
-const replace = require('gulp-replace');
-const ts = require('gulp-typescript');
-const rimraf = require('rimraf');
+import gulp from 'gulp';
+import sass from 'gulp-dart-sass';
+import rename from 'gulp-rename';
+import replace from 'gulp-replace';
+import ts from 'gulp-typescript';
+import {rimraf} from 'rimraf';
+
+const {dest, parallel, series, src, task} = gulp;
 
 const BUILD_DIR = path.resolve('dist');
 
@@ -15,9 +18,11 @@ task('clean', (done) => {
 
 function compileTs(modules = false) {
     const tsProject = ts.createProject('tsconfig.json', {
+        noEmit: false,
         declaration: true,
         ...(modules ? undefined : {verbatimModuleSyntax: false}),
         module: modules ? 'esnext' : 'commonjs',
+        moduleResolution: modules ? 'bundler' : 'node10',
     });
 
     return src([
@@ -40,6 +45,12 @@ task('compile-to-cjs', () => {
     return compileTs();
 });
 
+function copyCommonJsPackageJson() {
+    return src('templates/package.commonjs.json')
+        .pipe(rename({basename: 'package'}))
+        .pipe(dest(path.resolve(BUILD_DIR, 'cjs')));
+}
+
 task('copy-i18n', () => {
     return src(['src/**/i18n/*.json'])
         .pipe(dest(path.resolve(BUILD_DIR, 'esm')))
@@ -55,7 +66,12 @@ task('styles', () => {
 
 task(
     'build',
-    series(['clean', parallel(['compile-to-esm', 'compile-to-cjs']), 'copy-i18n', 'styles']),
+    series([
+        'clean',
+        parallel(['compile-to-esm', 'compile-to-cjs', copyCommonJsPackageJson]),
+        'copy-i18n',
+        'styles',
+    ]),
 );
 
 task('default', series(['build']));

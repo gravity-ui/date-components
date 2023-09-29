@@ -1,4 +1,17 @@
-export type DateFieldSectionType = Exclude<Intl.DateTimeFormatPartTypes, 'era'>;
+export type DateFieldSectionType = Extract<
+    Intl.DateTimeFormatPartTypes,
+    | 'day'
+    | 'dayPeriod'
+    | 'hour'
+    | 'literal'
+    | 'minute'
+    | 'month'
+    | 'second'
+    | 'timeZoneName'
+    | 'weekday'
+    | 'year'
+    | 'unknown'
+>;
 
 export type DateFormatTokenMap = {
     [formatToken: string]:

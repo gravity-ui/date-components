@@ -3,15 +3,15 @@ import React from 'react';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {ArrowToggle, Button} from '@gravity-ui/uikit';
 
-import {block} from '../../utils/cn';
-import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
+import {block} from '../../utils/cn.js';
+import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types/index.js';
 
-import type {RangeCalendarState} from './hooks/types';
-import {useCalendarCellProps} from './hooks/useCalendarCellProps';
-import {useCalendarGridProps} from './hooks/useCalendarGridProps';
-import {useCalendarProps} from './hooks/useCalendarProps';
-import type {CalendarState} from './hooks/useCalendarState';
-import {getDaysInPeriod, getWeekDays} from './utils';
+import type {RangeCalendarState} from './hooks/types.js';
+import {useCalendarCellProps} from './hooks/useCalendarCellProps.js';
+import {useCalendarGridProps} from './hooks/useCalendarGridProps.js';
+import {useCalendarProps} from './hooks/useCalendarProps.js';
+import type {CalendarState} from './hooks/useCalendarState.js';
+import {calendarLayouts, getDaysInPeriod, getWeekDays} from './utils.js';
 
 import './Calendar.scss';
 
@@ -51,7 +51,7 @@ export const CalendarBase = React.forwardRef<CalendarInstance, CalendarBaseProps
         <div {...calendarProps} className={b({size: props.size})}>
             <div className={b('header')}>
                 <Button {...modeButtonProps} view="flat" size={props.size}>
-                    {state.mode === 'years' ? (
+                    {state.mode === state.availableMods.at(-1) ? (
                         <span key="label" className={b('mode-label', b(`years-label`))}>
                             {modeButtonProps.children}
                         </span>
@@ -95,10 +95,7 @@ function CalendarGrid({state}: CalendarGridProps) {
 
     let animation;
     if (modeChanged) {
-        if (
-            (state.mode === 'days' && prevState.mode === 'months') ||
-            (state.mode === 'months' && prevState.mode === 'years')
-        ) {
+        if (calendarLayouts.indexOf(prevState.mode) > calendarLayouts.indexOf(state.mode)) {
             animation = 'zoom-out';
         } else {
             animation = 'zoom-in';
@@ -179,12 +176,17 @@ interface CalendarGridProps {
 }
 function CalendarGridCells({state}: CalendarGridProps) {
     const rowsInPeriod = state.mode === 'days' ? 6 : 4;
-    const columnsInRow = state.mode === 'days' ? 7 : 3;
+    const columnsInRow = state.mode === 'days' ? 7 : 3 + (state.mode === 'quarters' ? 1 : 0);
     const days = getDaysInPeriod(state.startDate, state.endDate, state.mode);
     return (
         <div className={b('grid-rowgroup', {mode: state.mode})} role="rowgroup">
             {[...new Array(rowsInPeriod).keys()].map((rowIndex) => (
                 <div key={rowIndex} className={b('grid-row')} role="row">
+                    {state.mode === 'quarters' ? (
+                        <span role="rowheader" className={b('grid-rowgroup-header')}>
+                            {days[rowIndex * columnsInRow].format('YYYY')}
+                        </span>
+                    ) : null}
                     {days
                         .slice(rowIndex * columnsInRow, (rowIndex + 1) * columnsInRow)
                         .map((date) => {

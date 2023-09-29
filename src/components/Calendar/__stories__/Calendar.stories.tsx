@@ -1,9 +1,12 @@
+import React from 'react';
+
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
-import {Calendar} from '../Calendar';
+import {Calendar} from '../Calendar.js';
 
 const meta: Meta<typeof Calendar> = {
     title: 'Components/Calendar',
@@ -115,3 +118,46 @@ function getIsDateUnavailable(variant: string) {
 
     return undefined;
 }
+
+export const Custom: Story = {
+    ...Default,
+    render: function Custom(args) {
+        const timeZone = args.timeZone;
+        const props = {
+            ...args,
+            minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
+            maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
+            value: args.value ? dateTimeParse(args.value, {timeZone}) : undefined,
+            defaultValue: args.defaultValue
+                ? dateTimeParse(args.defaultValue, {timeZone})
+                : undefined,
+            focusedValue: args.focusedValue
+                ? dateTimeParse(args.focusedValue, {timeZone})
+                : undefined,
+            defaultFocusedValue: args.defaultFocusedValue
+                ? dateTimeParse(args.defaultFocusedValue, {timeZone})
+                : undefined,
+            isDateUnavailable: getIsDateUnavailable(args.isDateUnavailable as unknown as string),
+        };
+        const [mode, setMode] = React.useState('days');
+
+        return (
+            <div>
+                <Tabs
+                    activeTab={mode}
+                    onSelectTab={(id) => {
+                        setMode(id);
+                    }}
+                    items={['days', 'months', 'quarters', 'years'].map((item) => ({
+                        id: item,
+                        title: item[0].toUpperCase() + item.slice(1),
+                    }))}
+                />
+                <Calendar {...props} modes={{[mode]: true}} />
+            </div>
+        );
+    },
+    parameters: {
+        controls: {exclude: ['mode', 'defaultMode', 'modes']},
+    },
+};
