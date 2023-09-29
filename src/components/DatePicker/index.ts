@@ -1,3 +1,3 @@
-export * from './DatePicker';
+export * from './DatePicker.js';
 
-export * from './hooks/useDatePickerState';
+export * from './hooks/useDatePickerState.js';

@@ -1,23 +1,32 @@
 import React from 'react';
 
-import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {useControlledState} from '../../hooks/useControlledState';
-import type {ValueBase} from '../../types';
-import {constrainValue} from '../utils';
+import {useControlledState} from '../../hooks/useControlledState.js';
+import type {ValueBase} from '../../types/index.js';
+import {createPlaceholderValue} from '../../utils/dates.js';
+import {calendarLayouts, constrainValue} from '../utils.js';
 
-import type {CalendarState, CalendarStateOptionsBase} from './types';
+import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './types.js';
 
 export interface CalendarStateOptions extends ValueBase<DateTime>, CalendarStateOptionsBase {}
-export type {CalendarState} from './types';
+export type {CalendarState} from './types.js';
+
+const defaultModes: Record<CalendarLayout, boolean> = {
+    days: true,
+    months: true,
+    quarters: false,
+    years: true,
+};
 
 export function useCalendarState(props: CalendarStateOptions): CalendarState {
-    const {disabled, readOnly, minValue, maxValue, timeZone} = props;
+    const {disabled, readOnly, minValue, maxValue, timeZone, modes = defaultModes} = props;
     const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
     const [mode, setMode] = useControlledState(props.mode, props.defaultMode, props.onUpdateMode);
 
-    const currentMode = mode || 'days';
+    const availableMods = calendarLayouts.filter((l) => modes[l]);
+    const minMode = availableMods[0] || 'days';
+    const currentMode = mode && availableMods.includes(mode) ? mode : minMode;
 
     const focusedValue = React.useMemo(() => {
         if (!props.focusedValue) {
@@ -28,9 +37,11 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
     const defaultFocusedValue = React.useMemo(() => {
         const defaultValue =
-            (props.defaultFocusedValue ? props.defaultFocusedValue : value) || dateTime({timeZone});
+            (props.defaultFocusedValue ? props.defaultFocusedValue : value) ||
+            createPlaceholderValue({timeZone}).startOf(minMode);
         return constrainValue(defaultValue, minValue, maxValue);
-    }, [maxValue, minValue, props.defaultFocusedValue, timeZone, value]);
+    }, [maxValue, minValue, props.defaultFocusedValue, timeZone, value, minMode]);
+
     const [focusedDateInner, setFocusedDate] = useControlledState(
         focusedValue,
         defaultFocusedValue,
@@ -38,7 +49,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     );
 
     const focusedDate =
-        focusedDateInner ?? constrainValue(dateTime({timeZone}), minValue, maxValue);
+        focusedDateInner ??
+        constrainValue(createPlaceholderValue({timeZone}).startOf(minMode), minValue, maxValue);
 
     if (isInvalid(focusedDate, minValue, maxValue)) {
         // If the focused date was moved to an invalid value, it can't be focused, so constrain it.
@@ -46,7 +58,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     }
 
     function focusCell(date: DateTime) {
-        setFocusedDate(constrainValue(date, minValue, maxValue));
+        setFocusedDate(constrainValue(date.startOf(currentMode), minValue, maxValue));
     }
 
     const [isFocused, setFocused] = React.useState(props.autoFocus || false);
@@ -60,13 +72,20 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         value,
         setValue,
         timeZone,
-        selectDate(date: DateTime) {
-            if (!disabled && !readOnly) {
-                const newValue = constrainValue(date, minValue, maxValue);
-                if (this.isCellUnavailable(newValue)) {
-                    return;
+        selectDate(date: DateTime, force = false) {
+            if (!disabled) {
+                if (!readOnly && (force || this.mode === minMode)) {
+                    const newValue = constrainValue(date.startOf(minMode), minValue, maxValue);
+                    if (this.isCellUnavailable(newValue)) {
+                        return;
+                    }
+                    setValue(newValue);
+                    if (force && currentMode !== minMode) {
+                        setMode(minMode);
+                    }
+                } else {
+                    this.zoomIn();
                 }
-                setValue(constrainValue(newValue, minValue, maxValue));
             }
         },
         minValue,
@@ -79,37 +98,45 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             setFocused(true);
         },
         focusNextCell() {
-            focusCell(focusedDate.add({[this.mode]: 1}));
+            focusCell(focusedDate.add(1, this.mode));
         },
         focusPreviousCell() {
-            focusCell(focusedDate.subtract({[this.mode]: 1}));
+            focusCell(focusedDate.subtract(1, this.mode));
         },
         focusNextRow() {
             if (this.mode === 'days') {
                 focusCell(focusedDate.add(1, 'week'));
+            } else if (this.mode === 'quarters') {
+                focusCell(focusedDate.add(1, 'years'));
             } else {
-                focusCell(focusedDate.add({[this.mode]: 3}));
+                focusCell(focusedDate.add(3, this.mode));
             }
         },
         focusPreviousRow() {
             if (this.mode === 'days') {
                 focusCell(focusedDate.subtract(1, 'week'));
+            } else if (this.mode === 'quarters') {
+                focusCell(focusedDate.subtract(1, 'years'));
             } else {
-                focusCell(focusedDate.subtract({[this.mode]: 3}));
+                focusCell(focusedDate.subtract(3, this.mode));
             }
         },
         focusNextPage(larger?: boolean) {
             if (this.mode === 'days') {
                 focusCell(focusedDate.add({months: larger ? 12 : 1}));
+            } else if (this.mode === 'quarters') {
+                focusCell(focusedDate.add(4, 'years'));
             } else {
-                focusCell(focusedDate.add({[this.mode]: 12}));
+                focusCell(focusedDate.add(12, this.mode));
             }
         },
         focusPreviousPage(larger?: boolean) {
             if (this.mode === 'days') {
                 focusCell(focusedDate.subtract({months: larger ? 12 : 1}));
+            } else if (this.mode === 'quarters') {
+                focusCell(focusedDate.subtract(4, 'years'));
             } else {
-                focusCell(focusedDate.subtract({[this.mode]: 12}));
+                focusCell(focusedDate.subtract(12, this.mode));
             }
         },
         focusSectionStart() {
@@ -119,13 +146,19 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             focusCell(getEndDate(focusedDate, this.mode));
         },
         zoomIn() {
-            this.setMode(this.mode === 'years' ? 'months' : 'days');
+            const index = availableMods.indexOf(this.mode) - 1;
+            if (index >= 0) {
+                this.setMode(availableMods[index]);
+            }
         },
         zoomOut() {
-            this.setMode(this.mode === 'days' ? 'months' : 'years');
+            const index = availableMods.indexOf(this.mode) + 1;
+            if (index < availableMods.length) {
+                this.setMode(availableMods[index]);
+            }
         },
         selectFocusedDate() {
-            this.selectDate(focusedDate);
+            this.selectDate(focusedDate, true);
         },
         isFocused,
         setFocused,
@@ -133,11 +166,11 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             return isInvalid(date, this.minValue, this.maxValue, this.mode);
         },
         isPreviousPageInvalid() {
-            const prev = this.startDate.add({days: -1});
+            const prev = this.startDate.subtract(1, 'day');
             return this.isInvalid(prev);
         },
         isNextPageInvalid() {
-            const next = this.endDate.add({days: 1});
+            const next = this.endDate.add(1, 'day');
             return this.isInvalid(next);
         },
         isSelected(date: DateTime) {
@@ -148,7 +181,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             );
         },
         isCellUnavailable(date: DateTime) {
-            if (this.mode === 'days') {
+            if (this.mode === availableMods[0]) {
                 return Boolean(props.isDateUnavailable && props.isDateUnavailable(date));
             } else {
                 return false;
@@ -165,10 +198,11 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         },
         mode: currentMode,
         setMode,
+        availableMods,
     };
 }
 
-function getStartDate(date: DateTime, mode: 'days' | 'months' | 'years') {
+function getStartDate(date: DateTime, mode: CalendarLayout) {
     if (mode === 'days') {
         return date.startOf('month');
     }
@@ -177,28 +211,37 @@ function getStartDate(date: DateTime, mode: 'days' | 'months' | 'years') {
         return date.startOf('year');
     }
 
+    if (mode === 'quarters') {
+        const year = Math.floor(date.year() / 4) * 4;
+        return date.startOf('year').set('year', year);
+    }
+
     const year = Math.floor(date.year() / 12) * 12;
     return date.startOf('year').set('year', year);
 }
 
-function getEndDate(date: DateTime, mode: 'days' | 'months' | 'years') {
+function getEndDate(date: DateTime, mode: CalendarLayout) {
     if (mode === 'days') {
         return date.endOf('month').startOf('day');
     }
 
     if (mode === 'months') {
-        return date.endOf('month').startOf('day');
+        return date.endOf('year').startOf('month');
     }
 
     const startDate = getStartDate(date, mode);
-    return startDate.add({[mode]: 11});
+    if (mode === 'quarters') {
+        return startDate.add(15, 'quarters');
+    }
+
+    return startDate.add(11, 'years');
 }
 
 function isInvalid(
     date: DateTime,
     minValue?: DateTime,
     maxValue?: DateTime,
-    mode: 'days' | 'months' | 'years' = 'days',
+    mode: CalendarLayout = 'days',
 ) {
     const constrainedDate = constrainValue(date, minValue, maxValue);
     return !constrainedDate.isSame(date, mode);

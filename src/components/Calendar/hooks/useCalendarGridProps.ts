@@ -2,7 +2,7 @@ import React from 'react';
 
 import {useFocusWithin} from '@gravity-ui/uikit';
 
-import type {CalendarState, RangeCalendarState} from './types';
+import type {CalendarState, RangeCalendarState} from './types.js';
 
 export function useCalendarGridProps(state: CalendarState | RangeCalendarState) {
     const {focusWithinProps} = useFocusWithin({
@@ -42,11 +42,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
             } else if (e.code === 'Equal') {
                 state.zoomIn();
             } else if (e.key === 'Enter' || e.key === ' ') {
-                if (state.mode === 'days') {
-                    state.selectFocusedDate();
-                } else {
-                    state.setMode(state.mode === 'months' ? 'days' : 'months');
-                }
+                state.selectDate(state.focusedDate);
             }
         },
     };

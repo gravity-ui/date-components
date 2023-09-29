@@ -4,10 +4,10 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
-import {constrainValue} from '../../Calendar/utils';
-import {useControlledState} from '../../hooks/useControlledState';
-import {RelativeDatePicker} from '../RelativeDatePicker';
-import type {Value} from '../hooks/useRelativeDatePickerState';
+import {constrainValue} from '../../Calendar/utils.js';
+import {useControlledState} from '../../hooks/useControlledState.js';
+import {RelativeDatePicker} from '../RelativeDatePicker.js';
+import type {Value} from '../hooks/useRelativeDatePickerState.js';
 
 const meta: Meta<typeof RelativeDatePicker> = {
     title: 'Components/RelativeDatePicker',

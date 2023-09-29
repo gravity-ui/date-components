@@ -3,14 +3,14 @@ import React from 'react';
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Button, Icon, Popup, useFocusWithin} from '@gravity-ui/uikit';
 
-import {Calendar} from '../Calendar';
-import {DateField} from '../DateField';
-import {getButtonSizeForInput} from '../utils/getButtonSizeForInput';
+import {Calendar} from '../Calendar/index.js';
+import {DateField} from '../DateField/index.js';
+import {getButtonSizeForInput} from '../utils/getButtonSizeForInput.js';
 
-import type {DatePickerProps} from './DatePicker';
-import type {DatePickerState} from './hooks/useDatePickerState';
-import {i18n} from './i18n';
-import {b} from './utils';
+import type {DatePickerProps} from './DatePicker.js';
+import type {DatePickerState} from './hooks/useDatePickerState.js';
+import {i18n} from './i18n/index.js';
+import {b} from './utils.js';
 
 interface DesktopCalendarProps {
     anchorRef: React.RefObject<HTMLElement>;

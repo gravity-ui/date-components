@@ -3,15 +3,16 @@ import React from 'react';
 import {dateTime, isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {useControlledState} from '../../hooks/useControlledState';
-import type {DateFieldBase} from '../../types/datePicker';
-import type {ValidationState} from '../../types/inputs';
+import {useControlledState} from '../../hooks/useControlledState.js';
+import type {DateFieldBase} from '../../types/datePicker.js';
+import type {ValidationState} from '../../types/inputs.js';
+import {createPlaceholderValue, isInvalid, mergeDateTime} from '../../utils/dates.js';
 import type {
     DateFieldSection,
     DateFieldSectionType,
     DateFieldSectionWithoutPosition,
-} from '../types';
-import {createPlaceholderValue, isInvalid, mergeDateTime, splitFormatIntoSections} from '../utils';
+} from '../types.js';
+import {splitFormatIntoSections} from '../utils.js';
 
 export interface DateFieldStateOptions extends DateFieldBase {}
 
@@ -392,7 +393,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
                 }),
             );
         },
-        // eslint-disable-next-line complexity
         onInput(key: string) {
             if (this.readOnly || this.disabled) {
                 return;

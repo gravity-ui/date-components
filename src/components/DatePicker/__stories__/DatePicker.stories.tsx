@@ -2,7 +2,7 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
-import {DatePicker} from '../DatePicker';
+import {DatePicker} from '../DatePicker.js';
 
 const meta: Meta<typeof DatePicker> = {
     title: 'Components/DatePicker',

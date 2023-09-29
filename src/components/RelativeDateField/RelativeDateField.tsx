@@ -2,9 +2,9 @@ import React from 'react';
 
 import {Popup, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
 
-import {block} from '../../utils/cn';
-import {Calendar} from '../Calendar';
-import {DateField} from '../DateField';
+import {block} from '../../utils/cn.js';
+import {Calendar} from '../Calendar/index.js';
+import {DateField} from '../DateField/index.js';
 import type {
     AccessibilityProps,
     DomProps,
@@ -13,11 +13,11 @@ import type {
     StyleProps,
     TextInputExtendProps,
     TextInputProps,
-} from '../types';
+} from '../types/index.js';
 
-import {useRelativeDateFieldProps} from './hooks/useRelativeDateFieldProps';
-import {useRelativeDateFieldState} from './hooks/useRelativeDateFieldState';
-import type {RelativeDateFieldOptions} from './hooks/useRelativeDateFieldState';
+import {useRelativeDateFieldProps} from './hooks/useRelativeDateFieldProps.js';
+import {useRelativeDateFieldState} from './hooks/useRelativeDateFieldState.js';
+import type {RelativeDateFieldOptions} from './hooks/useRelativeDateFieldState.js';
 
 import './RelativeDateField.scss';
 

@@ -2,11 +2,11 @@ import React from 'react';
 
 import type {TextInputProps} from '@gravity-ui/uikit';
 
-import type {CalendarProps} from '../../Calendar';
-import type {DateFieldProps} from '../../DateField';
-import type {RelativeDateFieldProps} from '../RelativeDateField';
+import type {CalendarProps} from '../../Calendar/index.js';
+import type {DateFieldProps} from '../../DateField/index.js';
+import type {RelativeDateFieldProps} from '../RelativeDateField.js';
 
-import type {RelativeDateFieldState} from './useRelativeDateFieldState';
+import type {RelativeDateFieldState} from './useRelativeDateFieldState.js';
 
 interface RelativeDateProps {
     inputProps: TextInputProps;

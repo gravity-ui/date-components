@@ -4,8 +4,8 @@ import {MobileProvider, ThemeProvider, getThemeType} from '@gravity-ui/uikit';
 import {DocsContainer} from '@storybook/blocks';
 import type {DocsContainerProps} from '@storybook/blocks';
 
-import {themes} from '../../../.storybook/theme';
-import {block} from '../utils/cn';
+import {themes} from '../../../.storybook/theme.js';
+import {block} from '../utils/cn.js';
 
 import './DocsDecorator.scss';
 

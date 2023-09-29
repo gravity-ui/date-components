@@ -2,7 +2,7 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
-import {DateField} from '../DateField';
+import {DateField} from '../DateField.js';
 
 const meta: Meta<typeof DateField> = {
     title: 'Components/DateField',

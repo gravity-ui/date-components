@@ -5,7 +5,7 @@ import {addons, types} from '@storybook/addons';
 import {useGlobals} from '@storybook/api';
 import type {API} from '@storybook/api';
 
-import {themes} from '../theme';
+import {themes} from '../theme.js';
 
 const ADDON_ID = 'yc-theme-addon';
 const TOOL_ID = `${ADDON_ID}tool`;

@@ -2,14 +2,14 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {useDateFieldState} from '../../DateField';
-import type {DateFieldState} from '../../DateField';
-import {useDatePickerState} from '../../DatePicker';
-import type {DatePickerState} from '../../DatePicker';
-import {useRelativeDateFieldState} from '../../RelativeDateField';
-import type {RelativeDateFieldState} from '../../RelativeDateField';
-import {useControlledState} from '../../hooks/useControlledState';
-import type {DateFieldBase} from '../../types';
+import {useDateFieldState} from '../../DateField/index.js';
+import type {DateFieldState} from '../../DateField/index.js';
+import {useDatePickerState} from '../../DatePicker/index.js';
+import type {DatePickerState} from '../../DatePicker/index.js';
+import {useRelativeDateFieldState} from '../../RelativeDateField/index.js';
+import type {RelativeDateFieldState} from '../../RelativeDateField/index.js';
+import {useControlledState} from '../../hooks/useControlledState.js';
+import type {DateFieldBase} from '../../types/index.js';
 
 export type Value =
     | {

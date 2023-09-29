@@ -1,4 +1,4 @@
-export * from './RelativeDatePicker';
+export * from './RelativeDatePicker.js';
 
-export * from './hooks/useRelativeDatePickerState';
-export * from './hooks/useRelativeDatePickerProps';
+export * from './hooks/useRelativeDatePickerState.js';
+export * from './hooks/useRelativeDatePickerProps.js';

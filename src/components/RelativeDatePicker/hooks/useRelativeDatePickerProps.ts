@@ -3,15 +3,15 @@ import React from 'react';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {Calendar, CalendarInstance} from '../../Calendar';
-import {useDateFieldProps} from '../../DateField';
-import type {DateFieldProps} from '../../DateField';
-import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
-import {mergeProps} from '../../utils/mergeProps';
-import type {RelativeDatePickerProps} from '../RelativeDatePicker';
-import {i18n} from '../i18n';
+import type {Calendar, CalendarInstance} from '../../Calendar/index.js';
+import {useDateFieldProps} from '../../DateField/index.js';
+import type {DateFieldProps} from '../../DateField/index.js';
+import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput.js';
+import {mergeProps} from '../../utils/mergeProps.js';
+import type {RelativeDatePickerProps} from '../RelativeDatePicker.js';
+import {i18n} from '../i18n/index.js';
 
-import type {RelativeDatePickerState} from './useRelativeDatePickerState';
+import type {RelativeDatePickerState} from './useRelativeDatePickerState.js';
 
 interface InnerRelativeDatePickerProps {
     groupProps: React.HTMLAttributes<unknown>;
@@ -114,6 +114,13 @@ export function useRelativeDatePickerProps(
         groupProps: {
             role: 'group',
             ...focusWithinProps,
+            onKeyDown: (e) => {
+                if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(true);
+                }
+            },
         },
         fieldProps: mergeProps(
             commonInputProps,

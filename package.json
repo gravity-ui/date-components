@@ -3,15 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "license": "MIT",
+  "type": "module",
   "main": "dist/cjs/index.js",
   "module": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
+  "types": "./dist/cjs/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/esm/index.d.js",
-      "import": "./dist/esm/index.js",
-      "default": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
   "sideEffects": [
@@ -32,12 +38,12 @@
   "scripts": {
     "prepare": "husky install",
     "lint": "run-p lint:*",
-    "lint:js": "eslint --ext .js,.jsx,.ts,.tsx .",
-    "lint:styles": "stylelint 'src/**/*.scss'",
+    "lint:js": "eslint --report-unused-disable-directives .",
+    "lint:styles": "stylelint 'src/**/*.scss' --report-needless-disables",
     "lint:other": "npm run prettier -- --check",
     "prettier": "prettier '**/*.{md,yaml,yml,json}'",
     "typecheck": "tsc --noEmit",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "clean": "gulp clean",
     "build": "gulp",
     "start": "storybook dev",
@@ -55,17 +61,22 @@
     "@babel/preset-typescript": "^7.22.5",
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
-    "@gravity-ui/eslint-config": "^2.1.1",
-    "@gravity-ui/prettier-config": "^1.0.1",
-    "@gravity-ui/stylelint-config": "^2.0.0",
+    "@gravity-ui/eslint-config": "^3.0.0",
+    "@gravity-ui/prettier-config": "^1.1.0",
+    "@gravity-ui/stylelint-config": "^4.0.0",
     "@gravity-ui/tsconfig": "^1.0.0",
-    "@gravity-ui/uikit": "^5.0.0",
-    "@storybook/addon-a11y": "^7.2.1",
-    "@storybook/addon-essentials": "^7.2.1",
-    "@storybook/api": "^7.2.1",
-    "@storybook/preset-scss": "^1.0.3",
-    "@storybook/react": "^7.2.1",
-    "@storybook/react-webpack5": "^7.2.1",
+    "@gravity-ui/uikit": "^5.6.0",
+    "@jest/globals": "^29.7.0",
+    "@storybook/addon-a11y": "^7.4.5",
+    "@storybook/addon-essentials": "^7.4.5",
+    "@storybook/addon-styling-webpack": "^0.0.4",
+    "@storybook/addon-viewport": "^7.4.5",
+    "@storybook/addons": "^7.4.5",
+    "@storybook/api": "^7.4.5",
+    "@storybook/blocks": "^7.4.5",
+    "@storybook/react": "^7.4.5",
+    "@storybook/react-webpack5": "^7.4.5",
+    "@storybook/theming": "^7.4.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -73,11 +84,13 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "cross-env": "^7.0.3",
-    "eslint": "^8.45.0",
-    "eslint-plugin-testing-library": "^5.11.0",
+    "css-loader": "^6.8.1",
+    "eslint": "^8.50.0",
+    "eslint-plugin-testing-library": "^6.0.2",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.3.0",
     "gulp-dart-sass": "^1.1.0",
+    "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.1.4",
     "gulp-typescript": "^5.0.1",
     "husky": "^8.0.3",
@@ -86,24 +99,22 @@
     "jest-transform-css": "^6.0.1",
     "nano-staged": "^0.8.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rimraf": "^5.0.5",
     "sass": "^1.64.1",
     "sass-loader": "^13.3.2",
-    "storybook": "^7.2.1",
+    "storybook": "^7.4.5",
     "style-loader": "^3.3.3",
-    "stylelint": "^15.10.2",
+    "stylelint": "^15.10.3",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.1.6"
+    "typescript": "~5.2.2"
   },
   "peerDependencies": {
     "@gravity-ui/uikit": "^5.0.0",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
-  },
-  "overrides": {
-    "stylelint": "^15.10.2"
   },
   "nano-staged": {
     "*.{scss}": [

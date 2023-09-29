@@ -1,9 +1,10 @@
 import React from 'react';
 
+import {jest} from '@jest/globals';
 import {act, render, renderHook, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import {useControlledState} from './useControlledState';
+import {useControlledState} from './useControlledState.js';
 
 describe('useControlledState tests', function () {
     it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
@@ -40,7 +41,9 @@ describe('useControlledState tests', function () {
 
     it('using NaN will only trigger onChange once', () => {
         const onChangeSpy = jest.fn();
-        const {result} = renderHook(() => useControlledState(undefined, undefined, onChangeSpy));
+        const {result} = renderHook(() =>
+            useControlledState<number | undefined, number>(undefined, undefined, onChangeSpy),
+        );
         let [value, setValue] = result.current;
         expect(value).not.toBeDefined();
         expect(onChangeSpy).not.toHaveBeenCalled();
@@ -57,7 +60,7 @@ describe('useControlledState tests', function () {
     });
 
     it('does not trigger too many renders', async () => {
-        const renderSpy = jest.fn();
+        const renderSpy = jest.fn<() => void>();
 
         const TestComponent = (props: any) => {
             const [state, setState] = useControlledState(

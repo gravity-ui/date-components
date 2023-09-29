@@ -3,7 +3,7 @@ import React from 'react';
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import type {CalendarState, RangeCalendarState} from './types';
+import type {CalendarLayout, CalendarState, RangeCalendarState} from './types.js';
 
 export function useCalendarCellProps(date: DateTime, state: CalendarState | RangeCalendarState) {
     const ref = React.useRef<HTMLDivElement>(null);
@@ -31,14 +31,7 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
     const isCurrent = dateTime().isSame(date, state.mode);
     const isWeekend = state.isWeekend(date);
 
-    let label = '';
-    if (state.mode === 'days') {
-        label = `${date.format('dddd')}, ${date.format('LL')}`;
-    } else if (state.mode === 'months') {
-        label = `${date.format('MMMM YYYY')}`;
-    } else if (state.mode === 'years') {
-        label = `${date.format('YYYY')}`;
-    }
+    const label = getDateLabel(date, state.mode);
 
     const cellProps: React.HTMLAttributes<unknown> = {
         role: 'gridcell',
@@ -55,11 +48,7 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
         onClick: isSelectable
             ? () => {
                   state.setFocusedDate(date);
-                  if (state.mode === 'days') {
-                      state.selectDate(date);
-                  } else {
-                      state.zoomIn();
-                  }
+                  state.selectDate(date);
               }
             : undefined,
         onPointerEnter() {
@@ -79,6 +68,8 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
     let formattedDate = date.format('D');
     if (state.mode === 'months') {
         formattedDate = date.format('MMM');
+    } else if (state.mode === 'quarters') {
+        formattedDate = date.format('[Q]Q');
     } else if (state.mode === 'years') {
         formattedDate = date.format('YYYY');
     }
@@ -97,4 +88,18 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
         isCurrent,
         isWeekend,
     };
+}
+
+function getDateLabel(date: DateTime, mode: CalendarLayout) {
+    let label = '';
+    if (mode === 'days') {
+        label = `${date.format('dddd')}, ${date.format('LL')}`;
+    } else if (mode === 'months') {
+        label = `${date.format('MMMM YYYY')}`;
+    } else if (mode === 'quarters') {
+        label = `${date.format('[Q]Q YYYY')}`;
+    } else if (mode === 'years') {
+        label = `${date.format('YYYY')}`;
+    }
+    return label;
 }
