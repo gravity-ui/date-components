@@ -38,11 +38,7 @@ const preview: Preview = {
                 className: 'g-storybook-docs-decorator__canvas',
             },
         },
-        // FIXME: Disabled due to performance reasons. See https://github.com/storybookjs/storybook/issues/5551
-        // actions: {
-        //     argTypesRegex: '^on.*',
-        // },
-        jsx: {showFunctions: true}, // To show functions in sources
+        jsx: {showFunctions: false}, // Do not show functions in sources
         viewport: {
             viewports: MINIMAL_VIEWPORTS,
         },
