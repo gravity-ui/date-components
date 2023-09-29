@@ -2,9 +2,10 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {createPlaceholderValue, splitFormatIntoSections} from '../../DateField/utils';
+import {splitFormatIntoSections} from '../../DateField/utils';
 import {useControlledState} from '../../hooks/useControlledState';
 import type {InputBase, ValueBase} from '../../types';
+import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
 
 export interface DatePickerState {
@@ -159,13 +160,6 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
             setOpen(newIsOpen);
         },
     };
-}
-
-function mergeDateTime(date: DateTime, time: DateTime) {
-    return date
-        .set('hours', time.hour())
-        .set('minutes', time.minute())
-        .set('seconds', time.second());
 }
 
 function getPlaceholderTime(placeholderValue: DateTime | undefined, timeZone?: string) {

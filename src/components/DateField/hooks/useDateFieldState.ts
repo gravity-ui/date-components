@@ -6,12 +6,13 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types/datePicker';
 import type {ValidationState} from '../../types/inputs';
+import {createPlaceholderValue, isInvalid, mergeDateTime} from '../../utils/dates';
 import type {
     DateFieldSection,
     DateFieldSectionType,
     DateFieldSectionWithoutPosition,
 } from '../types';
-import {createPlaceholderValue, isInvalid, mergeDateTime, splitFormatIntoSections} from '../utils';
+import {splitFormatIntoSections} from '../utils';
 
 export interface DateFieldStateOptions extends DateFieldBase {}
 
@@ -91,6 +92,8 @@ export type DateFieldState = {
      * Upon reaching the minimum or maximum value, the value wraps around to the opposite limit.
      */
     decrementPage: () => void;
+    incrementToMax: () => void;
+    decrementToMin: () => void;
     /** Clears the value of the currently selected segment, reverting it to the placeholder. */
     clearSection: () => void;
     /** Clears all segments, reverting them to the placeholder. */
@@ -327,6 +330,32 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
             const sectionIndex = getCurrentEditableSectionIndex(this.sections, selectedSections);
             if (sectionIndex !== -1) {
                 adjustSection(sectionIndex, -(PAGE_STEP[this.sections[sectionIndex].type] || 1));
+            }
+        },
+        incrementToMax() {
+            if (this.readOnly || this.disabled) {
+                return;
+            }
+            enteredKeys.current = '';
+            const sectionIndex = getCurrentEditableSectionIndex(this.sections, selectedSections);
+            if (sectionIndex !== -1) {
+                const section = this.sections[sectionIndex];
+                if (typeof section.maxValue === 'number') {
+                    setSection(section, section.maxValue);
+                }
+            }
+        },
+        decrementToMin() {
+            if (this.readOnly || this.disabled) {
+                return;
+            }
+            enteredKeys.current = '';
+            const sectionIndex = getCurrentEditableSectionIndex(this.sections, selectedSections);
+            if (sectionIndex !== -1) {
+                const section = this.sections[sectionIndex];
+                if (typeof section.minValue === 'number') {
+                    setSection(section, section.minValue);
+                }
             }
         },
         clearSection() {

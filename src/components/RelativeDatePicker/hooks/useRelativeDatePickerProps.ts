@@ -114,6 +114,13 @@ export function useRelativeDatePickerProps(
         groupProps: {
             role: 'group',
             ...focusWithinProps,
+            onKeyDown: (e) => {
+                if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(true);
+                }
+            },
         },
         fieldProps: mergeProps(
             commonInputProps,

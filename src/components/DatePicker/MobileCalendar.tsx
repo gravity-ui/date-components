@@ -4,7 +4,7 @@ import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
-import {createPlaceholderValue, mergeDateTime} from '../DateField/utils';
+import {createPlaceholderValue, mergeDateTime} from '../utils/dates';
 import {getButtonSizeForInput} from '../utils/getButtonSizeForInput';
 
 import type {DatePickerProps} from './DatePicker';

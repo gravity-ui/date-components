@@ -2,6 +2,7 @@ import React from 'react';
 
 import {TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
 
+import type {CalendarProps} from '../Calendar';
 import {useDateFieldProps, useDateFieldState} from '../DateField';
 import type {
     AccessibilityProps,
@@ -27,7 +28,9 @@ export interface DatePickerProps
         KeyboardEvents,
         DomProps,
         StyleProps,
-        AccessibilityProps {}
+        AccessibilityProps {
+    children?: (props: CalendarProps) => React.ReactNode;
+}
 
 export function DatePicker({
     value,
@@ -36,6 +39,7 @@ export function DatePicker({
     className,
     onFocus,
     onBlur,
+    children,
     ...props
 }: DatePickerProps) {
     const anchorRef = React.useRef<HTMLDivElement>(null);
@@ -94,7 +98,12 @@ export function DatePicker({
             {isMobile ? (
                 <MobileCalendar props={props} state={state} />
             ) : (
-                <DesktopCalendar anchorRef={anchorRef} props={props} state={state} />
+                <DesktopCalendar
+                    anchorRef={anchorRef}
+                    props={props}
+                    state={state}
+                    renderCalendar={children}
+                />
             )}
             <TextInput
                 {...inputProps}

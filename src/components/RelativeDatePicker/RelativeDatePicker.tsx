@@ -5,6 +5,7 @@ import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
+import type {CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
 import {MobileCalendar, MobileCalendarIcon} from '../DatePicker/MobileCalendar';
 import type {
@@ -31,7 +32,9 @@ export interface RelativeDatePickerProps
         KeyboardEvents,
         DomProps,
         StyleProps,
-        AccessibilityProps {}
+        AccessibilityProps {
+    children?: (props: CalendarProps) => React.ReactNode;
+}
 
 export function RelativeDatePicker(props: RelativeDatePickerProps) {
     const state = useRelativeDatePickerState(props);
@@ -90,7 +93,11 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
             {!isMobile && (
                 <Popup {...popupProps} anchorRef={anchorRef}>
                     <div className={b('popup-content')}>
-                        <Calendar {...calendarProps} />
+                        {typeof props.children === 'function' ? (
+                            props.children(calendarProps)
+                        ) : (
+                            <Calendar {...calendarProps} />
+                        )}
                         {state.datePickerState.hasTime && (
                             <div className={b('time-field-wrapper')}>
                                 <DateField {...timeInputProps} />
