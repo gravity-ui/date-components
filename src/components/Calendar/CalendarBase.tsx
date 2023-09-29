@@ -11,7 +11,7 @@ import {useCalendarCellProps} from './hooks/useCalendarCellProps';
 import {useCalendarGridProps} from './hooks/useCalendarGridProps';
 import {useCalendarProps} from './hooks/useCalendarProps';
 import type {CalendarState} from './hooks/useCalendarState';
-import {getDaysInPeriod, getWeekDays} from './utils';
+import {calendarLayouts, getDaysInPeriod, getWeekDays} from './utils';
 
 import './Calendar.scss';
 
@@ -51,7 +51,8 @@ export const CalendarBase = React.forwardRef<CalendarInstance, CalendarBaseProps
         <div {...calendarProps} className={b({size: props.size})}>
             <div className={b('header')}>
                 <Button {...modeButtonProps} view="flat" size={props.size}>
-                    {state.mode === 'years' ? (
+                    {state.availableModes.indexOf(state.mode) + 1 ===
+                    state.availableModes.length ? (
                         <span key="label" className={b('mode-label', b(`years-label`))}>
                             {modeButtonProps.children}
                         </span>
@@ -95,10 +96,7 @@ function CalendarGrid({state}: CalendarGridProps) {
 
     let animation;
     if (modeChanged) {
-        if (
-            (state.mode === 'days' && prevState.mode === 'months') ||
-            (state.mode === 'months' && prevState.mode === 'years')
-        ) {
+        if (calendarLayouts.indexOf(prevState.mode) > calendarLayouts.indexOf(state.mode)) {
             animation = 'zoom-out';
         } else {
             animation = 'zoom-in';
@@ -179,12 +177,17 @@ interface CalendarGridProps {
 }
 function CalendarGridCells({state}: CalendarGridProps) {
     const rowsInPeriod = state.mode === 'days' ? 6 : 4;
-    const columnsInRow = state.mode === 'days' ? 7 : 3;
+    const columnsInRow = state.mode === 'days' ? 7 : 3 + (state.mode === 'quarters' ? 1 : 0);
     const days = getDaysInPeriod(state.startDate, state.endDate, state.mode);
     return (
         <div className={b('grid-rowgroup', {mode: state.mode})} role="rowgroup">
             {[...new Array(rowsInPeriod).keys()].map((rowIndex) => (
                 <div key={rowIndex} className={b('grid-row')} role="row">
+                    {state.mode === 'quarters' ? (
+                        <span role="rowheader" className={b('grid-rowgroup-header')}>
+                            {days[rowIndex * columnsInRow].format('YYYY')}
+                        </span>
+                    ) : null}
                     {days
                         .slice(rowIndex * columnsInRow, (rowIndex + 1) * columnsInRow)
                         .map((date) => {

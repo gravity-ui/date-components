@@ -14,7 +14,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
     const gridProps: React.HTMLAttributes<HTMLElement> = {
         role: 'grid',
         'aria-label':
-            state.mode === 'years'
+            state.mode === 'years' || state.mode === 'quarters'
                 ? `${state.startDate.year()} — ${state.endDate.year()}`
                 : state.focusedDate.format(state.mode === 'days' ? 'MMMM YYYY' : 'YYYY'),
         'aria-disabled': state.disabled ? 'true' : undefined,
@@ -42,11 +42,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
             } else if (e.code === 'Equal') {
                 state.zoomIn();
             } else if (e.key === 'Enter' || e.key === ' ') {
-                if (state.mode === 'days') {
-                    state.selectFocusedDate();
-                } else {
-                    state.setMode(state.mode === 'months' ? 'days' : 'months');
-                }
+                state.selectDate(state.focusedDate);
             }
         },
     };

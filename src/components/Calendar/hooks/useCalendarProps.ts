@@ -13,7 +13,7 @@ const buttonDisabledClassName = 'yc-button_disabled g-button_disabled';
 // eslint-disable-next-line complexity
 export function useCalendarProps(props: CalendarProps, state: CalendarState | RangeCalendarState) {
     const title =
-        state.mode === 'years'
+        state.mode === 'years' || state.mode === 'quarters'
             ? `${state.startDate.year()} — ${state.endDate.year()}`
             : state.focusedDate.format(state.mode === 'days' ? 'MMMM YYYY' : 'YYYY');
 
@@ -33,7 +33,10 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
         ...focusWithinProps,
     };
 
-    const modeDisabled = state.disabled || state.mode === 'years';
+    const modeIndex = state.availableModes.indexOf(state.mode);
+    const isModeLast = modeIndex + 1 === state.availableModes.length;
+    const isNextModeLast = modeIndex + 2 === state.availableModes.length;
+    const modeDisabled = state.disabled || isModeLast;
 
     const modeButtonProps: ButtonProps = {
         disabled: state.disabled,
@@ -43,7 +46,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
             ? undefined
             : () => {
                   state.zoomOut();
-                  if (state.mode === 'months') {
+                  if (isNextModeLast) {
                       state.setFocused(true);
                   }
               },

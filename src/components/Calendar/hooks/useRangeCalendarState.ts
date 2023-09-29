@@ -6,7 +6,7 @@ import {useControlledState} from '../../hooks/useControlledState';
 import type {RangeValue, ValueBase} from '../../types';
 import {constrainValue} from '../utils';
 
-import type {CalendarStateOptionsBase, RangeCalendarState} from './types';
+import type {CalendarLayout, CalendarStateOptionsBase, RangeCalendarState} from './types';
 import {useCalendarState} from './useCalendarState';
 
 export interface RangeCalendarStateOptions
@@ -23,8 +23,8 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
     const calendar = useCalendarState({...calendarProps, value: value?.start ?? null});
     const highlightedRange = anchorDate
-        ? makeRange(anchorDate, calendar.focusedDate)
-        : (value && makeRange(value.start, value.end)) ?? undefined;
+        ? makeRange(anchorDate, calendar.focusedDate, calendar.mode)
+        : (value && makeRange(value.start, value.end, calendar.mode)) ?? undefined;
 
     const selectDate = (date: DateTime) => {
         if (props.disabled || props.readOnly) {
@@ -37,7 +37,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         }
 
         if (anchorDate) {
-            const range = makeRange(anchorDate, date);
+            const range = makeRange(anchorDate, date, calendar.mode);
             setValue(range);
             setAnchorDateState(undefined);
         } else {
@@ -76,16 +76,16 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     };
 }
 
-function makeRange(start: DateTime, end: DateTime): RangeValue<DateTime> {
+function makeRange(start: DateTime, end: DateTime, mode: CalendarLayout): RangeValue<DateTime> {
     if (start.isBefore(end)) {
         return {
             start,
-            end,
+            end: end.endOf(mode),
         };
     }
 
     return {
         start: end,
-        end: start,
+        end: start.endOf(mode),
     };
 }
