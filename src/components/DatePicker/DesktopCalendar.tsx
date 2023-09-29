@@ -3,7 +3,7 @@ import React from 'react';
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Button, Icon, Popup, useFocusWithin} from '@gravity-ui/uikit';
 
-import {Calendar} from '../Calendar';
+import {Calendar, type CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
 import {getButtonSizeForInput} from '../utils/getButtonSizeForInput';
 
@@ -16,8 +16,9 @@ interface DesktopCalendarProps {
     anchorRef: React.RefObject<HTMLElement>;
     props: DatePickerProps;
     state: DatePickerState;
+    renderCalendar?: (props: CalendarProps) => React.ReactNode;
 }
-export function DesktopCalendar({anchorRef, props, state}: DesktopCalendarProps) {
+export function DesktopCalendar({anchorRef, props, state, renderCalendar}: DesktopCalendarProps) {
     const {focusWithinProps} = useFocusWithin({
         isDisabled: !state.isOpen,
         onBlurWithin: () => {
@@ -29,6 +30,22 @@ export function DesktopCalendar({anchorRef, props, state}: DesktopCalendarProps)
         return null;
     }
 
+    const calendarProps: CalendarProps = {
+        autoFocus: true,
+        size: props.size === 's' ? 'm' : props.size,
+        disabled: props.disabled,
+        readOnly: props.readOnly,
+        onUpdate: (d) => {
+            state.setDateValue(d);
+        },
+        defaultFocusedValue: state.dateValue ?? undefined,
+        value: state.dateValue,
+        minValue: props.minValue,
+        maxValue: props.maxValue,
+        isDateUnavailable: props.isDateUnavailable,
+        timeZone: props.timeZone,
+    };
+
     return (
         <Popup
             open={state.isOpen}
@@ -38,23 +55,12 @@ export function DesktopCalendar({anchorRef, props, state}: DesktopCalendarProps)
             }}
             restoreFocus
         >
-            <div {...focusWithinProps} className={b('popup-content')}>
-                <Calendar
-                    // eslint-disable-next-line jsx-a11y/no-autofocus
-                    autoFocus
-                    size={props.size === 's' ? 'm' : props.size}
-                    disabled={props.disabled}
-                    readOnly={props.readOnly}
-                    onUpdate={(d) => {
-                        state.setDateValue(d);
-                    }}
-                    defaultFocusedValue={state.dateValue ?? undefined}
-                    value={state.dateValue}
-                    minValue={props.minValue}
-                    maxValue={props.maxValue}
-                    isDateUnavailable={props.isDateUnavailable}
-                    timeZone={props.timeZone}
-                />
+            <div {...focusWithinProps} className={b('popup-content')} tabIndex={-1}>
+                {typeof renderCalendar === 'function' ? (
+                    renderCalendar(calendarProps)
+                ) : (
+                    <Calendar {...calendarProps} />
+                )}
                 {state.hasTime && (
                     <div className={b('time-field-wrapper')}>
                         <DateField

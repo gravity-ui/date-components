@@ -1,7 +1,11 @@
+import React from 'react';
+
 import {dateTimeParse} from '@gravity-ui/date-utils';
+import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
+import {Calendar} from '../../Calendar';
 import {DatePicker} from '../DatePicker';
 
 const meta: Meta<typeof DatePicker> = {
@@ -12,9 +16,10 @@ const meta: Meta<typeof DatePicker> = {
 
 export default meta;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Story = StoryObj<typeof DatePicker>;
 
-export const Default: Story = {
+export const Default = {
     render: (args) => {
         const timeZone = args.timeZone;
         const props = {
@@ -84,4 +89,34 @@ export const Default: Story = {
             },
         },
     },
-};
+} satisfies Story;
+
+export const WithCustomCalendar = {
+    ...Default,
+    render: (args) => {
+        return Default.render({
+            ...args,
+            children: function CustomCalendar(props) {
+                const [mode, setMode] = React.useState('days');
+
+                return (
+                    <div>
+                        <div style={{paddingInline: 5}}>
+                            <Tabs
+                                activeTab={mode}
+                                onSelectTab={(id) => {
+                                    setMode(id);
+                                }}
+                                items={['days', 'months', 'quarters', 'years'].map((item) => ({
+                                    id: item,
+                                    title: item[0].toUpperCase() + item.slice(1, -1),
+                                }))}
+                            />
+                        </div>
+                        <Calendar {...props} modes={{[mode]: true}} />
+                    </div>
+                );
+            },
+        });
+    },
+} satisfies Story;

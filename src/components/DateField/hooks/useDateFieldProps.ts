@@ -136,10 +136,10 @@ export function useDateFieldProps(
                     state.focusNextSection();
                 } else if (e.key === 'Home') {
                     e.preventDefault();
-                    state.focusFirstSection();
+                    state.decrementToMin();
                 } else if (e.key === 'End') {
                     e.preventDefault();
-                    state.focusLastSection();
+                    state.incrementToMax();
                 } else if (e.key === 'ArrowUp' && !e.altKey) {
                     e.preventDefault();
                     state.increment();

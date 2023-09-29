@@ -1,9 +1,11 @@
 import React from 'react';
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
+import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
+import {Calendar} from '../../Calendar';
 import {constrainValue} from '../../Calendar/utils';
 import {useControlledState} from '../../hooks/useControlledState';
 import {RelativeDatePicker} from '../RelativeDatePicker';
@@ -19,7 +21,7 @@ export default meta;
 
 type Story = StoryObj<typeof RelativeDatePicker>;
 
-export const Default: Story = {
+export const Default = {
     render: (props) => {
         return <RelativeDatePicker {...props} />;
     },
@@ -45,7 +47,7 @@ export const Default: Story = {
             },
         },
     },
-};
+} satisfies Story;
 
 export const SimpleDatePicker: Story = {
     render: function SimpleDatePicker({value, defaultValue, onUpdate, ...props}) {
@@ -120,3 +122,33 @@ export const SimpleDatePicker: Story = {
         },
     },
 };
+
+export const WithCustomCalendar = {
+    ...Default,
+    render: (args) => {
+        return Default.render({
+            ...args,
+            children: function CustomCalendar(props) {
+                const [mode, setMode] = React.useState('days');
+
+                return (
+                    <div>
+                        <div style={{paddingInline: 5}}>
+                            <Tabs
+                                activeTab={mode}
+                                onSelectTab={(id) => {
+                                    setMode(id);
+                                }}
+                                items={['days', 'months', 'quarters', 'years'].map((item) => ({
+                                    id: item,
+                                    title: item[0].toUpperCase() + item.slice(1, -1),
+                                }))}
+                            />
+                        </div>
+                        <Calendar {...props} modes={{[mode]: true}} />
+                    </div>
+                );
+            },
+        });
+    },
+} satisfies Story;
