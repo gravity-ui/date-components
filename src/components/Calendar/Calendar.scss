@@ -185,10 +185,15 @@ $block: '.#{variables.$ns}calendar';
         gap: var(--_--calendar-days-gap);
 
         &_mode_months,
+        &_mode_quarters,
         &_mode_years {
             grid-row: 1 / -1;
 
             padding: 12px 0 0;
+        }
+
+        &-header {
+            align-self: center;
         }
     }
 

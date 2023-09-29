@@ -2,6 +2,7 @@ import React from 'react';
 
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -18,7 +19,7 @@ export default meta;
 
 type Story = StoryObj<typeof RangeCalendar>;
 
-export const Default: Story = {
+export const Default = {
     render: function Render(args) {
         const timeZone = args.timeZone;
         const props = {
@@ -60,7 +61,7 @@ export const Default: Story = {
                 type: 'success',
                 content: (
                     <div>
-                        <div>date: {JSON.stringify(res, null, 2) || 'null'}</div>
+                        <div>date: {`${res.start.format('L')} - ${res.end.format('L')}`}</div>
                     </div>
                 ),
             });
@@ -94,7 +95,7 @@ export const Default: Story = {
             },
         },
     },
-};
+} satisfies Story;
 
 function getIsDateUnavailable(variant: string) {
     if (variant === 'weekend') {
@@ -121,3 +122,29 @@ function getIsDateUnavailable(variant: string) {
 
     return undefined;
 }
+
+export const Custom: Story = {
+    ...Default,
+    render: function Custom(args) {
+        const [mode, setMode] = React.useState('days');
+
+        return (
+            <div>
+                <Tabs
+                    activeTab={mode}
+                    onSelectTab={(id) => {
+                        setMode(id);
+                    }}
+                    items={['days', 'months', 'quarters', 'years'].map((item) => ({
+                        id: item,
+                        title: item[0].toUpperCase() + item.slice(1),
+                    }))}
+                />
+                {Default.render?.({...args, modes: {[mode]: true}})}
+            </div>
+        );
+    },
+    parameters: {
+        controls: {exclude: ['mode', 'defaultMode', 'modes']},
+    },
+};
