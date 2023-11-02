@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0](https://github.com/gravity-ui/date-components/compare/v1.0.0...v1.1.0) (2023-11-02)
+
+
+### Features
+
+* **Calendar:** allow to controll available modes (days, months, quartes, years) ([ee6e797](https://github.com/gravity-ui/date-components/commit/ee6e797dfef9692bd120df281df7aeef3b7c083a))
+* **Calendar:** respects prefers-reduced-motion: reduce ([#13](https://github.com/gravity-ui/date-components/issues/13)) ([cbd4016](https://github.com/gravity-ui/date-components/commit/cbd4016292e67c42a6f51ce2ed6be926bd59c148))
+* **DatePicker, RelativeDatePicker:** allow to render custom calendar ([2bc50b6](https://github.com/gravity-ui/date-components/commit/2bc50b69a0c35fef8fd7971c4bcb30752f16ba6b))
+
 ## 1.0.0 (2023-08-06)
 
 
