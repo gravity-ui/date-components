@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
-import {Tabs} from '@gravity-ui/uikit';
+import {Button, Dialog, Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -118,5 +118,29 @@ export const WithCustomCalendar = {
                 );
             },
         });
+    },
+} satisfies Story;
+
+export const InsideDialog = {
+    ...Default,
+    render: function InsideDialog(args) {
+        const [isOpen, setOpen] = React.useState(false);
+        return (
+            <React.Fragment>
+                <Button
+                    onClick={() => {
+                        setOpen(true);
+                    }}
+                >
+                    Open dialog
+                </Button>
+                <Dialog open={isOpen} onClose={() => setOpen(false)}>
+                    <Dialog.Header />
+                    <Dialog.Body>
+                        <div style={{paddingTop: 16}}>{Default.render(args)}</div>
+                    </Dialog.Body>
+                </Dialog>
+            </React.Fragment>
+        );
     },
 } satisfies Story;
