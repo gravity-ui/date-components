@@ -103,13 +103,15 @@ export function useDateFieldProps(
                 if (state.selectedSectionIndexes !== null) {
                     return;
                 }
-                const input = inputRef.current;
+                const input = e.target;
+                const isAutofocus = !inputRef.current;
                 setTimeout(() => {
                     if (!input || input !== inputRef.current) {
                         return;
                     }
-
-                    if (
+                    if (isAutofocus) {
+                        state.focusSectionInPosition(0);
+                    } else if (
                         // avoid selecting all sections when focusing empty field without value
                         input.value.length &&
                         Number(input.selectionEnd) - Number(input.selectionStart) ===
