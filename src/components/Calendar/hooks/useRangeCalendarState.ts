@@ -26,8 +26,19 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         ? makeRange(anchorDate, calendar.focusedDate, calendar.mode)
         : (value && makeRange(value.start, value.end, calendar.mode)) ?? undefined;
 
-    const selectDate = (date: DateTime) => {
-        if (props.disabled || props.readOnly) {
+    const minMode = calendar.availableModes[0];
+
+    const selectDate = (date: DateTime, force = false) => {
+        if (props.disabled) {
+            return;
+        }
+
+        if (!force && calendar.mode !== minMode) {
+            calendar.zoomIn();
+            return;
+        }
+
+        if (props.readOnly) {
             return;
         }
 
@@ -53,9 +64,6 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         anchorDate,
         setAnchorDate: setAnchorDateState,
         highlightedRange,
-        selectFocusedDate() {
-            selectDate(calendar.focusedDate);
-        },
         isSelected(date) {
             if (!highlightedRange) {
                 return false;
