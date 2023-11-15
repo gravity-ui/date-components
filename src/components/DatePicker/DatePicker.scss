@@ -7,12 +7,20 @@ $block: '.#{variables.$ns}date-picker';
 
     display: inline-block;
 
+    outline: none;
+
     &__field {
         width: 100%;
 
         &_mobile {
             pointer-events: none;
         }
+    }
+
+    &__popup-anchor {
+        position: absolute;
+        z-index: -1;
+        inset: 0;
     }
 
     &__popup-content {

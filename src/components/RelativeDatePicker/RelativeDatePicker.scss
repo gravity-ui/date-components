@@ -7,6 +7,8 @@ $block: '.#{variables.$ns}relative-date-picker';
 
     display: inline-flex;
 
+    outline: none;
+
     &__field {
         width: 100%;
     }

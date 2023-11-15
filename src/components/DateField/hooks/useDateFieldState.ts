@@ -156,9 +156,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
             : placeholderDate;
     const sectionsState = useSectionsState(sections, displayValue, validSegments);
 
-    const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(() => {
-        return sectionsState.editableSections[0]?.previousEditableSection ?? -1;
-    });
+    const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
 
     const selectedSectionIndexes = React.useMemo<{
         startIndex: number;

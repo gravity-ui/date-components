@@ -2,9 +2,11 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
+import {useDateFieldState} from '../../DateField';
+import type {DateFieldState} from '../../DateField';
 import {splitFormatIntoSections} from '../../DateField/utils';
 import {useControlledState} from '../../hooks/useControlledState';
-import type {InputBase, ValueBase} from '../../types';
+import type {DateFieldBase} from '../../types';
 import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
 
@@ -43,13 +45,10 @@ export interface DatePickerState {
     isOpen: boolean;
     /** Sets whether the calendar popover is open. */
     setOpen(isOpen: boolean): void;
+    dateFieldState: DateFieldState;
 }
 
-export interface DatePickerStateOptions extends ValueBase<DateTime>, InputBase {
-    placeholderValue?: DateTime;
-    timeZone?: string;
-    format?: string;
-}
+export interface DatePickerStateOptions extends DateFieldBase {}
 
 export function useDatePickerState(props: DatePickerStateOptions): DatePickerState {
     const {disabled, readOnly} = props;
@@ -135,6 +134,21 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
             setSelectedTime(newValue);
         }
     };
+
+    const dateFieldState = useDateFieldState({
+        value: value ?? null,
+        onUpdate: setValue,
+        disabled,
+        readOnly,
+        validationState: props.validationState,
+        minValue: props.minValue,
+        maxValue: props.maxValue,
+        isDateUnavailable: props.isDateUnavailable,
+        format,
+        placeholderValue: props.placeholderValue,
+        timeZone: props.timeZone,
+    });
+
     return {
         value: value ?? null,
         setValue,
@@ -159,6 +173,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
 
             setOpen(newIsOpen);
         },
+        dateFieldState,
     };
 }
 

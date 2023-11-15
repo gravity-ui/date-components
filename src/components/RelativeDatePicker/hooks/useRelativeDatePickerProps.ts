@@ -49,7 +49,7 @@ export function useRelativeDatePickerProps(
         onBlurWithin: onBlur,
         onFocusWithinChange(isFocusWithin) {
             if (!isFocusWithin) {
-                state.setActive(isFocusWithin);
+                state.setActive(false);
             }
         },
     });
@@ -59,17 +59,12 @@ export function useRelativeDatePickerProps(
         setOpen(false);
     }
 
-    const [prevActive, setPrevActive] = React.useState(state.isActive);
-    if (prevActive !== state.isActive) {
-        setPrevActive(state.isActive);
-        if (state.isActive && !isOpen) {
-            setOpen(true);
-        }
-    }
-
     const commonInputProps: TextInputProps = {
         onFocus: () => {
-            state.setActive(true);
+            if (!state.isActive) {
+                state.setActive(true);
+                setOpen(true);
+            }
         },
     };
 
@@ -85,6 +80,7 @@ export function useRelativeDatePickerProps(
         value: relativeDateState.text,
         onUpdate: relativeDateState.setText,
         hasClear: props.hasClear && !relativeDateState.readOnly,
+        placeholder: props.placeholder,
         size: props.size,
     };
 
@@ -100,7 +96,6 @@ export function useRelativeDatePickerProps(
         error = validationState === 'invalid';
     }
 
-    const wasActiveBeforeClickRef = React.useRef(state.isActive);
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const handleRef = useForkRef(
@@ -110,8 +105,21 @@ export function useRelativeDatePickerProps(
 
     const calendarRef = React.useRef<CalendarInstance>(null);
 
+    function focusCalendar() {
+        setTimeout(() => {
+            calendarRef.current?.focus();
+        });
+    }
+
+    function focusInput() {
+        setTimeout(() => {
+            inputRef.current?.focus();
+        });
+    }
+
     return {
         groupProps: {
+            tabIndex: -1,
             role: 'group',
             ...focusWithinProps,
             onKeyDown: (e) => {
@@ -119,12 +127,16 @@ export function useRelativeDatePickerProps(
                     e.preventDefault();
                     e.stopPropagation();
                     setOpen(true);
+                    focusCalendar();
                 }
             },
         },
         fieldProps: mergeProps(
             commonInputProps,
             mode === 'relative' ? relativeDateProps : inputProps,
+            mode === 'absolute' && dateFieldState.isEmpty && !state.isActive && props.placeholder
+                ? {value: ''}
+                : undefined,
             {controlRef: handleRef, error},
         ),
         modeSwitcherProps: {
@@ -146,7 +158,7 @@ export function useRelativeDatePickerProps(
                 } else if (relativeDateState.parsedDate) {
                     setFocusedDate(relativeDateState.parsedDate);
                 }
-                setTimeout(() => inputRef.current?.focus());
+                focusInput();
             },
         },
         calendarButtonProps: {
@@ -158,28 +170,20 @@ export function useRelativeDatePickerProps(
                 'aria-expanded': isOpen,
             },
             view: 'flat-secondary',
-            onFocus: () => {
-                wasActiveBeforeClickRef.current = state.isActive;
-            },
             onClick: () => {
                 state.setActive(true);
-                if (wasActiveBeforeClickRef.current) {
-                    setOpen(!isOpen);
-                    if (!isOpen) {
-                        setTimeout(() => {
-                            calendarRef.current?.focus();
-                        });
-                    }
+                setOpen(!isOpen);
+                if (!isOpen) {
+                    focusCalendar();
                 }
-                wasActiveBeforeClickRef.current = state.isActive;
             },
         },
         popupProps: {
             open: isOpen,
             onEscapeKeyDown: () => {
                 setOpen(false);
+                focusInput();
             },
-            restoreFocus: true,
         },
         calendarProps: {
             ref: calendarRef,
@@ -190,7 +194,7 @@ export function useRelativeDatePickerProps(
                 datePickerState.setDateValue(v);
                 if (!state.datePickerState.hasTime) {
                     setOpen(false);
-                    setTimeout(() => inputRef.current?.focus());
+                    focusInput();
                 }
             },
             focusedValue: focusedDate,
