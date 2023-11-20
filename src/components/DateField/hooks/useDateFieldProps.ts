@@ -176,25 +176,22 @@ export function useDateFieldProps(
                 onMouseUp(e: React.MouseEvent) {
                     e.preventDefault();
                 },
-                onBeforeInput(e: React.FormEvent) {
+                onBeforeInput(e) {
                     e.preventDefault();
                     // @ts-expect-error
-                    const key = e.nativeEvent.data;
-                    // eslint-disable-next-line no-eq-null, eqeqeq
-                    if (key != null) {
+                    const key = e.data;
+                    if (key !== undefined && key !== null) {
                         state.onInput(key);
                     }
                 },
                 onPaste(e: React.ClipboardEvent) {
+                    e.preventDefault();
                     if (state.readOnly) {
-                        e.preventDefault();
                         return;
                     }
 
                     const pastedValue = e.clipboardData.getData('text');
-                    if (state.setValueFromString(pastedValue)) {
-                        e.preventDefault();
-                    } else if (
+                    if (
                         state.selectedSectionIndexes &&
                         state.selectedSectionIndexes.startIndex ===
                             state.selectedSectionIndexes.endIndex
@@ -202,14 +199,23 @@ export function useDateFieldProps(
                         const activeSection =
                             state.sections[state.selectedSectionIndexes.startIndex];
 
+                        const digitsOnly = /^\d+$/.test(pastedValue);
+                        const lettersOnly = /^[a-zA-Z]+$/.test(pastedValue);
+
                         const isValidValue =
                             Boolean(activeSection) &&
-                            ((activeSection.contentType === 'digit' && /^\d+$/.test(pastedValue)) ||
-                                activeSection.contentType === 'letter');
-                        if (!isValidValue) {
-                            e.preventDefault();
+                            ((activeSection.contentType === 'digit' && digitsOnly) ||
+                                (activeSection.contentType === 'letter' && lettersOnly));
+                        if (isValidValue) {
+                            state.onInput(pastedValue);
+                            return;
+                        }
+                        if (digitsOnly || lettersOnly) {
+                            return;
                         }
                     }
+
+                    state.setValueFromString(pastedValue);
                 },
             },
         },
