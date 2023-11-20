@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.1](https://github.com/gravity-ui/date-components/compare/v1.1.0...v1.1.1) (2023-11-20)
+
+
+### Bug Fixes
+
+* correctly control popup open state in pickers ([#17](https://github.com/gravity-ui/date-components/issues/17)) ([3af332f](https://github.com/gravity-ui/date-components/commit/3af332ffddbe50d40c2260558d8d15fcc0b2a574))
+* **DateField:** change field with numbers keys in Firefox ([#21](https://github.com/gravity-ui/date-components/issues/21)) ([0872c11](https://github.com/gravity-ui/date-components/commit/0872c114cb27324939b52ecfcb5e5d6c35de3b11))
+* **DateField:** correctly work with 2-digits years ([#22](https://github.com/gravity-ui/date-components/issues/22)) ([0d23300](https://github.com/gravity-ui/date-components/commit/0d23300fa9f4eed7547eb3744b84c8ec4e9c13d8))
+* **RangeCalendar:** select dates only on a minimum mode ([#18](https://github.com/gravity-ui/date-components/issues/18)) ([b59477a](https://github.com/gravity-ui/date-components/commit/b59477a27c2187299524cd2e186f4e267444168a))
+
 ## [1.1.0](https://github.com/gravity-ui/date-components/compare/v1.0.0...v1.1.0) (2023-11-02)
 
 
