@@ -12,7 +12,14 @@ import type {
     DateFieldSectionType,
     DateFieldSectionWithoutPosition,
 } from '../types';
-import {splitFormatIntoSections} from '../utils';
+import {
+    addSegment,
+    getDurationUnitFromSectionType,
+    getSectionLimits,
+    getSectionValue,
+    setSegment,
+    splitFormatIntoSections,
+} from '../utils';
 
 export interface DateFieldStateOptions extends DateFieldBase {}
 
@@ -26,12 +33,6 @@ const EDITABLE_SEGMENTS: Partial<Record<DateFieldSectionType, boolean>> = {
     dayPeriod: true,
     weekday: true,
 };
-
-const TYPE_MAPPING = {
-    weekday: 'day',
-    day: 'date',
-    dayPeriod: 'hour',
-} as const;
 
 const PAGE_STEP: Partial<Record<DateFieldSectionType, number>> = {
     year: 5,
@@ -194,8 +195,13 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         }
 
         if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
-            setDate(newValue);
+            if (!value || !newValue.isSame(value)) {
+                setDate(newValue);
+            }
         } else {
+            if (value) {
+                setDate(null);
+            }
             setPlaceholderDate(newValue);
         }
     }
@@ -396,9 +402,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
                 currentValue = displayValue.set(type, placeholder[type]());
             }
 
-            if (value) {
-                setDate(null);
-            }
             setValue(currentValue);
         },
         clearAll() {
@@ -534,6 +537,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
             }
         },
         setValueFromString(str: string) {
+            enteredKeys.current = '';
             let date = parseDate({input: str, format, timeZone: props.timeZone});
             if (isValid(date)) {
                 if (props.timeZone && !isDateStringWithTimeZone(str)) {
@@ -558,65 +562,6 @@ function parseDate(options: {input: string; format: string; timeZone?: string}) 
 
 function isDateStringWithTimeZone(str: string) {
     return /z$/i.test(str) || /[+-]\d\d:\d\d$/.test(str);
-}
-
-function addSegment(section: DateFieldSection, date: DateTime, amount: number) {
-    let val = section.value ?? 0;
-    if (section.type === 'dayPeriod') {
-        val = date.hour() + (date.hour() > 12 ? -12 : 12);
-    } else {
-        val = val + amount;
-        const min = section.minValue;
-        const max = section.maxValue;
-        if (typeof min === 'number' && typeof max === 'number') {
-            const length = max - min + 1;
-            val = ((val - min + length) % length) + min;
-        }
-    }
-    const type = getDurationUnitFromSectionType(section.type);
-    return date.set(type, val);
-}
-
-function setSegment(section: DateFieldSection, date: DateTime, amount: number) {
-    const type = section.type;
-    switch (type) {
-        case 'day':
-        case 'weekday':
-        case 'month':
-        case 'year': {
-            return date.set(getDurationUnitFromSectionType(type), amount);
-        }
-        case 'dayPeriod': {
-            const hours = date.hour();
-            const wasPM = hours >= 12;
-            const isPM = amount >= 12;
-            if (isPM === wasPM) {
-                return date;
-            }
-            return date.set('hour', wasPM ? hours - 12 : hours + 12);
-        }
-        case 'hour': {
-            // In 12 hour time, ensure that AM/PM does not change
-            let sectionAmount = amount;
-            if (section.minValue === 12 || section.maxValue === 11) {
-                const hours = date.hour();
-                const wasPM = hours >= 12;
-                if (!wasPM && sectionAmount === 12) {
-                    sectionAmount = 0;
-                }
-                if (wasPM && sectionAmount < 12) {
-                    sectionAmount += 12;
-                }
-            }
-            return date.set('hour', sectionAmount);
-        }
-        case 'minute':
-        case 'second': {
-            return date.set(type, amount);
-        }
-    }
-
-    return date;
 }
 
 function getCurrentEditableSectionIndex(
@@ -690,20 +635,26 @@ function getEditableSections(
         let renderedValue = section.placeholder;
         if ((isEditable && validSegments[section.type]) || section.type === 'timeZoneName') {
             renderedValue = value.format(section.format);
+            if (
+                section.contentType === 'digit' &&
+                renderedValue.length < section.placeholder.length
+            ) {
+                renderedValue = renderedValue.padStart(section.placeholder.length, '0');
+            }
         }
 
         const sectionLength = renderedValue.length;
 
         const newSection = {
             ...section,
-            value: getValue(value, section.type),
+            value: getSectionValue(section, value),
             textValue: renderedValue,
             start: position,
             end: position + sectionLength,
             modified: false,
             previousEditableSection,
             nextEditableSection: previousEditableSection,
-            ...getSectionLimits(value, section.type, {hour12: isHour12(section)}),
+            ...getSectionLimits(section, value),
         };
 
         newSections.push(newSection);
@@ -725,98 +676,4 @@ function getEditableSections(
     }
 
     return newSections;
-}
-
-function getValue(date: DateTime, type: DateFieldSectionType) {
-    switch (type) {
-        case 'year':
-        case 'month':
-        case 'hour':
-        case 'minute':
-        case 'second': {
-            return date[type]();
-        }
-        case 'day': {
-            return date.date();
-        }
-        case 'weekday': {
-            return date.day();
-        }
-        case 'dayPeriod': {
-            return date.hour() >= 12 ? 12 : 0;
-        }
-    }
-    return undefined;
-}
-
-function isHour12(section: DateFieldSectionWithoutPosition) {
-    if (section.type === 'hour') {
-        return dateTime().set('hour', 15).format(section.format) !== '15';
-    }
-    return false;
-}
-
-function getSectionLimits(date: DateTime, type: DateFieldSectionType, options: {hour12: boolean}) {
-    switch (type) {
-        case 'year': {
-            return {
-                minValue: 1,
-                maxValue: 9999,
-            };
-        }
-        case 'month': {
-            return {
-                minValue: 0,
-                maxValue: 11,
-            };
-        }
-        case 'weekday': {
-            return {
-                minValue: 0,
-                maxValue: 6,
-            };
-        }
-        case 'day': {
-            return {
-                minValue: 1,
-                maxValue: date ? date.daysInMonth() : 31,
-            };
-        }
-        case 'hour': {
-            if (options.hour12) {
-                const isPM = date.hour() >= 12;
-                return {
-                    minValue: isPM ? 12 : 0,
-                    maxValue: isPM ? 23 : 11,
-                };
-            }
-            return {
-                minValue: 0,
-                maxValue: 23,
-            };
-        }
-        case 'minute':
-        case 'second': {
-            return {
-                minValue: 0,
-                maxValue: 59,
-            };
-        }
-    }
-    return {};
-}
-
-function getDurationUnitFromSectionType(type: DateFieldSectionType) {
-    if (type === 'literal' || type === 'timeZoneName' || type === 'unknown') {
-        throw new Error(`${type} section does not have duration unit.`);
-    }
-
-    if (type in TYPE_MAPPING) {
-        return TYPE_MAPPING[type as keyof typeof TYPE_MAPPING];
-    }
-
-    return type as Exclude<
-        DateFieldSectionType,
-        keyof typeof TYPE_MAPPING | 'literal' | 'timeZoneName' | 'unknown'
-    >;
 }

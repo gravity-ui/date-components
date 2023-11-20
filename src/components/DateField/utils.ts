@@ -1,4 +1,5 @@
 import {dateTime, settings} from '@gravity-ui/date-utils';
+import type {DateTime} from '@gravity-ui/date-utils';
 
 import {i18n} from './i18n';
 import type {
@@ -120,6 +121,185 @@ function getDateSectionConfigFromFormatToken(formatToken: string): {
 function isFourDigitYearFormat(format: string) {
     return dateTime().format(format).length === 4;
 }
+
+function isHour12(format: string) {
+    return dateTime().set('hour', 15).format(format) !== '15';
+}
+
+export function getSectionLimits(section: DateFieldSectionWithoutPosition, date: DateTime) {
+    const {type, format} = section;
+    switch (type) {
+        case 'year': {
+            const isFourDigit = isFourDigitYearFormat(format);
+            return {
+                minValue: isFourDigit ? 1 : 0,
+                maxValue: isFourDigit ? 9999 : 99,
+            };
+        }
+        case 'month': {
+            return {
+                minValue: 0,
+                maxValue: 11,
+            };
+        }
+        case 'weekday': {
+            return {
+                minValue: 0,
+                maxValue: 6,
+            };
+        }
+        case 'day': {
+            return {
+                minValue: 1,
+                maxValue: date ? date.daysInMonth() : 31,
+            };
+        }
+        case 'hour': {
+            if (isHour12(format)) {
+                const isPM = date.hour() >= 12;
+                return {
+                    minValue: isPM ? 12 : 0,
+                    maxValue: isPM ? 23 : 11,
+                };
+            }
+            return {
+                minValue: 0,
+                maxValue: 23,
+            };
+        }
+        case 'minute':
+        case 'second': {
+            return {
+                minValue: 0,
+                maxValue: 59,
+            };
+        }
+    }
+    return {};
+}
+
+export function getSectionValue(sections: DateFieldSectionWithoutPosition, date: DateTime) {
+    const type = sections.type;
+    switch (type) {
+        case 'year': {
+            return isFourDigitYearFormat(sections.format)
+                ? date.year()
+                : Number(date.format(sections.format));
+        }
+        case 'month':
+        case 'hour':
+        case 'minute':
+        case 'second': {
+            return date[type]();
+        }
+        case 'day': {
+            return date.date();
+        }
+        case 'weekday': {
+            return date.day();
+        }
+        case 'dayPeriod': {
+            return date.hour() >= 12 ? 12 : 0;
+        }
+    }
+    return undefined;
+}
+
+const TYPE_MAPPING = {
+    weekday: 'day',
+    day: 'date',
+    dayPeriod: 'hour',
+} as const;
+
+export function getDurationUnitFromSectionType(type: DateFieldSectionType) {
+    if (type === 'literal' || type === 'timeZoneName' || type === 'unknown') {
+        throw new Error(`${type} section does not have duration unit.`);
+    }
+
+    if (type in TYPE_MAPPING) {
+        return TYPE_MAPPING[type as keyof typeof TYPE_MAPPING];
+    }
+
+    return type as Exclude<
+        DateFieldSectionType,
+        keyof typeof TYPE_MAPPING | 'literal' | 'timeZoneName' | 'unknown'
+    >;
+}
+
+export function addSegment(section: DateFieldSection, date: DateTime, amount: number) {
+    let val = section.value ?? 0;
+    if (section.type === 'dayPeriod') {
+        val = date.hour() + (date.hour() > 12 ? -12 : 12);
+    } else {
+        val = val + amount;
+        const min = section.minValue;
+        const max = section.maxValue;
+        if (typeof min === 'number' && typeof max === 'number') {
+            const length = max - min + 1;
+            val = ((val - min + length) % length) + min;
+        }
+    }
+
+    if (section.type === 'year' && !isFourDigitYearFormat(section.format)) {
+        val = dateTime({input: `${val}`.padStart(2, '0'), format: section.format}).year();
+    }
+
+    const type = getDurationUnitFromSectionType(section.type);
+    return date.set(type, val);
+}
+
+export function setSegment(section: DateFieldSection, date: DateTime, amount: number) {
+    const type = section.type;
+    switch (type) {
+        case 'year': {
+            return date.set(
+                'year',
+                isFourDigitYearFormat(section.format)
+                    ? amount
+                    : dateTime({
+                          input: `${amount}`.padStart(2, '0'),
+                          format: section.format,
+                      }).year(),
+            );
+        }
+        case 'day':
+        case 'weekday':
+        case 'month': {
+            return date.set(getDurationUnitFromSectionType(type), amount);
+        }
+        case 'dayPeriod': {
+            const hours = date.hour();
+            const wasPM = hours >= 12;
+            const isPM = amount >= 12;
+            if (isPM === wasPM) {
+                return date;
+            }
+            return date.set('hour', wasPM ? hours - 12 : hours + 12);
+        }
+        case 'hour': {
+            // In 12 hour time, ensure that AM/PM does not change
+            let sectionAmount = amount;
+            if (section.minValue === 12 || section.maxValue === 11) {
+                const hours = date.hour();
+                const wasPM = hours >= 12;
+                if (!wasPM && sectionAmount === 12) {
+                    sectionAmount = 0;
+                }
+                if (wasPM && sectionAmount < 12) {
+                    sectionAmount += 12;
+                }
+            }
+            return date.set('hour', sectionAmount);
+        }
+        case 'minute':
+        case 'second': {
+            return date.set(type, amount);
+        }
+    }
+
+    return date;
+}
+
 function doesSectionHaveLeadingZeros(
     contentType: 'digit' | 'letter',
     sectionType: DateFieldSectionType,
