@@ -179,7 +179,7 @@ export function useDateFieldProps(
                 onBeforeInput(e: React.FormEvent) {
                     e.preventDefault();
                     // @ts-expect-error
-                    const key = e.nativeEvent.data;
+                    const key = e.data;
                     // eslint-disable-next-line no-eq-null, eqeqeq
                     if (key != null) {
                         state.onInput(key);
