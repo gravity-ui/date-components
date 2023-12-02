@@ -18,6 +18,14 @@ configure({
 });
 
 const WithContextProvider: Decorator = (Story, context) => {
+    const direction = context.globals.direction;
+    React.useEffect(() => {
+        if (direction === 'ltr') {
+            document.body.removeAttribute('dir');
+        } else {
+            document.body.setAttribute('dir', direction);
+        }
+    }, [direction]);
     return (
         <React.StrictMode>
             <ThemeProvider theme={context.globals.theme}>
@@ -61,6 +69,7 @@ const preview: Preview = {
                     {value: 'light-hc', right: '☼', title: 'High Contrast Light (beta)'},
                     {value: 'dark-hc', right: '☾', title: 'High Contrast Dark (beta)'},
                 ],
+                dynamicTitle: true,
             },
         },
         lang: {
@@ -72,6 +81,19 @@ const preview: Preview = {
                     {value: 'en', right: '🇬🇧', title: 'En'},
                     {value: 'ru', right: '🇷🇺', title: 'Ru'},
                 ],
+                dynamicTitle: true,
+            },
+        },
+        direction: {
+            defaultValue: 'ltr',
+            toolbar: {
+                title: 'Direction',
+                icon: 'menu',
+                items: [
+                    {value: 'ltr', title: 'Left to Right', icon: 'arrowrightalt'},
+                    {value: 'rtl', title: 'Right to Left', icon: 'arrowleftalt'},
+                ],
+                dynamicTitle: true,
             },
         },
         platform: {
@@ -82,6 +104,7 @@ const preview: Preview = {
                     {value: 'desktop', title: 'Desktop', icon: 'browser'},
                     {value: 'mobile', title: 'Mobile', icon: 'mobile'},
                 ],
+                dynamicTitle: true,
             },
         },
     },

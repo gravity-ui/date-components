@@ -3,7 +3,7 @@ import React from 'react';
 import type {TextInputProps} from '@gravity-ui/uikit';
 
 import type {DateFieldProps} from '../DateField';
-import {CtrlCmd} from '../utils';
+import {CtrlCmd, cleanString} from '../utils';
 
 import type {DateFieldState} from './useDateFieldState';
 
@@ -190,7 +190,7 @@ export function useDateFieldProps(
                         return;
                     }
 
-                    const pastedValue = e.clipboardData.getData('text');
+                    const pastedValue = cleanString(e.clipboardData.getData('text'));
                     if (
                         state.selectedSectionIndexes &&
                         state.selectedSectionIndexes.startIndex ===

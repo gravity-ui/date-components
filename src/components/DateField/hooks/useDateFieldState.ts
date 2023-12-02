@@ -246,7 +246,8 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         isEmpty: Object.keys(validSegments).length === 0,
         displayValue,
         setValue,
-        text: sectionsState.editableSections.map((s) => s.textValue).join(''),
+        // use ltr direction context to get predictable navigation inside input
+        text: '\u2066' + sectionsState.editableSections.map((s) => s.textValue).join('') + '\u2069',
         readOnly: props.readOnly,
         disabled: props.disabled,
         sections: sectionsState.editableSections,
@@ -625,7 +626,7 @@ function getEditableSections(
     value: DateTime,
     validSegments: typeof EDITABLE_SEGMENTS,
 ) {
-    let position = 0;
+    let position = 1;
     const newSections: DateFieldSection[] = [];
     let previousEditableSection = -1;
     for (let i = 0; i < sections.length; i++) {
@@ -642,6 +643,9 @@ function getEditableSections(
                 renderedValue = renderedValue.padStart(section.placeholder.length, '0');
             }
         }
+
+        // use bidirectional context to allow the browser autodetect text direction
+        renderedValue = '\u2068' + renderedValue + '\u2069';
 
         const sectionLength = renderedValue.length;
 

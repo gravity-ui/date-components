@@ -516,3 +516,7 @@ function getSectionOptions(
 
     return undefined;
 }
+
+export function cleanString(dirtyString: string) {
+    return dirtyString.replace(/[\u2066\u2067\u2068\u2069]/g, '');
+}
