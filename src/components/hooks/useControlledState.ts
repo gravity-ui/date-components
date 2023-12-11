@@ -1,9 +1,9 @@
 import React from 'react';
 
-export function useControlledState<T, C extends T = T>(
-    value: T,
-    defaultValue: T,
-    onUpdate?: (value: C, ...args: any[]) => void,
+export function useControlledState<TInitialValue, TValue extends TInitialValue = TInitialValue>(
+    value: TInitialValue,
+    defaultValue: TInitialValue,
+    onUpdate?: (value: TValue, ...args: any[]) => void,
 ) {
     const [innerValue, setInnerValue] = React.useState(defaultValue);
 
@@ -23,7 +23,10 @@ export function useControlledState<T, C extends T = T>(
     }, [value]);
 
     const setState = React.useCallback(
-        (newValue: C, ...args: any[]) => {
+        (getter: TValue | ((value: TInitialValue) => TValue), ...args: any[]) => {
+            const newValue: TValue =
+                getter instanceof Function ? getter(currentValueRef.current) : getter;
+
             if (!Object.is(currentValueRef.current, newValue)) {
                 onUpdate?.(newValue, ...args);
             }

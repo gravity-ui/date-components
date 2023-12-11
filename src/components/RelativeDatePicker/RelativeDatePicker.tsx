@@ -7,7 +7,8 @@ import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
 import type {CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
-import {MobileCalendar, MobileCalendarIcon} from '../DatePicker/MobileCalendar';
+import {MobileCalendar} from '../MobileCalendar';
+import {MobileCalendarIcon} from '../MobileCalendarIcon';
 import type {
     AccessibilityProps,
     DomProps,
@@ -82,10 +83,7 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                             </Button>
                         )}
                         {isMobile && state.mode === 'absolute' && (
-                            <MobileCalendarIcon
-                                state={state.datePickerState}
-                                props={{size: props.size}}
-                            />
+                            <MobileCalendarIcon size={props.size} />
                         )}
                     </React.Fragment>
                 }

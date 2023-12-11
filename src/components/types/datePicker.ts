@@ -2,7 +2,10 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {InputBase, Validation, ValueBase} from './inputs';
 
-export interface DateFieldBase<T = DateTime> extends ValueBase<T, T | null>, InputBase, Validation {
+export interface DateFieldBase<T = DateTime, C = T | null>
+    extends ValueBase<T, C>,
+        InputBase,
+        Validation {
     /** The minimum allowed date that a user may select. */
     minValue?: DateTime;
     /** The maximum allowed date that a user may select. */

@@ -47,6 +47,7 @@
   "dependencies": {
     "@bem-react/classname": "^1.6.0",
     "@gravity-ui/date-utils": "^2.0.1",
+    "@gravity-ui/components": "^2.8.0",
     "@gravity-ui/icons": "^2.2.0",
     "tslib": "2.6.2"
   },
@@ -60,7 +61,7 @@
     "@gravity-ui/prettier-config": "^1.1.0",
     "@gravity-ui/stylelint-config": "^4.0.1",
     "@gravity-ui/tsconfig": "^1.0.0",
-    "@gravity-ui/uikit": "^5.0.0",
+    "@gravity-ui/uikit": "^5.21.1",
     "@storybook/addon-a11y": "^7.6.7",
     "@storybook/addon-essentials": "^7.6.7",
     "@storybook/addon-viewport": "^7.6.7",
@@ -105,7 +106,7 @@
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
-    "@gravity-ui/uikit": "^5.0.0",
+    "@gravity-ui/uikit": "^5.21.1",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
   },

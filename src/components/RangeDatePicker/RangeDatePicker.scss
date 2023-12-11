@@ -1,0 +1,13 @@
+@use '../variables';
+
+$block: '.#{variables.$ns}range-date-picker';
+
+#{$block} {
+    position: relative;
+
+    display: inline-block;
+
+    width: 300px;
+
+    outline: none;
+}

@@ -1,0 +1,28 @@
+{
+  "Tab_main": "Main",
+  "Tab_others": "Others",
+
+  "Preset_last_5m": "Last 5 minutes",
+  "Preset_last_30m": "Last 30 minutes",
+  "Preset_last_1h": "Last hour",
+  "Preset_last_3h": "Last 3 hours",
+  "Preset_last_6h": "Last 6 hours",
+  "Preset_last_12h": "Last 12 hours",
+  "Preset_last_1d": "Last day",
+  "Preset_last_3d": "Last 3 days",
+  "Preset_last_1w": "Last week",
+  "Preset_last_1M": "Last month",
+  "Preset_last_3M": "Last 3 months",
+  "Preset_last_6M": "Last 6 months",
+  "Preset_last_1y": "Last year",
+  "Preset_last_3y": "Last 3 years",
+  "Preset_today": "Today",
+  "Preset_yesterday": "Yesterday",
+  "Preset_this_w": "This week",
+  "Preset_this_M": "This month",
+  "Preset_this_y": "This year",
+  "Preset_from_start_of_d": "From start of day",
+  "Preset_from_start_of_w": "From start of week",
+  "Preset_from_start_of_M": "From start of month",
+  "Preset_from_start_of_y": "From start of year"
+}

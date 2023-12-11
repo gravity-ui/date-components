@@ -13,6 +13,9 @@ export interface FocusEvents<Target = Element> {
 }
 
 export interface FocusableProps<Target = Element> extends FocusEvents<Target> {
-    /** Whether the element should receive focus on render. */
+    /**
+     *  Whether the element should receive focus on render.
+     *  TODO: The autoFocus prop should not be used, as it can reduce usability and accessibility for users
+     *  */
     autoFocus?: boolean;
 }

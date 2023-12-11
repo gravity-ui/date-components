@@ -3,7 +3,7 @@ import React from 'react';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {Calendar, CalendarInstance} from '../../Calendar';
+import type {Calendar} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
@@ -54,7 +54,6 @@ export function useDatePickerProps(
 
     const handleRef = useForkRef(inputRef, inputProps.controlRef);
 
-    const calendarRef = React.useRef<CalendarInstance>(null);
     const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
     const groupRef = React.useRef<HTMLElement>(null);
 
@@ -71,7 +70,7 @@ export function useDatePickerProps(
             role: 'group',
             ...focusWithinProps,
             style: props.style,
-            'aria-disabled': state.disabled || undefined,
+            'aria-disabled': props.disabled || undefined,
             onKeyDown: (e) => {
                 if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
                     e.preventDefault();
@@ -90,7 +89,7 @@ export function useDatePickerProps(
         calendarButtonProps: {
             ref: calendarButtonRef,
             size: getButtonSizeForInput(props.size),
-            disabled: state.disabled,
+            disabled: props.disabled,
             extraProps: {
                 'aria-label': i18n('Calendar'),
                 'aria-haspopup': 'dialog',
@@ -116,11 +115,9 @@ export function useDatePickerProps(
                     focusInput();
                 }
             },
-            // @ts-expect-error focusTrap in popup was introduced in a newer version of uikit
             focusTrap: true,
         },
         calendarProps: {
-            ref: calendarRef,
             autoFocus: true,
             size: props.size === 's' ? 'm' : props.size,
             disabled: props.disabled,
@@ -142,8 +139,8 @@ export function useDatePickerProps(
             value: state.timeValue,
             onUpdate: state.setTimeValue,
             format: state.timeFormat,
-            readOnly: state.readOnly,
-            disabled: state.disabled,
+            readOnly: props.readOnly,
+            disabled: props.disabled,
             timeZone: props.timeZone,
             hasClear: props.hasClear,
             size: props.size,
