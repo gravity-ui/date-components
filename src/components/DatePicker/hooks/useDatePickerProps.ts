@@ -3,7 +3,7 @@ import React from 'react';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {Calendar} from '../../Calendar';
+import type {Calendar, CalendarInstance} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
@@ -54,6 +54,7 @@ export function useDatePickerProps(
 
     const handleRef = useForkRef(inputRef, inputProps.controlRef);
 
+    const calendarRef = React.useRef<CalendarInstance>(null);
     const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
     const groupRef = React.useRef<HTMLElement>(null);
 
@@ -70,7 +71,7 @@ export function useDatePickerProps(
             role: 'group',
             ...focusWithinProps,
             style: props.style,
-            'aria-disabled': props.disabled || undefined,
+            'aria-disabled': state.disabled || undefined,
             onKeyDown: (e) => {
                 if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
                     e.preventDefault();
@@ -89,7 +90,7 @@ export function useDatePickerProps(
         calendarButtonProps: {
             ref: calendarButtonRef,
             size: getButtonSizeForInput(props.size),
-            disabled: props.disabled,
+            disabled: state.disabled,
             extraProps: {
                 'aria-label': i18n('Calendar'),
                 'aria-haspopup': 'dialog',
@@ -118,6 +119,7 @@ export function useDatePickerProps(
             focusTrap: true,
         },
         calendarProps: {
+            ref: calendarRef,
             autoFocus: true,
             size: props.size === 's' ? 'm' : props.size,
             disabled: props.disabled,
@@ -139,8 +141,8 @@ export function useDatePickerProps(
             value: state.timeValue,
             onUpdate: state.setTimeValue,
             format: state.timeFormat,
-            readOnly: props.readOnly,
-            disabled: props.disabled,
+            readOnly: state.readOnly,
+            disabled: state.disabled,
             timeZone: props.timeZone,
             hasClear: props.hasClear,
             size: props.size,

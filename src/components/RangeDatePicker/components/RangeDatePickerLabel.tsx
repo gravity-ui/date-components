@@ -1,11 +1,10 @@
 import React from 'react';
 
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
-import {Button, Icon, TextInput, useMobile} from '@gravity-ui/uikit';
+import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import type {TextInputSize} from '@gravity-ui/uikit';
 
 import {pick} from '../../../utils/pick';
-import {MobileCalendarIcon} from '../../MobileCalendarIcon';
 import {i18n} from '../../RelativeDatePicker/i18n';
 import type {FocusableProps, TextInputProps} from '../../types';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
@@ -14,6 +13,7 @@ import type {RangeDatepickerSingleValue, RangeDatepickerValue} from '../types';
 interface Props extends Omit<FocusableProps, 'autoFocus'>, Omit<TextInputProps, 'placeholder'> {
     isOpen: boolean;
     onOpenChange(): void;
+    inputRef: React.RefObject<HTMLInputElement>;
     calendarButtonRef: React.RefObject<HTMLButtonElement>;
     onClear(): void;
 
@@ -30,50 +30,33 @@ function getDateLabel(value?: RangeDatepickerSingleValue, format?: string) {
     return value.value.format(format || 'L');
 }
 
-export const RangeDatePickerLabel = (props: Props) => {
-    const {isOpen, calendarButtonRef, value, format} = props;
+export function RangeDatePickerLabel(props: Props) {
+    const {isOpen, value, format} = props;
 
-    const [isMobile] = useMobile();
-
-    const handleFocus = React.useCallback(
-        (e: React.FocusEvent<HTMLInputElement, HTMLElement>) => {
-            e.preventDefault();
-            e.currentTarget.blur();
-            setTimeout(() => {
-                calendarButtonRef?.current?.focus();
-            });
-        },
-        [calendarButtonRef],
-    );
-
-    const extraProps = React.useMemo((): React.ButtonHTMLAttributes<HTMLButtonElement> => {
-        return {
-            'aria-label': i18n('Calendar'),
-            'aria-haspopup': 'dialog',
-            'aria-expanded': isOpen,
-        };
-    }, [isOpen]);
-
-    const label = React.useMemo(() => {
+    function getLabel() {
         const startLabel = getDateLabel(value?.start, format);
         const endLabel = getDateLabel(value?.end, format);
         if (!startLabel && !endLabel) return '';
         return `${startLabel} — ${endLabel}`;
-    }, [value, format]);
+    }
 
     function renderIcon() {
         return (
             <Button
+                {...pick(props, 'onFocus', 'onBlur', 'disabled')}
+                ref={props.calendarButtonRef}
                 onFocus={props.onFocus}
                 onBlur={props.onBlur}
-                ref={props.calendarButtonRef}
                 size={getButtonSizeForInput(props.size)}
-                disabled={props.disabled}
-                extraProps={extraProps}
+                extraProps={{
+                    'aria-label': i18n('Calendar'),
+                    'aria-haspopup': 'dialog',
+                    'aria-expanded': isOpen,
+                }}
                 view="flat-secondary"
                 onClick={props.onOpenChange}
             >
-                {isMobile ? <MobileCalendarIcon size={props.size} /> : <Icon data={CalendarIcon} />}
+                <Icon data={CalendarIcon} />
             </Button>
         );
     }
@@ -81,12 +64,15 @@ export const RangeDatePickerLabel = (props: Props) => {
     return (
         <TextInput
             {...pick(props, 'hasClear', 'label', 'pin', 'view', 'size')}
-            value={label}
-            tabIndex={-1}
-            onFocus={handleFocus}
+            controlRef={props.inputRef}
+            value={getLabel()}
             autoComplete="off"
             rightContent={renderIcon()}
-            onUpdate={props.onClear}
+            onUpdate={(value) => {
+                if (!value) {
+                    props.onClear();
+                }
+            }}
         />
     );
-};
+}

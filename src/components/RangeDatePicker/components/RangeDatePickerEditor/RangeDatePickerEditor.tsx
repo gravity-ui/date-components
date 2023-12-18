@@ -1,7 +1,3 @@
-import React from 'react';
-
-import type {DateTime} from '@gravity-ui/date-utils';
-
 import {block} from '../../../../utils/cn';
 import {DatePicker} from '../../../DatePicker';
 import {RelativeDatePicker} from '../../../RelativeDatePicker';
@@ -32,59 +28,25 @@ interface Props extends DateFieldBase<RangeDatepickerValue> {
     alwaysShowAsAbsolute?: boolean;
 }
 
-export const RangeDatePickerEditor = (props: Props) => {
+export function RangeDatePickerEditor(props: Props) {
     const {value, onUpdate} = props;
 
-    const handleUpdate = React.useCallback(
-        (key: keyof RangeDatepickerValue, singleValue: RangeDatepickerSingleValue | null) => {
-            let newValue: RangeDatepickerValue = {
-                start: value?.start || null,
-                end: value?.end || null,
-                [key]: singleValue || null,
-            };
+    function handleUpdate(
+        key: keyof RangeDatepickerValue,
+        singleValue: RangeDatepickerSingleValue | null,
+    ) {
+        let newValue: RangeDatepickerValue = {
+            start: value?.start || null,
+            end: value?.end || null,
+            [key]: singleValue || null,
+        };
 
-            if (isNeededToFlipValue(newValue)) {
-                newValue = getFlippedValue(key, newValue);
-            }
+        if (isNeededToFlipValue(newValue)) {
+            newValue = getFlippedValue(key, newValue);
+        }
 
-            onUpdate(newValue);
-        },
-        [value, onUpdate],
-    );
-
-    const handleChangePreset = React.useCallback(
-        (start: string, end: string) => {
-            onUpdate({
-                start: {type: 'relative', value: start},
-                end: {type: 'relative', value: end},
-            });
-        },
-        [onUpdate],
-    );
-
-    const handleUpdateStart = React.useMemo(
-        () => handleUpdate.bind(handleUpdate, 'start'),
-        [handleUpdate],
-    );
-
-    const handleUpdateEnd = React.useMemo(
-        () => handleUpdate.bind(handleUpdate, 'end'),
-        [handleUpdate],
-    );
-
-    const handleUpdateAbsoluteStart = React.useCallback(
-        (newValue: DateTime | null) => {
-            return handleUpdateStart(newValue ? {type: 'absolute', value: newValue} : null);
-        },
-        [handleUpdateStart],
-    );
-
-    const handleUpdateAbsoluteEnd = React.useCallback(
-        (newValue: DateTime | null) => {
-            return handleUpdateEnd(newValue ? {type: 'absolute', value: newValue} : null);
-        },
-        [handleUpdateEnd],
-    );
+        onUpdate(newValue);
+    }
 
     const baseDatePickerProps = {
         ...getFieldProps(props),
@@ -100,7 +62,9 @@ export const RangeDatePickerEditor = (props: Props) => {
                     label={`${i18n('From')}:`}
                     value={value?.start}
                     className={b('field')}
-                    onUpdate={handleUpdateStart}
+                    onUpdate={(newValue) => {
+                        handleUpdate('start', newValue);
+                    }}
                     hasClear={props.hasClear}
                 />
                 <RelativeDatePicker
@@ -108,7 +72,9 @@ export const RangeDatePickerEditor = (props: Props) => {
                     label={`${i18n('To')}:`}
                     value={value?.end}
                     className={b('field')}
-                    onUpdate={handleUpdateEnd}
+                    onUpdate={(newValue) => {
+                        handleUpdate('end', newValue);
+                    }}
                     hasClear={props.hasClear}
                 />
             </div>
@@ -123,7 +89,12 @@ export const RangeDatePickerEditor = (props: Props) => {
                     label={`${i18n('From')}:`}
                     value={value ? getDateTimeFromSingleValue(value.start) : value}
                     className={b('field')}
-                    onUpdate={handleUpdateAbsoluteStart}
+                    onUpdate={(newValue) => {
+                        handleUpdate(
+                            'start',
+                            newValue ? {type: 'absolute', value: newValue} : null,
+                        );
+                    }}
                     hasClear={props.hasClear}
                 />
                 <DatePicker
@@ -131,7 +102,9 @@ export const RangeDatePickerEditor = (props: Props) => {
                     label={`${i18n('To')}:`}
                     value={value ? getDateTimeFromSingleValue(value.end) : value}
                     className={b('field')}
-                    onUpdate={handleUpdateAbsoluteEnd}
+                    onUpdate={(newValue) => {
+                        handleUpdate('end', newValue ? {type: 'absolute', value: newValue} : null);
+                    }}
                     hasClear={props.hasClear}
                 />
             </div>
@@ -144,8 +117,13 @@ export const RangeDatePickerEditor = (props: Props) => {
             <RangeDatePickerPresets
                 value={value}
                 presetTabs={props.presetTabs}
-                onUpdatePreset={handleChangePreset}
+                onUpdatePreset={(start: string, end: string) => {
+                    onUpdate({
+                        start: {type: 'relative', value: start},
+                        end: {type: 'relative', value: end},
+                    });
+                }}
             />
         </div>
     );
-};
+}

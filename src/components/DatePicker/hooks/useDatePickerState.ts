@@ -29,6 +29,10 @@ export interface DatePickerState {
     timeValue: DateTime | null;
     /** Sets the time portion of the value. */
     setTimeValue(value: DateTime | null): void;
+    /** Whether the field is read only. */
+    readOnly?: boolean;
+    /** Whether the field is disabled. */
+    disabled?: boolean;
     /** Format of the date when rendered in the input. */
     format: string;
     /** Whether the date picker supports selecting a date. */
@@ -152,6 +156,8 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         timeValue: selectedTime,
         setDateValue: selectDate,
         setTimeValue: selectTime,
+        disabled,
+        readOnly,
         format,
         hasDate,
         hasTime,

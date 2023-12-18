@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import type {TextInputSize} from '@gravity-ui/uikit/build/esm/components/controls/TextInput/TextInput';

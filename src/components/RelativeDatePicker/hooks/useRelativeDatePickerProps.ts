@@ -3,7 +3,6 @@ import React from 'react';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import {pick} from '../../../utils/pick';
 import type {Calendar, CalendarInstance} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
@@ -77,13 +76,12 @@ export function useRelativeDatePickerProps(
     });
 
     const relativeDateProps: TextInputProps = {
-        // TODO: Need to support all possible props!
-        ...pick(inputProps, 'label'),
-        ...pick(props, 'placeholder', 'size'),
         disabled: relativeDateState.disabled,
         value: relativeDateState.text,
         onUpdate: relativeDateState.setText,
         hasClear: props.hasClear && !relativeDateState.readOnly,
+        placeholder: props.placeholder,
+        size: props.size,
     };
 
     let error: string | boolean | undefined;

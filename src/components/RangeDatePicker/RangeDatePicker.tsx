@@ -8,21 +8,21 @@ import {useControlledState} from '../hooks/useControlledState';
 
 import {RangeDatePickerEditor} from './components/RangeDatePickerEditor';
 import {RangeDatePickerLabel} from './components/RangeDatePickerLabel';
-import {useDefaultPresetTabs} from './hooks';
 import type {RangeDatepickerProps} from './types';
+import {getDefaultPresetTabs} from './utils/getDefaultPresetTabs';
 import {getFieldProps} from './utils/getFieldProps';
 
 import './RangeDatePicker.scss';
 
 export const b = block('range-date-picker');
 
-export const RangeDatePicker = (props: RangeDatepickerProps) => {
-    const defaultPresetTabs = useDefaultPresetTabs(props.withTime);
-    const {presetTabs = defaultPresetTabs} = props;
+export function RangeDatePicker(props: RangeDatepickerProps) {
+    const {presetTabs = getDefaultPresetTabs(props.withTime)} = props;
 
     const [isMobile] = useMobile();
 
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const inputRef = React.useRef<HTMLInputElement>(null);
     const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
@@ -30,29 +30,11 @@ export const RangeDatePicker = (props: RangeDatepickerProps) => {
 
     const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
 
-    const handleOpenChange = React.useCallback(() => {
-        setOpen((prevIsOpen) => !prevIsOpen);
-    }, []);
-
-    function focusCalendar() {
+    function focusInput() {
         setTimeout(() => {
-            calendarButtonRef?.current?.focus();
+            inputRef?.current?.focus();
         });
     }
-
-    const handleEscapeKeyDown = React.useCallback(() => {
-        setOpen(false);
-        focusCalendar();
-    }, []);
-
-    const handleOutsideClick = React.useCallback((e: MouseEvent) => {
-        if (e.target !== calendarButtonRef.current) {
-            setOpen(false);
-        }
-        if (e.target && containerRef.current?.contains(e.target as Node)) {
-            focusCalendar();
-        }
-    }, []);
 
     function renderPopupContent() {
         return (
@@ -65,10 +47,6 @@ export const RangeDatePicker = (props: RangeDatepickerProps) => {
             />
         );
     }
-
-    const handleClear = React.useCallback(() => {
-        setValue({start: null, end: null});
-    }, [setValue]);
 
     return (
         <div ref={containerRef} className={b()}>
@@ -86,12 +64,22 @@ export const RangeDatePicker = (props: RangeDatepickerProps) => {
                 )}
                 value={value}
                 isOpen={isOpen}
-                onOpenChange={handleOpenChange}
+                onOpenChange={() => {
+                    setOpen((prevIsOpen) => !prevIsOpen);
+                }}
+                inputRef={inputRef}
                 calendarButtonRef={calendarButtonRef}
-                onClear={handleClear}
+                onClear={() => {
+                    setValue({start: null, end: null});
+                }}
             />
             {isMobile ? (
-                <Sheet visible={isOpen} onClose={handleOpenChange}>
+                <Sheet
+                    visible={isOpen}
+                    onClose={() => {
+                        setOpen((prevIsOpen) => !prevIsOpen);
+                    }}
+                >
                     {renderPopupContent()}
                 </Sheet>
             ) : (
@@ -99,8 +87,18 @@ export const RangeDatePicker = (props: RangeDatepickerProps) => {
                     <Popup
                         anchorRef={anchorRef}
                         open={isOpen}
-                        onEscapeKeyDown={handleEscapeKeyDown}
-                        onOutsideClick={handleOutsideClick}
+                        onEscapeKeyDown={() => {
+                            setOpen(false);
+                            focusInput();
+                        }}
+                        onOutsideClick={(e) => {
+                            if (e.target !== calendarButtonRef.current) {
+                                setOpen(false);
+                            }
+                            if (e.target && containerRef.current?.contains(e.target as Node)) {
+                                focusInput();
+                            }
+                        }}
                     >
                         {renderPopupContent()}
                     </Popup>
@@ -108,4 +106,4 @@ export const RangeDatePicker = (props: RangeDatepickerProps) => {
             )}
         </div>
     );
-};
+}

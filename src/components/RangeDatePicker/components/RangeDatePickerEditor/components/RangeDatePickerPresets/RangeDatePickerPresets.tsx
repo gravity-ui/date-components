@@ -25,7 +25,7 @@ interface Props {
     value?: RangeDatepickerValue | null;
 }
 
-export const RangeDatePickerPresets = (props: Props) => {
+export function RangeDatePickerPresets(props: Props) {
     const {presetTabs, onUpdatePreset, value} = props;
 
     const [mobile] = useMobile();
@@ -34,51 +34,39 @@ export const RangeDatePickerPresets = (props: Props) => {
         presetTabs[0] || null,
     );
 
-    const selectedPresetIndex = React.useMemo(() => {
+    function getSelectedPresetIndex() {
         const index = visibleTab?.presets.findIndex((preset) => {
             return preset.start === value?.start?.value && preset.end === value?.end?.value;
         });
-        return typeof index === 'number' ? index : null;
-    }, [value, visibleTab]);
-
-    const handleChangeVisibleTab = React.useCallback(
-        (id: string) => {
-            if (visibleTab?.id === id) {
-                return;
-            }
-            setVisibleTab(presetTabs.find((tab) => tab.id === id) || null);
-        },
-        [visibleTab, presetTabs],
-    );
-
-    const handleChangePreset = React.useCallback(
-        (item: RangeDatepickerPreset) => {
-            onUpdatePreset(item.start, item.end);
-        },
-        [onUpdatePreset],
-    );
+        return typeof index === 'number' ? index : undefined;
+    }
 
     return (
         <div className={b()}>
             <AdaptiveTabs
                 items={presetTabs}
                 activeTab={visibleTab?.id}
-                onSelectTab={handleChangeVisibleTab}
+                onSelectTab={(id: string) => {
+                    if (visibleTab?.id === id) {
+                        return;
+                    }
+                    setVisibleTab(presetTabs.find((tab) => tab.id === id) || null);
+                }}
             />
             {visibleTab ? (
                 <List
                     className={b('list')}
                     itemClassName={b('item', {mobile})}
                     items={visibleTab.presets}
-                    selectedItemIndex={
-                        selectedPresetIndex === null ? undefined : selectedPresetIndex
-                    }
+                    selectedItemIndex={getSelectedPresetIndex()}
                     filterable={false}
                     virtualized={false}
                     renderItem={renderPreset}
-                    onItemClick={handleChangePreset}
+                    onItemClick={(item: RangeDatepickerPreset) => {
+                        onUpdatePreset(item.start, item.end);
+                    }}
                 />
             ) : null}
         </div>
     );
-};
+}
