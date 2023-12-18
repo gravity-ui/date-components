@@ -1,0 +1,22 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}relative-range-date-picker-editor';
+
+#{$block} {
+    --range-data-picker-padding: 12px;
+
+    width: 300px;
+
+    .yc-text-input__label {
+        min-width: 40px;
+    }
+
+    &__fields {
+        padding: var(--range-data-picker-padding) var(--range-data-picker-padding) 0;
+    }
+
+    &__field {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}
