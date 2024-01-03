@@ -423,7 +423,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
                 }),
             );
         },
-        // eslint-disable-next-line complexity
         onInput(key: string) {
             if (this.readOnly || this.disabled) {
                 return;
