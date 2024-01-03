@@ -16,7 +16,6 @@ const meta: Meta<typeof DatePicker> = {
 
 export default meta;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Story = StoryObj<typeof DatePicker>;
 
 export const Default = {

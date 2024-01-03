@@ -69,52 +69,6 @@ $block: '.#{variables.$ns}calendar';
         height: 100%;
         padding: 0 var(--_--calendar-padding) var(--_--calendar-padding);
 
-        &_animation_forward {
-            transform: translateX(-100%);
-            animation: calendar-forward 0.25s ease forwards;
-
-            &#{$block}__current-state {
-                left: -100%;
-            }
-        }
-
-        &_animation_backward {
-            transform: translateX(0);
-            animation: calendar-backward 0.25s ease forwards;
-
-            &#{$block}__current-state {
-                left: 100%;
-            }
-        }
-
-        &_animation_zoom-in {
-            transform: scale();
-
-            &#{$block}__previous-state {
-                animation: calendar-zoom-in-hiding 0.25s ease forwards;
-            }
-            &#{$block}__current-state {
-                animation: calendar-zoom-in-showing 0.25s ease forwards;
-            }
-        }
-
-        &_animation_zoom-out {
-            transform: scale();
-
-            &#{$block}__current-state {
-                animation: calendar-zoom-out-showing 0.25s ease forwards;
-            }
-            &#{$block}__previous-state {
-                animation: calendar-zoom-out-hiding 0.25s ease forwards;
-            }
-        }
-
-        @media screen and (prefers-reduced-motion: reduce), (update: slow) {
-            &[class] {
-                animation-duration: 0.001ms;
-            }
-        }
-
         @keyframes calendar-forward {
             from {
                 transform: translateX(0);
@@ -182,6 +136,52 @@ $block: '.#{variables.$ns}calendar';
                 opacity: 0;
 
                 transform: scale(2);
+            }
+        }
+
+        &_animation_forward {
+            transform: translateX(-100%);
+            animation: calendar-forward 0.25s ease forwards;
+
+            &#{$block}__current-state {
+                left: -100%;
+            }
+        }
+
+        &_animation_backward {
+            transform: translateX(0);
+            animation: calendar-backward 0.25s ease forwards;
+
+            &#{$block}__current-state {
+                left: 100%;
+            }
+        }
+
+        &_animation_zoom-in {
+            transform: scale();
+
+            &#{$block}__previous-state {
+                animation: calendar-zoom-in-hiding 0.25s ease forwards;
+            }
+            &#{$block}__current-state {
+                animation: calendar-zoom-in-showing 0.25s ease forwards;
+            }
+        }
+
+        &_animation_zoom-out {
+            transform: scale();
+
+            &#{$block}__current-state {
+                animation: calendar-zoom-out-showing 0.25s ease forwards;
+            }
+            &#{$block}__previous-state {
+                animation: calendar-zoom-out-hiding 0.25s ease forwards;
+            }
+        }
+
+        @media screen and (prefers-reduced-motion: reduce), (update: slow) {
+            &[class] {
+                animation-duration: 0.001ms;
             }
         }
     }

@@ -1,8 +1,17 @@
 {
     "root": true,
-    "extends": ["@gravity-ui/eslint-config", "@gravity-ui/eslint-config/client", "@gravity-ui/eslint-config/a11y", "@gravity-ui/eslint-config/prettier"],
+    "extends": [
+        "@gravity-ui/eslint-config",
+        "@gravity-ui/eslint-config/import-order",
+        "@gravity-ui/eslint-config/client",
+        "@gravity-ui/eslint-config/a11y",
+        "@gravity-ui/eslint-config/prettier"
+    ],
     "rules": {
-        "react/jsx-fragments": ["error", "element"],
+        "react/jsx-fragments": [
+            "error",
+            "element"
+        ],
         "react/react-in-jsx-scope": "off",
         "no-restricted-syntax": [
             "error",
@@ -18,21 +27,31 @@
     },
     "overrides": [
         {
-            "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-            "extends": ["plugin:testing-library/react"],
+            "files": [
+                "**/__tests__/**/*.[jt]s?(x)",
+                "**/?(*.)+(spec|test).[jt]s?(x)"
+            ],
+            "extends": [
+                "plugin:testing-library/react"
+            ],
             "env": {
                 "node": true,
                 "jest": true
             }
         },
         {
-            "files": ["**/__stories__/**/*.[jt]s?(x)"],
+            "files": [
+                "**/__stories__/**/*.[jt]s?(x)"
+            ],
             "rules": {
                 "no-console": "off"
             }
         },
         {
-            "files": ["**/*.js", "!src/**/*"],
+            "files": [
+                "**/*.js",
+                "!src/**/*"
+            ],
             "env": {
                 "node": true
             }
