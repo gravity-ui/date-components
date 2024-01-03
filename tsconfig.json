@@ -4,7 +4,8 @@
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "module": "esnext",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "importHelpers": true
   },
   "include": ["**/*.ts", "**/*.tsx", ".storybook/**/*.ts", ".storybook/**/*.tsx"]
 }
