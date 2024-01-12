@@ -1,20 +1,22 @@
 import React from 'react';
 
+import type {DateTime} from '@gravity-ui/date-utils';
 import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
+import type {RangeValue} from '../types';
 
 import {type DateFieldProps, useDateFieldProps} from './hooks/useDateFieldProps';
-import {useDateFieldState} from './hooks/useDateFieldState';
+import {useRangeDateFieldState} from './hooks/useRangeDateFieldState';
 
-export type {DateFieldProps} from './hooks/useDateFieldProps';
+import './RangeDateField.scss';
 
-import './DateField.scss';
+const b = block('range-date-field');
 
-const b = block('date-field');
+export type RangeDateFieldProps = DateFieldProps<RangeValue<DateTime>>;
 
-export function DateField({className, ...props}: DateFieldProps) {
-    const state = useDateFieldState(props);
+export function RangeDateField({className, ...props}: RangeDateFieldProps) {
+    const state = useRangeDateFieldState(props);
 
     const {inputProps} = useDateFieldProps(state, props);
 

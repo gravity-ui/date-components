@@ -1,0 +1,9 @@
+@use '../variables';
+
+$block: '.#{variables.$ns}range-date-field';
+
+#{$block} {
+    display: inline-block;
+
+    width: auto;
+}

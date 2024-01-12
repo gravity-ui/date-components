@@ -1,5 +1,8 @@
-import {dateTime, settings} from '@gravity-ui/date-utils';
+import {dateTime, isValid, settings} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+
+import type {RangeValue} from '../types';
+import {mergeDateTime} from '../utils/dates';
 
 import {i18n} from './i18n';
 import type {
@@ -8,6 +11,17 @@ import type {
     DateFieldSectionWithoutPosition,
     DateFormatTokenMap,
 } from './types';
+
+export const EDITABLE_SEGMENTS: Partial<Record<DateFieldSectionType, boolean>> = {
+    year: true,
+    month: true,
+    day: true,
+    hour: true,
+    minute: true,
+    second: true,
+    dayPeriod: true,
+    weekday: true,
+};
 
 export function expandFormat(format: string) {
     const localeFormats = settings.getLocaleData().formats;
@@ -516,4 +530,215 @@ function getSectionOptions(
 
 export function cleanString(dirtyString: string) {
     return dirtyString.replace(/[\u2066\u2067\u2068\u2069]/g, '');
+}
+
+export function getEditableSections(
+    sections: DateFieldSectionWithoutPosition[],
+    value: DateTime,
+    validSegments: typeof EDITABLE_SEGMENTS,
+) {
+    let position = 1;
+    const newSections: DateFieldSection[] = [];
+    let previousEditableSection = -1;
+    for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+
+        const newSection = toEditableSection(
+            section,
+            value,
+            validSegments,
+            position,
+            previousEditableSection,
+        );
+
+        newSections.push(newSection);
+
+        if (isEditableSection(section)) {
+            for (let j = Math.max(0, previousEditableSection); j <= i; j++) {
+                const prevSection = newSections[j];
+                if (prevSection) {
+                    prevSection.nextEditableSection = i;
+                    if (prevSection.previousEditableSection === -1) {
+                        prevSection.previousEditableSection = i;
+                    }
+                }
+            }
+            previousEditableSection = i;
+        }
+
+        position += newSection.textValue.length;
+    }
+
+    return newSections;
+}
+
+export function isEditableSection(section: DateFieldSectionWithoutPosition): boolean {
+    return EDITABLE_SEGMENTS[section.type] ?? false;
+}
+
+function toEditableSection(
+    section: DateFieldSectionWithoutPosition,
+    value: DateTime,
+    validSegments: typeof EDITABLE_SEGMENTS,
+    position: number,
+    previousEditableSection: number,
+): DateFieldSection {
+    const isEditable = isEditableSection(section);
+    let renderedValue = section.placeholder;
+    if ((isEditable && validSegments[section.type]) || section.type === 'timeZoneName') {
+        renderedValue = value.format(section.format);
+        if (section.contentType === 'digit' && renderedValue.length < section.placeholder.length) {
+            renderedValue = renderedValue.padStart(section.placeholder.length, '0');
+        }
+    }
+
+    // use bidirectional context to allow the browser autodetect text direction
+    renderedValue = '\u2068' + renderedValue + '\u2069';
+
+    const sectionLength = renderedValue.length;
+
+    const newSection = {
+        ...section,
+        value: getSectionValue(section, value),
+        textValue: renderedValue,
+        start: position,
+        end: position + sectionLength,
+        modified: false,
+        previousEditableSection,
+        nextEditableSection: previousEditableSection,
+        ...getSectionLimits(section, value),
+    };
+
+    return newSection;
+}
+
+export function getCurrentEditableSectionIndex(
+    sections: DateFieldSection[],
+    selectedSections: 'all' | number,
+) {
+    const currentIndex =
+        selectedSections === 'all' || selectedSections === -1 ? 0 : selectedSections;
+    const section = sections[currentIndex];
+    if (section && !EDITABLE_SEGMENTS[section.type]) {
+        return section.nextEditableSection;
+    }
+    return section ? currentIndex : -1;
+}
+
+export function toRangeFormat(format: string, delimeter: string) {
+    return `${format}${delimeter}${format}`;
+}
+
+export function splitToRangeSections<T extends DateFieldSectionWithoutPosition>(
+    sections: T[],
+    delimeter: string,
+): RangeValue<T[]> & {delimeter: T} {
+    const start: T[] = [];
+    const end: T[] = [];
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    let delimeterSection: T = undefined!;
+    for (const section of sections) {
+        if (section.type === 'literal' && section.placeholder === delimeter) {
+            delimeterSection = section;
+            continue;
+        }
+
+        const list = delimeterSection === undefined ? start : end;
+        list.push(section);
+    }
+
+    return {start, end, delimeter: delimeterSection};
+}
+
+export function findDelimeterSectionIndex(
+    sections: DateFieldSectionWithoutPosition[],
+    delimeter: string,
+) {
+    return sections.findIndex(
+        (section) => section.type === 'literal' && section.placeholder === delimeter,
+    );
+}
+
+export function getRangeEditableSections(
+    sections: DateFieldSectionWithoutPosition[],
+    value: RangeValue<DateTime>,
+    validSegments: RangeValue<typeof EDITABLE_SEGMENTS>,
+    delimeter: string,
+) {
+    const {start, end, delimeter: delimeterSection} = splitToRangeSections(sections, delimeter);
+    const startSections = getEditableSections(start, value.start, validSegments.start);
+    const endSections = getEditableSections(end, value.end, validSegments.end);
+
+    const last = startSections[startSections.length - 1];
+    let position = last.end;
+    const previousEditableSection = last.nextEditableSection;
+    const sectionsCount = startSections.length + 1;
+
+    const eDelimeterSection = toEditableSection(
+        delimeterSection,
+        value.start,
+        validSegments.start,
+        position,
+        previousEditableSection,
+    );
+
+    position += eDelimeterSection.textValue.length;
+
+    let nextEditableSection;
+    for (let index = 0; index < endSections.length; index++) {
+        const section = endSections[index];
+
+        section.start += position;
+        section.end += position;
+
+        if (section.previousEditableSection === 0 && nextEditableSection === undefined) {
+            section.previousEditableSection = previousEditableSection;
+        } else {
+            section.previousEditableSection += sectionsCount;
+        }
+
+        section.nextEditableSection += sectionsCount;
+
+        if (isEditableSection(section) && nextEditableSection === undefined) {
+            nextEditableSection = index + sectionsCount;
+        }
+    }
+
+    if (nextEditableSection !== undefined) {
+        eDelimeterSection.nextEditableSection = nextEditableSection;
+
+        startSections[previousEditableSection].nextEditableSection = nextEditableSection;
+    }
+
+    return [...startSections, eDelimeterSection, ...endSections];
+}
+
+export function formatSections(sections: DateFieldSection[]): string {
+    // use ltr direction context to get predictable navigation inside input
+    return '\u2066' + sections.map((s) => s.textValue).join('') + '\u2069';
+}
+
+function parseDate(options: {input: string; format: string; timeZone?: string}) {
+    let date = dateTime(options);
+    if (!isValid(date)) {
+        date = dateTime({...options, format: undefined});
+    }
+    return date;
+}
+
+function isDateStringWithTimeZone(str: string) {
+    return /z$/i.test(str) || /[+-]\d\d:\d\d$/.test(str);
+}
+
+export function parseDateFromString(str: string, format: string, timeZone?: string): DateTime {
+    let date = parseDate({input: str, format, timeZone});
+    if (isValid(date)) {
+        if (timeZone && !isDateStringWithTimeZone(str)) {
+            const time = parseDate({input: str, format});
+            date = mergeDateTime(date, time);
+        }
+    }
+
+    return date;
 }
