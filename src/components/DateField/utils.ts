@@ -576,7 +576,7 @@ export function isEditableSection(section: DateFieldSectionWithoutPosition): boo
     return EDITABLE_SEGMENTS[section.type] ?? false;
 }
 
-function toEditableSection(
+export function toEditableSection(
     section: DateFieldSectionWithoutPosition,
     value: DateTime,
     validSegments: typeof EDITABLE_SEGMENTS,

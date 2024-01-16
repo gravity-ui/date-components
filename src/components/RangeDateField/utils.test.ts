@@ -1,13 +1,8 @@
 import {dateTime} from '@gravity-ui/date-utils';
 
-import {
-    cleanString,
-    formatSections,
-    getRangeEditableSections,
-    isEditableSection,
-    splitFormatIntoSections,
-    toRangeFormat,
-} from './utils';
+import {cleanString, isEditableSection, splitFormatIntoSections} from '../DateField/utils';
+
+import {formatSections, getRangeEditableSections, toRangeFormat} from './utils';
 
 test('split a range format to sections', () => {
     const format = toRangeFormat('DD.MM.YYYY hh:mm:ss', ' — ');

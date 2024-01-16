@@ -4,24 +4,28 @@ import React from 'react';
 import {isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
+import {
+    type BaseDateFieldState,
+    useBaseDateFieldState,
+} from '../../DateField/hooks/useBaseDateFieldState';
+import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../DateField/types';
+import {
+    EDITABLE_SEGMENTS,
+    addSegment,
+    parseDateFromString,
+    setSegment,
+    splitFormatIntoSections,
+} from '../../DateField/utils';
 import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types/datePicker';
 import type {RangeValue} from '../../types/inputs';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
-import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../types';
 import {
-    EDITABLE_SEGMENTS,
-    addSegment,
     findDelimeterSectionIndex,
     getRangeEditableSections,
-    parseDateFromString,
-    setSegment,
-    splitFormatIntoSections,
     splitToRangeSections,
     toRangeFormat,
 } from '../utils';
-
-import {type BaseDateFieldState, useBaseDateFieldState} from './useBaseDateFieldState';
 
 export interface RangeDateFieldStateOptions extends DateFieldBase<RangeValue<DateTime>> {
     delimeter?: string;

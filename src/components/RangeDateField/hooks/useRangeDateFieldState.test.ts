@@ -1,8 +1,8 @@
 import {type DateTime, dateTime} from '@gravity-ui/date-utils';
 import {act, renderHook} from '@testing-library/react';
 
+import {cleanString, isEditableSection} from '../../DateField/utils';
 import type {RangeValue} from '../../types';
-import {cleanString, isEditableSection} from '../utils';
 
 import {useRangeDateFieldState} from './useRangeDateFieldState';
 
