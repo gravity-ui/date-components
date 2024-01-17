@@ -1,6 +1,6 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import type {DateFieldSection, DateFieldSectionWithoutPosition} from '../DateField/types';
+import type {DateFieldSectionWithoutPosition} from '../DateField/types';
 import {
     EDITABLE_SEGMENTS,
     getEditableSections,
@@ -9,69 +9,39 @@ import {
 } from '../DateField/utils';
 import type {RangeValue} from '../types';
 
-export function toRangeFormat(format: string, delimeter: string) {
-    return `${format}${delimeter}${format}`;
-}
-
-export function splitToRangeSections<T extends DateFieldSectionWithoutPosition>(
-    sections: T[],
-    delimeter: string,
-): RangeValue<T[]> & {delimeter: T} {
-    const start: T[] = [];
-    const end: T[] = [];
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    let delimeterSection: T = undefined!;
-    for (const section of sections) {
-        if (section.type === 'literal' && section.placeholder === delimeter) {
-            delimeterSection = section;
-            continue;
-        }
-
-        const list = delimeterSection === undefined ? start : end;
-        list.push(section);
-    }
-
-    return {start, end, delimeter: delimeterSection};
-}
-
-export function findDelimeterSectionIndex(
-    sections: DateFieldSectionWithoutPosition[],
-    delimeter: string,
-) {
-    return sections.findIndex(
-        (section) => section.type === 'literal' && section.placeholder === delimeter,
-    );
-}
-
 export function getRangeEditableSections(
     sections: DateFieldSectionWithoutPosition[],
     value: RangeValue<DateTime>,
     validSegments: RangeValue<typeof EDITABLE_SEGMENTS>,
     delimeter: string,
 ) {
-    const {start, end, delimeter: delimeterSection} = splitToRangeSections(sections, delimeter);
-    const startSections = getEditableSections(start, value.start, validSegments.start);
-    const endSections = getEditableSections(end, value.end, validSegments.end);
+    const start = getEditableSections(sections, value.start, validSegments.start);
+    const end = getEditableSections(sections, value.end, validSegments.end);
 
-    const last = startSections[startSections.length - 1];
+    const last = start[start.length - 1];
     let position = last.end;
     const previousEditableSection = last.nextEditableSection;
-    const sectionsCount = startSections.length + 1;
+    const sectionsCount = start.length + 1;
 
-    const eDelimeterSection = toEditableSection(
-        delimeterSection,
+    const delimeterSection = toEditableSection(
+        {
+            type: 'literal',
+            contentType: 'letter',
+            format: delimeter,
+            placeholder: delimeter,
+            hasLeadingZeros: false,
+        },
         value.start,
         validSegments.start,
         position,
         previousEditableSection,
     );
 
-    position += eDelimeterSection.textValue.length;
+    position += delimeterSection.textValue.length;
 
     let nextEditableSection;
-    for (let index = 0; index < endSections.length; index++) {
-        const section = endSections[index];
+    for (let index = 0; index < end.length; index++) {
+        const section = end[index];
 
         section.start += position;
         section.end += position;
@@ -90,15 +60,10 @@ export function getRangeEditableSections(
     }
 
     if (nextEditableSection !== undefined) {
-        eDelimeterSection.nextEditableSection = nextEditableSection;
+        delimeterSection.nextEditableSection = nextEditableSection;
 
-        startSections[previousEditableSection].nextEditableSection = nextEditableSection;
+        start[previousEditableSection].nextEditableSection = nextEditableSection;
     }
 
-    return [...startSections, eDelimeterSection, ...endSections];
-}
-
-export function formatSections(sections: DateFieldSection[]): string {
-    // use ltr direction context to get predictable navigation inside input
-    return '\u2066' + sections.map((s) => s.textValue).join('') + '\u2069';
+    return [...start, delimeterSection, ...end];
 }

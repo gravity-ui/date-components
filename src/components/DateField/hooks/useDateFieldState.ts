@@ -38,10 +38,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         () =>
             sections
                 .filter((seg) => EDITABLE_SEGMENTS[seg.type])
-                .reduce<typeof EDITABLE_SEGMENTS>((p, seg) => {
-                    p[seg.type] = true;
-                    return p;
-                }, {}),
+                .reduce<typeof EDITABLE_SEGMENTS>((p, seg) => ({...p, [seg.type]: true}), {}),
         [sections],
     );
 

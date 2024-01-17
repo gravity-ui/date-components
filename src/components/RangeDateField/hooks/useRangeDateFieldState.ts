@@ -20,12 +20,7 @@ import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types/datePicker';
 import type {RangeValue} from '../../types/inputs';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
-import {
-    findDelimeterSectionIndex,
-    getRangeEditableSections,
-    splitToRangeSections,
-    toRangeFormat,
-} from '../utils';
+import {getRangeEditableSections} from '../utils';
 
 export interface RangeDateFieldStateOptions extends DateFieldBase<RangeValue<DateTime>> {
     delimeter?: string;
@@ -36,7 +31,6 @@ const RANGE_FORMAT_DELIMETER = ' — ';
 export type RangeDateFieldState = BaseDateFieldState<RangeValue<DateTime>>;
 
 export function useRangeDateFieldState(props: RangeDateFieldStateOptions): RangeDateFieldState {
-    const delimeter = props.delimeter ?? RANGE_FORMAT_DELIMETER;
     const [value, setDate] = useControlledState(props.value, props.defaultValue, props.onUpdate);
 
     const [placeholderDate, setPlaceholderDate] = React.useState<RangeValue<DateTime>>(() => {
@@ -48,49 +42,38 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         return {start: date, end: date};
     });
 
-    const format = toRangeFormat(props.format || 'L', delimeter);
+    const format = props.format || 'L';
+    const delimeter = props.delimeter ?? RANGE_FORMAT_DELIMETER;
     const sections = useFormatSections(format);
-    const delimeterSectionIndex = findDelimeterSectionIndex(sections, delimeter);
 
-    const allSegments: RangeValue<typeof EDITABLE_SEGMENTS> = React.useMemo(() => {
-        const {start: startSections, end: endSections} = splitToRangeSections(sections, delimeter);
-        const start = startSections
+    const allSegments: typeof EDITABLE_SEGMENTS = React.useMemo(() => {
+        return sections
             .filter((seg) => EDITABLE_SEGMENTS[seg.type])
-            .reduce<typeof EDITABLE_SEGMENTS>((p, seg) => {
-                p[seg.type] = true;
-                return p;
-            }, {});
-        const end = endSections
-            .filter((seg) => EDITABLE_SEGMENTS[seg.type])
-            .reduce<typeof EDITABLE_SEGMENTS>((p, seg) => {
-                p[seg.type] = true;
-                return p;
-            }, {});
-        return {start, end};
-    }, [delimeter, sections]);
+            .reduce<typeof EDITABLE_SEGMENTS>((p, seg) => ({...p, [seg.type]: true}), {});
+    }, [sections]);
 
     // eslint-disable-next-line prefer-const
     let [validSegments, setValidSegments] = React.useState<RangeValue<typeof EDITABLE_SEGMENTS>>(
         () =>
             props.value || props.defaultValue
-                ? {start: {...allSegments.start}, end: {...allSegments.end}}
+                ? {start: {...allSegments}, end: {...allSegments}}
                 : {start: {}, end: {}},
     );
 
     if (
         value &&
-        (Object.keys(validSegments.start).length < Object.keys(allSegments.start).length ||
-            Object.keys(validSegments.end).length < Object.keys(allSegments.end).length)
+        (Object.keys(validSegments.start).length < Object.keys(allSegments).length ||
+            Object.keys(validSegments.end).length < Object.keys(allSegments).length)
     ) {
-        setValidSegments({start: {...allSegments.start}, end: {...allSegments.end}});
+        setValidSegments({start: {...allSegments}, end: {...allSegments}});
     }
 
     if (
         !value &&
         Object.keys(validSegments.start).length > 0 &&
-        Object.keys(validSegments.start).length === Object.keys(allSegments.start).length &&
+        Object.keys(validSegments.start).length === Object.keys(allSegments).length &&
         Object.keys(validSegments.end).length > 0 &&
-        Object.keys(validSegments.end).length === Object.keys(allSegments.end).length
+        Object.keys(validSegments.end).length === Object.keys(allSegments).length
     ) {
         validSegments = {start: {}, end: {}};
         setValidSegments(validSegments);
@@ -102,8 +85,8 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         value &&
         isValid(value.start) &&
         isValid(value.end) &&
-        Object.keys(validSegments.start).length >= Object.keys(allSegments.start).length &&
-        Object.keys(validSegments.end).length >= Object.keys(allSegments.end).length
+        Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
+        Object.keys(validSegments.end).length >= Object.keys(allSegments).length
             ? value
             : placeholderDate;
     const sectionsState = useSectionsState(sections, displayValue, validSegments, delimeter);
@@ -146,8 +129,8 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         }
 
         if (
-            Object.keys(validSegments.start).length >= Object.keys(allSegments.start).length &&
-            Object.keys(validSegments.end).length >= Object.keys(allSegments.end).length
+            Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
+            Object.keys(validSegments.end).length >= Object.keys(allSegments).length
         ) {
             if (!value || !(newValue.start.isSame(value.start) && newValue.end.isSame(value.end))) {
                 setDate(newValue);
@@ -166,18 +149,18 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
             validSegments[portion].day &&
             validSegments[portion].month &&
             validSegments[portion].year &&
-            allSegments[portion].weekday
+            allSegments.weekday
         ) {
             validSegments[portion].weekday = true;
         }
-        if (validSegments[portion].hour && allSegments[portion].dayPeriod) {
+        if (validSegments[portion].hour && allSegments.dayPeriod) {
             validSegments[portion].dayPeriod = true;
         }
         setValidSegments({...validSegments, [portion]: {...validSegments[portion]}});
     }
 
     function setSection(sectionIndex: number, amount: number) {
-        const portion = sectionIndex < delimeterSectionIndex ? 'start' : 'end';
+        const portion = sectionIndex <= sections.length ? 'start' : 'end';
         const section = sectionsState.editableSections[sectionIndex];
         markValid(portion, section.type);
         setValue({
@@ -188,7 +171,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
     function adjustSection(sectionIndex: number, amount: number) {
         const section = sectionsState.editableSections[sectionIndex];
-        const portion = sectionIndex < delimeterSectionIndex ? 'start' : 'end';
+        const portion = sectionIndex <= sections.length ? 'start' : 'end';
         if (validSegments[portion][section.type]) {
             setValue({
                 ...displayValue,
@@ -196,17 +179,14 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
             });
         } else {
             markValid(portion, section.type);
-            if (
-                Object.keys(validSegments[portion]).length >=
-                Object.keys(allSegments[portion]).length
-            ) {
+            if (Object.keys(validSegments[portion]).length >= Object.keys(allSegments).length) {
                 setValue(displayValue);
             }
         }
     }
 
     function flushValidSection(sectionIndex: number) {
-        const portion = sectionIndex < delimeterSectionIndex ? 'start' : 'end';
+        const portion = sectionIndex <= sections.length ? 'start' : 'end';
         delete validSegments[portion][sectionsState.editableSections[sectionIndex].type];
         setValidSegments({...validSegments, [portion]: {...validSegments[portion]}});
     }
@@ -217,12 +197,12 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     }
 
     function getSectionValue(sectionIndex: number) {
-        const portion = sectionIndex < delimeterSectionIndex ? 'start' : 'end';
+        const portion = sectionIndex <= sections.length ? 'start' : 'end';
         return displayValue[portion];
     }
 
     function setSectionValue(sectionIndex: number, currentValue: DateTime) {
-        const portion = sectionIndex < delimeterSectionIndex ? 'start' : 'end';
+        const portion = sectionIndex <= sections.length ? 'start' : 'end';
         setValue({...displayValue, [portion]: currentValue});
     }
 
@@ -236,10 +216,9 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     }
 
     function setValueFromString(str: string) {
-        const fmt = props.format || 'L';
         const list = str.split(delimeter);
-        const start = parseDateFromString(list?.[0]?.trim(), fmt, props.timeZone);
-        const end = parseDateFromString(list?.[1]?.trim(), fmt, props.timeZone);
+        const start = parseDateFromString(list?.[0]?.trim(), format, props.timeZone);
+        const end = parseDateFromString(list?.[1]?.trim(), format, props.timeZone);
         if (isValid(start) && isValid(end)) {
             setDate({start, end});
             return true;

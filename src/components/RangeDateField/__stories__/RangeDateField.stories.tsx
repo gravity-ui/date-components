@@ -19,14 +19,13 @@ type Story = StoryObj<typeof RangeDateField>;
 export const Default = {
     render: (args) => {
         const timeZone = args.timeZone;
-        const format = args.format;
         const props = {
             ...args,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
-            value: args.value ? parseRangeDateTime(args.value, format, timeZone) : undefined,
+            value: args.value ? parseRangeDateTime(args.value, args.format, timeZone) : undefined,
             defaultValue: args.defaultValue
-                ? parseRangeDateTime(args.defaultValue, format, timeZone)
+                ? parseRangeDateTime(args.defaultValue, args.format, timeZone)
                 : undefined,
             placeholderValue: args.placeholderValue
                 ? dateTimeParse(args.placeholderValue, {timeZone})

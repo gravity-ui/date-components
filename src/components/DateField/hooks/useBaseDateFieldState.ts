@@ -7,6 +7,7 @@ import {createPlaceholderValue} from '../../utils/dates';
 import type {DateFieldSection, DateFieldSectionType} from '../types';
 import {
     EDITABLE_SEGMENTS,
+    formatSections,
     getCurrentEditableSectionIndex,
     getDurationUnitFromSectionType,
 } from '../utils';
@@ -138,8 +139,7 @@ export function useBaseDateFieldState<T = DateTime>(
         isEmpty: isEmpty(),
         displayValue,
         setValue,
-        // use ltr direction context to get predictable navigation inside input
-        text: '\u2066' + editableSections.map((s) => s.textValue).join('') + '\u2069',
+        text: formatSections(editableSections),
         readOnly: props.readOnly,
         disabled: props.disabled,
         sections: editableSections,
