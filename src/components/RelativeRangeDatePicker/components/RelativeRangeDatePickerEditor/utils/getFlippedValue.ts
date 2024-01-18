@@ -1,6 +1,16 @@
-import type {RelativeRangeDatepickerValue} from '../../../types';
+import {type DateTime, dateTimeParse} from '@gravity-ui/date-utils';
 
-import {getDateTimeFromSingleValue} from './getDateTimeFromSingleValue';
+import type {
+    RelativeRangeDatepickerSingleValue,
+    RelativeRangeDatepickerValue,
+} from '../../../types';
+
+function getDateTimeFromSingleValue(value: RelativeRangeDatepickerSingleValue): DateTime | null {
+    if (!value) return null;
+    return value.type === 'absolute'
+        ? value.value
+        : dateTimeParse(value.value, {allowRelative: true}) || null;
+}
 
 export const getFlippedValue = (
     changed: keyof RelativeRangeDatepickerValue,

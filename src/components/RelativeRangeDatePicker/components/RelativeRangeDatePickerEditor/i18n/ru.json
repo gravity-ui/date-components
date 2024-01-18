@@ -1,6 +1,7 @@
 {
   "From": "От",
   "To": "До",
-  "Tab_main": "Main",
-  "Tab_others": "Others"
+  "Tab_main": "Основное",
+  "Tab_others": "Другое",
+  "Apply": "Применить"
 }

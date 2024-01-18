@@ -19,7 +19,7 @@ type Story = StoryObj<typeof RelativeRangeDatePicker>;
 function getDateLabel(value?: RelativeRangeDatepickerSingleValue) {
     if (!value) return '';
     if (value.type === 'relative') return value.value;
-    return value.value.format('L');
+    return value.value.toISOString();
 }
 
 function getLabel(value: RelativeRangeDatepickerValue | null) {
@@ -32,20 +32,28 @@ function getLabel(value: RelativeRangeDatepickerValue | null) {
 
 export const Default = {
     render: (args) => {
-        const timeZone = args.timeZone;
+        const {timeZone} = args;
         const props = {
             ...args,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
+            // minValue: dateTimeParse(new Date())?.add(1, 'weeks'),
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
+            withZonesList: true,
             label: 'Event date',
             placeholderValue: args.placeholderValue
                 ? dateTimeParse(args.placeholderValue, {timeZone})
                 : undefined,
         };
+
         return (
             // eslint-disable-next-line jsx-a11y/label-has-associated-control
             <label>
-                <RelativeRangeDatePicker {...props} />
+                <RelativeRangeDatePicker
+                    {...props}
+                    timeZone={timeZone}
+                    format={'MM/DD/YYYY HH:mm'}
+                    // format={'MM/DD/YYYY'}
+                />
             </label>
         );
     },
@@ -83,12 +91,6 @@ export const Default = {
         placeholderValue: {
             control: {
                 type: 'text',
-            },
-        },
-        validationState: {
-            options: ['invalid', 'none'],
-            mapping: {
-                none: undefined,
             },
         },
     },

@@ -1,51 +1,70 @@
 import React from 'react';
 
+import {guessUserTimeZone} from '@gravity-ui/date-utils';
 import {Popup, Sheet, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {pick} from '../../utils/pick';
 import {useControlledState} from '../hooks/useControlledState';
 
-import {RelativeRangeDatePickerEditor} from './components/RelativeRangeDatePickerEditor';
-import {RelativeRangeDatePickerLabel} from './components/RelativeRangeDatePickerLabel';
+import {RelativeRangeDatePickerEditor, RelativeRangeDatePickerLabel} from './components';
+import {useRelativeDatePickerValue} from './hooks';
 import type {RelativeRangeDatepickerProps} from './types';
-import {getDefaultPresetTabs} from './utils/getDefaultPresetTabs';
-import {getFieldProps} from './utils/getFieldProps';
+import {getDefaultPresetTabs, getErrors, getFieldProps, isValueEqual} from './utils';
 
 import './RelativeRangeDatePicker.scss';
-
 export const b = block('relative-range-date-picker');
 
 export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
-    const {presetTabs = getDefaultPresetTabs(props.withTime)} = props;
+    const {minValue, maxValue, value: propsValue, onUpdate, withApplyButton} = props;
 
     const [isMobile] = useMobile();
 
+    const propsValueRef = React.useRef(propsValue);
+    propsValueRef.current = propsValue;
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
     const [isOpen, setOpen] = React.useState(false);
+    const [timeZone, setTimeZone] = useControlledState(
+        props.timeZone,
+        guessUserTimeZone(),
+        props.onUpdateTimeZone,
+    );
+    const [value, setValue] = useRelativeDatePickerValue(pick(props, 'value', 'timeZone'));
+    const {startError, endError} = getErrors({value, minValue, maxValue});
+    const isValid = !startError && !endError;
 
-    const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
-
-    function focusInput() {
-        setTimeout(() => {
-            inputRef?.current?.focus();
-        });
-    }
+    React.useEffect(() => {
+        if (isValid && !withApplyButton && !isValueEqual(propsValueRef.current, value)) {
+            onUpdate?.(value || null);
+        }
+    }, [isValid, value, withApplyButton]);
 
     function renderPopupContent() {
         return (
             <RelativeRangeDatePickerEditor
-                {...getFieldProps(props)}
-                {...pick(props, 'alwaysShowAsAbsolute', 'hasClear')}
-                presetTabs={presetTabs}
+                {...getFieldProps({...props, timeZone})}
+                hasClear={props.hasClear}
+                onApply={() => {
+                    onUpdate?.(value);
+                }}
+                isValid={isValid}
+                withApplyButton={withApplyButton}
+                onUpdateTimeZone={setTimeZone}
+                startError={startError}
+                endError={endError}
+                presetTabs={props.presetTabs || getDefaultPresetTabs(props.withTimePresets)}
                 value={value}
                 onUpdate={setValue}
             />
         );
+    }
+
+    function focusInput() {
+        inputRef.current?.focus();
     }
 
     return (
@@ -62,6 +81,8 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
                     'label',
                     'placeholder',
                 )}
+                errorPlacement={props.errorPlacement}
+                errorMessage={startError || endError}
                 value={value}
                 isOpen={isOpen}
                 onOpenChange={() => {

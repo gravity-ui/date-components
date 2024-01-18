@@ -4,13 +4,17 @@ import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import type {TextInputSize} from '@gravity-ui/uikit';
 
-import {pick} from '../../../utils/pick';
-import {i18n} from '../../RelativeDatePicker/i18n';
-import type {FocusableProps, TextInputProps} from '../../types';
-import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
-import type {RelativeRangeDatepickerSingleValue, RelativeRangeDatepickerValue} from '../types';
+import {pick} from '../../../../utils/pick';
+import type {FocusEvents, TextInputProps, Validation} from '../../../types';
+import {getButtonSizeForInput} from '../../../utils/getButtonSizeForInput';
+import type {RelativeRangeDatepickerSingleValue, RelativeRangeDatepickerValue} from '../../types';
 
-interface Props extends Omit<FocusableProps, 'autoFocus'>, Omit<TextInputProps, 'placeholder'> {
+import {i18n} from './i18n';
+
+interface Props
+    extends Omit<FocusEvents, 'autoFocus'>,
+        Omit<TextInputProps, 'placeholder'>,
+        Validation {
     isOpen: boolean;
     onOpenChange(): void;
     inputRef: React.RefObject<HTMLInputElement>;
@@ -31,7 +35,7 @@ function getDateLabel(value?: RelativeRangeDatepickerSingleValue, format?: strin
 }
 
 export function RelativeRangeDatePickerLabel(props: Props) {
-    const {isOpen, value, format} = props;
+    const {value, format} = props;
 
     function getLabel() {
         const startLabel = getDateLabel(value?.start, format);
@@ -51,7 +55,7 @@ export function RelativeRangeDatePickerLabel(props: Props) {
                 extraProps={{
                     'aria-label': i18n('Calendar'),
                     'aria-haspopup': 'dialog',
-                    'aria-expanded': isOpen,
+                    'aria-expanded': props.isOpen,
                 }}
                 view="flat-secondary"
                 onClick={props.onOpenChange}
@@ -64,6 +68,9 @@ export function RelativeRangeDatePickerLabel(props: Props) {
     return (
         <TextInput
             {...pick(props, 'hasClear', 'label', 'pin', 'view', 'size')}
+            validationState={props.errorMessage ? 'invalid' : undefined}
+            errorPlacement={props.errorPlacement || 'inside'}
+            errorMessage={props.errorMessage}
             controlRef={props.inputRef}
             value={getLabel()}
             autoComplete="off"

@@ -1,19 +1,18 @@
+import {Button, useMobile} from '@gravity-ui/uikit';
+
 import {block} from '../../../../utils/cn';
-import {DatePicker} from '../../../DatePicker';
-import {RelativeDatePicker} from '../../../RelativeDatePicker';
+import {RelativeDatePicker, type RelativeDatePickerProps} from '../../../RelativeDatePicker';
 import type {DateFieldBase} from '../../../types';
 import type {
     RelativeRangeDatepickerPresetTab,
     RelativeRangeDatepickerSingleValue,
     RelativeRangeDatepickerValue,
 } from '../../types';
-import {getFieldProps} from '../../utils/getFieldProps';
+import {getFieldProps} from '../../utils';
 
-import {RelativeRangeDatePickerPresets} from './components/RelativeRangeDatePickerPresets';
+import {RelativeRangeDatePickerPresets, RelativeRangeDatePickerZones} from './components';
 import {i18n} from './i18n';
-import {getDateTimeFromSingleValue} from './utils/getDateTimeFromSingleValue';
-import {getFlippedValue} from './utils/getFlippedValue';
-import {isNeededToFlipValue} from './utils/isNeededToFlipValue';
+import {getFlippedValue, isNeededToFlipValue} from './utils';
 
 import './RelativeRangeDatePickerEditor.scss';
 
@@ -23,13 +22,20 @@ interface Props extends DateFieldBase<RelativeRangeDatepickerValue> {
     value: RelativeRangeDatepickerValue | null | undefined;
     onUpdate: (value: RelativeRangeDatepickerValue | null) => void;
     presetTabs: RelativeRangeDatepickerPresetTab[];
+    onUpdateTimeZone: (timeZone: string) => void;
+    isValid: boolean;
 
+    withApplyButton?: boolean;
+    onApply?: () => void;
+    startError?: string;
+    endError?: string;
     hasClear?: boolean;
-    alwaysShowAsAbsolute?: boolean;
 }
 
 export function RelativeRangeDatePickerEditor(props: Props) {
     const {value, onUpdate} = props;
+
+    const [mobile] = useMobile();
 
     function handleUpdate(
         key: keyof RelativeRangeDatepickerValue,
@@ -48,74 +54,50 @@ export function RelativeRangeDatePickerEditor(props: Props) {
         onUpdate(newValue);
     }
 
-    const baseDatePickerProps = {
+    const baseDatePickerProps: Omit<RelativeDatePickerProps, 'defaultValue'> = {
         ...getFieldProps(props),
         className: b('field'),
         hasClear: props.hasClear,
+        size: mobile ? 'xl' : undefined,
+        errorPlacement: 'inside',
     };
 
-    function renderRelative() {
-        return (
+    return (
+        <div className={b({platform: mobile ? 'mobile' : 'desktop'})}>
             <div className={b('fields')}>
                 <RelativeDatePicker
                     {...baseDatePickerProps}
                     label={`${i18n('From')}:`}
-                    value={value?.start}
-                    className={b('field')}
+                    errorMessage={props.startError}
+                    validationState={props.startError ? 'invalid' : undefined}
+                    value={value?.start || null}
                     onUpdate={(newValue) => {
                         handleUpdate('start', newValue);
                     }}
-                    hasClear={props.hasClear}
                 />
                 <RelativeDatePicker
                     {...baseDatePickerProps}
                     label={`${i18n('To')}:`}
-                    value={value?.end}
-                    className={b('field')}
+                    errorMessage={props.endError}
+                    validationState={props.endError ? 'invalid' : undefined}
+                    value={value?.end || null}
                     onUpdate={(newValue) => {
                         handleUpdate('end', newValue);
                     }}
-                    hasClear={props.hasClear}
                 />
+                {props.withApplyButton ? (
+                    <Button
+                        disabled={!props.isValid}
+                        onClick={props.onApply}
+                        className={b('apply')}
+                    >
+                        {i18n('Apply')}
+                    </Button>
+                ) : null}
             </div>
-        );
-    }
-
-    function renderAbsolute() {
-        return (
-            <div className={b('fields')}>
-                <DatePicker
-                    {...baseDatePickerProps}
-                    label={`${i18n('From')}:`}
-                    value={value ? getDateTimeFromSingleValue(value.start) : value}
-                    className={b('field')}
-                    onUpdate={(newValue) => {
-                        handleUpdate(
-                            'start',
-                            newValue ? {type: 'absolute', value: newValue} : null,
-                        );
-                    }}
-                    hasClear={props.hasClear}
-                />
-                <DatePicker
-                    {...baseDatePickerProps}
-                    label={`${i18n('To')}:`}
-                    value={value ? getDateTimeFromSingleValue(value.end) : value}
-                    className={b('field')}
-                    onUpdate={(newValue) => {
-                        handleUpdate('end', newValue ? {type: 'absolute', value: newValue} : null);
-                    }}
-                    hasClear={props.hasClear}
-                />
-            </div>
-        );
-    }
-
-    return (
-        <div className={b()}>
-            {props.alwaysShowAsAbsolute ? renderAbsolute() : renderRelative()}
             <RelativeRangeDatePickerPresets
                 value={value}
+                minValue={props.minValue}
                 presetTabs={props.presetTabs}
                 onUpdatePreset={(start: string, end: string) => {
                     onUpdate({
@@ -123,6 +105,10 @@ export function RelativeRangeDatePickerEditor(props: Props) {
                         end: {type: 'relative', value: end},
                     });
                 }}
+            />
+            <RelativeRangeDatePickerZones
+                onUpdate={props.onUpdateTimeZone}
+                timeZone={props.timeZone}
             />
         </div>
     );

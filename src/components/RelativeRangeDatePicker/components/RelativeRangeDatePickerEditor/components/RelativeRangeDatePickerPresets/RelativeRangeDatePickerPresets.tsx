@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {AdaptiveTabs} from '@gravity-ui/components';
+import {type DateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {List, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../../../../../utils/cn';
@@ -9,6 +10,8 @@ import type {
     RelativeRangeDatepickerPresetTab,
     RelativeRangeDatepickerValue,
 } from '../../../../types';
+
+import {RelativeDatePickerPresetsHint} from './components';
 
 import './RelativeRangeDatePickerPresets.scss';
 
@@ -21,12 +24,27 @@ function renderPreset(item: RelativeRangeDatepickerPreset) {
 interface Props {
     presetTabs: RelativeRangeDatepickerPresetTab[];
     onUpdatePreset: (start: string, end: string) => void;
+    minValue?: DateTime;
 
     value?: RelativeRangeDatepickerValue | null;
 }
 
 export function RelativeRangeDatePickerPresets(props: Props) {
-    const {presetTabs, onUpdatePreset, value} = props;
+    const {presetTabs: propsPresetTabs, onUpdatePreset, minValue, value} = props;
+
+    const presetTabs = React.useMemo(() => {
+        if (!minValue) return propsPresetTabs;
+        return propsPresetTabs
+            .map((tab) => {
+                const presets = tab.presets.filter((preset) => {
+                    const start = dateTimeParse(preset.start, {allowRelative: true});
+                    if (!start) return false;
+                    return start.valueOf() > minValue?.valueOf();
+                });
+                return {...tab, presets};
+            })
+            .filter((tab) => tab.presets.length > 0);
+    }, [propsPresetTabs, minValue]);
 
     const [mobile] = useMobile();
 
@@ -41,18 +59,25 @@ export function RelativeRangeDatePickerPresets(props: Props) {
         return typeof index === 'number' ? index : undefined;
     }
 
+    if (!presetTabs.length) return null;
+
     return (
-        <div className={b()}>
-            <AdaptiveTabs
-                items={presetTabs}
-                activeTab={visibleTab?.id}
-                onSelectTab={(id: string) => {
-                    if (visibleTab?.id === id) {
-                        return;
-                    }
-                    setVisibleTab(presetTabs.find((tab) => tab.id === id) || null);
-                }}
-            />
+        <div className={b({mobile})}>
+            <div className={b('header')}>
+                <AdaptiveTabs
+                    items={presetTabs}
+                    activeTab={visibleTab?.id}
+                    onSelectTab={(id: string) => {
+                        if (visibleTab?.id === id) {
+                            return;
+                        }
+                        setVisibleTab(presetTabs.find((tab) => tab.id === id) || null);
+                    }}
+                />
+                <div className={b('hint')}>
+                    <RelativeDatePickerPresetsHint />
+                </div>
+            </div>
             {visibleTab ? (
                 <List
                     className={b('list')}

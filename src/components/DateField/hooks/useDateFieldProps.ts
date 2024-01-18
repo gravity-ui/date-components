@@ -88,6 +88,7 @@ export function useDateFieldProps(
             controlRef: inputRef,
             autoComplete: 'off',
             type: 'text',
+            errorPlacement: props.errorPlacement,
             // @ts-expect-error
             error:
                 (state.validationState === 'invalid' && props.errorMessage) ||

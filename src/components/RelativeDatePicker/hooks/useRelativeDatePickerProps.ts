@@ -60,6 +60,7 @@ export function useRelativeDatePickerProps(
     }
 
     const commonInputProps: TextInputProps = {
+        label: props.label,
         onFocus: () => {
             if (!state.isActive) {
                 state.setActive(true);
@@ -82,6 +83,7 @@ export function useRelativeDatePickerProps(
         hasClear: props.hasClear && !relativeDateState.readOnly,
         placeholder: props.placeholder,
         size: props.size,
+        errorPlacement: props.errorPlacement,
     };
 
     let error: string | boolean | undefined;
@@ -190,6 +192,8 @@ export function useRelativeDatePickerProps(
             size: props.size === 's' ? 'm' : props.size,
             readOnly: props.readOnly,
             value: state.selectedDate,
+            minValue: props.minValue,
+            maxValue: props.maxValue,
             onUpdate: (v) => {
                 datePickerState.setDateValue(v);
                 if (!state.datePickerState.hasTime) {

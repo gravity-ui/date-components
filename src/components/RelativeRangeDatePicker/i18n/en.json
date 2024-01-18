@@ -1,0 +1,9 @@
+{
+  "Error_start-missing": "The first part of the range is not set",
+  "Error_end-missing": "The second part of the range is not set",
+  "Error_incomplete-range": "You must specify both parts of the range",
+  "Error_min": "The first part of the range less than minimum",
+  "Error_max": "The second part of the range greater than maximum",
+  "Error_incorrect-start": "The first part of the range is specified incorrectly",
+  "Error_incorrect-end": "The second part of the range is specified incorrectly"
+}

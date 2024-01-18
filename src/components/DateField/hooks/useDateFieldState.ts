@@ -607,7 +607,8 @@ function useSectionsState(
     if (
         sections !== state.sections ||
         validSegments !== state.validSegments ||
-        !value.isSame(state.value)
+        !value.isSame(state.value) ||
+        value.timeZone() !== state.value.timeZone()
     ) {
         setState({
             value,

@@ -71,6 +71,11 @@ export interface TextInputProps {
      * @default false
      */
     hasClear?: boolean;
+    /**
+     * Error placement
+     * @default inside
+     */
+    errorPlacement?: 'inside' | 'outside';
 }
 
 export interface TextInputExtendProps {

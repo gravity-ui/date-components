@@ -49,8 +49,6 @@ export function DatePicker({value, defaultValue, onUpdate, className, ...props}:
 
     const [isMobile] = useMobile();
 
-    console.log(popupProps);
-
     return (
         <div className={b(null, className)} {...groupProps}>
             {isMobile ? (

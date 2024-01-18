@@ -1,4 +1,7 @@
 {
   "From": "From",
-  "To": "To"
+  "To": "To",
+  "Tab_main": "Main",
+  "Tab_others": "Others",
+  "Apply": "Apply"
 }
