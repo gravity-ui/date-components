@@ -25,6 +25,8 @@ interface Props extends DateFieldBase<RelativeRangeDatepickerValue> {
     onUpdateTimeZone: (timeZone: string) => void;
     isValid: boolean;
 
+    withZonesList?: boolean;
+    withPresets?: boolean;
     withApplyButton?: boolean;
     onApply?: () => void;
     startError?: string;
@@ -63,7 +65,12 @@ export function RelativeRangeDatePickerEditor(props: Props) {
     };
 
     return (
-        <div className={b({platform: mobile ? 'mobile' : 'desktop'})}>
+        <div
+            className={b({
+                platform: mobile ? 'mobile' : 'desktop',
+                withPresets: props.withPresets,
+            })}
+        >
             <div className={b('fields')}>
                 <RelativeDatePicker
                     {...baseDatePickerProps}
@@ -95,21 +102,25 @@ export function RelativeRangeDatePickerEditor(props: Props) {
                     </Button>
                 ) : null}
             </div>
-            <RelativeRangeDatePickerPresets
-                value={value}
-                minValue={props.minValue}
-                presetTabs={props.presetTabs}
-                onUpdatePreset={(start: string, end: string) => {
-                    onUpdate({
-                        start: {type: 'relative', value: start},
-                        end: {type: 'relative', value: end},
-                    });
-                }}
-            />
-            <RelativeRangeDatePickerZones
-                onUpdate={props.onUpdateTimeZone}
-                timeZone={props.timeZone}
-            />
+            {props.withPresets ? (
+                <RelativeRangeDatePickerPresets
+                    value={value}
+                    minValue={props.minValue}
+                    presetTabs={props.presetTabs}
+                    onUpdatePreset={(start: string, end: string) => {
+                        onUpdate({
+                            start: {type: 'relative', value: start},
+                            end: {type: 'relative', value: end},
+                        });
+                    }}
+                />
+            ) : null}
+            {props.withZonesList ? (
+                <RelativeRangeDatePickerZones
+                    onUpdate={props.onUpdateTimeZone}
+                    timeZone={props.timeZone}
+                />
+            ) : null}
         </div>
     );
 }

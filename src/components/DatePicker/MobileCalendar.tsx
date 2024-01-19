@@ -1,9 +1,14 @@
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+import {Calendar as CalendarIcon} from '@gravity-ui/icons';
+import {Icon, type InputControlSize} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
-import type {DatePickerProps, DatePickerState} from '../DatePicker';
 import {createPlaceholderValue, mergeDateTime} from '../utils/dates';
+import {getButtonSizeForInput} from '../utils/getButtonSizeForInput';
+
+import type {DatePickerProps} from './DatePicker';
+import type {DatePickerState} from './hooks/useDatePickerState';
 
 import './MobileCalendar.scss';
 
@@ -25,7 +30,7 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
 
     return (
         <input
-            className={b()}
+            className={b('input')}
             disabled={props.disabled}
             type={type}
             value={formatNative(state.value || props.placeholderValue, type)}
@@ -63,6 +68,19 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
                 }
             }}
         />
+    );
+}
+
+interface MobileCalendarIconProps {
+    size?: InputControlSize;
+}
+export function MobileCalendarIcon(props: MobileCalendarIconProps) {
+    return (
+        <span className={b({size: getButtonSizeForInput(props.size)})}>
+            <span className={b('button')}>
+                <Icon data={CalendarIcon} />
+            </span>
+        </span>
     );
 }
 

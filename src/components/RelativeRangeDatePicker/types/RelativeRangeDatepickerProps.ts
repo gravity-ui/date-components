@@ -1,14 +1,14 @@
 import React from 'react';
 
 import type {RangeCalendarProps} from '../../Calendar';
-import type {DateFieldBase, FocusableProps, TextInputProps, Validation} from '../../types';
+import type {DateFieldBase, FocusableProps, TextInputProps} from '../../types';
 
 import type {RelativeRangeDatepickerPresetTab} from './RelativeRangeDatepickerPresetTab';
 import type {RelativeRangeDatepickerValue} from './RelativeRangeDatepickerValue';
 
 export interface RelativeRangeDatepickerProps
     extends TextInputProps,
-        Omit<DateFieldBase<RelativeRangeDatepickerValue>, keyof Validation>,
+        DateFieldBase<RelativeRangeDatepickerValue>,
         FocusableProps {
     onUpdateTimeZone?: (timeZone?: string) => void;
     children?: (props: RangeCalendarProps) => React.ReactNode;

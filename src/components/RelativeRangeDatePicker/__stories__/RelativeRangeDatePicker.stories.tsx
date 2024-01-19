@@ -36,9 +36,7 @@ export const Default = {
         const props = {
             ...args,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
-            // minValue: dateTimeParse(new Date())?.add(1, 'weeks'),
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
-            withZonesList: true,
             label: 'Event date',
             placeholderValue: args.placeholderValue
                 ? dateTimeParse(args.placeholderValue, {timeZone})

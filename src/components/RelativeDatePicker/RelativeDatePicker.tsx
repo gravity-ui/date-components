@@ -7,8 +7,7 @@ import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
 import type {CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
-import {MobileCalendar} from '../MobileCalendar';
-import {MobileCalendarIcon} from '../MobileCalendarIcon';
+import {MobileCalendar} from '../DatePicker/MobileCalendar';
 import type {
     AccessibilityProps,
     DomProps,
@@ -76,16 +75,9 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                     </Button>
                 }
                 rightContent={
-                    <React.Fragment>
-                        {!isMobile && (
-                            <Button {...calendarButtonProps}>
-                                <Icon data={CalendarIcon} />
-                            </Button>
-                        )}
-                        {isMobile && state.mode === 'absolute' && (
-                            <MobileCalendarIcon size={props.size} />
-                        )}
-                    </React.Fragment>
+                    <Button {...calendarButtonProps}>
+                        <Icon data={CalendarIcon} />
+                    </Button>
                 }
             />
             {!isMobile && (

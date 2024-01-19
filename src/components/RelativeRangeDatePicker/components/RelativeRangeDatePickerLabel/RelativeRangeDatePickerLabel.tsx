@@ -67,8 +67,8 @@ export function RelativeRangeDatePickerLabel(props: Props) {
 
     return (
         <TextInput
-            {...pick(props, 'hasClear', 'label', 'pin', 'view', 'size')}
-            validationState={props.errorMessage ? 'invalid' : undefined}
+            {...pick(props, 'hasClear', 'label', 'pin', 'view', 'size', 'disabled')}
+            validationState={props.errorMessage ? 'invalid' : props.validationState}
             errorPlacement={props.errorPlacement || 'inside'}
             errorMessage={props.errorMessage}
             controlRef={props.inputRef}

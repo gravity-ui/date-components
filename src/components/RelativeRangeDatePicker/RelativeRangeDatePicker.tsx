@@ -16,7 +16,7 @@ import './RelativeRangeDatePicker.scss';
 export const b = block('relative-range-date-picker');
 
 export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
-    const {minValue, maxValue, value: propsValue, onUpdate, withApplyButton} = props;
+    const {minValue, maxValue, value: propsValue, onUpdate, withApplyButton, disabled} = props;
 
     const [isMobile] = useMobile();
 
@@ -27,7 +27,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
     const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
-    const [isOpen, setOpen] = React.useState(false);
+    const [opened, setOpened] = React.useState(false);
     const [timeZone, setTimeZone] = useControlledState(
         props.timeZone,
         guessUserTimeZone(),
@@ -43,11 +43,15 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
         }
     }, [isValid, value, withApplyButton]);
 
+    React.useEffect(() => {
+        setOpened(false);
+    }, [disabled]);
+
     function renderPopupContent() {
         return (
             <RelativeRangeDatePickerEditor
                 {...getFieldProps({...props, timeZone})}
-                hasClear={props.hasClear}
+                {...pick(props, 'hasClear', 'withPresets', 'withZonesList')}
                 onApply={() => {
                     onUpdate?.(value);
                 }}
@@ -80,13 +84,16 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
                     'view',
                     'label',
                     'placeholder',
+                    'errorMessage',
+                    'validationState',
                 )}
                 errorPlacement={props.errorPlacement}
-                errorMessage={startError || endError}
+                errorMessage={startError || endError || props.errorMessage}
+                validationState={props.validationState}
                 value={value}
-                isOpen={isOpen}
+                isOpen={opened}
                 onOpenChange={() => {
-                    setOpen((prevIsOpen) => !prevIsOpen);
+                    setOpened((prevIsOpen) => !prevIsOpen);
                 }}
                 inputRef={inputRef}
                 calendarButtonRef={calendarButtonRef}
@@ -96,9 +103,9 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
             />
             {isMobile ? (
                 <Sheet
-                    visible={isOpen}
+                    visible={opened}
                     onClose={() => {
-                        setOpen((prevIsOpen) => !prevIsOpen);
+                        setOpened((prevIsOpen) => !prevIsOpen);
                     }}
                 >
                     {renderPopupContent()}
@@ -107,14 +114,14 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
                 <div ref={anchorRef} className={b('popup-anchor')}>
                     <Popup
                         anchorRef={anchorRef}
-                        open={isOpen}
+                        open={opened}
                         onEscapeKeyDown={() => {
-                            setOpen(false);
+                            setOpened(false);
                             focusInput();
                         }}
                         onOutsideClick={(e) => {
                             if (e.target !== calendarButtonRef.current) {
-                                setOpen(false);
+                                setOpened(false);
                             }
                             if (e.target && containerRef.current?.contains(e.target as Node)) {
                                 focusInput();

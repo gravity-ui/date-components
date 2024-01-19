@@ -5,8 +5,6 @@ import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
 import {Calendar, type CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
-import {MobileCalendar} from '../MobileCalendar';
-import {MobileCalendarIcon} from '../MobileCalendarIcon';
 import type {
     AccessibilityProps,
     DateFieldBase,
@@ -17,6 +15,7 @@ import type {
     TextInputProps,
 } from '../types';
 
+import {MobileCalendar, MobileCalendarIcon} from './MobileCalendar';
 import {useDatePickerProps} from './hooks/useDatePickerProps';
 import {useDatePickerState} from './hooks/useDatePickerState';
 import {b} from './utils';

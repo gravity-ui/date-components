@@ -11,15 +11,29 @@ $block: '.#{variables.$ns}relative-range-date-picker-editor';
 
     &_platform_desktop {
         width: 300px;
+
+        #{$block}__fields {
+            padding: var(--range-data-picker-padding) var(--range-data-picker-padding) 12px;
+        }
+
+        &#{$block}_withPresets {
+            #{$block}__fields {
+                padding-bottom: 0;
+            }
+        }
     }
 
     &__fields {
-        padding: var(--range-data-picker-padding) var(--range-data-picker-padding) 0;
+        padding: 0 var(--range-data-picker-padding);
     }
 
     &__field {
         width: 100%;
         margin-bottom: 8px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 
     &__apply {
