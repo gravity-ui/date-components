@@ -7,8 +7,6 @@ import {block} from '../../utils/cn';
 import {type DateFieldProps, useDateFieldProps} from './hooks/useDateFieldProps';
 import {useDateFieldState} from './hooks/useDateFieldState';
 
-export type {DateFieldProps} from './hooks/useDateFieldProps';
-
 import './DateField.scss';
 
 const b = block('date-field');

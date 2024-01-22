@@ -34,6 +34,7 @@ test('create a valid sequence of editable sections for range', () => {
     const fixIndex = (i: number) => (i < 0 ? 0 : i >= indexes.length ? indexes.length - 1 : i);
 
     let pointer = -1;
+    let position = 1;
     for (let i = 0; i < eSections.length; i++) {
         const section = eSections[i];
         if (isEditableSection(section)) {
@@ -45,6 +46,9 @@ test('create a valid sequence of editable sections for range', () => {
 
         expect(section.previousEditableSection).toBe(previous);
         expect(section.nextEditableSection).toBe(next);
+        expect(section.start).toBe(position);
+
+        position = section.end;
     }
 
     expect(cleanString(formatSections(eSections))).toBe(
