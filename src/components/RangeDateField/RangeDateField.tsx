@@ -13,7 +13,13 @@ import './RangeDateField.scss';
 
 const b = block('range-date-field');
 
-export type RangeDateFieldProps = DateFieldProps<RangeValue<DateTime>>;
+export type RangeDateFieldProps = DateFieldProps<RangeValue<DateTime>> & {
+    /**
+     * Delimiter separating the start and end parts of the range.
+     * @default ' — '
+     * */
+    delimiter?: string;
+};
 
 export function RangeDateField({className, ...props}: RangeDateFieldProps) {
     const state = useRangeDateFieldState(props);

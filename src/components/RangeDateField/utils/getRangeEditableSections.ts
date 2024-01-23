@@ -13,7 +13,7 @@ export function getRangeEditableSections(
     sections: DateFieldSectionWithoutPosition[],
     value: RangeValue<DateTime>,
     validSegments: RangeValue<typeof EDITABLE_SEGMENTS>,
-    delimeter: string,
+    delimiter: string,
 ) {
     const start = getEditableSections(sections, value.start, validSegments.start);
     const end = getEditableSections(sections, value.end, validSegments.end);
@@ -23,12 +23,12 @@ export function getRangeEditableSections(
     const previousEditableSection = last.nextEditableSection;
     const sectionsCount = start.length + 1;
 
-    const delimeterSection = toEditableSection(
+    const delimiterSection = toEditableSection(
         {
             type: 'literal',
             contentType: 'letter',
-            format: delimeter,
-            placeholder: delimeter,
+            format: delimiter,
+            placeholder: delimiter,
             hasLeadingZeros: false,
         },
         value.start,
@@ -37,7 +37,7 @@ export function getRangeEditableSections(
         previousEditableSection,
     );
 
-    position += delimeterSection.textValue.length - 1;
+    position += delimiterSection.textValue.length - 1;
 
     let nextEditableSection;
     for (let index = 0; index < end.length; index++) {
@@ -60,10 +60,10 @@ export function getRangeEditableSections(
     }
 
     if (nextEditableSection !== undefined) {
-        delimeterSection.nextEditableSection = nextEditableSection;
+        delimiterSection.nextEditableSection = nextEditableSection;
 
         start[previousEditableSection].nextEditableSection = nextEditableSection;
     }
 
-    return [...start, delimeterSection, ...end];
+    return [...start, delimiterSection, ...end];
 }

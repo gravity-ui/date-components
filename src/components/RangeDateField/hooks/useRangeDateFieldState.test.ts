@@ -6,7 +6,7 @@ import type {RangeValue} from '../../types';
 
 import {useRangeDateFieldState} from './useRangeDateFieldState';
 
-it('can display the correct range', () => {
+test('can display the correct range', () => {
     const timeZone = 'Israel';
     const {result} = renderHook(() =>
         useRangeDateFieldState({
@@ -24,7 +24,7 @@ it('can display the correct range', () => {
     expect(cleanString(text)).toBe('20.01.2024 — 24.01.2024');
 });
 
-it('can navigate through the range and change sections', () => {
+test('can navigate through the range and change sections', () => {
     const timeZone = 'Israel';
     const {result} = renderHook(() =>
         useRangeDateFieldState({
@@ -50,7 +50,7 @@ it('can navigate through the range and change sections', () => {
     expect(cleanString(result.current.text)).toBe('12.03.YYYY — DD.01.YYYY');
 });
 
-it('call onUpdate only if the entire value is valid', () => {
+test('call onUpdate only if the entire value is valid', () => {
     const onUpdateSpy = jest.fn();
     const timeZone = 'Israel';
     const {result} = renderHook(() =>
@@ -89,7 +89,7 @@ it('call onUpdate only if the entire value is valid', () => {
     });
 });
 
-it('can set a range from the string', () => {
+test('can set a range from the string', () => {
     const {result} = renderHook(() =>
         useRangeDateFieldState({
             format: 'DD.MM.YYYY',
@@ -102,7 +102,7 @@ it('can set a range from the string', () => {
     expect(cleanString(result.current.text)).toBe('31.01.2024 — 29.02.2024');
 });
 
-it('can clear the section or the entire range', () => {
+test('can clear the section or the entire range', () => {
     let value: RangeValue<DateTime> | null = {
         start: dateTime({input: '2024-01-20T12:30:00'}),
         end: dateTime({input: '2024-01-24T12:00:00'}),

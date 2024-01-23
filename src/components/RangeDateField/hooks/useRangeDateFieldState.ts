@@ -20,10 +20,10 @@ import {createPlaceholderValue, isInvalid} from '../../utils/dates';
 import {getRangeEditableSections} from '../utils';
 
 export interface RangeDateFieldStateOptions extends DateFieldBase<RangeValue<DateTime>> {
-    delimeter?: string;
+    delimiter?: string;
 }
 
-const RANGE_FORMAT_DELIMETER = ' — ';
+const RANGE_FORMAT_DELIMITER = ' — ';
 
 export type RangeDateFieldState = BaseDateFieldState<RangeValue<DateTime>>;
 
@@ -40,7 +40,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     });
 
     const format = props.format || 'L';
-    const delimeter = props.delimeter ?? RANGE_FORMAT_DELIMETER;
+    const delimiter = props.delimiter ?? RANGE_FORMAT_DELIMITER;
     const sections = useFormatSections(format);
 
     const allSegments: typeof EDITABLE_SEGMENTS = React.useMemo(() => {
@@ -86,7 +86,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         Object.keys(validSegments.end).length >= Object.keys(allSegments).length
             ? value
             : placeholderDate;
-    const sectionsState = useSectionsState(sections, displayValue, validSegments, delimeter);
+    const sectionsState = useSectionsState(sections, displayValue, validSegments, delimiter);
 
     const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
 
@@ -213,7 +213,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     }
 
     function setValueFromString(str: string) {
-        const list = str.split(delimeter);
+        const list = str.split(delimiter);
         const start = parseDateFromString(list?.[0]?.trim(), format, props.timeZone);
         const end = parseDateFromString(list?.[1]?.trim(), format, props.timeZone);
         if (isValid(start) && isValid(end)) {
@@ -275,14 +275,14 @@ function useSectionsState(
     sections: DateFieldSectionWithoutPosition[],
     value: RangeValue<DateTime>,
     validSegments: RangeValue<typeof EDITABLE_SEGMENTS>,
-    delimeter: string,
+    delimiter: string,
 ) {
     const [state, setState] = React.useState(() => {
         return {
             value,
             sections,
             validSegments,
-            editableSections: getRangeEditableSections(sections, value, validSegments, delimeter),
+            editableSections: getRangeEditableSections(sections, value, validSegments, delimiter),
         };
     });
 
@@ -295,7 +295,7 @@ function useSectionsState(
             value,
             sections,
             validSegments,
-            editableSections: getRangeEditableSections(sections, value, validSegments, delimeter),
+            editableSections: getRangeEditableSections(sections, value, validSegments, delimiter),
         });
     }
 
