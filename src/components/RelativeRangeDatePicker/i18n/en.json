@@ -5,5 +5,7 @@
   "Error_min": "The first part of the range less than minimum",
   "Error_max": "The second part of the range greater than maximum",
   "Error_incorrect-start": "The first part of the range is specified incorrectly",
-  "Error_incorrect-end": "The second part of the range is specified incorrectly"
+  "Error_incorrect-end": "The second part of the range is specified incorrectly",
+  "Error_start-greater-then-end": "The first part greater then the second part",
+  "Error_end-less-then-start": "The second part less then the first part"
 }

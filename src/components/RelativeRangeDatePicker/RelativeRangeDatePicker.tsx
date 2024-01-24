@@ -7,9 +7,9 @@ import {pick} from '../../utils/pick';
 import {useControlledState} from '../hooks/useControlledState';
 
 import {RelativeRangeDatePickerEditor, RelativeRangeDatePickerLabel} from './components';
-import {useRelativeDatePickerValue} from './hooks';
+import {useRelativeRangeDatePickerValue} from './hooks';
 import type {RelativeRangeDatepickerProps} from './types';
-import {getDefaultPresetTabs, getErrors, getFieldProps, isValueEqual} from './utils';
+import {getDefaultPresetTabs, getFieldProps} from './utils';
 
 import './RelativeRangeDatePicker.scss';
 
@@ -17,19 +17,17 @@ const b = block('relative-range-date-picker');
 
 export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
     const {
-        minValue,
-        maxValue,
         value: propsValue,
         onUpdate,
         withApplyButton,
         disabled,
         timeZone: propsTimeZone,
+        withZonesList,
     } = props;
 
     const [isMobile] = useMobile();
 
     const propsValueRef = React.useRef(propsValue);
-    propsValueRef.current = propsValue;
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -38,19 +36,22 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
     const [opened, setOpened] = useControlledState(props.open, false, props.onOpenChange);
     const [timeZone, setTimeZone] = React.useState(propsTimeZone);
 
-    const [value, setValue] = useRelativeDatePickerValue({value: props.value});
-    const {startError, endError} = getErrors({value, minValue, maxValue});
+    React.useEffect(() => {
+        if (!withZonesList) {
+            setTimeZone(propsTimeZone);
+        }
+    }, [propsTimeZone]);
+
+    const [value, setValue, {startError, endError}] = useRelativeRangeDatePickerValue({
+        ...pick(props, 'value', 'timeZone', 'minValue', 'maxValue', 'allowNullableValues'),
+        onUpdate: withApplyButton ? undefined : onUpdate,
+    });
+    propsValueRef.current = propsValue || value;
     const isValid = !startError && !endError;
 
     React.useEffect(() => {
         setTimeZone(propsTimeZone);
     }, [propsTimeZone]);
-
-    React.useEffect(() => {
-        if (isValid && !withApplyButton && !isValueEqual(propsValueRef.current, value)) {
-            onUpdate?.(value || null);
-        }
-    }, [isValid, value, withApplyButton]);
 
     React.useEffect(() => {
         setOpened(false);
@@ -66,7 +67,10 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
                 }}
                 isValid={isValid}
                 withApplyButton={withApplyButton}
-                onUpdateTimeZone={setTimeZone}
+                onUpdateTimeZone={(timeZone) => {
+                    setTimeZone(timeZone);
+                    props.onUpdateTimeZone?.(timeZone);
+                }}
                 startError={startError}
                 endError={endError}
                 presetTabs={props.presetTabs || getDefaultPresetTabs(props.withTimePresets)}

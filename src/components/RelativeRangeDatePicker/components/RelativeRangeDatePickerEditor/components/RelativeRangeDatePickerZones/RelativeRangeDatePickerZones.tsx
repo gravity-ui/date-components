@@ -1,4 +1,4 @@
-import {getTimeZonesList, guessUserTimeZone} from '@gravity-ui/date-utils';
+import {getTimeZonesList} from '@gravity-ui/date-utils';
 import {ChevronRight} from '@gravity-ui/icons';
 import {Button, Icon, Select, TextInput, useMobile} from '@gravity-ui/uikit';
 
@@ -13,7 +13,7 @@ import './RelativeRangeDatePickerZones.scss';
 export const b = block('relative-range-date-picker-zones');
 
 interface Props {
-    onUpdate: (timeZone: string) => void;
+    onUpdate: (timeZone: string | undefined) => void;
     timeZone?: string;
 }
 
@@ -60,7 +60,7 @@ export function RelativeRangeDatePickerZones(props: Props) {
                                 size={mobile ? 'xl' : undefined}
                                 view="flat"
                                 onClick={() => {
-                                    props.onUpdate(guessUserTimeZone());
+                                    props.onUpdate(undefined);
                                 }}
                             >
                                 {i18n('Clear')}

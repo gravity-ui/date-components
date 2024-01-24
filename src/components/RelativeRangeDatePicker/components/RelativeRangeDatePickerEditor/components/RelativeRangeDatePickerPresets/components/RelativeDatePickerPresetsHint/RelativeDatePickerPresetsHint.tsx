@@ -78,7 +78,7 @@ export function RelativeDatePickerPresetsHint() {
 
     return (
         <HelpPopover
-            openOnHover={false}
+            openOnHover={!mobile}
             className={b()}
             tooltipContentClassName={b('popup', {platform: mobile ? 'mobile' : 'desktop'})}
             placement={['right-start', 'left-start']}

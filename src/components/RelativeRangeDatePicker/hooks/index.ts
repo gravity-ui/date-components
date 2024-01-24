@@ -1,1 +1,1 @@
-export {useRelativeDatePickerValue} from './useRelativeDatePickerValue';
+export {useRelativeRangeDatePickerValue} from './useRelativeRangeDatePickerValue';

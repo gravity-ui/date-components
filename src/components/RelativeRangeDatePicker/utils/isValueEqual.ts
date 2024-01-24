@@ -1,8 +1,8 @@
 import type {RelativeRangeDatepickerSingleValue, RelativeRangeDatepickerValue} from '../types';
 
 export function isValueEqual(
-    v1?: RelativeRangeDatepickerValue | null,
-    v2?: RelativeRangeDatepickerValue | null,
+    v1?: RelativeRangeDatepickerValue | null | undefined,
+    v2?: RelativeRangeDatepickerValue | null | undefined,
 ): boolean {
     function isValuePartEqual(
         v1?: RelativeRangeDatepickerSingleValue | null,

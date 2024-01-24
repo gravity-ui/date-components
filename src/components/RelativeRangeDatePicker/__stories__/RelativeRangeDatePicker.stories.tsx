@@ -32,6 +32,7 @@ function getLabel(value: RelativeRangeDatepickerValue | null) {
 export const Default = {
     render: (args) => {
         const {timeZone} = args;
+
         const props = {
             ...args,
             style: {width: 350},
@@ -51,7 +52,6 @@ export const Default = {
                     {...props}
                     timeZone={timeZone}
                     format={'MM/DD/YYYY HH:mm'}
-                    // format={'MM/DD/YYYY'}
                 />
             </label>
         );

@@ -28,4 +28,5 @@ export interface RelativeRangeDatepickerProps
     style?: React.CSSProperties;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
+    onUpdateTimeZone?: (timeZone: string | undefined) => void;
 }

@@ -7,9 +7,9 @@ import {getValueDateTime} from './getValueDateTime';
 
 interface Opts {
     value?: RelativeRangeDatepickerValue | null;
-
     minValue?: DateTime;
     maxValue?: DateTime;
+    allowNullableValues: boolean;
 }
 
 function getStartError(opts: Opts) {
@@ -18,13 +18,19 @@ function getStartError(opts: Opts) {
     if (!value) return undefined;
 
     if (value.end && !value.start) {
+        if (opts.allowNullableValues) return undefined;
         return i18n('Error_start-missing');
     }
 
     const start = getValueDateTime(value.start);
+    const end = getValueDateTime(value.end);
 
     if (!start) {
-        return i18n('Error_incorrect-start');
+        return value.start ? i18n('Error_incorrect-start') : undefined;
+    }
+
+    if (start.isAfter(end)) {
+        return i18n('Error_start-greater-then-end');
     }
 
     if (minValue && start.valueOf() < minValue.valueOf()) {
@@ -40,13 +46,19 @@ function getEndError(opts: Opts) {
     if (!value) return undefined;
 
     if (value.start && !value.end) {
+        if (opts.allowNullableValues) return undefined;
         return i18n('Error_end-missing');
     }
 
+    const start = getValueDateTime(value.start);
     const end = getValueDateTime(value.end);
 
     if (!end) {
-        return i18n('Error_incorrect-end');
+        return value.end ? i18n('Error_incorrect-end') : undefined;
+    }
+
+    if (end.isBefore(start)) {
+        return i18n('Error_end-less-then-start');
     }
 
     if (maxValue && end.valueOf() > maxValue.valueOf()) {
