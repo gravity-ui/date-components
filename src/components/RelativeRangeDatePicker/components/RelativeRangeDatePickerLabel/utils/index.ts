@@ -1,0 +1,1 @@
+export {getDateLabel} from './getDateLabel';

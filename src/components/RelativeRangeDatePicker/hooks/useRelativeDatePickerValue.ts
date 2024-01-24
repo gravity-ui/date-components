@@ -2,10 +2,8 @@ import React from 'react';
 
 import type {RelativeRangeDatepickerValue} from '../types';
 import {isValueEqual} from '../utils/isValueEqual';
-import {updateTimeZone} from '../utils/updateTimeZone';
 
 type Opts = {
-    timeZone?: string;
     value?: RelativeRangeDatepickerValue | null;
 };
 
@@ -14,25 +12,21 @@ type SetValue = (value: RelativeRangeDatepickerValue | null) => void;
 export function useRelativeDatePickerValue(
     opts: Opts,
 ): [RelativeRangeDatepickerValue | null, SetValue] {
-    const {timeZone, value: optsValue} = opts;
+    const {value: optsValue} = opts;
 
-    const [value, setValue] = React.useState(updateTimeZone(optsValue || null, timeZone));
+    const [value, setValue] = React.useState(optsValue || null);
 
-    const updateValue = React.useCallback(
-        (value?: RelativeRangeDatepickerValue | null) => {
-            setValue((prevValue) => {
-                const newValue = updateTimeZone(value === undefined ? prevValue : value, timeZone);
-                if (isValueEqual(newValue, prevValue)) {
-                    return prevValue;
-                }
-                return newValue;
-            });
-        },
-        [timeZone],
-    );
+    const updateValue = React.useCallback((newValue: RelativeRangeDatepickerValue | null) => {
+        setValue((prevValue) => {
+            if (isValueEqual(newValue, prevValue)) {
+                return prevValue;
+            }
+            return newValue;
+        });
+    }, []);
 
     React.useEffect(() => {
-        updateValue(optsValue);
+        updateValue(optsValue || null);
     }, [optsValue, updateValue]);
 
     return [value, updateValue];

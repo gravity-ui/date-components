@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {guessUserTimeZone} from '@gravity-ui/date-utils';
 import {Popup, Sheet, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
@@ -13,10 +12,19 @@ import type {RelativeRangeDatepickerProps} from './types';
 import {getDefaultPresetTabs, getErrors, getFieldProps, isValueEqual} from './utils';
 
 import './RelativeRangeDatePicker.scss';
-export const b = block('relative-range-date-picker');
+
+const b = block('relative-range-date-picker');
 
 export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
-    const {minValue, maxValue, value: propsValue, onUpdate, withApplyButton, disabled} = props;
+    const {
+        minValue,
+        maxValue,
+        value: propsValue,
+        onUpdate,
+        withApplyButton,
+        disabled,
+        timeZone: propsTimeZone,
+    } = props;
 
     const [isMobile] = useMobile();
 
@@ -27,15 +35,16 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
     const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
-    const [opened, setOpened] = React.useState(false);
-    const [timeZone, setTimeZone] = useControlledState(
-        props.timeZone,
-        guessUserTimeZone(),
-        props.onUpdateTimeZone,
-    );
-    const [value, setValue] = useRelativeDatePickerValue(pick(props, 'value', 'timeZone'));
+    const [opened, setOpened] = useControlledState(props.open, false, props.onOpenChange);
+    const [timeZone, setTimeZone] = React.useState(propsTimeZone);
+
+    const [value, setValue] = useRelativeDatePickerValue({value: props.value});
     const {startError, endError} = getErrors({value, minValue, maxValue});
     const isValid = !startError && !endError;
+
+    React.useEffect(() => {
+        setTimeZone(propsTimeZone);
+    }, [propsTimeZone]);
 
     React.useEffect(() => {
         if (isValid && !withApplyButton && !isValueEqual(propsValueRef.current, value)) {
@@ -51,7 +60,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
         return (
             <RelativeRangeDatePickerEditor
                 {...getFieldProps({...props, timeZone})}
-                {...pick(props, 'hasClear', 'withPresets', 'withZonesList')}
+                {...pick(props, 'withPresets', 'withZonesList', 'placeholderValue')}
                 onApply={() => {
                     onUpdate?.(value);
                 }}
@@ -73,37 +82,42 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
 
     return (
         <div ref={containerRef} className={b()}>
-            <RelativeRangeDatePickerLabel
-                {...pick(
-                    props,
-                    'disabled',
-                    'format',
-                    'size',
-                    'hasClear',
-                    'pin',
-                    'view',
-                    'label',
-                    'placeholder',
-                    'errorMessage',
-                    'validationState',
-                )}
-                errorPlacement={props.errorPlacement}
-                errorMessage={startError || endError || props.errorMessage}
-                validationState={props.validationState}
-                value={value}
-                isOpen={opened}
-                onOpenChange={() => {
-                    setOpened((prevIsOpen) => !prevIsOpen);
-                }}
-                inputRef={inputRef}
-                calendarButtonRef={calendarButtonRef}
-                onClear={() => {
-                    setValue({start: null, end: null});
-                }}
-            />
+            {props.customControl || (
+                <RelativeRangeDatePickerLabel
+                    {...pick(
+                        props,
+                        'disabled',
+                        'format',
+                        'size',
+                        'hasClear',
+                        'pin',
+                        'view',
+                        'label',
+                        'placeholder',
+                        'errorMessage',
+                        'validationState',
+                        'alwaysShowAsAbsolute',
+                        'autoFocus',
+                    )}
+                    style={props.style}
+                    errorPlacement={props.errorPlacement}
+                    errorMessage={startError || endError || props.errorMessage}
+                    validationState={props.validationState}
+                    value={value}
+                    isOpen={!!opened}
+                    onOpenChange={() => {
+                        setOpened((prevIsOpen) => !prevIsOpen);
+                    }}
+                    inputRef={inputRef}
+                    calendarButtonRef={calendarButtonRef}
+                    onClear={() => {
+                        setValue({start: null, end: null});
+                    }}
+                />
+            )}
             {isMobile ? (
                 <Sheet
-                    visible={opened}
+                    visible={!!opened}
                     onClose={() => {
                         setOpened((prevIsOpen) => !prevIsOpen);
                     }}

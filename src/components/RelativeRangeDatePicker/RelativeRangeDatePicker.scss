@@ -7,7 +7,7 @@ $block: '.#{variables.$ns}relative-range-date-picker';
 
     display: inline-block;
 
-    width: 300px;
+    min-width: 300px;
 
     outline: none;
 }

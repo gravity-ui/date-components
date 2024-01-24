@@ -10,7 +10,8 @@ export interface RelativeRangeDatepickerProps
     extends TextInputProps,
         DateFieldBase<RelativeRangeDatepickerValue>,
         FocusableProps {
-    onUpdateTimeZone?: (timeZone?: string) => void;
+    autoFocus?: boolean;
+    alwaysShowAsAbsolute?: boolean;
     children?: (props: RangeCalendarProps) => React.ReactNode;
     allowNullableValues?: boolean;
     withTimePresets?: boolean;
@@ -21,7 +22,10 @@ export interface RelativeRangeDatepickerProps
     hasClear?: boolean;
     hasCalendarIcon?: boolean;
     disabled?: boolean;
-    customControl?: () => React.ReactNode;
+    customControl?: React.ReactNode;
     label?: string;
     getRangeTitle?: (value: RelativeRangeDatepickerValue) => string | undefined;
+    style?: React.CSSProperties;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }

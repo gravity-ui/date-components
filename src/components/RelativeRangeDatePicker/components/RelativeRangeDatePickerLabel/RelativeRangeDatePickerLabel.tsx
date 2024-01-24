@@ -5,41 +5,35 @@ import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import type {TextInputSize} from '@gravity-ui/uikit';
 
 import {pick} from '../../../../utils/pick';
-import type {FocusEvents, TextInputProps, Validation} from '../../../types';
+import type {FocusableProps, TextInputProps, Validation} from '../../../types';
 import {getButtonSizeForInput} from '../../../utils/getButtonSizeForInput';
-import type {RelativeRangeDatepickerSingleValue, RelativeRangeDatepickerValue} from '../../types';
+import type {RelativeRangeDatepickerValue} from '../../types';
 
 import {i18n} from './i18n';
+import {getDateLabel} from './utils';
 
-interface Props
-    extends Omit<FocusEvents, 'autoFocus'>,
-        Omit<TextInputProps, 'placeholder'>,
-        Validation {
+interface Props extends FocusableProps, Omit<TextInputProps, 'placeholder'>, Validation {
     isOpen: boolean;
     onOpenChange(): void;
     inputRef: React.RefObject<HTMLInputElement>;
     calendarButtonRef: React.RefObject<HTMLButtonElement>;
     onClear(): void;
 
+    alwaysShowAsAbsolute?: boolean;
     value?: RelativeRangeDatepickerValue | null;
     hasClear?: boolean;
     size?: TextInputSize;
     disabled?: boolean;
     format?: string;
-}
-
-function getDateLabel(value?: RelativeRangeDatepickerSingleValue, format?: string) {
-    if (!value) return '';
-    if (value.type === 'relative') return value.value;
-    return value.value.format(format || 'L');
+    style?: React.CSSProperties;
 }
 
 export function RelativeRangeDatePickerLabel(props: Props) {
-    const {value, format} = props;
+    const {value, format, alwaysShowAsAbsolute} = props;
 
     function getLabel() {
-        const startLabel = getDateLabel(value?.start, format);
-        const endLabel = getDateLabel(value?.end, format);
+        const startLabel = getDateLabel({value: value?.start, format, alwaysShowAsAbsolute});
+        const endLabel = getDateLabel({value: value?.end, format, alwaysShowAsAbsolute});
         if (!startLabel && !endLabel) return '';
         return `${startLabel} — ${endLabel}`;
     }
@@ -67,7 +61,8 @@ export function RelativeRangeDatePickerLabel(props: Props) {
 
     return (
         <TextInput
-            {...pick(props, 'hasClear', 'label', 'pin', 'view', 'size', 'disabled')}
+            {...pick(props, 'hasClear', 'label', 'pin', 'view', 'size', 'disabled', 'autoFocus')}
+            style={props.style}
             validationState={props.errorMessage ? 'invalid' : props.validationState}
             errorPlacement={props.errorPlacement || 'inside'}
             errorMessage={props.errorMessage}

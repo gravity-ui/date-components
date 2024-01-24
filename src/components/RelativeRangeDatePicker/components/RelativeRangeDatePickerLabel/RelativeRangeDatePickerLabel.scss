@@ -1,0 +1,9 @@
+@use '../../variables';
+
+$block: '.#{variables.$ns}relative-range-date-picker-label';
+
+#{$block} {
+    .yc-text-input__control {
+        width: 300px;
+    }
+}

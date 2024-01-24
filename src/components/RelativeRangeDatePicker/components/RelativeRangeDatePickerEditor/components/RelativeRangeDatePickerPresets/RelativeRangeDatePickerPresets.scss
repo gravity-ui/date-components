@@ -33,7 +33,7 @@ $block: '.#{variables.$ns}relative-range-date-picker-presets';
     }
 
     &__list {
-        overflow: scroll;
+        overflow: auto;
 
         height: 128px;
     }

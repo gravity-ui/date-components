@@ -44,6 +44,7 @@ export interface RelativeDatePickerState {
     readOnly?: boolean;
     isActive: boolean;
     setActive: (isActive: boolean) => void;
+    timeZone?: string;
 }
 
 export function useRelativeDatePickerState(

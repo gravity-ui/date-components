@@ -31,7 +31,6 @@ interface Props extends DateFieldBase<RelativeRangeDatepickerValue> {
     onApply?: () => void;
     startError?: string;
     endError?: string;
-    hasClear?: boolean;
 }
 
 export function RelativeRangeDatePickerEditor(props: Props) {
@@ -59,7 +58,8 @@ export function RelativeRangeDatePickerEditor(props: Props) {
     const baseDatePickerProps: Omit<RelativeDatePickerProps, 'defaultValue'> = {
         ...getFieldProps(props),
         className: b('field'),
-        hasClear: props.hasClear,
+        timeZone: props.timeZone,
+        hasClear: true,
         size: mobile ? 'xl' : undefined,
         errorPlacement: 'inside',
     };

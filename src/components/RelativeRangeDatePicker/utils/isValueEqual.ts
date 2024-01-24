@@ -16,7 +16,7 @@ export function isValueEqual(
             return v1.value === v2.value;
         }
         if (v2.type === 'absolute') {
-            return v1.value.isSame(v2.value) && v1.value.timeZone() === v2.value.timeZone();
+            return v1.value.isSame(v2.value);
         }
         return false;
     }

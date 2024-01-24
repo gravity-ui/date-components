@@ -13,7 +13,6 @@ const meta: Meta<typeof RelativeRangeDatePicker> = {
 
 export default meta;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Story = StoryObj<typeof RelativeRangeDatePicker>;
 
 function getDateLabel(value?: RelativeRangeDatepickerSingleValue) {
@@ -35,12 +34,14 @@ export const Default = {
         const {timeZone} = args;
         const props = {
             ...args,
+            style: {width: 350},
+            withPresets: true,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
             label: 'Event date',
             placeholderValue: args.placeholderValue
                 ? dateTimeParse(args.placeholderValue, {timeZone})
-                : undefined,
+                : dateTimeParse(new Date())?.add(-1, 'weeks'),
         };
 
         return (
