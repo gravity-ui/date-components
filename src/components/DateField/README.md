@@ -1,0 +1,376 @@
+<!--GITHUB_BLOCK-->
+
+# DateField
+
+<!--/GITHUB_BLOCK-->
+
+```tsx
+import {DateField} from '@gravity-ui/date-components';
+```
+
+`DateField` component is a versatile and convenient input field specifically designed for date entry in React applications. With an intuitive interface and easy integration, it's perfect for any form that requires date or time input, such as event schedulers, booking systems, or data-driven reports. It can be controlled (if you set `value` property) or uncontrolled (if you set `defaultValue` property). Component is uncontrolled by default.
+
+## Appearance
+
+The appearance of `DateField` is controlled by the `size`, `view` and `pin` properties.
+
+### Size
+
+To control the size of the `DateField` use the `size` property. Default size is `m`.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField size="s" />
+<DateField size="m" />
+<DateField size="l" />
+<DateField size="xl" />
+`}
+>
+    <DateComponents.DateField size="s" />
+    <DateComponents.DateField size="m" />
+    <DateComponents.DateField size="l" />
+    <DateComponents.DateField size="xl" />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField size="s" />
+<DateField size="m" />
+<DateField size="l" />
+<DateField size="xl" />
+```
+
+<!--/GITHUB_BLOCK-->
+
+### View
+
+`normal` - the main view of `DateField` (used by default).
+
+<!--LANDING_BLOCK
+<ExampleBlock code={`<DateField />`}>
+    <DateComponents.DateField />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+`clear` - view of `DateField` without visible borders (can be used with a custom wrapper)
+
+<!--LANDING_BLOCK
+<ExampleBlock code={`<DateField view="clear" />`}>
+    <DateComponents.DateField view="clear" />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField view="normal" />
+<DateField view="clear" />
+```
+
+<!--/GITHUB_BLOCK-->
+
+### Pin
+
+The `pin` property allows you to control the shape of the right and left edges and is usually used for combining multiple controls in a single unit.
+The value of the `pin` property consists of left and edge style names divided by a dash, e.g. `"round-brick"`.
+The edge styles are: `round` (default), `circle`, `brick` and `clear`.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField pin="round-brick" />
+<DateField pin="brick-brick" />
+<DateField pin="brick-round" />
+`}
+>
+    <DateComponents.DateField pin="round-brick" />
+    <DateComponents.DateField pin="brick-brick" />
+    <DateComponents.DateField pin="brick-round" />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField pin="round-brick" />
+<DateField pin="brick-brick" />
+<DateField pin="brick-round" />
+```
+
+<!--/GITHUB_BLOCK-->
+
+## Value
+
+### Min and max value
+
+The minValue property allows you to specify the earliest date and time that can be entered by the user. Conversely, the maxValue property specifies the latest date and time that can be entered.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField minValue={new DateTime('01.01.2024')} placeholder={"minValue: '01.01.2024'"}/>
+<DateField maxValue={new DateTime('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
+`}
+>
+    <DateComponents.DateField minValue={new DateTime('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
+    <DateComponents.DateField maxValue={new DateTime('01.01.2025')} placeholder={"maxValue: '01.01.2025'"} />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+
+<DateField minValue={new DateTime('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
+<DateField maxValue={new DateTime('01.01.2025')} placeholder={"maxValue: '01.01.2025'"} />
+```
+
+<!--/GITHUB_BLOCK-->
+
+## States
+
+### Disabled
+
+The state of the `DateField` where you don't want the user to be able to interact with the component.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField disabled={true} />
+`}
+>
+    <DateComponents.DateField disabled={true} />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField disabled />
+```
+
+<!--/GITHUB_BLOCK-->
+
+### Readonly
+
+`readOnly` is a boolean attribute that, when set to true, makes the 'DateField' component immutable to the user. This means that while the input will display its current value, users will not be able to change it.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField readOnly />
+`}
+>
+    <DateComponents.DateField readOnly />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField readOnly />
+```
+
+<!--/GITHUB_BLOCK-->
+
+### Error
+
+The state of the `DateField` in which you want to indicate incorrect user input. To change `DateField` appearance, use the `validationState` property with the `"invalid"` value. An optional message text can be added via the `errorMessage` property. Message text will be rendered under the component.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField errorMessage="Error message" validationState="invalid" />
+<DateField errorPlacement="inside" errorMessage="Error message" validationState="invalid" />
+`}
+>
+    <DateComponents.DateField errorMessage="Error message" validationState="invalid" />
+    <DateComponents.DateField errorPlacement="inside" errorMessage="Error message" validationState="invalid" />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField errorMessage="Error message" validationState="invalid" />
+<DateField errorPlacement="inside" errorMessage="Error message" validationState="invalid" />
+```
+
+<!--/GITHUB_BLOCK-->
+
+## Additional content
+
+### Placeholder
+
+This prop allows you to provide a short hint that describes the expected value of the input field. This hint is displayed within the input field before the user enters a value, and it disappears upon the entry of text.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField placeholder='Placeholder' />
+`}
+>
+    <DateComponents.DateField placeholder='Placeholder' />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField placeholder="Placeholder" />
+```
+
+<!--/GITHUB_BLOCK-->
+
+### Label
+
+Allows you to place the label in the left part of the field. Label can take up no more than half the width of the entire space of `DateField`.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField label="Label" />
+<DateField label="Very long label with huge amount of symbols" />
+`}
+>
+    <DateComponents.DateField label="Label" />
+    <DateComponents.DateField label="Very long label with huge amount of symbols" />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField label="Label" />
+```
+
+<!--/GITHUB_BLOCK-->
+
+### Clear button
+
+`hasClear` is a boolean prop that, provides users with the ability to quickly clear the content of the input field.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`<DateField hasClear />`}
+>
+    <DateComponents.DateField
+        hasClear
+    />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField hasClear />
+```
+
+<!--/GITHUB_BLOCK-->
+
+### Left content
+
+Allows you to add content to the left part of the field. It is placed before all other components.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`<DateField label="Label" leftContent={<Label size="s">Left content</Label>} />`}
+>
+    <DateComponents.DateField
+        label="Label"
+        leftContent={<UIKit.Label size="s">Left content</UIKit.Label>}
+    />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField label="Label" leftContent={<Label>Left content</Label>} />
+```
+
+<!--/GITHUB_BLOCK-->
+
+### Right content
+
+Allows you to add content to the right part of the field. It is placed after all other components.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`<DateField rightContent={<Label size="s">Right</Label>} hasClear/>`}
+>
+    <DateComponents.DateField
+        hasClear
+        rightContent={<UIKit.Label size="s">Right</UIKit.Label>}
+    />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField hasClear rightContent={<Label>Right</Label>} />
+```
+
+<!--/GITHUB_BLOCK-->
+
+## Format
+
+The `format` prop is a string that defines the date and time format the `DateField` component will accept and display. This prop determines how the date and time are visually presented to the user and how the user's input is expected to be formatted. [Available formats](https://day.js.org/docs/en/display/format)
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<DateField format='LTS' />
+`}
+>
+    <DateComponents.DateField format='LTS' />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<DateField placeholder="Placeholder" />
+```
+
+<!--/GITHUB_BLOCK-->
+
+## Properties
+
+| Name            | Description                                                                                                             |                     Type                      |     Default     |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------: | :-------------: |
+| autoComplete    | The control's `autocomplete` attribute                                                                                  |              `boolean` `string`               |                 |
+| autoFocus       | The control's `autofocus` attribute                                                                                     |                   `boolean`                   |                 |
+| className       | The control's wrapper class name                                                                                        |                   `string`                    |                 |
+| controlProps    | The control's html attributes                                                                                           | `React.InputHTMLAttributes<HTMLInputElement>` |                 |
+| controlRef      | React ref provided to the control                                                                                       |         `React.Ref<HTMLInputElement>`         |                 |
+| defaultValue    | The control's default value, used when the component is not controlled                                                  |                   `string`                    |                 |
+| disabled        | Indicates that the user cannot interact with the control                                                                |                   `boolean`                   |     `false`     |
+| errorMessage    | Error text                                                                                                              |                   `string`                    |                 |
+| errorPlacement  | Error placement                                                                                                         |              `outside` `inside`               |    `outside`    |
+| hasClear        | Shows the icon for clearing control's value                                                                             |                   `boolean`                   |     `false`     |
+| id              | The control's `id` attribute                                                                                            |                   `string`                    |                 |
+| label           | Help text rendered to the left of the input node                                                                        |                   `string`                    |                 |
+| leftContent     | The user`s node rendered before label and input                                                                         |               `React.ReactNode`               |                 |
+| name            | The `name` attribute of the control. If unspecified, it will be autogenerated if not specified                          |                   `string`                    |                 |
+| note            | An optional element displayed under the bottom-right corner of the control that shares a space with the error container |               `React.ReactNode`               |                 |
+| onBlur          | Fires when the control lost focus. Provides focus event as a callback's argument                                        |                  `function`                   |                 |
+| onChange        | Fires when the input’s value is changed by the user. Provides change event as an callback's argument                    |                  `function`                   |                 |
+| onFocus         | Fires when the control gets focus. Provides focus event as a callback's argument                                        |                  `function`                   |                 |
+| onKeyDown       | Fires when a key is pressed. Provides keyboard event as a callback's argument                                           |                  `function`                   |                 |
+| onKeyUp         | Fires when a key is released. Provides keyboard event as a callback's argument                                          |                  `function`                   |                 |
+| onUpdate        | Fires when the input’s value is changed by the user. Provides new value as an callback's argument                       |                  `function`                   |                 |
+| pin             | The control's border view                                                                                               |                   `string`                    | `'round-round'` |
+| placeholder     | Text that appears in the control when it has no value set                                                               |                   `string`                    |                 |
+| qa              | Test ID attribute (`data-qa`)                                                                                           |                   `string`                    |                 |
+| rightContent    | User`s node rendered after the input node and clear button                                                              |               `React.ReactNode`               |                 |
+| size            | The size of the control                                                                                                 |           `"s"` `"m"` `"l"` `"xl"`            |      `"m"`      |
+| tabIndex        | The `tabindex` attribute of the control                                                                                 |                   `string`                    |                 |
+| type            | The type of the control                                                                                                 |                   `string`                    |                 |
+| validationState | Validation state                                                                                                        |                  `"invalid"`                  |                 |
+| value           | The value of the control                                                                                                |                   `string`                    |                 |
+| view            | The view of the control                                                                                                 |             `"normal"` `"clear"`              |   `"normal"`    |
