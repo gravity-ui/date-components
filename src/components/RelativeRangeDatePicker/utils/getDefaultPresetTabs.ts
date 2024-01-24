@@ -1,6 +1,11 @@
 import {i18n} from '../components/RelativeRangeDatePickerEditor/components/RelativeRangeDatePickerPresets/i18n';
-import {defaultDatePresets, defaultTimePresets, mainTabId, othersTabId} from '../consts';
-import {defaultOtherPresets} from '../consts/defaultOtherPresets';
+import {
+    defaultDatePresets,
+    defaultOtherPresets,
+    defaultTimePresets,
+    mainTabId,
+    othersTabId,
+} from '../consts';
 
 export function getDefaultPresetTabs(withTimePresets?: boolean) {
     return [

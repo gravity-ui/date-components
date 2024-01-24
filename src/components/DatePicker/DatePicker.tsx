@@ -76,7 +76,7 @@ export function DatePicker({value, defaultValue, onUpdate, className, ...props}:
                 hasClear={!isMobile && fieldProps.hasClear}
                 rightContent={
                     isMobile ? (
-                        <MobileCalendarIcon size={props.size} />
+                        <MobileCalendarIcon props={props} state={state} />
                     ) : (
                         <Button {...calendarButtonProps}>
                             <Icon data={CalendarIcon} />
