@@ -3,7 +3,7 @@ import React from 'react';
 import type {TextInputProps} from '@gravity-ui/uikit';
 
 import type {DateFieldProps} from '../DateField';
-import {CtrlCmd, cleanString} from '../utils';
+import {cleanString} from '../utils';
 
 import type {DateFieldState} from './useDateFieldState';
 
@@ -157,7 +157,7 @@ export function useDateFieldProps(
                 } else if (e.key === 'Backspace' || e.key === 'Delete') {
                     e.preventDefault();
                     state.clearSection();
-                } else if (e.key === 'a' && e[CtrlCmd]) {
+                } else if (e.key === 'a' && (e['ctrlKey'] || e['metaKey'])) {
                     e.preventDefault();
                     setSelectedSections('all');
                 }
