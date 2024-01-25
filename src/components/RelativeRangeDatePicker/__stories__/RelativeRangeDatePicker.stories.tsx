@@ -36,23 +36,17 @@ export const Default = {
         const props = {
             ...args,
             style: {width: 350},
-            withPresets: true,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
-            label: 'Event date',
             placeholderValue: args.placeholderValue
                 ? dateTimeParse(args.placeholderValue, {timeZone})
-                : dateTimeParse(new Date())?.add(-1, 'weeks'),
+                : undefined,
         };
 
         return (
             // eslint-disable-next-line jsx-a11y/label-has-associated-control
             <label>
-                <RelativeRangeDatePicker
-                    {...props}
-                    timeZone={timeZone}
-                    format={'MM/DD/YYYY HH:mm'}
-                />
+                <RelativeRangeDatePicker {...props} timeZone={timeZone} />
             </label>
         );
     },
