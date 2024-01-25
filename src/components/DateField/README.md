@@ -184,11 +184,11 @@ The state of the `DateField` in which you want to indicate incorrect user input.
 <ExampleBlock
     code={`
 <DateField errorMessage="Error message" validationState="invalid" />
-<DateField errorPlacement="inside" errorMessage="Error message" validationState="invalid" />
+<DateField validationState="invalid" />
 `}
 >
     <DateComponents.DateField errorMessage="Error message" validationState="invalid" />
-    <DateComponents.DateField errorPlacement="inside" errorMessage="Error message" validationState="invalid" />
+    <DateComponents.DateField validationState="invalid" />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -196,7 +196,7 @@ LANDING_BLOCK-->
 
 ```tsx
 <DateField errorMessage="Error message" validationState="invalid" />
-<DateField errorPlacement="inside" errorMessage="Error message" validationState="invalid" />
+<DateField validationState="invalid" />
 ```
 
 <!--/GITHUB_BLOCK-->
