@@ -353,7 +353,7 @@ LANDING_BLOCK-->
 | aria-labelledby   | The control's `aria-labelledby` attribute                                                                     |                   `string`                    |                           |
 | autoFocus         | The control's `autofocus` attribute                                                                           |                   `boolean`                   |                           |
 | className         | The control's wrapper class name                                                                              |                   `string`                    |                           |
-| defaultValue      | Sets the initial value for uncontrolled component. Optional.                                                  |                  `DateTime`                   |                           |
+| defaultValue      | Sets the initial value for uncontrolled component.                                                            |                  `DateTime`                   |                           |
 | disabled          | Indicates that the user cannot interact with the control                                                      |                   `boolean`                   |          `false`          |
 | errorMessage      | Error text                                                                                                    |                   `string`                    |                           |
 | format            | Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format) |                   `string`                    |                           |
