@@ -23,7 +23,7 @@ const PAGE_STEP: Partial<Record<DateFieldSectionType, number>> = {
 };
 
 export type BaseDateFieldStateOptions<T = DateTime> = {
-    value: T | null | undefined;
+    value: T | null;
     displayValue: T;
     placeholderValue?: DateTime;
     timeZone?: string;
@@ -33,7 +33,7 @@ export type BaseDateFieldStateOptions<T = DateTime> = {
     disabled?: boolean;
     selectedSectionIndexes: {startIndex: number; endIndex: number} | null;
     selectedSections: number | 'all';
-    isEmpty: () => boolean;
+    isEmpty: boolean;
     flushAllValidSections: () => void;
     flushValidSection: (sectionIndex: number) => void;
     setSelectedSections: (position: number | 'all') => void;
@@ -135,8 +135,8 @@ export function useBaseDateFieldState<T = DateTime>(
     const enteredKeys = React.useRef('');
 
     return {
-        value: value ?? null,
-        isEmpty: isEmpty(),
+        value,
+        isEmpty,
         displayValue,
         setValue,
         text: formatSections(editableSections),

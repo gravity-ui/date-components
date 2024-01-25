@@ -6,6 +6,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types/datePicker';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
+import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../types';
 import {
     EDITABLE_SEGMENTS,
@@ -22,6 +23,7 @@ export interface DateFieldStateOptions extends DateFieldBase {}
 
 export type DateFieldState = BaseDateFieldState;
 
+// eslint-disable-next-line complexity
 export function useDateFieldState(props: DateFieldStateOptions): DateFieldState {
     const [value, setDate] = useControlledState(
         props.value,
@@ -29,10 +31,20 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         props.onUpdate,
     );
 
+    const defaultTimeZone = useDefaultTimeZone(
+        props.value || props.defaultValue || props.placeholderValue,
+    );
+    const inputTimeZone = defaultTimeZone || props.timeZone || 'default';
+    const timeZone = props.timeZone || inputTimeZone;
+
+    const handleUpdateDate = (v: DateTime | null) => {
+        setDate(v ? v.timeZone(inputTimeZone) : v);
+    };
+
     const [placeholderDate, setPlaceholderDate] = React.useState(() => {
         return createPlaceholderValue({
             placeholderValue: props.placeholderValue,
-            timeZone: props.timeZone,
+            timeZone,
         });
     });
 
@@ -47,7 +59,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     );
 
     const validSegmentsState = React.useState<typeof EDITABLE_SEGMENTS>(() =>
-        props.value || props.defaultValue ? {...allSegments} : {},
+        value ? {...allSegments} : {},
     );
 
     let validSegments = validSegmentsState[0];
@@ -64,15 +76,20 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     ) {
         validSegments = {};
         setValidSegments(validSegments);
-        setPlaceholderDate(createPlaceholderValue({timeZone: props.timeZone}));
+        setPlaceholderDate(
+            createPlaceholderValue({
+                placeholderValue: props.placeholderValue,
+                timeZone,
+            }),
+        );
     }
 
     const displayValue =
         value &&
         isValid(value) &&
         Object.keys(validSegments).length >= Object.keys(allSegments).length
-            ? value
-            : placeholderDate;
+            ? value.timeZone(timeZone)
+            : placeholderDate.timeZone(timeZone);
     const sectionsState = useSectionsState(sections, displayValue, validSegments);
 
     const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
@@ -114,11 +131,11 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
         if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
             if (!value || !newValue.isSame(value)) {
-                setDate(newValue);
+                handleUpdateDate(newValue);
             }
         } else {
             if (value) {
-                setDate(null);
+                handleUpdateDate(null);
             }
             setPlaceholderDate(newValue);
         }
@@ -174,14 +191,14 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     function createPlaceholder() {
         return createPlaceholderValue({
             placeholderValue: props.placeholderValue,
-            timeZone: props.timeZone,
+            timeZone,
         });
     }
 
     function setValueFromString(str: string) {
-        const date = parseDateFromString(str, props.format || 'L', props.timeZone);
+        const date = parseDateFromString(str, props.format || 'L', timeZone);
         if (isValid(date)) {
-            setDate(date);
+            handleUpdateDate(date);
             return true;
         }
         return false;
@@ -196,19 +213,19 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         value,
         displayValue,
         placeholderValue: props.placeholderValue,
-        timeZone: props.timeZone,
+        timeZone,
         validationState,
         editableSections: sectionsState.editableSections,
         readOnly: props.readOnly,
         disabled: props.disabled,
         selectedSectionIndexes,
         selectedSections,
-        isEmpty: () => Object.keys(validSegments).length === 0,
+        isEmpty: Object.keys(validSegments).length === 0,
         flushAllValidSections,
         flushValidSection,
         setSelectedSections,
         setValue,
-        setDate,
+        setDate: handleUpdateDate,
         adjustSection,
         setSection,
         getSectionValue,
@@ -248,7 +265,8 @@ function useSectionsState(
     if (
         sections !== state.sections ||
         validSegments !== state.validSegments ||
-        !value.isSame(state.value)
+        !value.isSame(state.value) ||
+        value.timeZone() !== state.value.timeZone()
     ) {
         setState({
             value,

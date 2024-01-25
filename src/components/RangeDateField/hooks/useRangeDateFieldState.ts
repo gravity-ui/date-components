@@ -16,6 +16,7 @@ import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types/datePicker';
 import type {RangeValue} from '../../types/inputs';
 import {isInvalid} from '../../utils/dates';
+import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {createPlaceholderRangeValue, getRangeEditableSections, isValidRange} from '../utils';
 
 export interface RangeDateFieldStateOptions extends DateFieldBase<RangeValue<DateTime>> {
@@ -27,12 +28,28 @@ const RANGE_FORMAT_DELIMITER = ' — ';
 export type RangeDateFieldState = BaseDateFieldState<RangeValue<DateTime>>;
 
 export function useRangeDateFieldState(props: RangeDateFieldStateOptions): RangeDateFieldState {
-    const [value, setDate] = useControlledState(props.value, props.defaultValue, props.onUpdate);
+    const [value, setRange] = useControlledState(
+        props.value,
+        props.defaultValue || null,
+        props.onUpdate,
+    );
+
+    const defaultTimeZone = useDefaultTimeZone(
+        props.value?.start || props.defaultValue?.start || props.placeholderValue,
+    );
+    const inputTimeZone = defaultTimeZone || props.timeZone || 'default';
+    const timeZone = props.timeZone || inputTimeZone;
+
+    const handleUpdateRange = (v: RangeValue<DateTime> | null) => {
+        setRange(
+            v ? {start: v.start.timeZone(inputTimeZone), end: v.end.timeZone(inputTimeZone)} : v,
+        );
+    };
 
     const [placeholderDate, setPlaceholderDate] = React.useState<RangeValue<DateTime>>(() => {
         return createPlaceholderRangeValue({
             placeholderValue: props.placeholderValue,
-            timeZone: props.timeZone,
+            timeZone,
         });
     });
 
@@ -68,7 +85,9 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     ) {
         validSegments = {start: {}, end: {}};
         setValidSegments(validSegments);
-        setPlaceholderDate(createPlaceholderRangeValue({timeZone: props.timeZone}));
+        setPlaceholderDate(
+            createPlaceholderRangeValue({placeholderValue: props.placeholderValue, timeZone}),
+        );
     }
 
     const displayValue =
@@ -77,8 +96,11 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         isValid(value.end) &&
         Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
         Object.keys(validSegments.end).length >= Object.keys(allSegments).length
-            ? value
-            : placeholderDate;
+            ? {start: value.start.timeZone(timeZone), end: value.end.timeZone(timeZone)}
+            : {
+                  start: placeholderDate.start.timeZone(timeZone),
+                  end: placeholderDate.end.timeZone(timeZone),
+              };
     const sectionsState = useSectionsState(sections, displayValue, validSegments, delimiter);
 
     const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
@@ -123,11 +145,11 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
             Object.keys(validSegments.end).length >= Object.keys(allSegments).length
         ) {
             if (!value || !(newValue.start.isSame(value.start) && newValue.end.isSame(value.end))) {
-                setDate(newValue);
+                handleUpdateRange(newValue);
             }
         } else {
             if (value) {
-                setDate(null);
+                handleUpdateRange(null);
             }
             setPlaceholderDate(newValue);
         }
@@ -199,17 +221,17 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     function createPlaceholder() {
         return createPlaceholderRangeValue({
             placeholderValue: props.placeholderValue,
-            timeZone: props.timeZone,
+            timeZone,
         });
     }
 
     function setValueFromString(str: string) {
         const list = str.split(delimiter);
-        const start = parseDateFromString(list?.[0]?.trim(), format, props.timeZone);
-        const end = parseDateFromString(list?.[1]?.trim(), format, props.timeZone);
+        const start = parseDateFromString(list?.[0]?.trim(), format, timeZone);
+        const end = parseDateFromString(list?.[1]?.trim(), format, timeZone);
         const range = {start, end};
         if (isValid(range.start) && isValid(range.end)) {
-            setDate(range);
+            handleUpdateRange(range);
             return true;
         }
         return false;
@@ -227,21 +249,21 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         value,
         displayValue,
         placeholderValue: props.placeholderValue,
-        timeZone: props.timeZone,
+        timeZone,
         validationState,
         editableSections: sectionsState.editableSections,
         readOnly: props.readOnly,
         disabled: props.disabled,
         selectedSectionIndexes,
         selectedSections,
-        isEmpty: () =>
+        isEmpty:
             Object.keys(validSegments.start).length === 0 &&
             Object.keys(validSegments.end).length === 0,
         flushAllValidSections,
         flushValidSection,
         setSelectedSections,
         setValue,
-        setDate,
+        setDate: handleUpdateRange,
         adjustSection,
         setSection,
         getSectionValue,

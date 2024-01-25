@@ -2,7 +2,6 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {useDateFieldState} from '../../DateField';
 import type {DateFieldState} from '../../DateField';
 import {useDatePickerState} from '../../DatePicker';
 import type {DatePickerState} from '../../DatePicker';
@@ -91,17 +90,11 @@ export function useRelativeDatePickerState(
         timeZone: props.timeZone,
         disabled: props.disabled,
         readOnly: props.readOnly,
+        minValue: props.minValue,
+        maxValue: props.maxValue,
     });
 
-    const dateFieldState = useDateFieldState({
-        value: valueDate,
-        onUpdate: datePickerState.setValue,
-        format: props.format,
-        placeholderValue: props.placeholderValue,
-        timeZone: props.timeZone,
-        disabled: props.disabled,
-        readOnly: props.readOnly,
-    });
+    const dateFieldState = datePickerState.dateFieldState;
 
     const [valueRelative, setValueRelative] = React.useState(
         value?.type === 'relative' ? value.value : null,

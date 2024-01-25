@@ -37,12 +37,12 @@ export function useRelativeDatePickerProps(
         setFocusedDate(relativeDateState.lastCorrectDate);
     }
 
-    const [prevDateValue, setPrevDateValue] = React.useState(datePickerState.dateValue);
-    if (datePickerState.dateValue !== prevDateValue) {
-        setPrevDateValue(datePickerState.dateValue);
-        if (datePickerState.dateValue) {
-            setFocusedDate(datePickerState.dateValue);
-        }
+    const [prevDateValue, setPrevDateValue] = React.useState(
+        datePickerState.dateFieldState.displayValue,
+    );
+    if (!datePickerState.dateFieldState.displayValue.isSame(prevDateValue, 'day')) {
+        setPrevDateValue(datePickerState.dateFieldState.displayValue);
+        setFocusedDate(datePickerState.dateFieldState.displayValue);
     }
     const {focusWithinProps} = useFocusWithin({
         onFocusWithin: onFocus,
@@ -199,6 +199,8 @@ export function useRelativeDatePickerProps(
             },
             focusedValue: focusedDate,
             onFocusUpdate: setFocusedDate,
+            minValue: props.minValue,
+            maxValue: props.maxValue,
         },
         timeInputProps: {
             value: datePickerState.timeValue,

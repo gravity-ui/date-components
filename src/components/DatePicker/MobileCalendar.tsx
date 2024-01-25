@@ -49,11 +49,11 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
                         ? dateTime({
                               input: newValue,
                               format: getDateFormat(type),
-                              timeZone: props.timeZone,
+                              timeZone: state.timeZone,
                           })
                         : createPlaceholderValue({
                               placeholderValue: props.placeholderValue,
-                              timeZone: props.timeZone,
+                              timeZone: state.timeZone,
                           });
                     if (state.hasTime) {
                         newDate = mergeDateTime(newDate, localDate);

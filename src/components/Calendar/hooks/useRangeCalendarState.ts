@@ -42,7 +42,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
             return;
         }
 
-        date = constrainValue(date, props.minValue, props.maxValue);
+        date = constrainValue(date, calendar.minValue, calendar.maxValue);
         if (calendar.isCellUnavailable(date)) {
             return;
         }

@@ -13,6 +13,9 @@ export interface DateFieldBase<T = DateTime> extends ValueBase<T | null>, InputB
     format?: string;
     /** A placeholder date that controls the default values of each segment when the user first interacts with them. Defaults to today's date at midnight. */
     placeholderValue?: DateTime;
-    /** */
+    /**
+     * Which timezone use to show values. Example: 'default', 'system', 'Europe/Amsterdam'.
+     * @default The timezone of the `value` or `defaultValue` or `placeholderValue`, 'default' otherwise.
+     */
     timeZone?: string;
 }

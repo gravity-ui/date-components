@@ -8,27 +8,28 @@ import {splitFormatIntoSections} from '../../DateField/utils';
 import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types';
 import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
+import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
 
 export interface DatePickerState {
     /** The currently selected date. */
     value: DateTime | null;
     /** Sets the selected date. */
-    setValue(value: DateTime | null): void;
+    setValue: (value: DateTime | null) => void;
     /**
      * The date portion of the value. This may be set prior to `value` if the user has
      * selected a date but has not yet selected a time.
      */
     dateValue: DateTime | null;
     /** Sets the date portion of the value. */
-    setDateValue(value: DateTime): void;
+    setDateValue: (value: DateTime) => void;
     /**
      * The time portion of the value. This may be set prior to `value` if the user has
      * selected a time but has not yet selected a date.
      */
     timeValue: DateTime | null;
     /** Sets the time portion of the value. */
-    setTimeValue(value: DateTime | null): void;
+    setTimeValue: (value: DateTime | null) => void;
     /** Whether the field is read only. */
     readOnly?: boolean;
     /** Whether the field is disabled. */
@@ -41,10 +42,11 @@ export interface DatePickerState {
     hasTime: boolean;
     /** Format of the time when rendered in the input. */
     timeFormat?: string;
+    timeZone: string;
     /** Whether the calendar popover is currently open. */
     isOpen: boolean;
     /** Sets whether the calendar popover is open. */
-    setOpen(isOpen: boolean): void;
+    setOpen: (isOpen: boolean) => void;
     dateFieldState: DateFieldState;
 }
 
@@ -54,13 +56,19 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     const {disabled, readOnly} = props;
     const [isOpen, setOpen] = React.useState(false);
 
-    const [value, setValue] = useControlledState(
+    const [inputValue, setValue] = useControlledState(
         props.value,
         props.defaultValue ?? null,
         props.onUpdate,
     );
     const [selectedDateInner, setSelectedDate] = React.useState<DateTime | null>(null);
     const [selectedTimeInner, setSelectedTime] = React.useState<DateTime | null>(null);
+
+    const defaultTimeZone = useDefaultTimeZone(
+        props.value || props.defaultValue || props.placeholderValue,
+    );
+    const inputTimeZone = defaultTimeZone || props.timeZone || 'default';
+    const timeZone = props.timeZone || inputTimeZone;
 
     let selectedDate = selectedDateInner;
     let selectedTime = selectedTimeInner;
@@ -85,6 +93,11 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         };
     }, [format]);
 
+    const value = React.useMemo(
+        () => (inputValue ? inputValue.timeZone(timeZone) : null),
+        [inputValue, timeZone],
+    );
+
     if (value) {
         selectedDate = value;
         if (hasTime) {
@@ -97,7 +110,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
             return;
         }
 
-        setValue(mergeDateTime(date, time));
+        setValue(mergeDateTime(date, time).timeZone(inputTimeZone));
         setSelectedDate(null);
         setSelectedTime(null);
     };
@@ -113,7 +126,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
             if (selectedTime || shouldClose) {
                 commitValue(
                     newValue,
-                    selectedTime || getPlaceholderTime(props.placeholderValue, props.timeZone),
+                    selectedTime || getPlaceholderTime(props.placeholderValue, timeZone),
                 );
             } else {
                 setSelectedDate(newValue);
@@ -127,12 +140,12 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         }
     };
 
-    const selectTime = (newValue: DateTime) => {
+    const selectTime = (newValue: DateTime | null) => {
         if (disabled || readOnly) {
             return;
         }
 
-        if (selectedDate) {
+        if (selectedDate && newValue) {
             commitValue(selectedDate, newValue);
         } else {
             setSelectedTime(newValue);
@@ -141,7 +154,13 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
 
     const dateFieldState = useDateFieldState({
         value,
-        onUpdate: setValue,
+        onUpdate(date: DateTime | null) {
+            if (date) {
+                commitValue(date, date);
+            } else {
+                setValue(null);
+            }
+        },
         disabled,
         readOnly,
         validationState: props.validationState,
@@ -150,8 +169,12 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         isDateUnavailable: props.isDateUnavailable,
         format,
         placeholderValue: props.placeholderValue,
-        timeZone: props.timeZone,
+        timeZone,
     });
+
+    if (hasTime && !selectedTime) {
+        selectedTime = dateFieldState.displayValue;
+    }
 
     return {
         value,
@@ -166,12 +189,13 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         hasDate,
         hasTime,
         timeFormat,
+        timeZone,
         isOpen,
         setOpen(newIsOpen) {
             if (!newIsOpen && !value && selectedDate && hasTime) {
                 commitValue(
                     selectedDate,
-                    selectedTime || getPlaceholderTime(props.placeholderValue, props.timeZone),
+                    selectedTime || getPlaceholderTime(props.placeholderValue, timeZone),
                 );
             }
 
@@ -181,6 +205,6 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     };
 }
 
-function getPlaceholderTime(placeholderValue: DateTime | undefined, timeZone?: string) {
-    return createPlaceholderValue({placeholderValue, timeZone});
+function getPlaceholderTime(placeholderValue: DateTime | undefined, timeZone: string) {
+    return createPlaceholderValue({placeholderValue, timeZone}).timeZone(timeZone);
 }

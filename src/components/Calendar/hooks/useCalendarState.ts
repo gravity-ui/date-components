@@ -1,10 +1,12 @@
 import React from 'react';
 
+import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {useControlledState} from '../../hooks/useControlledState';
 import type {ValueBase} from '../../types';
 import {createPlaceholderValue} from '../../utils/dates';
+import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {calendarLayouts, constrainValue} from '../utils';
 
 import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './types';
@@ -21,7 +23,7 @@ const defaultModes: Record<CalendarLayout, boolean> = {
     years: true,
 };
 export function useCalendarState(props: CalendarStateOptions): CalendarState {
-    const {disabled, readOnly, minValue, maxValue, timeZone, modes = defaultModes} = props;
+    const {disabled, readOnly, modes = defaultModes} = props;
     const [value, setValue] = useControlledState(
         props.value,
         props.defaultValue ?? null,
@@ -38,6 +40,22 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
     const currentMode = mode && availableModes.includes(mode) ? mode : minMode;
 
+    const defaultTimeZone = useDefaultTimeZone(
+        props.value || props.defaultValue || props.focusedValue || props.defaultFocusedValue,
+    );
+    const inputTimeZone = defaultTimeZone || props.timeZone || 'default';
+    const timeZone = props.timeZone || inputTimeZone;
+
+    const minValue = React.useMemo(
+        () => (props.minValue ? props.minValue.timeZone(timeZone) : undefined),
+        [timeZone, props.minValue],
+    );
+
+    const maxValue = React.useMemo(
+        () => (props.maxValue ? props.maxValue.timeZone(timeZone) : undefined),
+        [timeZone, props.maxValue],
+    );
+
     const focusedValue = React.useMemo(() => {
         if (!props.focusedValue) {
             return props.focusedValue;
@@ -48,9 +66,9 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     const defaultFocusedValue = React.useMemo(() => {
         const defaultValue =
             (props.defaultFocusedValue ? props.defaultFocusedValue : value) ||
-            createPlaceholderValue({timeZone}).startOf(minMode);
+            createPlaceholderValue({timeZone: inputTimeZone}).startOf(minMode);
         return constrainValue(defaultValue, minValue, maxValue);
-    }, [maxValue, minValue, props.defaultFocusedValue, timeZone, value, minMode]);
+    }, [maxValue, minValue, props.defaultFocusedValue, inputTimeZone, value, minMode]);
     const [focusedDateInner, setFocusedDate] = useControlledState(
         focusedValue,
         defaultFocusedValue,
@@ -59,15 +77,17 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
     const focusedDate =
         focusedDateInner ??
-        constrainValue(createPlaceholderValue({timeZone}).startOf(minMode), minValue, maxValue);
+        constrainValue(createPlaceholderValue({timeZone: inputTimeZone}), minValue, maxValue);
 
     if (isInvalid(focusedDate, minValue, maxValue)) {
         // If the focused date was moved to an invalid value, it can't be focused, so constrain it.
-        setFocusedDate(constrainValue(focusedDate, minValue, maxValue));
+        setFocusedDate(constrainValue(focusedDate, minValue, maxValue).timeZone(inputTimeZone));
     }
 
     function focusCell(date: DateTime) {
-        setFocusedDate(constrainValue(date.startOf(currentMode), minValue, maxValue));
+        setFocusedDate(
+            constrainValue(date.startOf(currentMode).timeZone(inputTimeZone), minValue, maxValue),
+        );
     }
 
     const [isFocused, setFocused] = React.useState(props.autoFocus || false);
@@ -79,16 +99,20 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         disabled,
         readOnly,
         value,
-        setValue,
+        setValue(date: DateTime) {
+            if (!disabled && !readOnly) {
+                const newValue = constrainValue(date, minValue, maxValue);
+                if (this.isCellUnavailable(newValue)) {
+                    return;
+                }
+                setValue(newValue.timeZone(inputTimeZone));
+            }
+        },
         timeZone,
         selectDate(date: DateTime, force = false) {
             if (!disabled) {
                 if (!readOnly && (force || this.mode === minMode)) {
-                    const newValue = constrainValue(date, minValue, maxValue);
-                    if (this.isCellUnavailable(newValue)) {
-                        return;
-                    }
-                    setValue(newValue);
+                    this.setValue(date.startOf(minMode));
                     if (force && currentMode !== minMode) {
                         setMode(minMode);
                     }
@@ -183,10 +207,10 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             return this.isInvalid(next);
         },
         isSelected(date: DateTime) {
-            return (
-                Boolean(value) &&
-                date.isSame(value ?? undefined, currentMode) &&
-                !this.isCellDisabled(date)
+            return Boolean(
+                value &&
+                    date.isSame(value.timeZone(timeZone), currentMode) &&
+                    !this.isCellDisabled(date),
             );
         },
         isCellUnavailable(date: DateTime) {
@@ -204,6 +228,9 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         },
         isWeekend(date: DateTime) {
             return this.mode === 'days' && [0, 6].includes(date.day());
+        },
+        isCurrent(date: DateTime) {
+            return dateTime({timeZone}).isSame(date, this.mode);
         },
         mode: currentMode,
         setMode,

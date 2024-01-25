@@ -131,12 +131,12 @@ export function useDatePickerProps(
                     focusInput();
                 }
             },
-            defaultFocusedValue: state.dateValue ?? undefined,
+            defaultFocusedValue: state.dateValue ?? state.dateFieldState.displayValue,
             value: state.dateValue,
             minValue: props.minValue,
             maxValue: props.maxValue,
             isDateUnavailable: props.isDateUnavailable,
-            timeZone: props.timeZone,
+            timeZone: state.timeZone,
         },
         timeInputProps: {
             value: state.timeValue,
@@ -144,7 +144,7 @@ export function useDatePickerProps(
             format: state.timeFormat,
             readOnly: state.readOnly,
             disabled: state.disabled,
-            timeZone: props.timeZone,
+            timeZone: state.timeZone,
             hasClear: props.hasClear,
             size: props.size,
         },
