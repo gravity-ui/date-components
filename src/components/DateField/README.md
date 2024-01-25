@@ -8,7 +8,7 @@
 import {DateField} from '@gravity-ui/date-components';
 ```
 
-`DateField` component is a versatile and convenient input field specifically designed for date entry in React applications. With an intuitive interface and easy integration, it's perfect for any form that requires date or time input, such as event schedulers, booking systems, or data-driven reports. It can be controlled (if you set `value` property) or uncontrolled (if you set `defaultValue` property). Component is uncontrolled by default.
+`DateField` component is a versatile and convenient input field specifically designed for date entry in React applications. With an intuitive interface and easy integration, it's perfect for any form that requires date or time input, such as event schedulers, booking systems, or data-driven reports. It can be controlled if you set `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with optional property `defaultValue`. Component is uncontrolled by default.
 
 ## Appearance
 
@@ -106,7 +106,7 @@ LANDING_BLOCK-->
 
 ### Min and max value
 
-The `minValue` property allows you to specify the earliest date and time that can be entered by the user. Conversely, the `maxValue` property specifies the latest date and time that can be entered.
+The `minValue` property allows you to specify the earliest date and time that can be entered by the user. Conversely, the `maxValue` property specifies the latest date and time that can be entered. If you input the value out of this bounds component changes it's view like in case of invalid validation state.
 
 <!--LANDING_BLOCK
 <ExampleBlock
@@ -116,7 +116,9 @@ The `minValue` property allows you to specify the earliest date and time that ca
 `}
 >
     <DateComponents.DateField minValue={new Date('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
+    <DateComponents.DateField minValue={new Date('01.01.2024')} value={new Date('01.01.2023')} />
     <DateComponents.DateField maxValue={new Date('01.01.2025')} placeholder={"maxValue: '01.01.2025'"} />
+    <DateComponents.DateField maxValue={new Date('01.01.2025')} value={new Date('01.01.2026')} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -124,8 +126,8 @@ LANDING_BLOCK-->
 
 ```tsx
 
-<DateField minValue={new DateTime('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
-<DateField maxValue={new DateTime('01.01.2025')} placeholder={"maxValue: '01.01.2025'"} />
+<DateField minValue={new DateTime('01.01.2024')}  />
+<DateField maxValue={new DateTime('01.01.2025')} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -334,8 +336,12 @@ LANDING_BLOCK-->
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<DateField placeholder="Placeholder" />
+<DateField format="LTS" />
 ```
+
+## Time zone
+
+`timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://day.js.org/docs/en/timezone/timezone)
 
 <!--/GITHUB_BLOCK-->
 
@@ -349,7 +355,7 @@ LANDING_BLOCK-->
 | aria-labelledby   | The control's `aria-labelledby` attribute                                                                     |                   `string`                    |                           |
 | autoFocus         | The control's `autofocus` attribute                                                                           |                   `boolean`                   |                           |
 | className         | The control's wrapper class name                                                                              |                   `string`                    |                           |
-| defaultValue      | The control's default value, used when the component is not controlled                                        |                  `DateTime`                   |                           |
+| defaultValue      | Sets the initial value for uncontrolled component. Optional.                                                  |                  `DateTime`                   |                           |
 | disabled          | Indicates that the user cannot interact with the control                                                      |                   `boolean`                   |          `false`          |
 | errorMessage      | Error text                                                                                                    |                   `string`                    |                           |
 | format            | Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format) |                   `string`                    |                           |
