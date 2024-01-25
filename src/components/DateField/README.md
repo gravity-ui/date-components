@@ -115,8 +115,8 @@ The `minValue` property allows you to specify the earliest date and time that ca
 <DateField maxValue={new DateTime('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
 `}
 >
-    <DateComponents.DateField minValue={new DateTime('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
-    <DateComponents.DateField maxValue={new DateTime('01.01.2025')} placeholder={"maxValue: '01.01.2025'"} />
+    <DateComponents.DateField minValue={new Date('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
+    <DateComponents.DateField maxValue={new Date('01.01.2025')} placeholder={"maxValue: '01.01.2025'"} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
