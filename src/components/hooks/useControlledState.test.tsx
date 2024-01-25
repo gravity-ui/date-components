@@ -44,7 +44,7 @@ describe('useControlledState tests', function () {
             useControlledState<number | null>(undefined, null, onChangeSpy),
         );
         let [value, setValue] = result.current;
-        expect(value).not.toBeDefined();
+        expect(value).toBeNull();
         expect(onChangeSpy).not.toHaveBeenCalled();
         act(() => setValue(NaN));
         [value, setValue] = result.current;
