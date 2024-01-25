@@ -43,7 +43,7 @@ export type BaseDateFieldStateOptions<T = DateTime> = {
     setSection: (sectionIndex: number, amount: number) => void;
     getSectionValue: (sectionIndex: number) => DateTime;
     setSectionValue: (sectionIndex: number, currentValue: DateTime) => void;
-    createPlaceHolder: () => T;
+    createPlaceholder: () => T;
     setValueFromString: (str: string) => boolean;
 };
 
@@ -128,7 +128,7 @@ export function useBaseDateFieldState<T = DateTime>(
         setSection,
         getSectionValue,
         setSectionValue,
-        createPlaceHolder,
+        createPlaceholder,
         setValueFromString,
     } = props;
 
@@ -310,7 +310,7 @@ export function useBaseDateFieldState<T = DateTime>(
                 setDate(null);
             }
 
-            const date = createPlaceHolder();
+            const date = createPlaceholder();
 
             setValue(date);
         },

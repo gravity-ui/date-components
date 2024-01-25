@@ -167,7 +167,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         setValue(currentValue);
     }
 
-    function createPlaceHolder() {
+    function createPlaceholder() {
         return createPlaceholderValue({
             placeholderValue: props.placeholderValue,
             timeZone: props.timeZone,
@@ -209,7 +209,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         setSection,
         getSectionValue,
         setSectionValue,
-        createPlaceHolder,
+        createPlaceholder,
         setValueFromString,
     });
 }

@@ -85,7 +85,7 @@ test('call onUpdate only if the entire value is valid', () => {
 
     expect(onUpdateSpy).toHaveBeenLastCalledWith({
         start: dateTime({input: '2024-01-31T00:00:00', timeZone}),
-        end: dateTime({input: '2024-02-29T00:00:00', timeZone}),
+        end: dateTime({input: '2024-02-29T01:00:00', timeZone}),
     });
 });
 

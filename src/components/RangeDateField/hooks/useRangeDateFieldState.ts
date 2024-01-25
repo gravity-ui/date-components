@@ -1,7 +1,6 @@
 /* eslint-disable complexity */
 import React from 'react';
 
-import {isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {type BaseDateFieldState, useBaseDateFieldState} from '../../DateField';
@@ -16,8 +15,8 @@ import {
 import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types/datePicker';
 import type {RangeValue} from '../../types/inputs';
-import {createPlaceholderValue, isInvalid} from '../../utils/dates';
-import {getRangeEditableSections} from '../utils';
+import {isInvalid} from '../../utils/dates';
+import {createPlaceholderRangeValue, getRangeEditableSections, isValidRange} from '../utils';
 
 export interface RangeDateFieldStateOptions extends DateFieldBase<RangeValue<DateTime>> {
     delimiter?: string;
@@ -31,12 +30,10 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     const [value, setDate] = useControlledState(props.value, props.defaultValue, props.onUpdate);
 
     const [placeholderDate, setPlaceholderDate] = React.useState<RangeValue<DateTime>>(() => {
-        const date = createPlaceholderValue({
+        return createPlaceholderRangeValue({
             placeholderValue: props.placeholderValue,
             timeZone: props.timeZone,
         });
-
-        return {start: date, end: date};
     });
 
     const format = props.format || 'L';
@@ -70,18 +67,17 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         Object.keys(validSegments.start).length > 0 &&
         Object.keys(validSegments.start).length === Object.keys(allSegments).length &&
         Object.keys(validSegments.end).length > 0 &&
-        Object.keys(validSegments.end).length === Object.keys(allSegments).length
+        Object.keys(validSegments.end).length === Object.keys(allSegments).length &&
+        isValidRange(placeholderDate)
     ) {
         validSegments = {start: {}, end: {}};
         setValidSegments(validSegments);
-        const date = createPlaceholderValue({timeZone: props.timeZone});
-        setPlaceholderDate({start: date, end: date});
+        setPlaceholderDate(createPlaceholderRangeValue({timeZone: props.timeZone}));
     }
 
     const displayValue =
         value &&
-        isValid(value.start) &&
-        isValid(value.end) &&
+        isValidRange(value) &&
         Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
         Object.keys(validSegments.end).length >= Object.keys(allSegments).length
             ? value
@@ -127,7 +123,8 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
         if (
             Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
-            Object.keys(validSegments.end).length >= Object.keys(allSegments).length
+            Object.keys(validSegments.end).length >= Object.keys(allSegments).length &&
+            isValidRange(newValue)
         ) {
             if (!value || !(newValue.start.isSame(value.start) && newValue.end.isSame(value.end))) {
                 setDate(newValue);
@@ -203,21 +200,20 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         setValue({...displayValue, [portion]: currentValue});
     }
 
-    function createPlaceHolder() {
-        const date = createPlaceholderValue({
+    function createPlaceholder() {
+        return createPlaceholderRangeValue({
             placeholderValue: props.placeholderValue,
             timeZone: props.timeZone,
         });
-
-        return {start: date, end: date};
     }
 
     function setValueFromString(str: string) {
         const list = str.split(delimiter);
         const start = parseDateFromString(list?.[0]?.trim(), format, props.timeZone);
         const end = parseDateFromString(list?.[1]?.trim(), format, props.timeZone);
-        if (isValid(start) && isValid(end)) {
-            setDate({start, end});
+        const range = {start, end};
+        if (isValidRange(range)) {
+            setDate(range);
             return true;
         }
         return false;
@@ -227,6 +223,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         props.validationState ||
         (isInvalid(value?.start, props.minValue, props.maxValue) ? 'invalid' : undefined) ||
         (isInvalid(value?.end, props.minValue, props.maxValue) ? 'invalid' : undefined) ||
+        (value && !isValidRange(value) ? 'invalid' : undefined) ||
         (value && props.isDateUnavailable?.(value.start) ? 'invalid' : undefined) ||
         (value && props.isDateUnavailable?.(value.end) ? 'invalid' : undefined);
 
@@ -253,7 +250,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         setSection,
         getSectionValue,
         setSectionValue,
-        createPlaceHolder,
+        createPlaceholder,
         setValueFromString,
     });
 }
