@@ -49,7 +49,11 @@ export interface RelativeDatePickerState {
 export function useRelativeDatePickerState(
     props: RelativeDatePickerStateOptions,
 ): RelativeDatePickerState {
-    const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
+    const [value, setValue] = useControlledState(
+        props.value,
+        props.defaultValue ?? null,
+        props.onUpdate,
+    );
 
     const [mode, setMode] = React.useState<Value['type']>(
         value?.type === 'relative' ? 'relative' : 'absolute',
@@ -136,7 +140,7 @@ export function useRelativeDatePickerState(
     const [isActive, setActive] = React.useState(false);
 
     return {
-        value: value ?? null,
+        value,
         setValue(v) {
             if (props.readOnly || props.disabled) {
                 return;

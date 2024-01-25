@@ -10,13 +10,13 @@ import type {CalendarLayout, CalendarStateOptionsBase, RangeCalendarState} from 
 import {useCalendarState} from './useCalendarState';
 
 export interface RangeCalendarStateOptions
-    extends ValueBase<RangeValue<DateTime>>,
+    extends ValueBase<RangeValue<DateTime> | null, RangeValue<DateTime>>,
         CalendarStateOptionsBase {}
 
 export type {RangeCalendarState} from './types';
 
 export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCalendarState {
-    const {value: valueProp, defaultValue, onUpdate, ...calendarProps} = props;
+    const {value: valueProp, defaultValue = null, onUpdate, ...calendarProps} = props;
     const [value, setValue] = useControlledState(valueProp, defaultValue, onUpdate);
 
     const [anchorDate, setAnchorDateState] = React.useState<DateTime>();

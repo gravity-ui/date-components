@@ -23,7 +23,11 @@ export interface DateFieldStateOptions extends DateFieldBase {}
 export type DateFieldState = BaseDateFieldState;
 
 export function useDateFieldState(props: DateFieldStateOptions): DateFieldState {
-    const [value, setDate] = useControlledState(props.value, props.defaultValue, props.onUpdate);
+    const [value, setDate] = useControlledState(
+        props.value,
+        props.defaultValue ?? null,
+        props.onUpdate,
+    );
 
     const [placeholderDate, setPlaceholderDate] = React.useState(() => {
         return createPlaceholderValue({

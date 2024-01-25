@@ -54,7 +54,11 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     const {disabled, readOnly} = props;
     const [isOpen, setOpen] = React.useState(false);
 
-    const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
+    const [value, setValue] = useControlledState(
+        props.value,
+        props.defaultValue ?? null,
+        props.onUpdate,
+    );
     const [selectedDateInner, setSelectedDate] = React.useState<DateTime | null>(null);
     const [selectedTimeInner, setSelectedTime] = React.useState<DateTime | null>(null);
 
@@ -136,7 +140,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     };
 
     const dateFieldState = useDateFieldState({
-        value: value ?? null,
+        value,
         onUpdate: setValue,
         disabled,
         readOnly,
@@ -150,7 +154,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     });
 
     return {
-        value: value ?? null,
+        value,
         setValue,
         dateValue: selectedDate,
         timeValue: selectedTime,

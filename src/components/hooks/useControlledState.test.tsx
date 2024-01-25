@@ -40,7 +40,9 @@ describe('useControlledState tests', function () {
 
     it('using NaN will only trigger onChange once', () => {
         const onChangeSpy = jest.fn();
-        const {result} = renderHook(() => useControlledState(undefined, undefined, onChangeSpy));
+        const {result} = renderHook(() =>
+            useControlledState<number | null>(undefined, null, onChangeSpy),
+        );
         let [value, setValue] = result.current;
         expect(value).not.toBeDefined();
         expect(onChangeSpy).not.toHaveBeenCalled();
@@ -77,10 +79,10 @@ describe('useControlledState tests', function () {
         render(<TestComponentWrapper defaultValue={5} />);
         const button = screen.getByRole('button');
         screen.getByTestId('5');
-        expect(renderSpy).toBeCalledTimes(1);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
         await userEvent.click(button);
         screen.getByTestId('6');
-        expect(renderSpy).toBeCalledTimes(2);
+        expect(renderSpy).toHaveBeenCalledTimes(2);
     });
 
     it('can handle controlled setValue behavior', () => {

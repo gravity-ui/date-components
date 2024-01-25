@@ -111,14 +111,14 @@ interface CalendarStateBase {
 
 export interface CalendarState extends CalendarStateBase {
     /** The currently selected date. */
-    readonly value?: DateTime | null;
+    readonly value: DateTime | null;
     /** Sets the currently selected date. */
     setValue(value: DateTime): void;
 }
 
 export interface RangeCalendarState extends CalendarStateBase {
     /** The currently selected range. */
-    readonly value?: RangeValue<DateTime> | null;
+    readonly value: RangeValue<DateTime> | null;
     /** Sets the currently selected range. */
     setValue(value: RangeValue<DateTime>): void;
     /** The current anchor date that the user clicked on to begin range selection. */

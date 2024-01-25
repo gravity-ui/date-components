@@ -9,7 +9,9 @@ import {calendarLayouts, constrainValue} from '../utils';
 
 import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './types';
 
-export interface CalendarStateOptions extends ValueBase<DateTime>, CalendarStateOptionsBase {}
+export interface CalendarStateOptions
+    extends ValueBase<DateTime | null, DateTime>,
+        CalendarStateOptionsBase {}
 export type {CalendarState} from './types';
 
 const defaultModes: Record<CalendarLayout, boolean> = {
@@ -20,11 +22,20 @@ const defaultModes: Record<CalendarLayout, boolean> = {
 };
 export function useCalendarState(props: CalendarStateOptions): CalendarState {
     const {disabled, readOnly, minValue, maxValue, timeZone, modes = defaultModes} = props;
-    const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
-    const [mode, setMode] = useControlledState(props.mode, props.defaultMode, props.onUpdateMode);
-
+    const [value, setValue] = useControlledState(
+        props.value,
+        props.defaultValue ?? null,
+        props.onUpdate,
+    );
     const availableModes = calendarLayouts.filter((l) => modes[l]);
     const minMode = availableModes[0] || 'days';
+
+    const [mode, setMode] = useControlledState(
+        props.mode,
+        props.defaultMode ?? minMode,
+        props.onUpdateMode,
+    );
+
     const currentMode = mode && availableModes.includes(mode) ? mode : minMode;
 
     const focusedValue = React.useMemo(() => {
