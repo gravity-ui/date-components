@@ -111,8 +111,8 @@ The `minValue` property allows you to specify the earliest date and time that ca
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DateField minValue={new DateTime('01.01.2024')} placeholder={"minValue: '01.01.2024'"}/>
-<DateField maxValue={new DateTime('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
+<DateField minValue={new Date('01.01.2024')} placeholder={"minValue: '01.01.2024'"}/>
+<DateField maxValue={new Date('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
 `}
 >
     <DateComponents.DateField minValue={new Date('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
@@ -124,8 +124,8 @@ LANDING_BLOCK-->
 
 ```tsx
 
-<DateField minValue={new DateTime('01.01.2024')}  />
-<DateField maxValue={new DateTime('01.01.2025')} />
+<DateField minValue={new Date('01.01.2024')} />
+<DateField maxValue={new Date('01.01.2025')} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -337,11 +337,11 @@ LANDING_BLOCK-->
 <DateField format="LTS" />
 ```
 
+<!--/GITHUB_BLOCK-->
+
 ## Time zone
 
 `timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
-
-<!--/GITHUB_BLOCK-->
 
 ## Properties
 
