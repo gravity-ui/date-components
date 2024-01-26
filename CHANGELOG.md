@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/gravity-ui/date-components/compare/v1.1.1...v1.2.0) (2024-01-26)
+
+
+### Features
+
+* **DateField:** add component's description in README ([#35](https://github.com/gravity-ui/date-components/issues/35)) ([e8a015e](https://github.com/gravity-ui/date-components/commit/e8a015e4c0341f25eec0c944101ccf648bb72211))
+* **DateField:** support rtl ([#28](https://github.com/gravity-ui/date-components/issues/28)) ([0d7bd16](https://github.com/gravity-ui/date-components/commit/0d7bd16b1fa740960679755c74e7a011692c196a))
+
+
+### Bug Fixes
+
+* **Calendar:** prevent default behaviour on navigation ([#26](https://github.com/gravity-ui/date-components/issues/26)) ([5a9c51f](https://github.com/gravity-ui/date-components/commit/5a9c51fe10de8b8652196bcb2bcc22015cbf9d4b))
+
 ## [1.1.1](https://github.com/gravity-ui/date-components/compare/v1.1.0...v1.1.1) (2023-11-20)
 
 
