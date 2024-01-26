@@ -9,9 +9,6 @@ import type {
     DateFormatTokenMap,
 } from './types';
 
-export const isMac = window.navigator.userAgent.indexOf('Macintosh') >= 0;
-export const CtrlCmd = isMac ? 'metaKey' : 'ctrlKey';
-
 export function expandFormat(format: string) {
     const localeFormats = settings.getLocaleData().formats;
 
