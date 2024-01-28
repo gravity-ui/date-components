@@ -372,7 +372,7 @@ LANDING_BLOCK-->
 | pin               | Corner rounding                                                                                                      |                   `string`                    |      `'round-round'`      |
 | placeholder       | Text that appears in the control when it has no value set                                                            |                   `string`                    |                           |
 | placeholderValue  | A placeholder date that controls the default values of each segment when the user first interacts with them.         |                  `DateTime`                   | `today's date at midnigh` |
-| readOnly          | Whether the calendar value is immutable.                                                                             |                   `boolean`                   |          `false`          |
+| readOnly          | Whether the component's value is immutable.                                                                          |                   `boolean`                   |          `false`          |
 | rightContent      | User`s node rendered after the input node and clear button                                                           |               `React.ReactNode`               |                           |
 | size              | The size of the control                                                                                              |           `"s"` `"m"` `"l"` `"xl"`            |           `"m"`           |
 | style             | Sets inline style for the element.                                                                                   |                `CSSProperties`                |                           |
