@@ -80,9 +80,11 @@ Defines the time interval that `Calendar` should display. With `mode` you can ch
 
 `months` - shows months in year
 
-`quarters` - shows quarters by years
+`quarters` - shows quarters by years (not available as value in `defaultMode`)
 
 `years` - shows several years for select
+
+You can limit enabled modes by using prop `modes`.
 
 <!--LANDING_BLOCK
 <ExampleBlock
@@ -175,3 +177,43 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 ## Time zone
 
 `timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
+
+## Properties
+
+| Name                | Description                                                                                              |                    Type                    | Default |
+| :------------------ | :------------------------------------------------------------------------------------------------------- | :----------------------------------------: | :-----: |
+| aria-describedby    | The control's `aria-describedby` attribute                                                               |                  `string`                  |         |
+| aria-details        | The control's `aria-details` attribute                                                                   |                  `string`                  |         |
+| aria-label          | The control's `aria-label` attribute                                                                     |                  `string`                  |         |
+| aria-labelledby     | The control's `aria-labelledby` attribute                                                                |                  `string`                  |         |
+| autoFocus           | The control's `autofocus` attribute                                                                      |                 `boolean`                  |         |
+| className           | The control's wrapper class name                                                                         |                  `string`                  |         |
+| defaultFocusedValue | The date that is focused when the calendar first mounts (uncontrolled)                                   |                 `DateTime`                 |         |
+| defaultMode         | Initial mode to show in calendar                                                                         |     `days` `months` `quarters` `years`     |         |
+| defaultValue        | Sets the initial value for uncontrolled component.                                                       |                 `DateTime`                 |         |
+| disabled            | Indicates that the user cannot interact with the control                                                 |                 `boolean`                  | `false` |
+| focusedValue        | Set the default view of uncontrolled component which includes this value                                 |             `DateTime` `null`              |         |
+| id                  | The control's `id` attribute                                                                             |                  `string`                  |         |
+| isDateUnavailable   | Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. |      `((date: DateTime) => boolean)`       |         |
+| maxValue            | The maximum allowed date that a user may select.                                                         |                 `DateTime`                 |         |
+| minValue            | The minimum allowed date that a user may select.                                                         |                 `DateTime`                 |         |
+| mode                | Defines the time interval that `Calendar` should display in colttrolled way.                             |     `days` `months` `quarters` `years`     |         |
+| modes               | Modes available to user                                                                                  | `Partial<Record<CalendarLayout, boolean>>` |
+
+`{
+    days: true,
+    months: true,
+    quarters: false,
+    years: true,
+}`
+|
+| onBlur | Fires when the control lost focus. Provides focus event as a callback's argument | `((e: FocusEvent<Element, Element>) => void)` | |
+| onFocus | Fires when the control gets focus. Provides focus event as a callback's argument | `((e: FocusEvent<Element, Element>) => void)` | |
+| onFocusUpdate | Fires when the control's focused date changes. | `((date: DateTime) => void)` | |
+| onUpdate | Fires when the value is changed. | `((value: DateTime) => void` | |
+| onUpdateMode | Fires when the mode is changed. | `((value: 'days' \| 'months' \| 'quarters' \| 'years' ) => void` | |
+| readOnly | Whether the calendar value is immutable. | `boolean` | `false` |
+| size | The size of the control | `"m"` `"l"` `"xl"` | `"m"` |
+| style | Sets inline style for the element. | `CSSProperties` | |
+| timeZone | Sets the time zone. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) | `string` | |
+| value | The value of the control | `DateTime` `null` | |
