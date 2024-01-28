@@ -50,7 +50,7 @@ LANDING_BLOCK-->
 
 ### Min and max value
 
-The `minValue` property allows you to specify the earliest date and time that can be entered by the user. Conversely, the `maxValue` property specifies the latest date and time that can be entered. If you input the value out of this bounds component changes it's view like in case of invalid validation state.
+The `minValue` property allows you to specify the earliest date and time that can be entered by the user. Conversely, the `maxValue` property specifies the latest date and time that can be entered. All other values will be disabled for user.
 
 <!--LANDING_BLOCK
 <ExampleBlock
