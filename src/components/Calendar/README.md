@@ -15,7 +15,7 @@ import {Calendar} from '@gravity-ui/date-components';
 To set dates in the right format you may need to include additional helpers from [Date Utils library](https://gravity-ui.com/libraries/date-utils)
 
 ```tsx
-import {dateTimeParse, dateTime} from '@gravity-ui/date-utils';
+import {dateTimeParse} from '@gravity-ui/date-utils';
 ```
 
 ## Size
@@ -55,19 +55,17 @@ The `minValue` property allows you to specify the earliest date and time that ca
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<Calendar minValue={new Date('01.01.2024')} maxValue={new Date('01.01.2025')} />
+<Calendar minValue={dateTimeParse('01.01.2024')} maxValue={dateTimeParse('01.01.2025')} />
 `}
 >
-    <DateComponents.Calendar minValue={new Date('01.01.2024')} maxValue={new Date('01.01.2025')}/>
+    <DateComponents.Calendar minValue={dateTimeParse('01.01.2024')} maxValue={dateTimeParse('01.01.2025')}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-import {dateTimeParse} from '@gravity-ui/date-utils';
-
-<Calendar minValue={dateTimeParse('01.01.2024')} maxValue={dateTimeParse('01.01.2025')} />;
+<Calendar minValue={dateTimeParse('01.01.2024')} maxValue={dateTimeParse('01.01.2025')} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -157,19 +155,17 @@ Allows to select the date that is focused when `Calendar` first mounts. If you n
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<Calendar defaultFocusedValue={'01.01.2025'} />
+<Calendar defaultFocusedValue={dateTimeParse('01.01.2025')} />
 `}
 >
-    <DateComponents.Calendar defaultFocusedValue={'01.01.2025'} />
+    <DateComponents.Calendar defaultFocusedValue={dateTimeParse('01.01.2025')} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-import {dateTimeParse} from '@gravity-ui/date-utils';
-
-<Calendar defaultFocusedValue={dateTimeParse('01.01.2025')} />;
+<Calendar defaultFocusedValue={dateTimeParse('01.01.2025')} />
 ```
 
 <!--/GITHUB_BLOCK-->
