@@ -10,6 +10,14 @@ import {Calendar} from '@gravity-ui/date-components';
 
 `Calendar` is a flexible, user-friendly calendar component for React applications. It allows users to view, select, and manage dates with ease. Ideal for event scheduling, booking systems, and any application where date selection is essential. It can be controlled if you set `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with optional property `defaultValue`. Component is uncontrolled by default.
 
+### Useful addition
+
+To set dates in the right format you may need to include additional helpers from [Date Utils library](https://gravity-ui.com/libraries/date-utils)
+
+```tsx
+import {dateTimeParse, dateTime} from '@gravity-ui/date-utils';
+```
+
 ## Size
 
 To control the size of the `Calendar` use the `size` property. Default size is `m`.
@@ -67,6 +75,14 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 ## Mode
 
 Defines the time interval that `Calendar` should display. With `mode` you can choose it in controlled way. For uncontrolled way you don't need to specify any value. Also you can set the initial mode in uncontrolled way with `defaultMode` prop.
+
+`days` - default mode for `Calendar`. It shows days in month.
+
+`months` - shows months in year
+
+`quarters` - shows quarters by years
+
+`years` - shows several years for select
 
 <!--LANDING_BLOCK
 <ExampleBlock
@@ -155,3 +171,7 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 ```
 
 <!--/GITHUB_BLOCK-->
+
+## Time zone
+
+`timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
