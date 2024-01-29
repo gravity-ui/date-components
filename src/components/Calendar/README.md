@@ -150,7 +150,7 @@ LANDING_BLOCK-->
 
 ## Focused value
 
-Allows to select the date that is focused when `Calendar` first mounts. If you need it to be controlled you shoud use `focusedValue` prop. You can set the initial focused value for uncontrolled component with optional prop `defaultFocusedValue`.
+Allows to select the date that `Calendar` view is focused on. If you need it to be controlled you shoud use `focusedValue` prop. You can set the initial focused value for uncontrolled component with optional prop `defaultFocusedValue`.
 
 <!--LANDING_BLOCK
 <ExampleBlock
