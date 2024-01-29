@@ -58,7 +58,7 @@ The `minValue` property allows you to specify the earliest date and time that ca
 <Calendar minValue={dateTimeParse('01.01.2024')} maxValue={dateTimeParse('01.01.2025')} />
 `}
 >
-    <DateComponents.Calendar minValue={dateTimeParse('01.01.2024')} maxValue={dateTimeParse('01.01.2025')}/>
+    <DateComponentsExamples.CalendarExample minValue={'01.01.2024'} maxValue={'01.01.2025'}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -155,17 +155,17 @@ Allows to select the date that is focused when `Calendar` first mounts. If you n
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<Calendar defaultFocusedValue={dateTimeParse('01.01.2025')} />
+<Calendar defaultFocusedValue={dateTimeParse('01.01.2020')} />
 `}
 >
-    <DateComponents.Calendar defaultFocusedValue={dateTimeParse('01.01.2025')} />
+    <DateComponentsExamples.CalendarExample defaultFocusedValue={'01.01.2020'} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<Calendar defaultFocusedValue={dateTimeParse('01.01.2025')} />
+<Calendar defaultFocusedValue={dateTimeParse('01.01.2020')} />
 ```
 
 <!--/GITHUB_BLOCK-->
