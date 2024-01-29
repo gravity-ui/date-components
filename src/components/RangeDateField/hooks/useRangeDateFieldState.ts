@@ -1,7 +1,7 @@
 /* eslint-disable complexity */
 import React from 'react';
 
-import type {DateTime} from '@gravity-ui/date-utils';
+import {type DateTime, isValid} from '@gravity-ui/date-utils';
 
 import {type BaseDateFieldState, useBaseDateFieldState} from '../../DateField';
 import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../DateField/types';
@@ -48,10 +48,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
     // eslint-disable-next-line prefer-const
     let [validSegments, setValidSegments] = React.useState<RangeValue<typeof EDITABLE_SEGMENTS>>(
-        () =>
-            props.value || props.defaultValue
-                ? {start: {...allSegments}, end: {...allSegments}}
-                : {start: {}, end: {}},
+        () => (value ? {start: {...allSegments}, end: {...allSegments}} : {start: {}, end: {}}),
     );
 
     if (
@@ -67,8 +64,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         Object.keys(validSegments.start).length > 0 &&
         Object.keys(validSegments.start).length === Object.keys(allSegments).length &&
         Object.keys(validSegments.end).length > 0 &&
-        Object.keys(validSegments.end).length === Object.keys(allSegments).length &&
-        isValidRange(placeholderDate)
+        Object.keys(validSegments.end).length === Object.keys(allSegments).length
     ) {
         validSegments = {start: {}, end: {}};
         setValidSegments(validSegments);
@@ -77,7 +73,8 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
     const displayValue =
         value &&
-        isValidRange(value) &&
+        isValid(value.start) &&
+        isValid(value.end) &&
         Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
         Object.keys(validSegments.end).length >= Object.keys(allSegments).length
             ? value
@@ -123,8 +120,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
         if (
             Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
-            Object.keys(validSegments.end).length >= Object.keys(allSegments).length &&
-            isValidRange(newValue)
+            Object.keys(validSegments.end).length >= Object.keys(allSegments).length
         ) {
             if (!value || !(newValue.start.isSame(value.start) && newValue.end.isSame(value.end))) {
                 setDate(newValue);
@@ -212,7 +208,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         const start = parseDateFromString(list?.[0]?.trim(), format, props.timeZone);
         const end = parseDateFromString(list?.[1]?.trim(), format, props.timeZone);
         const range = {start, end};
-        if (isValidRange(range)) {
+        if (isValid(range.start) && isValid(range.end)) {
             setDate(range);
             return true;
         }
@@ -279,6 +275,7 @@ function useSectionsState(
             value,
             sections,
             validSegments,
+            delimiter,
             editableSections: getRangeEditableSections(sections, value, validSegments, delimiter),
         };
     });
@@ -286,12 +283,14 @@ function useSectionsState(
     if (
         sections !== state.sections ||
         validSegments !== state.validSegments ||
-        !(value.start.isSame(state.value.start) && value.end.isSame(state.value.end))
+        !(value.start.isSame(state.value.start) && value.end.isSame(state.value.end)) ||
+        delimiter !== state.delimiter
     ) {
         setState({
             value,
             sections,
             validSegments,
+            delimiter,
             editableSections: getRangeEditableSections(sections, value, validSegments, delimiter),
         });
     }
