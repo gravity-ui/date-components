@@ -3,7 +3,6 @@ import {ChevronRight} from '@gravity-ui/icons';
 import {Button, Icon, Select, TextInput, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../../../../../utils/cn';
-import {pick} from '../../../../../../utils/pick';
 
 import {i18n} from './i18n';
 import {getTimeZoneOffset} from './utils/getTimeZoneOffset';
@@ -53,12 +52,11 @@ export function RelativeRangeDatePickerZones(props: Props) {
                                 size={mobile ? 'xl' : undefined}
                                 value={filterProps.value}
                                 onUpdate={filterProps.onChange}
-                                view="clear"
                                 placeholder={i18n('Search')}
                             />
                             <Button
+                                className={b('clear')}
                                 size={mobile ? 'xl' : undefined}
-                                view="flat"
                                 onClick={() => {
                                     props.onUpdate(undefined);
                                 }}
@@ -68,26 +66,32 @@ export function RelativeRangeDatePickerZones(props: Props) {
                         </div>
                     );
                 }}
-                renderControl={(props) => {
+                renderControl={(opts) => {
                     return (
-                        <div
-                            {...pick(props, 'onClick')} // For avoid  jsx-a11y/click-events-have-key-events jsx-a11y/no-static-element-interactions
-                            className={b('control', {mobile})}
+                        <Button
+                            onClick={opts.onClick}
+                            ref={opts.ref}
+                            view="flat"
+                            size={mobile ? 'xl' : undefined}
+                            extraProps={{
+                                onKeyDown: opts.onKeyDown,
+                            }}
+                            className={b('control', {platform: mobile ? 'mobile' : 'desktop'})}
                         >
-                            <div className={b('control-zone', {empty: !timeZone})} title={timeZone}>
-                                {timeZone || i18n('Empty_zone')}
+                            <div
+                                className={b('control-label', {empty: !timeZone})}
+                                title={timeZone}
+                            >
+                                {timeZone
+                                    ? `${timeZone} (${getTimeZoneOffset(timeZone)})`
+                                    : i18n('Empty_zone')}
                             </div>
-                            {timeZone && (
-                                <div className={b('control-offset')}>
-                                    {getTimeZoneOffset(timeZone)}
-                                </div>
-                            )}
                             <Icon
                                 className={b('control-icon')}
                                 data={ChevronRight}
                                 size={mobile ? 20 : 16}
                             />
-                        </div>
+                        </Button>
                     );
                 }}
                 renderOption={({value: zone}) => renderItem(zone)}

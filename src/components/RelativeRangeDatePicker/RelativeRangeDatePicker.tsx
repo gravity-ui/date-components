@@ -30,7 +30,6 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
     const propsValueRef = React.useRef(propsValue);
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
     const [opened, setOpened] = useControlledState(props.open, false, props.onOpenChange);
@@ -109,11 +108,10 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
                     validationState={props.validationState}
                     value={value}
                     isOpen={!!opened}
-                    onOpenChange={() => {
+                    onOpen={() => {
                         setOpened((prevIsOpen) => !prevIsOpen);
                     }}
                     inputRef={inputRef}
-                    calendarButtonRef={calendarButtonRef}
                     onClear={() => {
                         setValue({start: null, end: null});
                     }}
@@ -138,7 +136,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
                             focusInput();
                         }}
                         onOutsideClick={(e) => {
-                            if (e.target !== calendarButtonRef.current) {
+                            if (e.target !== inputRef.current) {
                                 setOpened(false);
                             }
                             if (e.target && containerRef.current?.contains(e.target as Node)) {

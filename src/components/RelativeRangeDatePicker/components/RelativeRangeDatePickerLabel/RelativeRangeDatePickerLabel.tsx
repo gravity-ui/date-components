@@ -14,9 +14,8 @@ import {getDateLabel} from './utils';
 
 interface Props extends FocusableProps, Omit<TextInputProps, 'placeholder'>, Validation {
     isOpen: boolean;
-    onOpenChange(): void;
+    onOpen(): void;
     inputRef: React.RefObject<HTMLInputElement>;
-    calendarButtonRef: React.RefObject<HTMLButtonElement>;
     onClear(): void;
 
     alwaysShowAsAbsolute?: boolean;
@@ -42,7 +41,6 @@ export function RelativeRangeDatePickerLabel(props: Props) {
         return (
             <Button
                 {...pick(props, 'onFocus', 'onBlur', 'disabled')}
-                ref={props.calendarButtonRef}
                 onFocus={props.onFocus}
                 onBlur={props.onBlur}
                 size={getButtonSizeForInput(props.size)}
@@ -52,7 +50,7 @@ export function RelativeRangeDatePickerLabel(props: Props) {
                     'aria-expanded': props.isOpen,
                 }}
                 view="flat-secondary"
-                onClick={props.onOpenChange}
+                onClick={props.onOpen}
             >
                 <Icon data={CalendarIcon} />
             </Button>
@@ -70,6 +68,9 @@ export function RelativeRangeDatePickerLabel(props: Props) {
             value={getLabel()}
             autoComplete="off"
             rightContent={renderIcon()}
+            controlProps={{
+                onClick: props.onOpen,
+            }}
             onUpdate={(value) => {
                 if (!value) {
                     props.onClear();

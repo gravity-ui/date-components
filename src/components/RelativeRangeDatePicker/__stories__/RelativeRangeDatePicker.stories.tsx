@@ -35,7 +35,6 @@ export const Default = {
 
         const props = {
             ...args,
-            style: {width: 350},
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
             placeholderValue: args.placeholderValue
