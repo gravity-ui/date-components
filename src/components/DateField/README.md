@@ -111,12 +111,12 @@ The `minValue` property allows you to specify the earliest date and time that ca
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DateField minValue={new Date('01.01.2024')} placeholder={"minValue: '01.01.2024'"}/>
-<DateField maxValue={new Date('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
+<DateField minValue={dateTimeParse('01.01.2024')} placeholder={"minValue: '01.01.2024'"}/>
+<DateField maxValue={dateTimeParse('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
 `}
 >
-    <DateComponents.DateField minValue={new Date('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
-    <DateComponents.DateField maxValue={new Date('01.01.2025')} placeholder={"maxValue: '01.01.2025'"} />
+    <DateComponentsExamples.DateFieldExample minValue={'01.01.2024'} placeholder={"minValue: '01.01.2024'"} />
+    <DateComponentsExamples.DateFieldExample maxValue={'01.01.2025'} placeholder={"maxValue: '01.01.2025'"} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -124,8 +124,8 @@ LANDING_BLOCK-->
 
 ```tsx
 
-<DateField minValue={new Date('01.01.2024')} />
-<DateField maxValue={new Date('01.01.2025')} />
+<DateField minValue={dateTimeParse('01.01.2024')} />
+<DateField maxValue={dateTimeParse('01.01.2025')} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -139,17 +139,17 @@ The state of the `DateField` where you don't want the user to be able to interac
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DateField disabled={true} />
+<DateField disabled={true} defaultValue={dateTimeParse(new Date())} />
 `}
 >
-    <DateComponents.DateField disabled={true} />
+    <DateComponentsExamples.DateFieldExample disabled={true} defaultValue={new Date()} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<DateField disabled />
+<DateField disabled defaultValue={dateTimeParse(new Date())} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -161,17 +161,17 @@ LANDING_BLOCK-->
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DateField readOnly />
+<DateField readOnly defaultValue={dateTimeParse(new Date())} />
 `}
 >
-    <DateComponents.DateField readOnly />
+    <DateComponentsExamples.DateFieldExample readOnly defaultValue={new Date()} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<DateField readOnly />
+<DateField readOnly defaultValue={dateTimeParse(new Date())} />
 ```
 
 <!--/GITHUB_BLOCK-->
