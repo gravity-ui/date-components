@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/gravity-ui/date-components/compare/v1.2.0...v1.3.0) (2024-01-30)
+
+
+### Features
+
+* **Calendar:** add README for Calendar ([#38](https://github.com/gravity-ui/date-components/issues/38)) ([95226dc](https://github.com/gravity-ui/date-components/commit/95226dcd8610eb4012ab73a9785419563554d078))
+
 ## [1.2.0](https://github.com/gravity-ui/date-components/compare/v1.1.1...v1.2.0) (2024-01-26)
 
 
