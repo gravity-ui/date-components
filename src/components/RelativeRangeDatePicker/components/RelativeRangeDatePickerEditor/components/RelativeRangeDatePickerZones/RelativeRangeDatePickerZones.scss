@@ -45,11 +45,10 @@ $block: '.#{variables.$ns}relative-range-date-picker-zones';
     }
 
     &__control {
-        width: 100%;
-
         display: flex;
         align-items: center;
 
+        width: 100%;
         height: 32px;
 
         &:active {
@@ -78,9 +77,12 @@ $block: '.#{variables.$ns}relative-range-date-picker-zones';
 
     &__control-label {
         overflow: hidden;
+
         margin-right: 2px;
+
         white-space: nowrap;
         text-overflow: ellipsis;
+
         color: var(--g-color-text-secondary);
 
         &_empty {
@@ -93,13 +95,16 @@ $block: '.#{variables.$ns}relative-range-date-picker-zones';
     &__control-icon {
         position: relative;
         right: 10px;
-        top: 2px;
 
         flex: 0 0 20px;
 
         margin-left: auto;
 
         color: var(--g-color-text-secondary);
+
+        &_mobile {
+            top: 2px;
+        }
     }
 
     &__filter {

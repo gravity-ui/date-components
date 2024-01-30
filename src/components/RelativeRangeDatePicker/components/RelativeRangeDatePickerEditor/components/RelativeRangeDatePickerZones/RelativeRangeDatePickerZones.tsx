@@ -87,7 +87,7 @@ export function RelativeRangeDatePickerZones(props: Props) {
                                     : i18n('Empty_zone')}
                             </div>
                             <Icon
-                                className={b('control-icon')}
+                                className={b('control-icon', {mobile})}
                                 data={ChevronRight}
                                 size={mobile ? 20 : 16}
                             />
