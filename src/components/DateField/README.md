@@ -10,6 +10,14 @@ import {DateField} from '@gravity-ui/date-components';
 
 `DateField` component is a versatile and convenient input field specifically designed for date entry in React applications. With an intuitive interface and easy integration, it's perfect for any form that requires date or time input, such as event schedulers, booking systems, or data-driven reports. It can be controlled if you set `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with optional property `defaultValue`. Component is uncontrolled by default.
 
+### Useful addition
+
+To set dates in the right format you may need to include additional helpers from [Date Utils library](https://gravity-ui.com/libraries/date-utils)
+
+```tsx
+import {dateTimeParse} from '@gravity-ui/date-utils';
+```
+
 ## Appearance
 
 The appearance of `DateField` is controlled by the `size`, `view` and `pin` properties.
@@ -111,12 +119,12 @@ The `minValue` property allows you to specify the earliest date and time that ca
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DateField minValue={new DateTime('01.01.2024')} placeholder={"minValue: '01.01.2024'"}/>
-<DateField maxValue={new DateTime('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
+<DateField minValue={dateTimeParse('01.01.2024')} placeholder={"minValue: '01.01.2024'"}/>
+<DateField maxValue={dateTimeParse('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
 `}
 >
-    <DateComponents.DateField minValue={new Date('01.01.2024')} placeholder={"minValue: '01.01.2024'"} />
-    <DateComponents.DateField maxValue={new Date('01.01.2025')} placeholder={"maxValue: '01.01.2025'"} />
+    <DateComponentsExamples.DateFieldExample minValue={'01.01.2024'} placeholder={"minValue: '01.01.2024'"} />
+    <DateComponentsExamples.DateFieldExample maxValue={'01.01.2025'} placeholder={"maxValue: '01.01.2025'"} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -124,8 +132,8 @@ LANDING_BLOCK-->
 
 ```tsx
 
-<DateField minValue={new DateTime('01.01.2024')}  />
-<DateField maxValue={new DateTime('01.01.2025')} />
+<DateField minValue={dateTimeParse('01.01.2024')} />
+<DateField maxValue={dateTimeParse('01.01.2025')} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -139,17 +147,17 @@ The state of the `DateField` where you don't want the user to be able to interac
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DateField disabled={true} />
+<DateField disabled={true} defaultValue={dateTimeParse(new Date())} />
 `}
 >
-    <DateComponents.DateField disabled={true} />
+    <DateComponentsExamples.DateFieldExample disabled={true} defaultValue={new Date()} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<DateField disabled />
+<DateField disabled defaultValue={dateTimeParse(new Date())} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -161,17 +169,17 @@ LANDING_BLOCK-->
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DateField readOnly />
+<DateField readOnly defaultValue={dateTimeParse(new Date())} />
 `}
 >
-    <DateComponents.DateField readOnly />
+    <DateComponentsExamples.DateFieldExample readOnly defaultValue={new Date()} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<DateField readOnly />
+<DateField readOnly defaultValue={dateTimeParse(new Date())} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -337,11 +345,11 @@ LANDING_BLOCK-->
 <DateField format="LTS" />
 ```
 
+<!--/GITHUB_BLOCK-->
+
 ## Time zone
 
 `timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
-
-<!--/GITHUB_BLOCK-->
 
 ## Properties
 
@@ -372,7 +380,7 @@ LANDING_BLOCK-->
 | pin               | Corner rounding                                                                                                      |                   `string`                    |      `'round-round'`      |
 | placeholder       | Text that appears in the control when it has no value set                                                            |                   `string`                    |                           |
 | placeholderValue  | A placeholder date that controls the default values of each segment when the user first interacts with them.         |                  `DateTime`                   | `today's date at midnigh` |
-| readOnly          | Whether the calendar value is immutable.                                                                             |                   `boolean`                   |          `false`          |
+| readOnly          | Whether the component's value is immutable.                                                                          |                   `boolean`                   |          `false`          |
 | rightContent      | User`s node rendered after the input node and clear button                                                           |               `React.ReactNode`               |                           |
 | size              | The size of the control                                                                                              |           `"s"` `"m"` `"l"` `"xl"`            |           `"m"`           |
 | style             | Sets inline style for the element.                                                                                   |                `CSSProperties`                |                           |
