@@ -6,7 +6,7 @@ import {useRangeCalendarState} from '../CalendarBase/hooks/useRangeCalendarState
 import type {RangeCalendarStateOptions} from '../CalendarBase/hooks/useRangeCalendarState';
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
 
-import './Calendar.scss';
+import '../CalendarBase/Calendar.scss';
 
 export interface RangeCalendarProps
     extends RangeCalendarStateOptions,
