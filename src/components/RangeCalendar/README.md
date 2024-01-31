@@ -8,15 +8,22 @@
 import {RangeCalendar} from '@gravity-ui/date-components';
 ```
 
-`RangeCalendar` is a flexible, user-friendly calendar component for React applications. It allows users to view, select, and manage dates with ease. Ideal for event scheduling, booking systems, and any application where date selection is essential. It can be controlled if you set `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with optional property `defaultValue`. Component is uncontrolled by default.
+`RangeCalendar` is a powerful, flexible, and user-friendly UI component designed for selecting a range of dates. Built with React, it combines the functionality of a calendar and a date range picker, making it an ideal choice for applications that require users to input a start and end date. It can be controlled if you set `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with optional property `defaultValue`. Component is uncontrolled by default.
 
 ### Useful addition
 
 To set dates in the right format you may need to include additional helpers from [Date Utils library](https://gravity-ui.com/libraries/date-utils)
 
 ```tsx
-import {dateTimeParse} from '@gravity-ui/date-utils';
+import {dateTimeParse, dateTime} from '@gravity-ui/date-utils';
 ```
+
+<!--LANDING_BLOCK
+
+> [!NOTE]
+> Row with "Selected range: ..." is not a part of the component. It was added to examples only for clarity.
+
+LANDING_BLOCK-->
 
 ## Size
 
@@ -30,9 +37,9 @@ To control the size of the `RangeCalendar` use the `size` property. Default size
 <RangeCalendar size="xl" />
 `}
 >
-    <DateComponents.RangeCalendar size="m" />
-    <DateComponents.RangeCalendar size="l" />
-    <DateComponents.RangeCalendar size="xl" />
+    <DateComponentsExamples.RangeCalendarExample size="m" />
+    <DateComponentsExamples.RangeCalendarExample size="l" />
+    <DateComponentsExamples.RangeCalendarExample size="xl" />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -90,7 +97,7 @@ You can limit enabled modes by using prop `modes`.
 <RangeCalendar defaultMode="months"/>
 `}
 >
-    <DateComponents.RangeCalendar defaultMode="months" />
+    <DateComponentsExamples.RangeCalendarExample defaultMode="months" />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -111,17 +118,24 @@ The state of the `RangeCalendar` where you don't want the user to be able to int
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<RangeCalendar disabled={true} />
+<RangeCalendar
+  disabled={true}
+  defaultValue={{start: dateTime().add({days: 2}), end: dateTime().subtract({days: 2})}}
+/>
 `}
 >
-    <DateComponents.RangeCalendar disabled={true} />
+    <DateComponentsExamples.RangeCalendarExample disabled={true}
+    defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<RangeCalendar disabled={true} />
+<RangeCalendar
+  disabled={true}
+  defaultValue={{start: dateTime().add({days: 2}), end: dateTime().subtract({days: 2})}}
+/>
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -133,20 +147,25 @@ LANDING_BLOCK-->
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<RangeCalendar readOnly={true} />
+<RangeCalendar
+  readOnly={true}
+  defaultValue={{start: dateTime().add({days: 2}), end: dateTime().subtract({days: 2})}}
+/>
 `}
 >
-    <DateComponents.RangeCalendar readOnly={true} />
+    <DateComponentsExamples.RangeCalendarExample readOnly={true}
+      defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<RangeCalendar readOnly={true} />
+<RangeCalendar
+  readOnly={true}
+  defaultValue={{start: dateTime().add({days: 2}), end: dateTime().subtract({days: 2})}}
+/>
 ```
-
-<!--/GITHUB_BLOCK-->
 
 ## Focused value
 
@@ -155,17 +174,24 @@ Allows to select the date that `RangeCalendar` view is focused on. If you need i
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<RangeCalendar defaultFocusedValue={dateTimeParse('01.01.2020')} />
+<RangeCalendar
+  defaultFocusedValue={dateTimeParse('01.01.2020')}
+  defaultValue={{start: dateTime().add({days: 2}), end: dateTime().subtract({days: 2})}}
+/>
 `}
 >
-    <DateComponentsExamples.RangeCalendarExample defaultFocusedValue={'01.01.2020'} />
+    <DateComponentsExamples.RangeCalendarExample defaultFocusedValue={'01.01.2020'}
+      defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<RangeCalendar defaultFocusedValue={dateTimeParse('01.01.2020')} />
+<RangeCalendar
+  defaultFocusedValue={dateTimeParse('01.01.2020')}
+  defaultValue={{start: dateTime().add({days: 2}), end: dateTime().subtract({days: 2})}}
+/>
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -186,7 +212,7 @@ LANDING_BLOCK-->
 | className                             | The control's wrapper class name                                                                                     |                             `string`                             |                                                             |
 | [defaultFocusedValue](#focused-value) | The date that is focused when the calendar first mounts (uncontrolled)                                               |                            `DateTime`                            |                                                             |
 | [defaultMode](#mode)                  | Initial mode to show in calendar                                                                                     |                `days` `months` `quarters` `years`                |                                                             |
-| [defaultValue](#value)                | Sets the initial value for uncontrolled component.                                                                   |                            `DateTime`                            |                                                             |
+| [defaultValue](#value)                | Sets the initial value for uncontrolled component.                                                                   |                      `RangeValue<DateTime>`                      |                                                             |
 | [disabled](#disabled)                 | Indicates that the user cannot interact with the control                                                             |                            `boolean`                             |                           `false`                           |
 | [focusedValue](#focused-value)        | Set the default view of uncontrolled component which includes this value                                             |                        `DateTime` `null`                         |                                                             |
 | id                                    | The control's `id` attribute                                                                                         |                             `string`                             |                                                             |
@@ -204,4 +230,4 @@ LANDING_BLOCK-->
 | [size](#size)                         | The size of the control                                                                                              |                        `"m"` `"l"` `"xl"`                        |                            `"m"`                            |
 | style                                 | Sets inline style for the element.                                                                                   |                         `CSSProperties`                          |                                                             |
 | [timeZone](#time-zone)                | Sets the time zone. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) |                             `string`                             |                                                             |
-| [value](#calendar)                    | The value of the control                                                                                             |                        `DateTime` `null`                         |                                                             |
+| [value](#calendar)                    | The value of the control                                                                                             |                  `RangeValue<DateTime>` `null`                   |                                                             |
