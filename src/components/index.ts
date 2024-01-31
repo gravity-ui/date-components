@@ -1,4 +1,5 @@
 export * from './Calendar';
+export * from './RangeCalendar';
 export * from './DateField';
 export * from './DatePicker';
 export * from './RelativeDateField';

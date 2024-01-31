@@ -1,11 +1,10 @@
 import React from 'react';
 
+import {CalendarBase} from '../CalendarBase/CalendarBase';
+import type {CalendarInstance, CalendarSize} from '../CalendarBase/CalendarBase';
+import {useRangeCalendarState} from '../CalendarBase/hooks/useRangeCalendarState';
+import type {RangeCalendarStateOptions} from '../CalendarBase/hooks/useRangeCalendarState';
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
-
-import {CalendarBase} from './CalendarBase';
-import type {CalendarInstance, CalendarSize} from './CalendarBase';
-import {useRangeCalendarState} from './hooks/useRangeCalendarState';
-import type {RangeCalendarStateOptions} from './hooks/useRangeCalendarState';
 
 import './Calendar.scss';
 
