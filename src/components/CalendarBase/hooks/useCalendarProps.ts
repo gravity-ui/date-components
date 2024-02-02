@@ -3,7 +3,7 @@ import React from 'react';
 import {useFocusWithin} from '@gravity-ui/uikit';
 import type {ButtonProps} from '@gravity-ui/uikit';
 
-import type {CalendarProps} from '../Calendar';
+import type {CalendarProps} from '../../Calendar/Calendar';
 import {i18n} from '../i18n';
 
 import type {CalendarState, RangeCalendarState} from './types';

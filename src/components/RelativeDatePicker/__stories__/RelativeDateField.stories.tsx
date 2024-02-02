@@ -6,7 +6,7 @@ import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {Calendar} from '../../Calendar';
-import {constrainValue} from '../../Calendar/utils';
+import {constrainValue} from '../../CalendarBase/utils';
 import {useControlledState} from '../../hooks/useControlledState';
 import {RelativeDatePicker} from '../RelativeDatePicker';
 import type {Value} from '../hooks/useRelativeDatePickerState';

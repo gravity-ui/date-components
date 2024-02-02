@@ -1,10 +1,10 @@
 export * from './Calendar';
-export * from './RangeCalendar';
+export * from '../RangeCalendar/RangeCalendar';
 
-export type {CalendarInstance} from './CalendarBase';
+export type {CalendarInstance} from '../CalendarBase/CalendarBase';
 
-export * from './hooks/useCalendarState';
-export * from './hooks/useRangeCalendarState';
-export * from './hooks/useCalendarProps';
-export * from './hooks/useCalendarGridProps';
-export * from './hooks/useCalendarCellProps';
+export * from '../CalendarBase/hooks/useCalendarState';
+export * from '../CalendarBase/hooks/useRangeCalendarState';
+export * from '../CalendarBase/hooks/useCalendarProps';
+export * from '../CalendarBase/hooks/useCalendarGridProps';
+export * from '../CalendarBase/hooks/useCalendarCellProps';
