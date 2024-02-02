@@ -124,8 +124,7 @@ The state of the `RangeCalendar` where you don't want the user to be able to int
 />
 `}
 >
-    <DateComponentsExamples.RangeCalendarExample disabled={true}
-    defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
+    <DateComponentsExamples.RangeCalendarExample disabled={true} defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -153,8 +152,7 @@ LANDING_BLOCK-->
 />
 `}
 >
-    <DateComponentsExamples.RangeCalendarExample readOnly={true}
-      defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
+    <DateComponentsExamples.RangeCalendarExample readOnly={true} defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -167,6 +165,8 @@ LANDING_BLOCK-->
 />
 ```
 
+<!--/GITHUB_BLOCK-->
+
 ## Focused value
 
 Allows to select the date that `RangeCalendar` view is focused on. If you need it to be controlled you shoud use `focusedValue` prop. You can set the initial focused value for uncontrolled component with optional prop `defaultFocusedValue`.
@@ -175,13 +175,11 @@ Allows to select the date that `RangeCalendar` view is focused on. If you need i
 <ExampleBlock
     code={`
 <RangeCalendar
-  defaultFocusedValue={dateTimeParse('01.01.2020')}
-  defaultValue={{start: dateTime().add({days: 2}), end: dateTime().subtract({days: 2})}}
+  defaultFocusedValue={dateTimeParse('01.01.2020')} defaultValue={{start: dateTime().add({days: 2}), end: dateTime().subtract({days: 2})}}
 />
 `}
 >
-    <DateComponentsExamples.RangeCalendarExample defaultFocusedValue={'01.01.2020'}
-      defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
+    <DateComponentsExamples.RangeCalendarExample defaultFocusedValue={'01.01.2020'} defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() +2*24*60*60*1000)}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
