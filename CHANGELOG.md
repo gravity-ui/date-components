@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/gravity-ui/date-components/compare/v1.3.0...v1.4.0) (2024-02-02)
+
+
+### Features
+
+* **RangeCalendar:** add description for RangeCalendar ([#40](https://github.com/gravity-ui/date-components/issues/40)) ([6fed701](https://github.com/gravity-ui/date-components/commit/6fed701e7f4b1c84549dd0148926153c413a65ab))
+
 ## [1.3.0](https://github.com/gravity-ui/date-components/compare/v1.2.0...v1.3.0) (2024-01-30)
 
 
