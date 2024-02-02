@@ -124,7 +124,7 @@ The state of the `RangeCalendar` where you don't want the user to be able to int
 />
 `}
 >
-    <DateComponentsExamples.RangeCalendarExample disabled={true} defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
+    <DateComponentsExamples.RangeCalendarWithDefaultValueExample disabled={true} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -152,7 +152,7 @@ LANDING_BLOCK-->
 />
 `}
 >
-    <DateComponentsExamples.RangeCalendarExample readOnly={true} defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() + 2*24*60*60*1000)}/>
+    <DateComponentsExamples.RangeCalendarWithDefaultValueExample readOnly={true} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -179,7 +179,7 @@ Allows to select the date that `RangeCalendar` view is focused on. If you need i
 />
 `}
 >
-    <DateComponentsExamples.RangeCalendarExample defaultFocusedValue={'01.01.2020'} defaultValue={{start: new Date(Date.now() - 2*24*60*60*1000), end: new Date(Date.now() +2*24*60*60*1000)}/>
+    <DateComponentsExamples.RangeCalendarWithDefaultValueExample defaultFocusedValue={'01.01.2020'} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
