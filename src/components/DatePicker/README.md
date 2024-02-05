@@ -286,17 +286,17 @@ The `format` prop is a string that defines the date and time format the `DatePic
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DatePicker format='LTS' />
+<DatePicker format='LL' />
 `}
 >
-    <DateComponents.DatePicker format='LTS' />
+    <DateComponents.DatePicker format='LL' />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<DatePicker format="LTS" />
+<DatePicker format="LL" />
 ```
 
 ## Time zone
