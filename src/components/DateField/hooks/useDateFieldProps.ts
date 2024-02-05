@@ -1,15 +1,35 @@
 import React from 'react';
 
+import type {DateTime} from '@gravity-ui/date-utils';
 import type {TextInputProps} from '@gravity-ui/uikit';
 
-import type {DateFieldProps} from '../DateField';
+import type {
+    AccessibilityProps,
+    DateFieldBase,
+    TextInputProps as DateFieldTextInputProps,
+    DomProps,
+    FocusableProps,
+    KeyboardEvents,
+    StyleProps,
+    TextInputExtendProps,
+} from '../../types';
 import {cleanString} from '../utils';
 
-import type {DateFieldState} from './useDateFieldState';
+import type {BaseDateFieldState} from './useBaseDateFieldState';
 
-export function useDateFieldProps(
-    state: DateFieldState,
-    props: DateFieldProps,
+export interface DateFieldProps<T = DateTime>
+    extends DateFieldBase<T>,
+        DateFieldTextInputProps,
+        TextInputExtendProps,
+        DomProps,
+        FocusableProps,
+        KeyboardEvents,
+        StyleProps,
+        AccessibilityProps {}
+
+export function useDateFieldProps<T = DateTime>(
+    state: BaseDateFieldState<T>,
+    props: DateFieldProps<T>,
 ): {inputProps: TextInputProps} {
     const inputRef = React.useRef<HTMLInputElement>(null);
 
