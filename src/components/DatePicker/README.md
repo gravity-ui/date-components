@@ -299,6 +299,8 @@ LANDING_BLOCK-->
 <DatePicker format="LL" />
 ```
 
+<!--/GITHUB_BLOCK-->
+
 ## Time zone
 
 `timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
@@ -307,14 +309,15 @@ LANDING_BLOCK-->
 
 If you want to use custom calendar component inside `DatePicker` you can pass it as `children` with calendar like props.
 
+<!--LANDING_BLOCK
+[Learn more about calendar](https://gravity-ui.com/components/date-components/calendar)
+LANDING_BLOCK-->
+
 <!--GITHUB_BLOCK-->
 
 [Learn more about calendar](https://github.com/gravity-ui/date-components/blob/main/src/components/Calendar/README.md)
 
 <!--/GITHUB_BLOCK-->
-<!--LANDING_BLOCK
-[Learn more about calendar](https://gravity-ui.com/components/date-components/calendar)
-LANDING_BLOCK-->
 
 ## Properties
 
