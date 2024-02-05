@@ -1,7 +1,7 @@
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
-interface PlaceholderValueOptions {
+export interface PlaceholderValueOptions {
     placeholderValue?: DateTime;
     timeZone?: string;
 }
