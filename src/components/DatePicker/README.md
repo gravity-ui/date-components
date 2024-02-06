@@ -218,7 +218,7 @@ This prop allows you to provide a short hint that describes the expected value o
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<DatePicker placeholder='Placeholder' />
+<DatePicker placeholder="Placeholder" />
 `}
 >
     <DateComponents.DatePicker placeholder='Placeholder' />
