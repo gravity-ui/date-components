@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/gravity-ui/date-components/compare/v1.4.0...v1.5.0) (2024-02-06)
+
+
+### Features
+
+* **DatePicker:** add description in README ([#43](https://github.com/gravity-ui/date-components/issues/43)) ([7a4a1dc](https://github.com/gravity-ui/date-components/commit/7a4a1dc0c25a0f0031cea0f837069bf7bc58218f))
+
 ## [1.4.0](https://github.com/gravity-ui/date-components/compare/v1.3.0...v1.4.0) (2024-02-02)
 
 
