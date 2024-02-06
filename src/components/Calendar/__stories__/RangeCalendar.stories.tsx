@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
+import {dateTime, dateTimeParse, getTimeZonesList} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
@@ -18,6 +18,11 @@ const meta: Meta<typeof RangeCalendar> = {
 export default meta;
 
 type Story = StoryObj<typeof RangeCalendar>;
+
+const zones = getTimeZonesList().reduce<Record<string, string>>((l, zone) => {
+    l[zone] = `${zone} (UTC ${dateTime({timeZone: zone}).format('Z')})`;
+    return l;
+}, {});
 
 export const Default = {
     render: function Render(args) {
@@ -92,6 +97,16 @@ export const Default = {
             options: ['weekend', 'ranges', 'none'],
             control: {
                 type: 'radio',
+            },
+        },
+        timeZone: {
+            options: ['none', ...Object.keys(zones)],
+            mapping: {
+                none: undefined,
+            },
+            control: {
+                type: 'select',
+                labels: zones,
             },
         },
     },

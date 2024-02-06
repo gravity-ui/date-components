@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTimeParse} from '@gravity-ui/date-utils';
+import {dateTime, dateTimeParse, getTimeZonesList} from '@gravity-ui/date-utils';
 import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -20,6 +20,11 @@ const meta: Meta<typeof RelativeDatePicker> = {
 export default meta;
 
 type Story = StoryObj<typeof RelativeDatePicker>;
+
+const zones = getTimeZonesList().reduce<Record<string, string>>((l, zone) => {
+    l[zone] = `${zone} (UTC ${dateTime({timeZone: zone}).format('Z')})`;
+    return l;
+}, {});
 
 export const Default = {
     render: (props) => {
@@ -57,6 +62,16 @@ export const Default = {
             options: ['invalid', 'none'],
             mapping: {
                 none: undefined,
+            },
+        },
+        timeZone: {
+            options: ['none', ...Object.keys(zones)],
+            mapping: {
+                none: undefined,
+            },
+            control: {
+                type: 'select',
+                labels: zones,
             },
         },
     },
