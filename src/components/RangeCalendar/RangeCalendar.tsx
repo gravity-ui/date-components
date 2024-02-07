@@ -1,25 +1,17 @@
 import React from 'react';
 
+import type {DateTime} from '@gravity-ui/date-utils';
+
+import type {CalendarProps} from '../Calendar/Calendar';
 import {CalendarView} from '../CalendarView/CalendarView';
-import type {CalendarInstance, CalendarSize} from '../CalendarView/CalendarView';
+import type {CalendarInstance} from '../CalendarView/CalendarView';
 import {useRangeCalendarState} from '../CalendarView/hooks/useRangeCalendarState';
-import type {RangeCalendarStateOptions} from '../CalendarView/hooks/useRangeCalendarState';
-import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
+import type {RangeValue} from '../types';
 
 import '../CalendarView/Calendar.scss';
 
-export interface RangeCalendarProps
-    extends RangeCalendarStateOptions,
-        DomProps,
-        StyleProps,
-        FocusEvents,
-        AccessibilityProps {
-    /**
-     * The size of the element.
-     * @default m
-     */
-    size?: CalendarSize;
-}
+export type RangeCalendarProps = CalendarProps<RangeValue<DateTime>>;
+
 export const RangeCalendar = React.forwardRef<CalendarInstance, RangeCalendarProps>(
     function Calendar(props: RangeCalendarProps, ref) {
         const state = useRangeCalendarState(props);

@@ -19,11 +19,9 @@ import {
 } from '../utils';
 
 import {useBaseDateFieldState} from './useBaseDateFieldState';
-import type {BaseDateFieldState} from './useBaseDateFieldState';
+import type {DateFieldState} from './useBaseDateFieldState';
 
 export interface DateFieldStateOptions extends DateFieldBase {}
-
-export type DateFieldState = BaseDateFieldState;
 
 export function useDateFieldState(props: DateFieldStateOptions): DateFieldState {
     const [value, setDate] = useControlledState(

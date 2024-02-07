@@ -16,7 +16,7 @@ import type {
 } from '../../types';
 import {cleanString} from '../utils';
 
-import type {BaseDateFieldState} from './useBaseDateFieldState';
+import type {DateFieldState} from './useBaseDateFieldState';
 
 export interface DateFieldProps<T = DateTime>
     extends DateFieldBase<T>,
@@ -30,7 +30,7 @@ export interface DateFieldProps<T = DateTime>
         AccessibilityProps {}
 
 export function useDateFieldProps<T = DateTime>(
-    state: BaseDateFieldState<T>,
+    state: DateFieldState<T>,
     props: DateFieldProps<T>,
 ): {inputProps: TextInputProps} {
     const inputRef = React.useRef<HTMLInputElement>(null);

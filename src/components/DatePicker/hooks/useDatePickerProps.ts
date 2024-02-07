@@ -1,31 +1,35 @@
 import React from 'react';
 
+import type {DateTime} from '@gravity-ui/date-utils';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {Calendar, CalendarInstance} from '../../Calendar';
+import type {CalendarInstance, CalendarProps} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
+import type {RangeValue} from '../../types';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
 import {mergeProps} from '../../utils/mergeProps';
 import type {DatePickerProps} from '../DatePicker';
 import {i18n} from '../i18n';
+import {getDateTimeValue} from '../utils';
 
 import type {DatePickerState} from './useDatePickerState';
 
-interface InnerRelativeDatePickerProps {
+interface InnerRelativeDatePickerProps<T = DateTime> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     groupProps: React.HTMLAttributes<unknown> & {ref: React.Ref<any>};
     fieldProps: TextInputProps;
     calendarButtonProps: ButtonProps & {ref: React.Ref<HTMLButtonElement>};
     popupProps: PopupProps;
-    calendarProps: React.ComponentProps<typeof Calendar>;
-    timeInputProps: DateFieldProps;
+    calendarProps: CalendarProps<T> & {ref: React.Ref<CalendarInstance>};
+    timeInputProps: DateFieldProps<T>;
 }
 
-export function useDatePickerProps(
-    state: DatePickerState,
-    {onFocus, onBlur, ...props}: DatePickerProps,
-): InnerRelativeDatePickerProps {
+export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
+    state: DatePickerState<T>,
+    {onFocus, onBlur, ...props}: DatePickerProps<T>,
+): InnerRelativeDatePickerProps<T> {
     const [isActive, setActive] = React.useState(false);
 
     const {focusWithinProps} = useFocusWithin({
@@ -131,7 +135,7 @@ export function useDatePickerProps(
         },
         timeInputProps: {
             value: state.timeValue,
-            placeholderValue: state.dateFieldState.displayValue,
+            placeholderValue: getDateTimeValue(state.dateFieldState.displayValue),
             onUpdate: state.setTimeValue,
             format: state.timeFormat,
             readOnly: state.readOnly,

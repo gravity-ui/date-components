@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {DateTime} from '@gravity-ui/date-utils';
 import {Calendar as CalendarIcon, Clock as ClockIcon} from '@gravity-ui/icons';
 import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
@@ -25,8 +26,8 @@ import {b} from './utils';
 
 import './DatePicker.scss';
 
-export interface DatePickerProps
-    extends DateFieldBase,
+export interface DatePickerProps<T = DateTime>
+    extends DateFieldBase<T>,
         TextInputProps,
         FocusableProps,
         KeyboardEvents,
@@ -34,7 +35,7 @@ export interface DatePickerProps
         InputDOMProps,
         StyleProps,
         AccessibilityProps {
-    children?: (props: CalendarProps) => React.ReactNode;
+    children?: (props: CalendarProps<T>) => React.ReactNode;
 }
 
 export function DatePicker({className, ...props}: DatePickerProps) {

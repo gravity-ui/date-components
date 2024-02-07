@@ -47,7 +47,7 @@ export type BaseDateFieldStateOptions<T = DateTime> = {
     setValueFromString: (str: string) => boolean;
 };
 
-export type BaseDateFieldState<T = DateTime> = {
+export type DateFieldState<T = DateTime> = {
     /** The current field value. */
     value: T | null;
     /** Is no part of value is filled. */
@@ -114,7 +114,7 @@ export type BaseDateFieldState<T = DateTime> = {
 
 export function useBaseDateFieldState<T = DateTime>(
     props: BaseDateFieldStateOptions<T>,
-): BaseDateFieldState<T> {
+): DateFieldState<T> {
     const {
         value,
         validationState,
