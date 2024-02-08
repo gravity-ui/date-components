@@ -56,7 +56,7 @@ Using this mode you can deliver youe data from source to destination and compute
 <RelativeDatePicker defaultValue={{type: 'relative', value: 'now-2d'}} />
 `}
 >
-    <DateComponentsExamples.RelativeDatePickerExample withRelativeDefaultValue />
+    <DateComponentsExamples.RelativeDatePickerExample defaultValue={'now-2d'} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -200,7 +200,7 @@ The state of the `RelativeDatePicker` where you don't want the user to be able t
 <RelativeDatePicker disabled={true} defaultValue={dateTime()} />
 `}
 >
-    <DateComponentsExamples.DatePickerExample disabled={true} defaultValue={new Date()} />
+    <DateComponentsExamples.DatePickerExample disabled={true} defaultValue={'now'} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -222,7 +222,7 @@ LANDING_BLOCK-->
 <RelativeDatePicker readOnly defaultValue={dateTimeParse(new Date())} />
 `}
 >
-    <DateComponentsExamples.DatePickerExample readOnly defaultValue={new Date()} />
+    <DateComponentsExamples.DatePickerExample readOnly defaultValue={'now'} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
