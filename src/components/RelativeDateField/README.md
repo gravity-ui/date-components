@@ -18,57 +18,6 @@ To set dates in the right format you may need to include additional helpers from
 import {dateTimeParse} from '@gravity-ui/date-utils';
 ```
 
-## Difference from `DateField`
-
-`RelativeDateField` can work in two modes: `absolute` and `relative`. You can switch it interactively by click on `f(x)` button. Or you can set field `type` in `value` or `defaultValue` object.
-
-### Absolute
-
-`RelativeDateField`'s behaviour in `absolute` mode is very similar to simple `DateField`.
-
-<!--LANDING_BLOCK
-<ExampleBlock
-    code={`
-<RelativeDateField defaultValue={{type: 'absolute', value:new Date()}} />
-`}
->
-    <DateComponentsExamples.RelativeDatePickerExample defaultValue={{type: 'absolute', value: new Date()}} />
-</ExampleBlock>
-LANDING_BLOCK-->
-
-<!--GITHUB_BLOCK-->
-
-```tsx
-<RelativeDateField defaultValue={{type: 'absolute', value: new Date()}} />
-```
-
-<!--/GITHUB_BLOCK-->
-
-### Relative
-
-In this mode `RelativeDateField` get and return values in special relative format. You set and get values as formulas which will help you to compute the exact date. We can call it `grafana-like format` because it is very similar to format of Grafana's relative time fields. To know more about relative time values in Grafana read [the docs](https://grafana.com/docs/grafana/latest/panels-visualizations/query-transform-data/).
-
-Using this mode you can deliver your data from source to destination and compute the exact value straight on the necessary endpoit without inaccuracy.
-
-<!--LANDING_BLOCK
-<ExampleBlock
-    code={`
-<RelativeDateField defaultValue={{type: 'relative', value: 'now-2d'}} />
-`}
->
-    <DateComponentsExamples.RelativeDatePickerExample defaultValue={'now-2d'}
-    isRelative={true}/>
-</ExampleBlock>
-LANDING_BLOCK-->
-
-<!--GITHUB_BLOCK-->
-
-```tsx
-<RelativeDateField defaultValue={{type: 'relative', value: 'now-2d'}} />
-```
-
-<!--/GITHUB_BLOCK-->
-
 ## Appearance
 
 The appearance of `RelativeDateField` is controlled by the `size`, `view` and `pin` properties.
@@ -163,28 +112,25 @@ LANDING_BLOCK-->
 
 ## Value
 
-### Min and max value
+`RelativeDateField` get and return values in special relative format. You set and get values as formulas which will help you to compute the exact date. We can call it `grafana-like format` because it is very similar to format of Grafana's relative time fields. To know more about relative time values in Grafana read [the docs](https://grafana.com/docs/grafana/latest/panels-visualizations/query-transform-data/).
 
-The `minValue` property allows you to specify the earliest date and time that can be entered by the user. Conversely, the `maxValue` property specifies the latest date and time that can be entered. If you input the value out of this bounds component changes it's view like in case of invalid validation state.
+Using this mode you can deliver your data from source to destination and compute the exact value straight on the necessary endpoit without inaccuracy.
 
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<RelativeDateField minValue={dateTimeParse('01.01.2024')} placeholder={"minValue: '01.01.2024'"}/>
-<RelativeDateField maxValue={dateTimeParse('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
+<RelativeDateField defaultValue="now-2d" />
 `}
 >
-    <DateComponentsExamples.RelativeDateFieldExample minValue={'01.01.2024'} placeholder={"minValue: '01.01.2024'"} />
-    <DateComponentsExamples.RelativeDateFieldExample maxValue={'01.01.2025'} placeholder={"maxValue: '01.01.2025'"} />
+    <DateComponents.RelativeDateField defaultValue="now-2d"
+    isRelative={true}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-
-<RelativeDateField minValue={dateTimeParse('01.01.2024')} />
-<RelativeDateField maxValue={dateTimeParse('01.01.2025')} />
+<RelativeDateField defaultValue="now-2d" />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -198,17 +144,17 @@ The state of the `RelativeDateField` where you don't want the user to be able to
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<RelativeDateField disabled={true} defaultValue={dateTimeParse(new Date())} />
+<RelativeDateField disabled={true} defaultValue="now-2d" />
 `}
 >
-    <DateComponentsExamples.RelativeDateFieldExample disabled={true} defaultValue={new Date()} />
+    <DateComponents.RelativeDateField disabled={true} defaultValue="now-2d" />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<RelativeDateField disabled defaultValue={dateTimeParse(new Date())} />
+<RelativeDateField disabled defaultValue="now-2d" />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -220,17 +166,17 @@ LANDING_BLOCK-->
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<RelativeDateField readOnly defaultValue={dateTimeParse(new Date())} />
+<RelativeDateField readOnly defaultValue="now-2d" />
 `}
 >
-    <DateComponentsExamples.RelativeDateFieldExample readOnly defaultValue={new Date()} />
+    <DateComponents.RelativeDateField readOnly defaultValue="now-2d" />
 </ExampleBlock>
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<RelativeDateField readOnly defaultValue={dateTimeParse(new Date())} />
+<RelativeDateField readOnly defaultValue="now-2d" />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -404,38 +350,35 @@ LANDING_BLOCK-->
 
 ## Properties
 
-| Name              | Description                                                                                                          |                     Type                      |          Default          |
-| :---------------- | :------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------: | :-----------------------: |
-| aria-describedby  | The control's `aria-describedby` attribute                                                                           |                   `string`                    |                           |
-| aria-details      | The control's `aria-details` attribute                                                                               |                   `string`                    |                           |
-| aria-label        | The control's `aria-label` attribute                                                                                 |                   `string`                    |                           |
-| aria-labelledby   | The control's `aria-labelledby` attribute                                                                            |                   `string`                    |                           |
-| autoFocus         | The control's `autofocus` attribute                                                                                  |                   `boolean`                   |                           |
-| className         | The control's wrapper class name                                                                                     |                   `string`                    |                           |
-| defaultValue      | Sets the initial value for uncontrolled component.                                                                   |                    `Value`                    |                           |
-| disabled          | Indicates that the user cannot interact with the control                                                             |                   `boolean`                   |          `false`          |
-| errorMessage      | Error text                                                                                                           |                  `ReactNode`                  |                           |
-| format            | Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format)        |                   `string`                    |                           |
-| hasClear          | Shows the icon for clearing control's value                                                                          |                   `boolean`                   |          `false`          |
-| id                | The control's `id` attribute                                                                                         |                   `string`                    |                           |
-| isDateUnavailable | Callback that is called for each date of the calendar. If it returns true, then the date is unavailable.             |        `((date: DateTime) => boolean)`        |                           |
-| label             | Help text rendered to the left of the input node                                                                     |                   `string`                    |                           |
-| leftContent       | The user`s node rendered before label and input                                                                      |               `React.ReactNode`               |                           |
-| maxValue          | The maximum allowed date that a user may select.                                                                     |                  `DateTime`                   |                           |
-| minValue          | The minimum allowed date that a user may select.                                                                     |                  `DateTime`                   |                           |
-| onBlur            | Fires when the control lost focus. Provides focus event as a callback's argument                                     | `((e: FocusEvent<Element, Element>) => void)` |                           |
-| onFocus           | Fires when the control gets focus. Provides focus event as a callback's argument                                     | `((e: FocusEvent<Element, Element>) => void)` |                           |
-| onKeyDown         | Fires when a key is pressed. Provides keyboard event as a callback's argument                                        |    `((e: KeyboardEvent<Element>) => void)`    |                           |
-| onKeyUp           | Fires when a key is released. Provides keyboard event as a callback's argument                                       |    `((e: KeyboardEvent<Element>) => void)`    |                           |
-| onUpdate          | Fires when the value is changed by the user. Provides new value as an callback's argument                            |       `((value: Value \| null) => void`       |                           |
-| pin               | Corner rounding                                                                                                      |                   `string`                    |      `'round-round'`      |
-| placeholder       | Text that appears in the control when it has no value set                                                            |                   `string`                    |                           |
-| placeholderValue  | A placeholder date that controls the default values of each segment when the user first interacts with them.         |                  `DateTime`                   | `today's date at midnigh` |
-| readOnly          | Whether the component's value is immutable.                                                                          |                   `boolean`                   |          `false`          |
-| rightContent      | User`s node rendered after the input node and clear button                                                           |               `React.ReactNode`               |                           |
-| size              | The size of the control                                                                                              |           `"s"` `"m"` `"l"` `"xl"`            |           `"m"`           |
-| style             | Sets inline style for the element.                                                                                   |                `CSSProperties`                |                           |
-| timeZone          | Sets the time zone. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) |                   `string`                    |                           |
-| validationState   | Validation state                                                                                                     |                  `"invalid"`                  |                           |
-| value             | The value of the control                                                                                             |                `Value` `null`                 |                           |
-| view              | The view of the control                                                                                              |             `"normal"` `"clear"`              |        `"normal"`         |
+| Name                           | Description                                                                                                          |                     Type                      |     Default     |
+| :----------------------------- | :------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------: | :-------------: |
+| aria-describedby               | The control's `aria-describedby` attribute                                                                           |                   `string`                    |                 |
+| aria-details                   | The control's `aria-details` attribute                                                                               |                   `string`                    |                 |
+| aria-label                     | The control's `aria-label` attribute                                                                                 |                   `string`                    |                 |
+| aria-labelledby                | The control's `aria-labelledby` attribute                                                                            |                   `string`                    |                 |
+| autoFocus                      | The control's `autofocus` attribute                                                                                  |                   `boolean`                   |                 |
+| className                      | The control's wrapper class name                                                                                     |                   `string`                    |                 |
+| [defaultValue](#value)         | Sets the initial value for uncontrolled component.                                                                   |                   `string`                    |                 |
+| [disabled](#disabled)          | Indicates that the user cannot interact with the control                                                             |                   `boolean`                   |     `false`     |
+| [errorMessage](#error)         | Error text                                                                                                           |                  `ReactNode`                  |                 |
+| [format](#format)              | Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format)        |                   `string`                    |                 |
+| [hasClear](#clear-button)      | Shows the icon for clearing control's value                                                                          |                   `boolean`                   |     `false`     |
+| hasTime                        | Show time field in popupvalue                                                                                        |                   `boolean`                   |     `false`     |
+| id                             | The control's `id` attribute                                                                                         |                   `string`                    |                 |
+| [label](#label)                | Help text rendered to the left of the input node                                                                     |                   `string`                    |                 |
+| [leftContent](#left-content)   | The user`s node rendered before label and input                                                                      |               `React.ReactNode`               |                 |
+| onBlur                         | Fires when the control lost focus. Provides focus event as a callback's argument                                     | `((e: FocusEvent<Element, Element>) => void)` |                 |
+| onFocus                        | Fires when the control gets focus. Provides focus event as a callback's argument                                     | `((e: FocusEvent<Element, Element>) => void)` |                 |
+| onKeyDown                      | Fires when a key is pressed. Provides keyboard event as a callback's argument                                        |    `((e: KeyboardEvent<Element>) => void)`    |                 |
+| onKeyUp                        | Fires when a key is released. Provides keyboard event as a callback's argument                                       |    `((e: KeyboardEvent<Element>) => void)`    |                 |
+| onUpdate                       | Fires when the value is changed by the user. Provides new value as an callback's argument                            |      `((value: string \| null) => void`       |                 |
+| [pin](#pin)                    | Corner rounding                                                                                                      |                   `string`                    | `'round-round'` |
+| [placeholder](#placeholder)    | Text that appears in the control when it has no value set                                                            |                   `string`                    |                 |
+| [readOnly](#readonly)          | Whether the component's value is immutable.                                                                          |                   `boolean`                   |     `false`     |
+| [rightContent](#right-content) | User`s node rendered after the input node and clear button                                                           |               `React.ReactNode`               |                 |
+| [size](#size)                  | The size of the control                                                                                              |           `"s"` `"m"` `"l"` `"xl"`            |      `"m"`      |
+| style                          | Sets inline style for the element.                                                                                   |                `CSSProperties`                |                 |
+| [timeZone](#time-zone)         | Sets the time zone. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) |                   `string`                    |                 |
+| validationState                | Validation state                                                                                                     |                  `"invalid"`                  |                 |
+| [value](#value)                | The value of the control                                                                                             |                `string` `null`                |                 |
+| [view](#view)                  | The view of the control                                                                                              |             `"normal"` `"clear"`              |   `"normal"`    |
