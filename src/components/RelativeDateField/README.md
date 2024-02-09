@@ -322,28 +322,6 @@ LANDING_BLOCK-->
 
 <!--/GITHUB_BLOCK-->
 
-## Format
-
-The `format` prop is a string that defines the date and time format the `RelativeDateField` component will accept and display. This prop determines how the date and time are visually presented to the user and how the user's input is expected to be formatted. [Available formats](https://day.js.org/docs/en/display/format)
-
-<!--LANDING_BLOCK
-<ExampleBlock
-    code={`
-<RelativeDateField format='LTS' />
-`}
->
-    <DateComponents.RelativeDateField format='LTS' />
-</ExampleBlock>
-LANDING_BLOCK-->
-
-<!--GITHUB_BLOCK-->
-
-```tsx
-<RelativeDateField format="LTS" />
-```
-
-<!--/GITHUB_BLOCK-->
-
 ## Time zone
 
 `timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
@@ -361,7 +339,6 @@ LANDING_BLOCK-->
 | [defaultValue](#value)         | Sets the initial value for uncontrolled component.                                                                   |                   `string`                    |                 |
 | [disabled](#disabled)          | Indicates that the user cannot interact with the control                                                             |                   `boolean`                   |     `false`     |
 | [errorMessage](#error)         | Error text                                                                                                           |                  `ReactNode`                  |                 |
-| [format](#format)              | Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format)        |                   `string`                    |                 |
 | [hasClear](#clear-button)      | Shows the icon for clearing control's value                                                                          |                   `boolean`                   |     `false`     |
 | hasTime                        | Show time field in popupvalue                                                                                        |                   `boolean`                   |     `false`     |
 | id                             | The control's `id` attribute                                                                                         |                   `string`                    |                 |
