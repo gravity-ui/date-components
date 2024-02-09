@@ -3,7 +3,7 @@ import React from 'react';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 export function useDefaultTimeZone(date: DateTime | null | undefined) {
-    const defaultTimeZone = date ? date.timeZone() : undefined;
+    const defaultTimeZone = date ? date.timeZone() : 'default';
 
     const [lastValue, setLastValue] = React.useState(defaultTimeZone);
 

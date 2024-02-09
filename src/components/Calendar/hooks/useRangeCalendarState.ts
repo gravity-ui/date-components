@@ -4,6 +4,8 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import {useControlledState} from '../../hooks/useControlledState';
 import type {RangeValue, ValueBase} from '../../types';
+import {mergeDateTime} from '../../utils/dates';
+import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {constrainValue} from '../utils';
 
 import type {CalendarLayout, CalendarStateOptionsBase, RangeCalendarState} from './types';
@@ -21,12 +23,29 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
     const [anchorDate, setAnchorDateState] = React.useState<DateTime>();
 
-    const calendar = useCalendarState({...calendarProps, value: value?.start ?? null});
+    const inputTimeZone = useDefaultTimeZone(valueProp?.start || defaultValue?.start);
+    const timeZone = props.timeZone || inputTimeZone;
+
+    const calendar = useCalendarState({...calendarProps, value: null, timeZone});
     const highlightedRange = anchorDate
         ? makeRange(anchorDate, calendar.focusedDate, calendar.mode)
-        : (value && makeRange(value.start, value.end, calendar.mode)) ?? undefined;
+        : (value &&
+              makeRange(
+                  value.start.timeZone(timeZone),
+                  value.end.timeZone(timeZone),
+                  calendar.mode,
+              )) ??
+          undefined;
 
     const minMode = calendar.availableModes[0];
+
+    const handleSetValue = (v: RangeValue<DateTime>) => {
+        if (value) {
+            v.start = mergeDateTime(v.start, value.start.timeZone(timeZone));
+            v.end = mergeDateTime(v.end, value.end.timeZone(timeZone));
+        }
+        setValue({start: v.start.timeZone(inputTimeZone), end: v.end.timeZone(inputTimeZone)});
+    };
 
     const selectDate = (date: DateTime, force = false) => {
         if (props.disabled) {
@@ -49,7 +68,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
         if (anchorDate) {
             const range = makeRange(anchorDate, date, calendar.mode);
-            setValue(range);
+            handleSetValue(range);
             setAnchorDateState(undefined);
         } else {
             setAnchorDateState(date);
@@ -59,7 +78,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     return {
         ...calendar,
         value,
-        setValue,
+        setValue: handleSetValue,
         selectDate,
         anchorDate,
         setAnchorDate: setAnchorDateState,

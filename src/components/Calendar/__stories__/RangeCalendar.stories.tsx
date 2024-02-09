@@ -53,7 +53,7 @@ export const Default = {
                 />
                 <div>
                     Selected range:{' '}
-                    {value ? `${value.start.format('L')} - ${value.end.format('L')}` : ''}
+                    {value ? `${value.start.format('L LT')} - ${value.end.format('L LT')}` : ''}
                 </div>
             </div>
         );

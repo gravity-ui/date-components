@@ -5,7 +5,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import {useControlledState} from '../../hooks/useControlledState';
 import type {ValueBase} from '../../types';
-import {createPlaceholderValue} from '../../utils/dates';
+import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {calendarLayouts, constrainValue} from '../utils';
 
@@ -40,10 +40,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
     const currentMode = mode && availableModes.includes(mode) ? mode : minMode;
 
-    const defaultTimeZone = useDefaultTimeZone(
-        props.value || props.defaultValue || props.focusedValue || props.defaultFocusedValue,
-    );
-    const inputTimeZone = defaultTimeZone || props.timeZone || 'default';
+    const inputTimeZone = useDefaultTimeZone(props.value || props.defaultValue);
     const timeZone = props.timeZone || inputTimeZone;
 
     const minValue = React.useMemo(
@@ -60,34 +57,34 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         if (!props.focusedValue) {
             return props.focusedValue;
         }
-        return constrainValue(props.focusedValue, minValue, maxValue);
-    }, [props.focusedValue, minValue, maxValue]);
+        return constrainValue(props.focusedValue.timeZone(timeZone), minValue, maxValue);
+    }, [props.focusedValue, minValue, maxValue, timeZone]);
 
     const defaultFocusedValue = React.useMemo(() => {
         const defaultValue =
-            (props.defaultFocusedValue ? props.defaultFocusedValue : value) ||
-            createPlaceholderValue({timeZone: inputTimeZone}).startOf(minMode);
+            (props.defaultFocusedValue ? props.defaultFocusedValue : value)?.timeZone(timeZone) ||
+            createPlaceholderValue({timeZone}).startOf(minMode);
         return constrainValue(defaultValue, minValue, maxValue);
-    }, [maxValue, minValue, props.defaultFocusedValue, inputTimeZone, value, minMode]);
+    }, [maxValue, minValue, props.defaultFocusedValue, timeZone, value, minMode]);
     const [focusedDateInner, setFocusedDate] = useControlledState(
         focusedValue,
         defaultFocusedValue,
-        props.onFocusUpdate,
+        (date: DateTime) => {
+            props.onFocusUpdate?.(date.timeZone(inputTimeZone));
+        },
     );
 
     const focusedDate =
-        focusedDateInner ??
-        constrainValue(createPlaceholderValue({timeZone: inputTimeZone}), minValue, maxValue);
+        focusedDateInner?.timeZone(timeZone) ??
+        constrainValue(createPlaceholderValue({timeZone}), minValue, maxValue);
 
     if (isInvalid(focusedDate, minValue, maxValue)) {
         // If the focused date was moved to an invalid value, it can't be focused, so constrain it.
-        setFocusedDate(constrainValue(focusedDate, minValue, maxValue).timeZone(inputTimeZone));
+        setFocusedDate(constrainValue(focusedDate, minValue, maxValue));
     }
 
     function focusCell(date: DateTime) {
-        setFocusedDate(
-            constrainValue(date.startOf(currentMode).timeZone(inputTimeZone), minValue, maxValue),
-        );
+        setFocusedDate(constrainValue(date.startOf(currentMode), minValue, maxValue));
     }
 
     const [isFocused, setFocused] = React.useState(props.autoFocus || false);
@@ -101,9 +98,13 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         value,
         setValue(date: DateTime) {
             if (!disabled && !readOnly) {
-                const newValue = constrainValue(date, minValue, maxValue);
+                let newValue = constrainValue(date, minValue, maxValue);
                 if (this.isCellUnavailable(newValue)) {
                     return;
+                }
+                if (value) {
+                    // If there is a date already selected, then we want to keep its time
+                    newValue = mergeDateTime(newValue, value.timeZone(timeZone));
                 }
                 setValue(newValue.timeZone(inputTimeZone));
             }

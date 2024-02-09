@@ -64,10 +64,9 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     const [selectedDateInner, setSelectedDate] = React.useState<DateTime | null>(null);
     const [selectedTimeInner, setSelectedTime] = React.useState<DateTime | null>(null);
 
-    const defaultTimeZone = useDefaultTimeZone(
+    const inputTimeZone = useDefaultTimeZone(
         props.value || props.defaultValue || props.placeholderValue,
     );
-    const inputTimeZone = defaultTimeZone || props.timeZone || 'default';
     const timeZone = props.timeZone || inputTimeZone;
 
     let selectedDate = selectedDateInner;

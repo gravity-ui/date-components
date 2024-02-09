@@ -23,7 +23,6 @@ export interface DateFieldStateOptions extends DateFieldBase {}
 
 export type DateFieldState = BaseDateFieldState;
 
-// eslint-disable-next-line complexity
 export function useDateFieldState(props: DateFieldStateOptions): DateFieldState {
     const [value, setDate] = useControlledState(
         props.value,
@@ -31,10 +30,9 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         props.onUpdate,
     );
 
-    const defaultTimeZone = useDefaultTimeZone(
+    const inputTimeZone = useDefaultTimeZone(
         props.value || props.defaultValue || props.placeholderValue,
     );
-    const inputTimeZone = defaultTimeZone || props.timeZone || 'default';
     const timeZone = props.timeZone || inputTimeZone;
 
     const handleUpdateDate = (v: DateTime | null) => {

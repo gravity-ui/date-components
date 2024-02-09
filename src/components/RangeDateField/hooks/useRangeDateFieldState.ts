@@ -34,10 +34,9 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         props.onUpdate,
     );
 
-    const defaultTimeZone = useDefaultTimeZone(
+    const inputTimeZone = useDefaultTimeZone(
         props.value?.start || props.defaultValue?.start || props.placeholderValue,
     );
-    const inputTimeZone = defaultTimeZone || props.timeZone || 'default';
     const timeZone = props.timeZone || inputTimeZone;
 
     const handleUpdateRange = (v: RangeValue<DateTime> | null) => {
