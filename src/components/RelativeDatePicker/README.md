@@ -46,9 +46,9 @@ LANDING_BLOCK-->
 
 ### Relative
 
-In this mode `RelativeDatePicker` get and return values in special relative format. You set and get values as formulas which will help you to compute the exact date. We can call it `grafana-like format` because it is very similar to format of grafana's relative time fields. To know more about relative time values in Grafana read [the docs](https://grafana.com/docs/grafana/latest/panels-visualizations/query-transform-data/).
+In this mode `RelativeDatePicker` get and return values in special relative format. You set and get values as formulas which will help you to compute the exact date. We can call it `grafana-like format` because it is very similar to format of Grafana's relative time fields. To know more about relative time values in Grafana read [the docs](https://grafana.com/docs/grafana/latest/panels-visualizations/query-transform-data/).
 
-Using this mode you can deliver youe data from source to destination and compute the exact value straight on the necessary endpoit without inaccuracy.
+Using this mode you can deliver your data from source to destination and compute the exact value straight on the necessary endpoit without inaccuracy.
 
 <!--LANDING_BLOCK
 <ExampleBlock
@@ -56,7 +56,8 @@ Using this mode you can deliver youe data from source to destination and compute
 <RelativeDatePicker defaultValue={{type: 'relative', value: 'now-2d'}} />
 `}
 >
-    <DateComponentsExamples.RelativeDatePickerExample defaultValue={'now-2d'} />
+    <DateComponentsExamples.RelativeDatePickerExample defaultValue={'now-2d'}
+    isRelative={true}/>
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -200,7 +201,7 @@ The state of the `RelativeDatePicker` where you don't want the user to be able t
 <RelativeDatePicker disabled={true} defaultValue={dateTime()} />
 `}
 >
-    <DateComponentsExamples.DatePickerExample disabled={true} defaultValue={'now'} />
+    <DateComponentsExamples.DatePickerExample disabled={true} defaultValue={new Date()} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -219,10 +220,10 @@ LANDING_BLOCK-->
 <!--LANDING_BLOCK
 <ExampleBlock
     code={`
-<RelativeDatePicker readOnly defaultValue={dateTimeParse(new Date())} />
+<RelativeDatePicker readOnly defaultValue={dateTimeParse(dateTime()} />
 `}
 >
-    <DateComponentsExamples.DatePickerExample readOnly defaultValue={'now'} />
+    <DateComponentsExamples.DatePickerExample readOnly defaultValue={new Date()} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
