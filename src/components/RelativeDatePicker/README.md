@@ -174,8 +174,8 @@ The `minValue` property allows you to specify the earliest date and time that ca
 <RelativeDatePicker maxValue={dateTimeParse('01.01.2025')} placeholder={"maxValue: '01.01.2025'"}/>
 `}
 >
-    <DateComponentsExamples.DatePickerExample minValue={'01.01.2024'} placeholder={"minValue: '01.01.2024'"} />
-    <DateComponentsExamples.DatePickerExample maxValue={'01.01.2025'} placeholder={"maxValue: '01.01.2025'"} />
+    <DateComponentsExamples.RelativeDatePickerExample minValue={'01.01.2024'} placeholder={"minValue: '01.01.2024'"} />
+    <DateComponentsExamples.RelativeDatePickerExample maxValue={'01.01.2025'} placeholder={"maxValue: '01.01.2025'"} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -201,7 +201,7 @@ The state of the `RelativeDatePicker` where you don't want the user to be able t
 <RelativeDatePicker disabled={true} defaultValue={dateTime()} />
 `}
 >
-    <DateComponentsExamples.DatePickerExample disabled={true} defaultValue={new Date()} />
+    <DateComponentsExamples.RelativeDatePickerExample disabled={true} defaultValue={new Date()} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -223,7 +223,7 @@ LANDING_BLOCK-->
 <RelativeDatePicker readOnly defaultValue={dateTimeParse(dateTime()} />
 `}
 >
-    <DateComponentsExamples.DatePickerExample readOnly defaultValue={new Date()} />
+    <DateComponentsExamples.RelativeDatePickerExample readOnly defaultValue={new Date()} />
 </ExampleBlock>
 LANDING_BLOCK-->
 
