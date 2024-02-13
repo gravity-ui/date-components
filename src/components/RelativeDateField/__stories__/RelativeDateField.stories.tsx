@@ -28,7 +28,7 @@ export const Default: Story = {
             toaster.add({
                 name: 'on-change-cb',
                 title: 'onUpdate callback',
-                type: 'success',
+                theme: 'success',
                 content: (
                     <div>
                         <div>value: {res ?? 'null'}</div>

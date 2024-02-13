@@ -1,13 +1,12 @@
 import React from 'react';
 
 import {dateTime, dateTimeParse, getTimeZonesList} from '@gravity-ui/date-utils';
-import {Tabs} from '@gravity-ui/uikit';
+import {Tabs, useControlledState} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {Calendar} from '../../Calendar';
 import {constrainValue} from '../../Calendar/utils';
-import {useControlledState} from '../../hooks/useControlledState';
 import {RelativeDatePicker} from '../RelativeDatePicker';
 import type {Value} from '../hooks/useRelativeDatePickerState';
 
@@ -38,7 +37,7 @@ export const Default = {
             toaster.add({
                 name: 'on-change-cb',
                 title: 'onUpdate callback',
-                type: 'success',
+                theme: 'success',
                 content: (
                     <div>
                         <div>value: {res ? JSON.stringify(res, null, 2) : 'null'}</div>

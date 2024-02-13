@@ -2,6 +2,7 @@
 import React from 'react';
 
 import {type DateTime, isValid} from '@gravity-ui/date-utils';
+import {useControlledState} from '@gravity-ui/uikit';
 
 import {type BaseDateFieldState, useBaseDateFieldState} from '../../DateField';
 import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../DateField/types';
@@ -12,7 +13,6 @@ import {
     setSegment,
     splitFormatIntoSections,
 } from '../../DateField/utils';
-import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types/datePicker';
 import type {RangeValue} from '../../types/inputs';
 import {isInvalid} from '../../utils/dates';

@@ -46,7 +46,7 @@ export function DatePicker({value, defaultValue, onUpdate, className, ...props}:
     const {groupProps, fieldProps, calendarButtonProps, popupProps, calendarProps, timeInputProps} =
         useDatePickerProps(state, props);
 
-    const [isMobile] = useMobile();
+    const isMobile = useMobile();
 
     return (
         <div className={b(null, className)} {...groupProps}>
@@ -74,7 +74,7 @@ export function DatePicker({value, defaultValue, onUpdate, className, ...props}:
                 {...fieldProps}
                 className={b('field', {mobile: isMobile})}
                 hasClear={!isMobile && fieldProps.hasClear}
-                rightContent={
+                endContent={
                     isMobile ? (
                         <MobileCalendarIcon props={props} state={state} />
                     ) : (

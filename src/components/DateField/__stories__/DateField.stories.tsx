@@ -41,7 +41,7 @@ export const Default: Story = {
             toaster.add({
                 name: 'calendar-on-change-cb',
                 title: 'onUpdate callback',
-                type: 'success',
+                theme: 'success',
                 content: (
                     <div>
                         <div>date: {res?.format() || 'null'}</div>

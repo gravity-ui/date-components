@@ -116,7 +116,6 @@ export function useDatePickerProps(
                     focusInput();
                 }
             },
-            // @ts-expect-error focusTrap in popup was introduced in a newer version of uikit
             focusTrap: true,
         },
         calendarProps: {

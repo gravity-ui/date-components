@@ -51,7 +51,7 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
 
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
-    const [isMobile] = useMobile();
+    const isMobile = useMobile();
 
     return (
         <div ref={anchorRef} className={b(null, props.className)} {...groupProps}>
@@ -69,12 +69,12 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
             )}
             <TextInput
                 {...fieldProps}
-                leftContent={
+                startContent={
                     <Button {...modeSwitcherProps}>
                         <Icon data={FunctionIcon} />
                     </Button>
                 }
-                rightContent={
+                endContent={
                     <React.Fragment>
                         {!isMobile && (
                             <Button {...calendarButtonProps}>
