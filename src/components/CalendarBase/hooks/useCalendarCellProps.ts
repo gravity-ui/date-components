@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {CalendarLayout, CalendarState, RangeCalendarState} from './types';
@@ -28,7 +27,7 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
         state.mode === 'days' ? !state.focusedDate.isSame(date, 'month') : false;
     const isUnavailable = state.isCellUnavailable(date);
     const isSelectable = !isDisabled && !isUnavailable;
-    const isCurrent = dateTime().isSame(date, state.mode);
+    const isCurrent = state.isCurrent(date);
     const isWeekend = state.isWeekend(date);
 
     const label = getDateLabel(date, state.mode);

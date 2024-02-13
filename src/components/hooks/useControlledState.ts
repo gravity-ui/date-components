@@ -1,5 +1,15 @@
 import React from 'react';
 
+export function useControlledState<T, C = T>(
+    value: Exclude<T, undefined>,
+    defaultValue: Exclude<T, undefined> | undefined,
+    onChange?: (v: C, ...args: any[]) => void,
+): [T, (value: C) => void];
+export function useControlledState<T, C = T>(
+    value: Exclude<T, undefined> | undefined,
+    defaultValue: Exclude<T, undefined>,
+    onChange?: (v: C, ...args: any[]) => void,
+): [T, (value: C) => void];
 export function useControlledState<T, C extends T = T>(
     value: T,
     defaultValue: T,

@@ -31,14 +31,15 @@ export interface RelativeDateFieldState {
     readOnly?: boolean;
 }
 
-export interface RelativeDateFieldOptions
-    extends ValueBase<string, string | null>,
-        InputBase,
-        Validation {
+export interface RelativeDateFieldOptions extends ValueBase<string | null>, InputBase, Validation {
     timeZone?: string;
 }
 export function useRelativeDateFieldState(props: RelativeDateFieldOptions): RelativeDateFieldState {
-    const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
+    const [value, setValue] = useControlledState(
+        props.value,
+        props.defaultValue ?? null,
+        props.onUpdate,
+    );
 
     const [text, setText] = React.useState(value ?? '');
     if (value && value !== text) {
@@ -77,7 +78,7 @@ export function useRelativeDateFieldState(props: RelativeDateFieldOptions): Rela
     const validationState = props.validationState || (text && !parsedDate) ? 'invalid' : undefined;
 
     return {
-        value: value ?? null,
+        value,
         setValue(v: string | null) {
             if (props.disabled || props.readOnly) {
                 return;
