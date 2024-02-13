@@ -23,13 +23,18 @@ interface InnerRelativeDatePickerProps {
     timeInputProps: DateFieldProps;
 }
 
+// eslint-disable-next-line complexity
 export function useRelativeDatePickerProps(
     state: RelativeDatePickerState,
     {onFocus, onBlur, ...props}: RelativeDatePickerProps,
 ): InnerRelativeDatePickerProps {
-    const {mode, setMode, datePickerState, dateFieldState, relativeDateState} = state;
+    const {mode, setMode, datePickerState, relativeDateState} = state;
 
-    const [focusedDate, setFocusedDate] = React.useState(relativeDateState.lastCorrectDate);
+    const [focusedDate, setFocusedDate] = React.useState(
+        mode === 'relative'
+            ? relativeDateState.lastCorrectDate
+            : datePickerState.dateFieldState.displayValue,
+    );
 
     const [prevCorrectDate, setPrevCorrectDate] = React.useState(relativeDateState.lastCorrectDate);
     if (prevCorrectDate !== relativeDateState.lastCorrectDate) {
@@ -59,6 +64,21 @@ export function useRelativeDatePickerProps(
         setOpen(false);
     }
 
+    const [prevOpen, setPrevOpen] = React.useState(isOpen);
+    if (isOpen !== prevOpen) {
+        setPrevOpen(isOpen);
+        if (!isOpen) {
+            // FIXME: use popup afterOpenChange instead.
+            setTimeout(() => {
+                setFocusedDate(
+                    mode === 'relative'
+                        ? relativeDateState.lastCorrectDate
+                        : datePickerState.dateFieldState.displayValue,
+                );
+            }, 200);
+        }
+    }
+
     const commonInputProps: TextInputProps = {
         onFocus: () => {
             if (!state.isActive) {
@@ -68,7 +88,7 @@ export function useRelativeDatePickerProps(
         },
     };
 
-    const {inputProps} = useDateFieldProps(dateFieldState, {
+    const {inputProps} = useDateFieldProps(datePickerState.dateFieldState, {
         ...props,
         value: undefined,
         defaultValue: undefined,
@@ -92,7 +112,7 @@ export function useRelativeDatePickerProps(
         validationState =
             mode === 'relative'
                 ? relativeDateState.validationState
-                : dateFieldState.validationState;
+                : datePickerState.dateFieldState.validationState;
         error = validationState === 'invalid';
     }
 
@@ -134,7 +154,10 @@ export function useRelativeDatePickerProps(
         fieldProps: mergeProps(
             commonInputProps,
             mode === 'relative' ? relativeDateProps : inputProps,
-            mode === 'absolute' && dateFieldState.isEmpty && !state.isActive && props.placeholder
+            mode === 'absolute' &&
+                datePickerState.dateFieldState.isEmpty &&
+                !state.isActive &&
+                props.placeholder
                 ? {value: ''}
                 : undefined,
             {controlRef: handleRef, error},

@@ -2,7 +2,6 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import type {DateFieldState} from '../../DateField';
 import {useDatePickerState} from '../../DatePicker';
 import type {DatePickerState} from '../../DatePicker';
 import {useRelativeDateFieldState} from '../../RelativeDateField';
@@ -30,7 +29,6 @@ export interface RelativeDatePickerState {
     mode: RelativeDatePickerMode;
     setMode: (mode: RelativeDatePickerMode) => void;
     datePickerState: DatePickerState;
-    dateFieldState: DateFieldState;
     relativeDateState: RelativeDateFieldState;
     selectedDate: DateTime | null;
     /**
@@ -61,7 +59,7 @@ export function useRelativeDatePickerState(
     const [prevValue, setPrevValue] = React.useState(value);
     if (value !== prevValue) {
         setPrevValue(value);
-        if (value) {
+        if (value && value.type !== mode) {
             setMode(value.type);
         }
     }
@@ -94,8 +92,6 @@ export function useRelativeDatePickerState(
         maxValue: props.maxValue,
     });
 
-    const dateFieldState = datePickerState.dateFieldState;
-
     const [valueRelative, setValueRelative] = React.useState(
         value?.type === 'relative' ? value.value : null,
     );
@@ -117,6 +113,7 @@ export function useRelativeDatePickerState(
         },
         disabled: props.disabled,
         readOnly: props.readOnly,
+        timeZone: datePickerState.timeZone,
     });
 
     if (!value) {
@@ -128,7 +125,9 @@ export function useRelativeDatePickerState(
     }
 
     const selectedDate =
-        mode === 'relative' ? relativeDateState.parsedDate : datePickerState.dateValue;
+        mode === 'relative'
+            ? relativeDateState.parsedDate
+            : datePickerState.dateFieldState.displayValue;
 
     const [isActive, setActive] = React.useState(false);
 
@@ -159,7 +158,6 @@ export function useRelativeDatePickerState(
             }
         },
         datePickerState,
-        dateFieldState,
         relativeDateState,
         selectedDate,
         isActive,
