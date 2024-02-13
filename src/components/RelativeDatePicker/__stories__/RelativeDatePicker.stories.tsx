@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTimeParse} from '@gravity-ui/date-utils';
+import {dateTime, dateTimeParse, getTimeZonesList} from '@gravity-ui/date-utils';
 import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -21,9 +21,17 @@ export default meta;
 
 type Story = StoryObj<typeof RelativeDatePicker>;
 
+const zones = getTimeZonesList().reduce<Record<string, string>>((l, zone) => {
+    l[zone] = `${zone} (UTC ${dateTime({timeZone: zone}).format('Z')})`;
+    return l;
+}, {});
+
 export const Default = {
     render: (props) => {
-        return <RelativeDatePicker {...props} />;
+        const timeZone = props.timeZone;
+        const minValue = props.minValue ? dateTimeParse(props.minValue, {timeZone}) : undefined;
+        const maxValue = props.maxValue ? dateTimeParse(props.maxValue, {timeZone}) : undefined;
+        return <RelativeDatePicker {...props} minValue={minValue} maxValue={maxValue} />;
     },
     args: {
         onUpdate: (res) => {
@@ -40,10 +48,30 @@ export const Default = {
         },
     },
     argTypes: {
+        minValue: {
+            control: {
+                type: 'text',
+            },
+        },
+        maxValue: {
+            control: {
+                type: 'text',
+            },
+        },
         validationState: {
             options: ['invalid', 'none'],
             mapping: {
                 none: undefined,
+            },
+        },
+        timeZone: {
+            options: ['none', ...Object.keys(zones)],
+            mapping: {
+                none: undefined,
+            },
+            control: {
+                type: 'select',
+                labels: zones,
             },
         },
     },
@@ -58,7 +86,7 @@ export const SimpleDatePicker: Story = {
         const [innerValue, setInnerValue] = React.useState<Value | null>(
             (value === undefined ? defaultValue : value) ?? null,
         );
-        const [val, setVal] = useControlledState(value, defaultValue, onUpdate);
+        const [val, setVal] = useControlledState(value, defaultValue ?? null, onUpdate);
         const [prev, setPrev] = React.useState<Value | null | undefined>(val);
         if (val !== prev) {
             setPrev(val);
