@@ -26,7 +26,7 @@ export type BaseDateFieldStateOptions<T = DateTime> = {
     value: T | null;
     displayValue: T;
     placeholderValue?: DateTime;
-    timeZone?: string;
+    timeZone: string;
     validationState?: ValidationState;
     editableSections: DateFieldSection[];
     readOnly?: boolean;
@@ -64,6 +64,10 @@ export type BaseDateFieldState<T = DateTime> = {
     disabled?: boolean;
     /** A list of segments for the current value. */
     sections: DateFieldSection[];
+    /** Whether the the format is containing date parts */
+    hasDate: boolean;
+    /** Whether the the format is containing time parts */
+    hasTime: boolean;
     /** Selected sections */
     selectedSectionIndexes: {startIndex: number; endIndex: number} | null;
     /** The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props. */
@@ -134,6 +138,19 @@ export function useBaseDateFieldState<T = DateTime>(
 
     const enteredKeys = React.useRef('');
 
+    const {hasDate, hasTime} = React.useMemo(() => {
+        let hasDateInner = false;
+        let hasTimeInner = false;
+        for (const s of editableSections) {
+            hasTimeInner ||= ['hour', 'minute', 'second'].includes(s.type);
+            hasDateInner ||= ['day', 'month', 'year'].includes(s.type);
+        }
+        return {
+            hasTime: hasTimeInner,
+            hasDate: hasDateInner,
+        };
+    }, [editableSections]);
+
     return {
         value,
         isEmpty,
@@ -143,6 +160,8 @@ export function useBaseDateFieldState<T = DateTime>(
         readOnly: props.readOnly,
         disabled: props.disabled,
         sections: editableSections,
+        hasDate,
+        hasTime,
         selectedSectionIndexes,
         validationState,
         setSelectedSections(position) {
@@ -278,7 +297,7 @@ export function useBaseDateFieldState<T = DateTime>(
             const placeholder = createPlaceholderValue({
                 placeholderValue: props.placeholderValue,
                 timeZone: props.timeZone,
-            });
+            }).timeZone(props.timeZone);
 
             const displayPortion = getSectionValue(sectionIndex);
             let currentValue = displayPortion;

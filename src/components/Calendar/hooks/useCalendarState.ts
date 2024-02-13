@@ -40,7 +40,9 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
     const currentMode = mode && availableModes.includes(mode) ? mode : minMode;
 
-    const inputTimeZone = useDefaultTimeZone(props.value || props.defaultValue);
+    const inputTimeZone = useDefaultTimeZone(
+        props.value || props.defaultValue || props.focusedValue || props.defaultFocusedValue,
+    );
     const timeZone = props.timeZone || inputTimeZone;
 
     const minValue = React.useMemo(

@@ -85,7 +85,10 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         validSegments = {start: {}, end: {}};
         setValidSegments(validSegments);
         setPlaceholderDate(
-            createPlaceholderRangeValue({placeholderValue: props.placeholderValue, timeZone}),
+            createPlaceholderRangeValue({
+                placeholderValue: props.placeholderValue,
+                timeZone,
+            }),
         );
     }
 

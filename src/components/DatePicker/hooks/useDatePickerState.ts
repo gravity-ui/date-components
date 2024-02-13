@@ -4,7 +4,6 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import {useDateFieldState} from '../../DateField';
 import type {DateFieldState} from '../../DateField';
-import {splitFormatIntoSections} from '../../DateField/utils';
 import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types';
 import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
@@ -56,7 +55,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     const {disabled, readOnly} = props;
     const [isOpen, setOpen] = React.useState(false);
 
-    const [inputValue, setValue] = useControlledState(
+    const [value, setValue] = useControlledState(
         props.value,
         props.defaultValue ?? null,
         props.onUpdate,
@@ -73,36 +72,6 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     let selectedTime = selectedTimeInner;
 
     const format = props.format || 'L';
-    const {hasDate, hasTime, timeFormat} = React.useMemo(() => {
-        const sections = splitFormatIntoSections(format);
-        let hasDate = false;
-        let hasHours = false;
-        let hasMinutes = false;
-        let hasSeconds = false;
-        for (const s of sections) {
-            hasHours ||= s.type === 'hour';
-            hasMinutes ||= s.type === 'minute';
-            hasSeconds ||= s.type === 'second';
-            hasDate ||= ['day', 'month', 'year'].includes(s.type);
-        }
-        return {
-            hasTime: hasHours || hasMinutes || hasSeconds,
-            timeFormat: hasSeconds ? 'LTS' : 'LT',
-            hasDate,
-        };
-    }, [format]);
-
-    const value = React.useMemo(
-        () => (inputValue ? inputValue.timeZone(timeZone) : null),
-        [inputValue, timeZone],
-    );
-
-    if (value) {
-        selectedDate = value;
-        if (hasTime) {
-            selectedTime = value;
-        }
-    }
 
     const commitValue = (date: DateTime, time: DateTime) => {
         if (disabled || readOnly) {
@@ -112,43 +81,6 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         setValue(mergeDateTime(date, time).timeZone(inputTimeZone));
         setSelectedDate(null);
         setSelectedTime(null);
-    };
-
-    // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
-    const selectDate = (newValue: DateTime) => {
-        if (disabled || readOnly) {
-            return;
-        }
-
-        const shouldClose = !hasTime;
-        if (hasTime) {
-            if (selectedTime || shouldClose) {
-                commitValue(
-                    newValue,
-                    selectedTime || getPlaceholderTime(props.placeholderValue, timeZone),
-                );
-            } else {
-                setSelectedDate(newValue);
-            }
-        } else {
-            setValue(newValue);
-        }
-
-        if (shouldClose) {
-            setOpen(false);
-        }
-    };
-
-    const selectTime = (newValue: DateTime | null) => {
-        if (disabled || readOnly) {
-            return;
-        }
-
-        if (selectedDate && newValue) {
-            commitValue(selectedDate, newValue);
-        } else {
-            setSelectedTime(newValue);
-        }
     };
 
     const dateFieldState = useDateFieldState({
@@ -171,13 +103,69 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         timeZone,
     });
 
-    if (hasTime && !selectedTime) {
+    const timeFormat = React.useMemo(() => {
+        const hasSeconds = dateFieldState.sections.some((s) => s.type === 'second');
+        return hasSeconds ? 'LTS' : 'LT';
+    }, [dateFieldState.sections]);
+
+    if (value) {
+        selectedDate = value.timeZone(timeZone);
+        if (dateFieldState.hasTime) {
+            selectedTime = value.timeZone(timeZone);
+        }
+    }
+
+    // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
+    const selectDate = (newValue: DateTime) => {
+        if (disabled || readOnly) {
+            return;
+        }
+
+        const shouldClose = !dateFieldState.hasTime;
+        if (dateFieldState.hasTime) {
+            if (selectedTime || shouldClose) {
+                commitValue(newValue, selectedTime || newValue);
+            } else {
+                setSelectedDate(newValue);
+            }
+        } else {
+            commitValue(newValue, newValue);
+        }
+
+        if (shouldClose) {
+            setOpen(false);
+        }
+    };
+
+    const selectTime = (newValue: DateTime | null) => {
+        if (disabled || readOnly) {
+            return;
+        }
+
+        if (selectedDate && newValue) {
+            commitValue(selectedDate, newValue);
+        } else {
+            setSelectedTime(newValue);
+        }
+    };
+
+    if (dateFieldState.hasTime && !selectedTime) {
         selectedTime = dateFieldState.displayValue;
     }
 
     return {
         value,
-        setValue,
+        setValue(newDate: DateTime | null) {
+            if (props.readOnly || props.disabled) {
+                return;
+            }
+
+            if (newDate) {
+                setValue(newDate.timeZone(inputTimeZone));
+            } else {
+                setValue(null);
+            }
+        },
         dateValue: selectedDate,
         timeValue: selectedTime,
         setDateValue: selectDate,
@@ -185,16 +173,20 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         disabled,
         readOnly,
         format,
-        hasDate,
-        hasTime,
+        hasDate: dateFieldState.hasDate,
+        hasTime: dateFieldState.hasTime,
         timeFormat,
         timeZone,
         isOpen,
         setOpen(newIsOpen) {
-            if (!newIsOpen && !value && selectedDate && hasTime) {
+            if (!newIsOpen && !value && selectedDate && dateFieldState.hasTime) {
                 commitValue(
                     selectedDate,
-                    selectedTime || getPlaceholderTime(props.placeholderValue, timeZone),
+                    selectedTime ||
+                        createPlaceholderValue({
+                            placeholderValue: props.placeholderValue,
+                            timeZone: inputTimeZone,
+                        }),
                 );
             }
 
@@ -202,8 +194,4 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         },
         dateFieldState,
     };
-}
-
-function getPlaceholderTime(placeholderValue: DateTime | undefined, timeZone: string) {
-    return createPlaceholderValue({placeholderValue, timeZone}).timeZone(timeZone);
 }

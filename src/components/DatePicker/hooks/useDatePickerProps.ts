@@ -131,8 +131,7 @@ export function useDatePickerProps(
                     focusInput();
                 }
             },
-            defaultFocusedValue: state.dateValue ?? state.dateFieldState.displayValue,
-            value: state.dateValue,
+            value: state.dateFieldState.displayValue,
             minValue: props.minValue,
             maxValue: props.maxValue,
             isDateUnavailable: props.isDateUnavailable,
@@ -140,6 +139,7 @@ export function useDatePickerProps(
         },
         timeInputProps: {
             value: state.timeValue,
+            placeholderValue: state.dateFieldState.displayValue,
             onUpdate: state.setTimeValue,
             format: state.timeFormat,
             readOnly: state.readOnly,

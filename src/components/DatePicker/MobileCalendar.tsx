@@ -33,10 +33,10 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
             className={b('input')}
             disabled={props.disabled}
             type={type}
-            value={formatNative(state.value || props.placeholderValue, type)}
+            value={formatNative(state.dateFieldState.displayValue, type)}
             id={props.id}
-            min={formatNative(props.minValue, type)}
-            max={formatNative(props.maxValue, type)}
+            min={formatNative(props.minValue?.timeZone(state.timeZone), type)}
+            max={formatNative(props.maxValue?.timeZone(state.timeZone), type)}
             tabIndex={-1}
             onChange={(e) => {
                 if (props.readOnly) {
@@ -44,23 +44,29 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
                 }
                 const newValue = e.target.value;
                 if (newValue) {
-                    const localDate = dateTime({input: newValue, format: getDateFormat(type)});
+                    const localDate = dateTime({
+                        input: newValue,
+                        format: getDateFormat(type),
+                        timeZone: 'system',
+                    }).timeZone(state.timeZone, true);
                     let newDate = state.hasDate
-                        ? dateTime({
-                              input: newValue,
-                              format: getDateFormat(type),
-                              timeZone: state.timeZone,
-                          })
+                        ? localDate
                         : createPlaceholderValue({
-                              placeholderValue: props.placeholderValue,
+                              placeholderValue: props.placeholderValue?.timeZone(state.timeZone),
                               timeZone: state.timeZone,
                           });
                     if (state.hasTime) {
                         newDate = mergeDateTime(newDate, localDate);
-                    } else if (state.dateValue) {
-                        newDate = mergeDateTime(newDate, state.dateValue);
+                    } else if (state.value) {
+                        newDate = mergeDateTime(newDate, state.value.timeZone(state.timeZone));
                     } else {
-                        newDate = newDate.set('hours', 0).set('minutes', 0).set('seconds', 0);
+                        newDate = mergeDateTime(
+                            newDate,
+                            createPlaceholderValue({
+                                placeholderValue: props.placeholderValue?.timeZone(state.timeZone),
+                                timeZone: state.timeZone,
+                            }),
+                        );
                     }
                     state.setValue(newDate);
                 } else {

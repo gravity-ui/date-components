@@ -23,7 +23,9 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
     const [anchorDate, setAnchorDateState] = React.useState<DateTime>();
 
-    const inputTimeZone = useDefaultTimeZone(valueProp?.start || defaultValue?.start);
+    const inputTimeZone = useDefaultTimeZone(
+        valueProp?.start || defaultValue?.start || props.focusedValue || props.defaultFocusedValue,
+    );
     const timeZone = props.timeZone || inputTimeZone;
 
     const calendar = useCalendarState({...calendarProps, value: null, timeZone});

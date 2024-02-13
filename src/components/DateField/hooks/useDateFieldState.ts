@@ -190,7 +190,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         return createPlaceholderValue({
             placeholderValue: props.placeholderValue,
             timeZone,
-        });
+        }).timeZone(timeZone);
     }
 
     function setValueFromString(str: string) {
