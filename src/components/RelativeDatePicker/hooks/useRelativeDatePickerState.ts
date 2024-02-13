@@ -2,8 +2,6 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {useDateFieldState} from '../../DateField';
-import type {DateFieldState} from '../../DateField';
 import {useDatePickerState} from '../../DatePicker';
 import type {DatePickerState} from '../../DatePicker';
 import {useRelativeDateFieldState} from '../../RelativeDateField';
@@ -31,7 +29,6 @@ export interface RelativeDatePickerState {
     mode: RelativeDatePickerMode;
     setMode: (mode: RelativeDatePickerMode) => void;
     datePickerState: DatePickerState;
-    dateFieldState: DateFieldState;
     relativeDateState: RelativeDateFieldState;
     selectedDate: DateTime | null;
     /**
@@ -49,7 +46,11 @@ export interface RelativeDatePickerState {
 export function useRelativeDatePickerState(
     props: RelativeDatePickerStateOptions,
 ): RelativeDatePickerState {
-    const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
+    const [value, setValue] = useControlledState(
+        props.value,
+        props.defaultValue ?? null,
+        props.onUpdate,
+    );
 
     const [mode, setMode] = React.useState<Value['type']>(
         value?.type === 'relative' ? 'relative' : 'absolute',
@@ -58,7 +59,7 @@ export function useRelativeDatePickerState(
     const [prevValue, setPrevValue] = React.useState(value);
     if (value !== prevValue) {
         setPrevValue(value);
-        if (value) {
+        if (value && value.type !== mode) {
             setMode(value.type);
         }
     }
@@ -87,16 +88,8 @@ export function useRelativeDatePickerState(
         timeZone: props.timeZone,
         disabled: props.disabled,
         readOnly: props.readOnly,
-    });
-
-    const dateFieldState = useDateFieldState({
-        value: valueDate,
-        onUpdate: datePickerState.setValue,
-        format: props.format,
-        placeholderValue: props.placeholderValue,
-        timeZone: props.timeZone,
-        disabled: props.disabled,
-        readOnly: props.readOnly,
+        minValue: props.minValue,
+        maxValue: props.maxValue,
     });
 
     const [valueRelative, setValueRelative] = React.useState(
@@ -120,6 +113,7 @@ export function useRelativeDatePickerState(
         },
         disabled: props.disabled,
         readOnly: props.readOnly,
+        timeZone: datePickerState.timeZone,
     });
 
     if (!value) {
@@ -131,12 +125,14 @@ export function useRelativeDatePickerState(
     }
 
     const selectedDate =
-        mode === 'relative' ? relativeDateState.parsedDate : datePickerState.dateValue;
+        mode === 'relative'
+            ? relativeDateState.parsedDate
+            : datePickerState.dateFieldState.displayValue;
 
     const [isActive, setActive] = React.useState(false);
 
     return {
-        value: value ?? null,
+        value,
         setValue(v) {
             if (props.readOnly || props.disabled) {
                 return;
@@ -162,7 +158,6 @@ export function useRelativeDatePickerState(
             }
         },
         datePickerState,
-        dateFieldState,
         relativeDateState,
         selectedDate,
         isActive,

@@ -1,15 +1,19 @@
 import React from 'react';
 
+import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {useControlledState} from '../../hooks/useControlledState';
 import type {ValueBase} from '../../types';
-import {createPlaceholderValue} from '../../utils/dates';
+import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
+import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {calendarLayouts, constrainValue} from '../utils';
 
 import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './types';
 
-export interface CalendarStateOptions extends ValueBase<DateTime>, CalendarStateOptionsBase {}
+export interface CalendarStateOptions
+    extends ValueBase<DateTime | null, DateTime>,
+        CalendarStateOptionsBase {}
 export type {CalendarState} from './types';
 
 const defaultModes: Record<CalendarLayout, boolean> = {
@@ -19,36 +23,62 @@ const defaultModes: Record<CalendarLayout, boolean> = {
     years: true,
 };
 export function useCalendarState(props: CalendarStateOptions): CalendarState {
-    const {disabled, readOnly, minValue, maxValue, timeZone, modes = defaultModes} = props;
-    const [value, setValue] = useControlledState(props.value, props.defaultValue, props.onUpdate);
-    const [mode, setMode] = useControlledState(props.mode, props.defaultMode, props.onUpdateMode);
-
+    const {disabled, readOnly, modes = defaultModes} = props;
+    const [value, setValue] = useControlledState(
+        props.value,
+        props.defaultValue ?? null,
+        props.onUpdate,
+    );
     const availableModes = calendarLayouts.filter((l) => modes[l]);
     const minMode = availableModes[0] || 'days';
+
+    const [mode, setMode] = useControlledState(
+        props.mode,
+        props.defaultMode ?? minMode,
+        props.onUpdateMode,
+    );
+
     const currentMode = mode && availableModes.includes(mode) ? mode : minMode;
+
+    const inputTimeZone = useDefaultTimeZone(
+        props.value || props.defaultValue || props.focusedValue || props.defaultFocusedValue,
+    );
+    const timeZone = props.timeZone || inputTimeZone;
+
+    const minValue = React.useMemo(
+        () => (props.minValue ? props.minValue.timeZone(timeZone) : undefined),
+        [timeZone, props.minValue],
+    );
+
+    const maxValue = React.useMemo(
+        () => (props.maxValue ? props.maxValue.timeZone(timeZone) : undefined),
+        [timeZone, props.maxValue],
+    );
 
     const focusedValue = React.useMemo(() => {
         if (!props.focusedValue) {
             return props.focusedValue;
         }
-        return constrainValue(props.focusedValue, minValue, maxValue);
-    }, [props.focusedValue, minValue, maxValue]);
+        return constrainValue(props.focusedValue.timeZone(timeZone), minValue, maxValue);
+    }, [props.focusedValue, minValue, maxValue, timeZone]);
 
     const defaultFocusedValue = React.useMemo(() => {
         const defaultValue =
-            (props.defaultFocusedValue ? props.defaultFocusedValue : value) ||
+            (props.defaultFocusedValue ? props.defaultFocusedValue : value)?.timeZone(timeZone) ||
             createPlaceholderValue({timeZone}).startOf(minMode);
         return constrainValue(defaultValue, minValue, maxValue);
     }, [maxValue, minValue, props.defaultFocusedValue, timeZone, value, minMode]);
     const [focusedDateInner, setFocusedDate] = useControlledState(
         focusedValue,
         defaultFocusedValue,
-        props.onFocusUpdate,
+        (date: DateTime) => {
+            props.onFocusUpdate?.(date.timeZone(inputTimeZone));
+        },
     );
 
     const focusedDate =
-        focusedDateInner ??
-        constrainValue(createPlaceholderValue({timeZone}).startOf(minMode), minValue, maxValue);
+        focusedDateInner?.timeZone(timeZone) ??
+        constrainValue(createPlaceholderValue({timeZone}), minValue, maxValue);
 
     if (isInvalid(focusedDate, minValue, maxValue)) {
         // If the focused date was moved to an invalid value, it can't be focused, so constrain it.
@@ -68,16 +98,24 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         disabled,
         readOnly,
         value,
-        setValue,
+        setValue(date: DateTime) {
+            if (!disabled && !readOnly) {
+                let newValue = constrainValue(date, minValue, maxValue);
+                if (this.isCellUnavailable(newValue)) {
+                    return;
+                }
+                if (value) {
+                    // If there is a date already selected, then we want to keep its time
+                    newValue = mergeDateTime(newValue, value.timeZone(timeZone));
+                }
+                setValue(newValue.timeZone(inputTimeZone));
+            }
+        },
         timeZone,
         selectDate(date: DateTime, force = false) {
             if (!disabled) {
                 if (!readOnly && (force || this.mode === minMode)) {
-                    const newValue = constrainValue(date, minValue, maxValue);
-                    if (this.isCellUnavailable(newValue)) {
-                        return;
-                    }
-                    setValue(newValue);
+                    this.setValue(date.startOf(minMode));
                     if (force && currentMode !== minMode) {
                         setMode(minMode);
                     }
@@ -172,10 +210,10 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             return this.isInvalid(next);
         },
         isSelected(date: DateTime) {
-            return (
-                Boolean(value) &&
-                date.isSame(value ?? undefined, currentMode) &&
-                !this.isCellDisabled(date)
+            return Boolean(
+                value &&
+                    date.isSame(value.timeZone(timeZone), currentMode) &&
+                    !this.isCellDisabled(date),
             );
         },
         isCellUnavailable(date: DateTime) {
@@ -193,6 +231,9 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         },
         isWeekend(date: DateTime) {
             return this.mode === 'days' && [0, 6].includes(date.day());
+        },
+        isCurrent(date: DateTime) {
+            return dateTime({timeZone}).isSame(date, this.mode);
         },
         mode: currentMode,
         setMode,

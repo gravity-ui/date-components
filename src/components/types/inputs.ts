@@ -20,7 +20,7 @@ export interface AccessibilityProps {
 
 export interface ValueBase<T, C = T> {
     /** The current value (controlled). */
-    value?: T | null;
+    value?: T;
     /** The default value (uncontrolled). */
     defaultValue?: T;
     /** Handler that is called when the value changes. */
