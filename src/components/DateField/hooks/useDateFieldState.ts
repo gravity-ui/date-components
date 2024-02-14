@@ -17,7 +17,8 @@ import {
     splitFormatIntoSections,
 } from '../utils';
 
-import {type BaseDateFieldState, useBaseDateFieldState} from './useBaseDateFieldState';
+import {useBaseDateFieldState} from './useBaseDateFieldState';
+import type {BaseDateFieldState} from './useBaseDateFieldState';
 
 export interface DateFieldStateOptions extends DateFieldBase {}
 

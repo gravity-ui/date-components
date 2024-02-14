@@ -25,6 +25,14 @@ const zones = getTimeZonesList().reduce<Record<string, string>>((l, zone) => {
     return l;
 }, {});
 
+function stringifyValue(value: Value): string {
+    if (value.type === 'relative') {
+        return JSON.stringify(value, null, 2);
+    }
+
+    return JSON.stringify({...value, value: value.value.format()}, null, 2);
+}
+
 export const Default = {
     render: (props) => {
         const timeZone = props.timeZone;
@@ -40,7 +48,7 @@ export const Default = {
                 theme: 'success',
                 content: (
                     <div>
-                        <div>value: {res ? JSON.stringify(res, null, 2) : 'null'}</div>
+                        <div>value: {res ? stringifyValue(res) : 'null'}</div>
                     </div>
                 ),
             });

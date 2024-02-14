@@ -1,10 +1,12 @@
 /* eslint-disable complexity */
 import React from 'react';
 
-import {type DateTime, isValid} from '@gravity-ui/date-utils';
+import {isValid} from '@gravity-ui/date-utils';
+import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
-import {type BaseDateFieldState, useBaseDateFieldState} from '../../DateField';
+import {useBaseDateFieldState} from '../../DateField';
+import type {BaseDateFieldState} from '../../DateField';
 import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../DateField/types';
 import {
     EDITABLE_SEGMENTS,

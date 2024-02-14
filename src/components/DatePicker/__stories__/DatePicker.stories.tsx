@@ -41,7 +41,7 @@ export const Default = {
         return (
             // eslint-disable-next-line jsx-a11y/label-has-associated-control
             <label>
-                <span style={{marginRight: 4}}>Event date</span>
+                <span style={{marginInlineEnd: 4}}>Event date</span>
                 <DatePicker {...props} />
             </label>
         );

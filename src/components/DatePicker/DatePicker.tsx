@@ -3,7 +3,8 @@ import React from 'react';
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
-import {Calendar, type CalendarProps} from '../Calendar';
+import {Calendar} from '../Calendar';
+import type {CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
 import type {
     AccessibilityProps,
