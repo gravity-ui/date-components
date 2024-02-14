@@ -48,7 +48,7 @@ export const Default = {
             toaster.add({
                 name: 'date-field-on-update-cb',
                 title: 'onUpdate callback',
-                type: 'success',
+                theme: 'success',
                 content: (
                     <div>
                         <div>

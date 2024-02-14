@@ -26,13 +26,6 @@ export function useRelativeDateFieldProps(
         setFocusedDate(state.lastCorrectDate);
     }
 
-    let error: React.ReactNode;
-    if (props.validationState === 'invalid') {
-        error = props.errorMessage || true;
-    } else {
-        error = state.validationState === 'invalid';
-    }
-
     return {
         inputProps: {
             size: props.size,
@@ -41,12 +34,13 @@ export function useRelativeDateFieldProps(
             onUpdate: state.setText,
             disabled: state.disabled,
             hasClear: props.hasClear,
-            //@ts-expect-error TODO: use new TextInput API
-            error,
+            validationState: state.validationState,
+            errorMessage: props.errorMessage,
+            errorPlacement: props.errorPlacement,
             label: props.label,
             id: props.id,
-            leftContent: props.leftContent,
-            rightContent: props.rightContent,
+            startContent: props.startContent,
+            endContent: props.endContent,
             pin: props.pin,
             view: props.view,
             placeholder: props.placeholder,

@@ -4,7 +4,8 @@ import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 
-import {type DateFieldProps, useDateFieldProps} from './hooks/useDateFieldProps';
+import {useDateFieldProps} from './hooks/useDateFieldProps';
+import type {DateFieldProps} from './hooks/useDateFieldProps';
 import {useDateFieldState} from './hooks/useDateFieldState';
 
 import './DateField.scss';

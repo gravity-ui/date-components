@@ -63,7 +63,7 @@ export const Default = {
             toaster.add({
                 name: 'calendar-on-change-cb',
                 title: 'onUpdate callback',
-                type: 'success',
+                theme: 'success',
                 content: (
                     <div>
                         <div>date: {`${res.start.format('L')} - ${res.end.format('L')}`}</div>

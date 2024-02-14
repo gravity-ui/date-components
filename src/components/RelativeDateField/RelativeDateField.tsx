@@ -42,7 +42,7 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
     const state = useRelativeDateFieldState(props);
     const {inputProps, calendarProps, timeInputProps} = useRelativeDateFieldProps(state, props);
 
-    const [isMobile] = useMobile();
+    const isMobile = useMobile();
 
     const anchorRef = React.useRef<HTMLElement>(null);
 

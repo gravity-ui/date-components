@@ -1,8 +1,8 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
+import {useControlledState} from '@gravity-ui/uikit';
 
-import {useControlledState} from '../../hooks/useControlledState';
 import type {RangeValue, ValueBase} from '../../types';
 import {mergeDateTime} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';

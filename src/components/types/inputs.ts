@@ -27,12 +27,8 @@ export interface ValueBase<T, C = T> {
     onUpdate?: (value: C) => void;
 }
 
-export interface Validation {
-    /** Whether the input should display its "invalid" visual styling */
-    validationState?: ValidationState;
-    /** An error message for the field */
-    errorMessage?: React.ReactNode;
-}
+export interface Validation
+    extends Pick<TextInputBaseProps, 'validationState' | 'errorMessage' | 'errorPlacement'> {}
 
 export interface DomProps {
     /** The element's unique identifier. */
@@ -77,11 +73,11 @@ export interface TextInputExtendProps {
     /**
      * User`s node rendered before label and input
      */
-    leftContent?: TextInputBaseProps['leftContent'];
+    startContent?: TextInputBaseProps['startContent'];
     /**
      * User`s node rendered after input and clear button
      */
-    rightContent?: TextInputBaseProps['rightContent'];
+    endContent?: TextInputBaseProps['endContent'];
 }
 
 export interface RangeValue<T> {

@@ -31,17 +31,17 @@ $root: '.g-storybook-docs-decorator';
             & + .sbdocs-p,
             & + .sbdocs-ul,
             & + .sbdocs-ol {
-                margin-top: $offset-s;
+                margin-block-start: $offset-s;
             }
         }
 
         .sbdocs-li + .sbdocs-li {
-            margin-top: $offset-xs;
+            margin-block-start: $offset-xs;
         }
 
         .sbdocs-ul,
         .sbdocs-ol {
-            padding-left: $offset-m;
+            padding-inline-start: $offset-m;
         }
 
         .sbdocs-h1 {
@@ -62,8 +62,7 @@ $root: '.g-storybook-docs-decorator';
         .sbdocs-h1,
         .sbdocs-h2,
         .sbdocs-h3 {
-            margin-top: $offset-l;
-            margin-bottom: $offset-m;
+            margin-block: $offset-l $offset-m;
         }
 
         .sbdocs-a {

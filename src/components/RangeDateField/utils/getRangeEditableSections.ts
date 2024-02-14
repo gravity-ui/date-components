@@ -1,12 +1,8 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {DateFieldSectionWithoutPosition} from '../../DateField/types';
-import {
-    EDITABLE_SEGMENTS,
-    getEditableSections,
-    isEditableSection,
-    toEditableSection,
-} from '../../DateField/utils';
+import {getEditableSections, isEditableSection, toEditableSection} from '../../DateField/utils';
+import type {EDITABLE_SEGMENTS} from '../../DateField/utils';
 import type {RangeValue} from '../../types';
 
 export function getRangeEditableSections(

@@ -101,17 +101,16 @@ export function useDateFieldProps<T = DateTime>(
             placeholder: props.placeholder,
             id: props.id,
             label: props.label,
-            leftContent: props.leftContent,
-            rightContent: props.rightContent,
+            startContent: props.startContent,
+            endContent: props.endContent,
             pin: props.pin,
             autoFocus: props.autoFocus,
             controlRef: inputRef,
             autoComplete: 'off',
             type: 'text',
-            // @ts-expect-error
-            error:
-                (state.validationState === 'invalid' && props.errorMessage) ||
-                state.validationState === 'invalid',
+            validationState: state.validationState,
+            errorMessage: props.errorMessage,
+            errorPlacement: props.errorPlacement,
             onUpdate(value) {
                 if (!value) {
                     state.clearAll();

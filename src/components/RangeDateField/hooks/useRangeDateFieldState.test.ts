@@ -1,4 +1,5 @@
-import {type DateTime, dateTime} from '@gravity-ui/date-utils';
+import {dateTime} from '@gravity-ui/date-utils';
+import type {DateTime} from '@gravity-ui/date-utils';
 import {act, renderHook} from '@testing-library/react';
 
 import {cleanString, isEditableSection} from '../../DateField/utils';

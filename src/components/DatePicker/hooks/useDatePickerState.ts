@@ -1,10 +1,10 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
+import {useControlledState} from '@gravity-ui/uikit';
 
 import {useDateFieldState} from '../../DateField';
 import type {DateFieldState} from '../../DateField';
-import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types';
 import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';

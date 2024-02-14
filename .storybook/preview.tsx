@@ -10,7 +10,6 @@ import type {Decorator, Preview} from '@storybook/react';
 import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator';
 
 import {WithLang} from './decorators/withLang';
-import {WithMobile} from './decorators/withMobile';
 import {themes} from './theme';
 
 configure({
@@ -18,18 +17,10 @@ configure({
 });
 
 const WithContextProvider: Decorator = (Story, context) => {
-    const direction = context.globals.direction;
-    React.useEffect(() => {
-        if (direction === 'ltr') {
-            document.body.removeAttribute('dir');
-        } else {
-            document.body.setAttribute('dir', direction);
-        }
-    }, [direction]);
     return (
         <React.StrictMode>
-            <ThemeProvider theme={context.globals.theme}>
-                <MobileProvider>
+            <ThemeProvider theme={context.globals.theme} direction={context.globals.direction}>
+                <MobileProvider mobile={context.globals.platform === 'mobile'}>
                     <Story {...context} />
                 </MobileProvider>
             </ThemeProvider>
@@ -56,7 +47,7 @@ const preview: Preview = {
             },
         },
     },
-    decorators: [WithMobile, WithLang, WithContextProvider],
+    decorators: [WithLang, WithContextProvider],
     globalTypes: {
         theme: {
             defaultValue: 'light',

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {useFocusWithin} from '@gravity-ui/uikit';
 
 import type {CalendarState, RangeCalendarState} from './types';

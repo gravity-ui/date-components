@@ -1,13 +1,12 @@
 import React from 'react';
 
 import {dateTime, dateTimeParse, getTimeZonesList} from '@gravity-ui/date-utils';
-import {Tabs} from '@gravity-ui/uikit';
+import {Tabs, useControlledState} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {Calendar} from '../../Calendar';
 import {constrainValue} from '../../CalendarBase/utils';
-import {useControlledState} from '../../hooks/useControlledState';
 import {RelativeDatePicker} from '../RelativeDatePicker';
 import type {Value} from '../hooks/useRelativeDatePickerState';
 
@@ -26,6 +25,14 @@ const zones = getTimeZonesList().reduce<Record<string, string>>((l, zone) => {
     return l;
 }, {});
 
+function stringifyValue(value: Value): string {
+    if (value.type === 'relative') {
+        return JSON.stringify(value, null, 2);
+    }
+
+    return JSON.stringify({...value, value: value.value.format()}, null, 2);
+}
+
 export const Default = {
     render: (props) => {
         const timeZone = props.timeZone;
@@ -38,10 +45,10 @@ export const Default = {
             toaster.add({
                 name: 'on-change-cb',
                 title: 'onUpdate callback',
-                type: 'success',
+                theme: 'success',
                 content: (
                     <div>
-                        <div>value: {res ? JSON.stringify(res, null, 2) : 'null'}</div>
+                        <div>value: {res ? stringifyValue(res) : 'null'}</div>
                     </div>
                 ),
             });
