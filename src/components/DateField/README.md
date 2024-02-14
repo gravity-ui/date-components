@@ -279,17 +279,17 @@ LANDING_BLOCK-->
 
 <!--/GITHUB_BLOCK-->
 
-### Left content
+### Start content
 
-Allows you to add content to the left part of the field. It is placed before all other components.
+Allows you to add content to the start part of the field. It is placed before all other components.
 
 <!--LANDING_BLOCK
 <ExampleBlock
-    code={`<DateField label="Label" leftContent={<Label size="s">Left content</Label>} />`}
+    code={`<DateField label="Label" startContent={<Label size="s">Start content</Label>} />`}
 >
     <DateComponents.DateField
         label="Label"
-        leftContent={<UIKit.Label size="s">Left content</UIKit.Label>}
+        startContent={<UIKit.Label size="s">Start content</UIKit.Label>}
     />
 </ExampleBlock>
 LANDING_BLOCK-->
@@ -297,22 +297,22 @@ LANDING_BLOCK-->
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<DateField label="Label" leftContent={<Label>Left content</Label>} />
+<DateField label="Label" startContent={<Label>Start content</Label>} />
 ```
 
 <!--/GITHUB_BLOCK-->
 
-### Right content
+### End content
 
-Allows you to add content to the right part of the field. It is placed after all other components.
+Allows you to add content to the end part of the field. It is placed after all other components.
 
 <!--LANDING_BLOCK
 <ExampleBlock
-    code={`<DateField rightContent={<Label size="s">Right</Label>} hasClear/>`}
+    code={`<DateField endContent={<Label size="s">End content</Label>} hasClear/>`}
 >
     <DateComponents.DateField
         hasClear
-        rightContent={<UIKit.Label size="s">Right</UIKit.Label>}
+        endContent={<UIKit.Label size="s">End content</UIKit.Label>}
     />
 </ExampleBlock>
 LANDING_BLOCK-->
@@ -320,7 +320,7 @@ LANDING_BLOCK-->
 <!--GITHUB_BLOCK-->
 
 ```tsx
-<DateField hasClear rightContent={<Label>Right</Label>} />
+<DateField hasClear endContent={<Label>End content</Label>} />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -369,7 +369,7 @@ LANDING_BLOCK-->
 | id                | The control's `id` attribute                                                                                         |                   `string`                    |                           |
 | isDateUnavailable | Callback that is called for each date of the calendar. If it returns true, then the date is unavailable.             |        `((date: DateTime) => boolean)`        |                           |
 | label             | Help text rendered to the left of the input node                                                                     |                   `string`                    |                           |
-| leftContent       | The user`s node rendered before label and input                                                                      |               `React.ReactNode`               |                           |
+| startContent      | The user`s node rendered before label and input                                                                      |               `React.ReactNode`               |                           |
 | maxValue          | The maximum allowed date that a user may select.                                                                     |                  `DateTime`                   |                           |
 | minValue          | The minimum allowed date that a user may select.                                                                     |                  `DateTime`                   |                           |
 | onBlur            | Fires when the control lost focus. Provides focus event as a callback's argument                                     | `((e: FocusEvent<Element, Element>) => void)` |                           |
@@ -381,7 +381,7 @@ LANDING_BLOCK-->
 | placeholder       | Text that appears in the control when it has no value set                                                            |                   `string`                    |                           |
 | placeholderValue  | A placeholder date that controls the default values of each segment when the user first interacts with them.         |                  `DateTime`                   | `today's date at midnigh` |
 | readOnly          | Whether the component's value is immutable.                                                                          |                   `boolean`                   |          `false`          |
-| rightContent      | User`s node rendered after the input node and clear button                                                           |               `React.ReactNode`               |                           |
+| endContent        | User`s node rendered after the input node and clear button                                                           |               `React.ReactNode`               |                           |
 | size              | The size of the control                                                                                              |           `"s"` `"m"` `"l"` `"xl"`            |           `"m"`           |
 | style             | Sets inline style for the element.                                                                                   |                `CSSProperties`                |                           |
 | timeZone          | Sets the time zone. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) |                   `string`                    |                           |

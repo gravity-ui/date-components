@@ -1,12 +1,12 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
+import {useControlledState} from '@gravity-ui/uikit';
 
 import {useDatePickerState} from '../../DatePicker';
 import type {DatePickerState} from '../../DatePicker';
 import {useRelativeDateFieldState} from '../../RelativeDateField';
 import type {RelativeDateFieldState} from '../../RelativeDateField';
-import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types';
 
 export type Value =

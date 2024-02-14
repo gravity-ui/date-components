@@ -3,7 +3,8 @@ import React from 'react';
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
-import {Calendar, type CalendarProps} from '../Calendar';
+import {Calendar} from '../Calendar';
+import type {CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
 import type {
     AccessibilityProps,
@@ -46,7 +47,7 @@ export function DatePicker({value, defaultValue, onUpdate, className, ...props}:
     const {groupProps, fieldProps, calendarButtonProps, popupProps, calendarProps, timeInputProps} =
         useDatePickerProps(state, props);
 
-    const [isMobile] = useMobile();
+    const isMobile = useMobile();
 
     return (
         <div className={b(null, className)} {...groupProps}>
@@ -74,7 +75,7 @@ export function DatePicker({value, defaultValue, onUpdate, className, ...props}:
                 {...fieldProps}
                 className={b('field', {mobile: isMobile})}
                 hasClear={!isMobile && fieldProps.hasClear}
-                rightContent={
+                endContent={
                     isMobile ? (
                         <MobileCalendarIcon props={props} state={state} />
                     ) : (

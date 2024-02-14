@@ -2,8 +2,8 @@ import React from 'react';
 
 import {isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+import {useControlledState} from '@gravity-ui/uikit';
 
-import {useControlledState} from '../../hooks/useControlledState';
 import type {DateFieldBase} from '../../types/datePicker';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
@@ -17,7 +17,8 @@ import {
     splitFormatIntoSections,
 } from '../utils';
 
-import {type BaseDateFieldState, useBaseDateFieldState} from './useBaseDateFieldState';
+import {useBaseDateFieldState} from './useBaseDateFieldState';
+import type {BaseDateFieldState} from './useBaseDateFieldState';
 
 export interface DateFieldStateOptions extends DateFieldBase {}
 

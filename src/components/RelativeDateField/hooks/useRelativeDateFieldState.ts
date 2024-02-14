@@ -2,8 +2,8 @@ import React from 'react';
 
 import {dateTimeParse, isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+import {useControlledState} from '@gravity-ui/uikit';
 
-import {useControlledState} from '../../hooks/useControlledState';
 import type {InputBase, Validation, ValueBase} from '../../types';
 
 export interface RelativeDateFieldState {

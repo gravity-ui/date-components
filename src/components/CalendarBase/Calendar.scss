@@ -42,7 +42,11 @@ $block: '.#{variables.$ns}calendar';
     }
 
     &__controls {
-        margin-left: auto;
+        margin-inline-start: auto;
+    }
+
+    &__control-icon {
+        transform: scaleX(var(--g-flow-direction));
     }
 
     &__grid {
@@ -58,8 +62,8 @@ $block: '.#{variables.$ns}calendar';
 
     &__content {
         position: absolute;
-        top: 0;
-        left: 0;
+        inset-block-start: 0;
+        inset-inline-start: 0;
 
         display: grid;
         grid-template-rows: var(--_--calendar-day-size) 1fr;
@@ -144,7 +148,7 @@ $block: '.#{variables.$ns}calendar';
             animation: calendar-forward 0.25s ease forwards;
 
             &#{$block}__current-state {
-                left: -100%;
+                inset-inline-start: calc(var(--g-flow-direction) * -100%);
             }
         }
 
@@ -153,7 +157,7 @@ $block: '.#{variables.$ns}calendar';
             animation: calendar-backward 0.25s ease forwards;
 
             &#{$block}__current-state {
-                left: 100%;
+                inset-inline-start: calc(var(--g-flow-direction) * 100%);
             }
         }
 
@@ -272,7 +276,7 @@ $block: '.#{variables.$ns}calendar';
 
         &_current::before {
             position: absolute;
-            top: 50%;
+            inset-block-start: 50%;
 
             display: block;
 

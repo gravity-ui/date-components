@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {settings} from '@gravity-ui/date-utils';
-import {Lang, configure} from '@gravity-ui/uikit';
+import type {Lang} from '@gravity-ui/uikit';
+import {configure} from '@gravity-ui/uikit';
 import type {Decorator} from '@storybook/react';
 
 export const WithLang: Decorator = (Story, context) => {

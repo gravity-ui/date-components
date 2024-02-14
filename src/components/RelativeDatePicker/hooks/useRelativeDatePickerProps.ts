@@ -23,7 +23,6 @@ interface InnerRelativeDatePickerProps {
     timeInputProps: DateFieldProps;
 }
 
-// eslint-disable-next-line complexity
 export function useRelativeDatePickerProps(
     state: RelativeDatePickerState,
     {onFocus, onBlur, ...props}: RelativeDatePickerProps,
@@ -86,6 +85,8 @@ export function useRelativeDatePickerProps(
                 setOpen(true);
             }
         },
+        errorMessage: props.errorMessage,
+        errorPlacement: props.errorPlacement,
     };
 
     const {inputProps} = useDateFieldProps(datePickerState.dateFieldState, {
@@ -104,16 +105,12 @@ export function useRelativeDatePickerProps(
         size: props.size,
     };
 
-    let error: string | boolean | undefined;
     let validationState = props.validationState;
-    if (validationState) {
-        error = validationState === 'invalid' ? (props.errorMessage as string) || true : undefined;
-    } else {
+    if (!validationState) {
         validationState =
             mode === 'relative'
                 ? relativeDateState.validationState
                 : datePickerState.dateFieldState.validationState;
-        error = validationState === 'invalid';
     }
 
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -160,7 +157,7 @@ export function useRelativeDatePickerProps(
                 props.placeholder
                 ? {value: ''}
                 : undefined,
-            {controlRef: handleRef, error},
+            {controlRef: handleRef, validationState},
         ),
         modeSwitcherProps: {
             size: getButtonSizeForInput(props.size),

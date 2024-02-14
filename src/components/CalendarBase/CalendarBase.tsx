@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
+import {ChevronLeft, ChevronRight} from '@gravity-ui/icons';
 import {ArrowToggle, Button} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
@@ -70,12 +71,12 @@ export const CalendarBase = React.forwardRef<CalendarInstance, CalendarBaseProps
                 <div className={b('controls')}>
                     <Button {...previousButtonProps} view="flat" size={props.size}>
                         <Button.Icon>
-                            <ArrowToggle direction="left" />
+                            <ChevronLeft className={b('control-icon')} />
                         </Button.Icon>
                     </Button>
                     <Button {...nextButtonProps} view="flat" size={props.size}>
                         <Button.Icon>
-                            <ArrowToggle direction="right" />
+                            <ChevronRight className={b('control-icon')} />
                         </Button.Icon>
                     </Button>
                 </div>

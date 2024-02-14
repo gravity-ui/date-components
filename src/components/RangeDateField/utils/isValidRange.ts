@@ -1,4 +1,5 @@
-import {type DateTime, isValid} from '@gravity-ui/date-utils';
+import {isValid} from '@gravity-ui/date-utils';
+import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {RangeValue} from '../../types';
 

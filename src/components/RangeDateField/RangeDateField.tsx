@@ -4,7 +4,8 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
-import {type DateFieldProps, useDateFieldProps} from '../DateField/hooks/useDateFieldProps';
+import {useDateFieldProps} from '../DateField/hooks/useDateFieldProps';
+import type {DateFieldProps} from '../DateField/hooks/useDateFieldProps';
 import type {RangeValue} from '../types';
 
 import {useRangeDateFieldState} from './hooks/useRangeDateFieldState';
