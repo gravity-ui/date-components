@@ -20,13 +20,13 @@ import {RelativeDatePicker} from '@gravity-ui/date-components';
 
 <!--LANDING_BLOCK
 
-[Learn more about DatePicker](https://gravity-ui.com/components/date-components/date-picker)
+[Learn more about DatePicker](/components/date-components/date-picker)
 
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
-[Learn more about DatePicker](https://github.com/gravity-ui/date-components/tree/main/src/components/DatePicker)
+[Learn more about DatePicker](/gravity-ui/date-components/tree/main/src/components/DatePicker)
 
 <!--/GITHUB_BLOCK-->
 
@@ -36,13 +36,13 @@ In this mode `RelativeDatePicker` get and return values in special relative form
 
 <!--LANDING_BLOCK
 
-[Learn more about rules of relative formulas](https://gravity-ui.com/components/date-components/relative-date-field#relative-input)
+[Learn more about rules of relative formulas](/components/date-components/relative-date-field#relative-input)
 
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
-[Learn more about rules of relative formulas](https://github.com/gravity-ui/date-components/tree/main/src/components/RelativeDateField#relative-input)
+[Learn more about rules of relative formulas](/gravity-ui/date-components/tree/main/src/components/RelativeDateField#relative-input)
 
 <!--/GITHUB_BLOCK-->
 
