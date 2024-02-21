@@ -363,7 +363,7 @@ LANDING_BLOCK-->
 | className         | The control's wrapper class name                                                                                     |                   `string`                    |                           |
 | defaultValue      | Sets the initial value for uncontrolled component.                                                                   |                  `DateTime`                   |                           |
 | disabled          | Indicates that the user cannot interact with the control                                                             |                   `boolean`                   |          `false`          |
-| errorMessage      | Error text                                                                                                           |                   `string`                    |                           |
+| errorMessage      | Error text                                                                                                           |                  `ReactNode`                  |                           |
 | format            | Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format)        |                   `string`                    |                           |
 | hasClear          | Shows the icon for clearing control's value                                                                          |                   `boolean`                   |          `false`          |
 | id                | The control's `id` attribute                                                                                         |                   `string`                    |                           |
