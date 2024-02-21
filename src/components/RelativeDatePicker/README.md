@@ -32,19 +32,17 @@ LANDING_BLOCK-->
 
 ### Relative
 
-In this mode `RelativeDatePicker` get and return values in special relative format. You set and get values as formulas which will help you to compute the exact date. We can call it `grafana-like format` because it is very similar to format of Grafana's relative time fields. To know more about relative time values in Grafana read [the docs](https://grafana.com/docs/grafana/latest/panels-visualizations/query-transform-data/).
-
-Using this mode you can deliver your data from source to destination and compute the exact value straight on the necessary endpoit without inaccuracy.
+In this mode `RelativeDatePicker` get and return values in special relative format.
 
 <!--LANDING_BLOCK
 
-[Learn more about rules of relative  formulas](https://gravity-ui.com/components/date-components/relative-date-field#valid-input-rules)
+[Learn more about rules of relative formulas](https://gravity-ui.com/components/date-components/relative-date-field#relative-input)
 
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
-[Learn more about rules of relative formulas](https://github.com/gravity-ui/date-components/tree/main/src/components/RelativeDateField#valid-input-rules)
+[Learn more about rules of relative formulas](https://github.com/gravity-ui/date-components/tree/main/src/components/RelativeDateField#relative-input)
 
 <!--/GITHUB_BLOCK-->
 
