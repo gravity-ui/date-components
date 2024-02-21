@@ -26,7 +26,7 @@ LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
-[Learn more about DatePicker](/gravity-ui/date-components/tree/main/src/components/DatePicker)
+[Learn more about DatePicker](/src/components/DatePicker)
 
 <!--/GITHUB_BLOCK-->
 
@@ -42,7 +42,7 @@ LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
 
-[Learn more about rules of relative formulas](/gravity-ui/date-components/tree/main/src/components/RelativeDateField#relative-input)
+[Learn more about rules of relative formulas](/src/components/RelativeDateField#relative-input)
 
 <!--/GITHUB_BLOCK-->
 
