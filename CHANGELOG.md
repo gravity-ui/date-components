@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/gravity-ui/date-components/compare/v1.5.0...v1.6.0) (2024-02-21)
+
+
+### Features
+
+* **Relative components:** Add description in README ([#48](https://github.com/gravity-ui/date-components/issues/48)) ([b91027a](https://github.com/gravity-ui/date-components/commit/b91027adf6d4949022aabfdffa7fd197f5edba66))
+
 ## [1.5.0](https://github.com/gravity-ui/date-components/compare/v1.4.0...v1.5.0) (2024-02-06)
 
 
