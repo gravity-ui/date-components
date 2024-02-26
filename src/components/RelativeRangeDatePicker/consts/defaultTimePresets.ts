@@ -1,4 +1,4 @@
-import {i18n} from '../components/RelativeRangeDatePickerEditor/components/RelativeRangeDatePickerPresets/i18n';
+import {i18n} from '../RelativeRangeDatePickerEditor/RelativeRangeDatePickerPresets/i18n';
 import type {RelativeRangeDatepickerPreset} from '../types';
 
 export const defaultTimePresets: RelativeRangeDatepickerPreset[] = [

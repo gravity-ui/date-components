@@ -3,8 +3,8 @@ import React from 'react';
 import {HelpPopover} from '@gravity-ui/components';
 import {Sheet, useMobile} from '@gravity-ui/uikit';
 
-import {block} from '../../../../../../../../utils/cn';
-import {i18n as i18nEditor} from '../../../../i18n';
+import {block} from '../../../../../utils/cn';
+import {i18n as i18nEditor} from '../../i18n';
 
 import {i18n} from './i18n';
 

@@ -1,6 +1,6 @@
 import {dateTimeParse} from '@gravity-ui/date-utils';
 
-import type {RelativeRangeDatepickerSingleValue} from '../../../types';
+import type {RelativeRangeDatepickerSingleValue} from '../../types';
 
 type Opts = {
     value?: RelativeRangeDatepickerSingleValue;

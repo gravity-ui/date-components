@@ -1,16 +1,17 @@
 import {Button, useMobile} from '@gravity-ui/uikit';
 
-import {block} from '../../../../utils/cn';
-import {RelativeDatePicker, type RelativeDatePickerProps} from '../../../RelativeDatePicker';
-import type {DateFieldBase} from '../../../types';
+import {block} from '../../../utils/cn';
+import {RelativeDatePicker, type RelativeDatePickerProps} from '../../RelativeDatePicker';
+import type {DateFieldBase} from '../../types';
 import type {
     RelativeRangeDatepickerPresetTab,
     RelativeRangeDatepickerSingleValue,
     RelativeRangeDatepickerValue,
-} from '../../types';
-import {getFieldProps} from '../../utils';
+} from '../types';
+import {getFieldProps} from '../utils';
 
-import {RelativeRangeDatePickerPresets, RelativeRangeDatePickerZones} from './components';
+import {RelativeRangeDatePickerPresets} from './RelativeRangeDatePickerPresets';
+import {RelativeRangeDatePickerZones} from './RelativeRangeDatePickerZones';
 import {i18n} from './i18n';
 
 import './RelativeRangeDatePickerEditor.scss';

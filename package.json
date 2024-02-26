@@ -32,7 +32,7 @@
   "scripts": {
     "prepare": "husky install",
     "lint": "run-p lint:*",
-    "lint:js": "eslint --ext .js,.jsx,.ts,.tsx --report-unused-disable-directives .",
+    "lint:js": "eslint --fix --ext .js,.jsx,.ts,.tsx --report-unused-disable-directives .",
     "lint:styles": "stylelint --report-needless-disables 'src/**/*.scss'",
     "lint:other": "npm run prettier -- --check",
     "prettier": "prettier '**/*.{md,yaml,yml,json}'",

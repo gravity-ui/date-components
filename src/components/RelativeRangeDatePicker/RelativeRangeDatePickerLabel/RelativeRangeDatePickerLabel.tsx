@@ -4,10 +4,10 @@ import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import type {TextInputSize} from '@gravity-ui/uikit';
 
-import {pick} from '../../../../utils/pick';
-import type {FocusableProps, TextInputProps, Validation} from '../../../types';
-import {getButtonSizeForInput} from '../../../utils/getButtonSizeForInput';
-import type {RelativeRangeDatepickerValue} from '../../types';
+import {pick} from '../../../utils/pick';
+import type {FocusableProps, TextInputProps, Validation} from '../../types';
+import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
+import type {RelativeRangeDatepickerValue} from '../types';
 
 import {i18n} from './i18n';
 import {getDateLabel} from './utils';
@@ -71,8 +71,8 @@ export function RelativeRangeDatePickerLabel(props: Props) {
             controlProps={{
                 onClick: props.onOpen,
             }}
-            onUpdate={(value) => {
-                if (!value) {
+            onUpdate={(newValue) => {
+                if (!newValue) {
                     props.onClear();
                 }
             }}

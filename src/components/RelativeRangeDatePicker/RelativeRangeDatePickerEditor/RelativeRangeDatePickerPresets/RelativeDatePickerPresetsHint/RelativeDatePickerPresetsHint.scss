@@ -1,5 +1,5 @@
-@use '@gravity-ui/uikit/styles/mixins';
-@use '../../../../../../../variables';
+@use '../../../../../../node_modules/@gravity-ui/uikit/styles/mixins';
+@use '../../../../variables';
 
 $block: '.#{variables.$ns}relative-range-date-picker-presets-hint';
 

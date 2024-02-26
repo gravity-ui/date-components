@@ -6,7 +6,8 @@ import {block} from '../../utils/cn';
 import {pick} from '../../utils/pick';
 import {useControlledState} from '../hooks/useControlledState';
 
-import {RelativeRangeDatePickerEditor, RelativeRangeDatePickerLabel} from './components';
+import {RelativeRangeDatePickerEditor} from './RelativeRangeDatePickerEditor';
+import {RelativeRangeDatePickerLabel} from './RelativeRangeDatePickerLabel';
 import {useRelativeRangeDatePickerValue} from './hooks';
 import type {RelativeRangeDatepickerProps} from './types';
 import {getDefaultPresetTabs, getFieldProps} from './utils';
@@ -39,7 +40,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
         if (!withZonesList) {
             setTimeZone(propsTimeZone);
         }
-    }, [propsTimeZone]);
+    }, [withZonesList, propsTimeZone]);
 
     const [value, setValue, {startError, endError}] = useRelativeRangeDatePickerValue({
         ...pick(props, 'value', 'timeZone', 'minValue', 'maxValue', 'allowNullableValues'),
@@ -66,9 +67,9 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
                 }}
                 isValid={isValid}
                 withApplyButton={withApplyButton}
-                onUpdateTimeZone={(timeZone) => {
-                    setTimeZone(timeZone);
-                    props.onUpdateTimeZone?.(timeZone);
+                onUpdateTimeZone={(newTimeZone) => {
+                    setTimeZone(newTimeZone);
+                    props.onUpdateTimeZone?.(newTimeZone);
                 }}
                 startError={startError}
                 endError={endError}
@@ -107,7 +108,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
                     errorMessage={startError || endError || props.errorMessage}
                     validationState={props.validationState}
                     value={value}
-                    isOpen={!!opened}
+                    isOpen={Boolean(opened)}
                     onOpen={() => {
                         setOpened((prevIsOpen) => !prevIsOpen);
                     }}
@@ -119,7 +120,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatepickerProps) {
             )}
             {isMobile ? (
                 <Sheet
-                    visible={!!opened}
+                    visible={Boolean(opened)}
                     onClose={() => {
                         setOpened((prevIsOpen) => !prevIsOpen);
                     }}

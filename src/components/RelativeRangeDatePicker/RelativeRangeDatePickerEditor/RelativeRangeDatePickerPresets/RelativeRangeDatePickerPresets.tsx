@@ -4,14 +4,14 @@ import {AdaptiveTabs} from '@gravity-ui/components';
 import {type DateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {List, useMobile} from '@gravity-ui/uikit';
 
-import {block} from '../../../../../../utils/cn';
+import {block} from '../../../../utils/cn';
 import type {
     RelativeRangeDatepickerPreset,
     RelativeRangeDatepickerPresetTab,
     RelativeRangeDatepickerValue,
-} from '../../../../types';
+} from '../../types';
 
-import {RelativeDatePickerPresetsHint} from './components';
+import {RelativeDatePickerPresetsHint} from './RelativeDatePickerPresetsHint';
 
 import './RelativeRangeDatePickerPresets.scss';
 

@@ -2,7 +2,7 @@ import {getTimeZonesList} from '@gravity-ui/date-utils';
 import {ChevronRight} from '@gravity-ui/icons';
 import {Button, Icon, Select, TextInput, useMobile} from '@gravity-ui/uikit';
 
-import {block} from '../../../../../../utils/cn';
+import {block} from '../../../../utils/cn';
 
 import {i18n} from './i18n';
 import {getTimeZoneOffset} from './utils/getTimeZoneOffset';
@@ -97,8 +97,8 @@ export function RelativeRangeDatePickerZones(props: Props) {
                 renderOption={({value: zone}) => renderItem(zone)}
                 value={props.timeZone ? [props.timeZone] : []}
                 hasClear={props.timeZone !== 'UTC'}
-                onUpdate={([timeZone]) => {
-                    props.onUpdate(timeZone);
+                onUpdate={([newTimeZone]) => {
+                    props.onUpdate(newTimeZone);
                 }}
             />
         </div>
