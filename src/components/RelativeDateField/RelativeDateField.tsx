@@ -9,6 +9,7 @@ import type {
     AccessibilityProps,
     DomProps,
     FocusableProps,
+    InputDOMProps,
     KeyboardEvents,
     StyleProps,
     TextInputExtendProps,
@@ -28,6 +29,7 @@ export interface RelativeDateFieldProps
         TextInputProps,
         TextInputExtendProps,
         DomProps,
+        InputDOMProps,
         StyleProps,
         AccessibilityProps,
         FocusableProps,
@@ -73,6 +75,14 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
                     props.onFocus?.(e);
                 }}
                 onBlur={props.onBlur}
+            />
+            <input
+                type="text"
+                hidden
+                name={props.name}
+                value={state.value ?? ''}
+                // Ignore React warning
+                onChange={() => {}}
             />
             {!isMobile && (
                 <Popup anchorRef={anchorRef} open={isOpen}>

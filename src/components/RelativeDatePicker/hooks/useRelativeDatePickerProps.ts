@@ -6,6 +6,7 @@ import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 import type {Calendar, CalendarInstance} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
+import {useRelativeDateFieldProps} from '../../RelativeDateField';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
 import {mergeProps} from '../../utils/mergeProps';
 import type {RelativeDatePickerProps} from '../RelativeDatePicker';
@@ -96,14 +97,12 @@ export function useRelativeDatePickerProps(
         onUpdate: undefined,
     });
 
-    const relativeDateProps: TextInputProps = {
-        disabled: relativeDateState.disabled,
-        value: relativeDateState.text,
-        onUpdate: relativeDateState.setText,
-        hasClear: props.hasClear && !relativeDateState.readOnly,
-        placeholder: props.placeholder,
-        size: props.size,
-    };
+    const {inputProps: relativeDateProps} = useRelativeDateFieldProps(relativeDateState, {
+        ...props,
+        value: undefined,
+        defaultValue: undefined,
+        onUpdate: undefined,
+    });
 
     let validationState = props.validationState;
     if (!validationState) {
@@ -163,7 +162,7 @@ export function useRelativeDatePickerProps(
             size: getButtonSizeForInput(props.size),
             disabled: state.readOnly || state.disabled,
             view: 'flat-secondary',
-            style: {zIndex: 2},
+            style: {zIndex: 2, marginInlineEnd: 2},
             selected: mode === 'relative',
             extraProps: {
                 'aria-label': i18n('Formula input mode'),
