@@ -41,15 +41,6 @@ export function useDatePickerProps(
 
     const {inputProps} = useDateFieldProps(state.dateFieldState, props);
 
-    let error: string | boolean | undefined;
-    let validationState = props.validationState;
-    if (validationState) {
-        error = validationState === 'invalid' ? (props.errorMessage as string) || true : undefined;
-    } else {
-        validationState = state.dateFieldState.validationState;
-        error = validationState === 'invalid';
-    }
-
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const handleRef = useForkRef(inputRef, inputProps.controlRef);
@@ -85,7 +76,7 @@ export function useDatePickerProps(
             state.dateFieldState.isEmpty && !isActive && props.placeholder
                 ? {value: ''}
                 : undefined,
-            {controlRef: handleRef, error},
+            {controlRef: handleRef},
         ),
         calendarButtonProps: {
             ref: calendarButtonRef,

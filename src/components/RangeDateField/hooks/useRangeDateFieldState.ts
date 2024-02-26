@@ -11,9 +11,10 @@ import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../
 import {
     EDITABLE_SEGMENTS,
     addSegment,
+    isAllSegmentsValid,
     parseDateFromString,
     setSegment,
-    splitFormatIntoSections,
+    useFormatSections,
 } from '../../DateField/utils';
 import type {DateFieldBase} from '../../types/datePicker';
 import type {RangeValue} from '../../types/inputs';
@@ -71,17 +72,17 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
     if (
         value &&
-        (Object.keys(validSegments.start).length < Object.keys(allSegments).length ||
-            Object.keys(validSegments.end).length < Object.keys(allSegments).length)
+        (!isAllSegmentsValid(allSegments, validSegments.start) ||
+            !isAllSegmentsValid(allSegments, validSegments.end))
     ) {
         setValidSegments({start: {...allSegments}, end: {...allSegments}});
     }
 
     if (
         !value &&
-        Object.keys(validSegments.start).length > 0 &&
+        isAllSegmentsValid(allSegments, validSegments.start) &&
         Object.keys(validSegments.start).length === Object.keys(allSegments).length &&
-        Object.keys(validSegments.end).length > 0 &&
+        isAllSegmentsValid(allSegments, validSegments.end) &&
         Object.keys(validSegments.end).length === Object.keys(allSegments).length
     ) {
         validSegments = {start: {}, end: {}};
@@ -145,8 +146,8 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         }
 
         if (
-            Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
-            Object.keys(validSegments.end).length >= Object.keys(allSegments).length
+            isAllSegmentsValid(allSegments, validSegments.start) &&
+            isAllSegmentsValid(allSegments, validSegments.end)
         ) {
             if (!value || !(newValue.start.isSame(value.start) && newValue.end.isSame(value.end))) {
                 handleUpdateRange(newValue);
@@ -249,7 +250,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         (value && props.isDateUnavailable?.(value.start) ? 'invalid' : undefined) ||
         (value && props.isDateUnavailable?.(value.end) ? 'invalid' : undefined);
 
-    return useBaseDateFieldState<RangeValue<DateTime>>({
+    return useBaseDateFieldState({
         value,
         displayValue,
         placeholderValue: props.placeholderValue,
@@ -275,19 +276,6 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         createPlaceholder,
         setValueFromString,
     });
-}
-
-function useFormatSections(format: string) {
-    const usedFormat = format;
-    const [sections, setSections] = React.useState(() => splitFormatIntoSections(usedFormat));
-
-    const [previousFormat, setFormat] = React.useState(usedFormat);
-    if (usedFormat !== previousFormat) {
-        setFormat(usedFormat);
-        setSections(splitFormatIntoSections(usedFormat));
-    }
-
-    return sections;
 }
 
 function useSectionsState(

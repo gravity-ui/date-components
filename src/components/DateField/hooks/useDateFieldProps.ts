@@ -9,6 +9,7 @@ import type {
     TextInputProps as DateFieldTextInputProps,
     DomProps,
     FocusableProps,
+    InputDOMProps,
     KeyboardEvents,
     StyleProps,
     TextInputExtendProps,
@@ -22,6 +23,7 @@ export interface DateFieldProps<T = DateTime>
         DateFieldTextInputProps,
         TextInputExtendProps,
         DomProps,
+        InputDOMProps,
         FocusableProps,
         KeyboardEvents,
         StyleProps,
@@ -58,14 +60,16 @@ export function useDateFieldProps<T = DateTime>(
 
         const firstSelectedSection = state.sections[state.selectedSectionIndexes.startIndex];
         const lastSelectedSection = state.sections[state.selectedSectionIndexes.endIndex];
-        const selectionStart = firstSelectedSection.start;
-        const selectionEnd = lastSelectedSection.end;
+        if (firstSelectedSection && lastSelectedSection) {
+            const selectionStart = firstSelectedSection.start;
+            const selectionEnd = lastSelectedSection.end;
 
-        if (
-            selectionStart !== inputElement.selectionStart ||
-            selectionEnd !== inputElement.selectionEnd
-        ) {
-            inputElement.setSelectionRange(selectionStart, selectionEnd);
+            if (
+                selectionStart !== inputElement.selectionStart ||
+                selectionEnd !== inputElement.selectionEnd
+            ) {
+                inputElement.setSelectionRange(selectionStart, selectionEnd);
+            }
         }
     });
 
@@ -221,10 +225,11 @@ export function useDateFieldProps<T = DateTime>(
                         const digitsOnly = /^\d+$/.test(pastedValue);
                         const lettersOnly = /^[a-zA-Z]+$/.test(pastedValue);
 
-                        const isValidValue =
-                            Boolean(activeSection) &&
-                            ((activeSection.contentType === 'digit' && digitsOnly) ||
-                                (activeSection.contentType === 'letter' && lettersOnly));
+                        const isValidValue = Boolean(
+                            activeSection &&
+                                ((activeSection.contentType === 'digit' && digitsOnly) ||
+                                    (activeSection.contentType === 'letter' && lettersOnly)),
+                        );
                         if (isValidValue) {
                             state.onInput(pastedValue);
                             return;

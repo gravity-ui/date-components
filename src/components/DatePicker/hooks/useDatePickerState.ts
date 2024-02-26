@@ -142,10 +142,17 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
             return;
         }
 
-        if (selectedDate && newValue) {
-            commitValue(selectedDate, newValue);
+        const newTime =
+            newValue ??
+            createPlaceholderValue({
+                placeholderValue: props.placeholderValue,
+                timeZone,
+            });
+
+        if (selectedDate) {
+            commitValue(selectedDate, newTime);
         } else {
-            setSelectedTime(newValue);
+            setSelectedTime(newTime);
         }
     };
 

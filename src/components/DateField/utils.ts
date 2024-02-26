@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {dateTime, isValid, settings} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
@@ -414,7 +416,7 @@ export function splitFormatIntoSections(format: string) {
     let isSeparator = false;
     let isInEscapeBoundary = false;
     for (let i = 0; i < expandedFormat.length; i++) {
-        const char = expandedFormat[i];
+        const char = expandedFormat[i] || '';
         if (isInEscapeBoundary) {
             if (char === escapedCharacters.end) {
                 isInEscapeBoundary = false;
@@ -541,6 +543,9 @@ export function getEditableSections(
     let previousEditableSection = -1;
     for (let i = 0; i < sections.length; i++) {
         const section = sections[i];
+        if (!section) {
+            continue;
+        }
 
         const newSection = toEditableSection(
             section,
@@ -651,4 +656,26 @@ export function parseDateFromString(str: string, format: string, timeZone?: stri
     }
 
     return date;
+}
+
+export function isAllSegmentsValid(
+    allSegments: typeof EDITABLE_SEGMENTS,
+    validSegments: typeof EDITABLE_SEGMENTS,
+) {
+    return Object.keys(allSegments).every(
+        (key) => validSegments[key as keyof typeof EDITABLE_SEGMENTS],
+    );
+}
+
+export function useFormatSections(format: string) {
+    const usedFormat = format;
+    const [sections, setSections] = React.useState(() => splitFormatIntoSections(usedFormat));
+
+    const [previousFormat, setFormat] = React.useState(usedFormat);
+    if (usedFormat !== previousFormat) {
+        setFormat(usedFormat);
+        setSections(splitFormatIntoSections(usedFormat));
+    }
+
+    return sections;
 }
