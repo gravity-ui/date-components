@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.0.0](https://github.com/gravity-ui/date-components/compare/v1.6.0...v2.0.0) (2024-02-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* update to @gravity-ui/uikit 6 ([#49](https://github.com/gravity-ui/date-components/issues/49))
+* update date-utils ([#25](https://github.com/gravity-ui/date-components/issues/25))
+
+### Features
+
+* add a new range date field component ([#32](https://github.com/gravity-ui/date-components/issues/32)) ([041d5bc](https://github.com/gravity-ui/date-components/commit/041d5bcde226e0a9c981e5fe3faff78a40e68721))
+* add RelativeRangeDatePicker component ([af74354](https://github.com/gravity-ui/date-components/commit/af743548fb2a92c724d7ff184e976e6adf3fc1d9))
+* **DateField:** add hidden input for native form submissition ([810f06c](https://github.com/gravity-ui/date-components/commit/810f06c3a815bc00d62830d77f7250a61643a004))
+* export RangeValue type from the library ([#50](https://github.com/gravity-ui/date-components/issues/50)) ([6828c6e](https://github.com/gravity-ui/date-components/commit/6828c6e556d2f419276f9ea1f9f0f32c7baac44d))
+* **RelativeDateField:** add roundUp prop ([6a73684](https://github.com/gravity-ui/date-components/commit/6a7368498c9690c2053fc2c6ccf04586481afce5))
+* **timezone:** use timeZone prop to show values ([#36](https://github.com/gravity-ui/date-components/issues/36)) ([d87923e](https://github.com/gravity-ui/date-components/commit/d87923ec78dbb1f129ddcb01907cf08b42eb58bd))
+* update to @gravity-ui/uikit 6 ([#49](https://github.com/gravity-ui/date-components/issues/49)) ([7f6ef01](https://github.com/gravity-ui/date-components/commit/7f6ef01427736c278a53f22d47ce36f3f09c0fb5))
+
+
+### Bug Fixes
+
+* accept events handlers with custom targets ([#45](https://github.com/gravity-ui/date-components/issues/45)) ([2a28389](https://github.com/gravity-ui/date-components/commit/2a2838938755ecd2a8db5d0de999d805a8dac897))
+* **DateField:** correctly manage format changing ([cad9a7e](https://github.com/gravity-ui/date-components/commit/cad9a7e5a1e4bb7a7a7690ae0a134ea5a2d62104))
+* **MobileCalendar:** fix trigger click area on iOS ([e252c31](https://github.com/gravity-ui/date-components/commit/e252c316c270f8cc8b47c43213adcf128f3b0f80))
+* update date-utils ([#25](https://github.com/gravity-ui/date-components/issues/25)) ([76422ef](https://github.com/gravity-ui/date-components/commit/76422ef323569640a8b7e16907614e1525c0295c))
+
 ## [1.6.0](https://github.com/gravity-ui/date-components/compare/v1.5.0...v1.6.0) (2024-02-21)
 
 
