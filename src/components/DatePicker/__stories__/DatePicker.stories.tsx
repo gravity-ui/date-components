@@ -39,8 +39,7 @@ export const Default = {
                 : undefined,
         };
         return (
-            // eslint-disable-next-line jsx-a11y/label-has-associated-control
-            <label>
+            <label htmlFor={props.id}>
                 <span style={{marginInlineEnd: 4}}>Event date</span>
                 <DatePicker {...props} />
             </label>
@@ -49,7 +48,7 @@ export const Default = {
     args: {
         onUpdate: (res) => {
             toaster.add({
-                name: 'calendar-on-change-cb',
+                name: 'date-picker-on-change-cb',
                 title: 'onUpdate callback',
                 theme: 'success',
                 content: (

@@ -1,0 +1,9 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}relative-range-date-picker-zones';
+
+#{$block} {
+    &__control {
+        --g-button-background-color-hover: transparent;
+    }
+}

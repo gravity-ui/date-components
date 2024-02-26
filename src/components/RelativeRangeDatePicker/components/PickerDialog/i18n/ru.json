@@ -1,0 +1,8 @@
+{
+  "Value is incorrect.": "Значение некорректно.",
+  "Value is required.": "Value is required.",
+  "\"From\" can't be after \"To\".": "Значение «От» не может быть позже чем «До».",
+  "From": "От",
+  "To": "Дo",
+  "Apply": "Применить"
+}

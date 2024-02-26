@@ -9,6 +9,12 @@ $block: '.#{variables.$ns}relative-date-picker';
 
     outline: none;
 
+    &__input {
+        &_mobile {
+            pointer-events: none;
+        }
+    }
+
     &__field {
         width: 100%;
     }
