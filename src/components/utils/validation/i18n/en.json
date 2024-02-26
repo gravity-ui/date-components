@@ -1,0 +1,6 @@
+{
+  "Value must be {minValue} or later.": "{{value}} must be {{minValue}} or later.",
+  "Value must be {maxValue} or earlier.": "{{value}} must be {{maxValue}} or earlier.",
+  "Selected date unavailable.": "Selected date unavailable.",
+  "Value is required.": "{{value}} is required."
+}

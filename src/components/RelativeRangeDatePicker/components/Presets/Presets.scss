@@ -1,0 +1,44 @@
+@use '@gravity-ui/uikit/styles/mixins';
+@use '../../../variables';
+
+$block: '.#{variables.$ns}relative-range-date-picker-presets';
+
+#{$block} {
+    &__tabs {
+        --g-tabs-border-width: 0;
+
+        display: flex;
+        align-items: center;
+        gap: var(--g-spacing-2);
+
+        box-shadow: inset 0 -1px var(--g-color-line-generic);
+    }
+
+    &__list-container {
+        outline: none;
+    }
+
+    &__doc {
+        margin-inline-start: auto;
+    }
+
+    &__content {
+        overflow: auto;
+
+        height: 128px;
+    }
+
+    &_size {
+        &_l {
+            #{$block}__content {
+                height: 144px;
+            }
+        }
+        &_xl {
+            #{$block}__content {
+                height: 162px;
+                @include mixins.text-body-2();
+            }
+        }
+    }
+}

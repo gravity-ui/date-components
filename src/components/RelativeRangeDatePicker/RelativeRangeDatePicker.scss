@@ -1,0 +1,83 @@
+@use '../variables';
+
+$block: '.#{variables.$ns}relative-range-date-picker';
+
+#{$block} {
+    position: relative;
+
+    display: inline-flex;
+
+    &__input {
+        &_mobile {
+            pointer-events: none;
+        }
+    }
+
+    &__mobile-trigger {
+        --_--g-date-mobile-trigger-clear-width: 0px;
+        --_--g-date-mobile-trigger-errors-width: 0px;
+        --_--g-date-mobile-trigger-button-width: 24px;
+
+        position: absolute;
+        inset: 0;
+        inset-inline-end: calc(
+            var(--g-spacing-2) + var(--_--g-date-mobile-trigger-button-width) +
+                var(--_--g-date-mobile-trigger-clear-width) +
+                var(--_--g-date-mobile-trigger-errors-width)
+        );
+
+        opacity: 0;
+
+        &_size_s {
+            --_--g-date-mobile-trigger-button-width: 20px;
+        }
+        &_size_l {
+            --_--g-date-mobile-trigger-button-width: 28px;
+        }
+        &_size_xl {
+            --_--g-date-mobile-trigger-button-width: 36px;
+        }
+
+        &_has-clear {
+            --_--g-date-mobile-trigger-clear-width: calc(
+                var(--_--g-date-mobile-trigger-button-width) + 2px
+            );
+        }
+        &_has-errors {
+            --_--g-date-mobile-trigger-errors-width: calc(
+                var(--_--g-date-mobile-trigger-button-width) + 2px
+            );
+        }
+    }
+
+    &__value-label {
+        display: flex;
+
+        width: 100%;
+
+        & > div {
+            flex: 1 0 0;
+        }
+
+        &-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &-tooltip {
+            --g-popover-max-width: 'none';
+        }
+
+        &-item,
+        &-to,
+        &-tz {
+            text-align: center;
+        }
+
+        &-tz {
+            margin-block-start: 5px;
+
+            color: var(--g-color-text-hint);
+        }
+    }
+}
