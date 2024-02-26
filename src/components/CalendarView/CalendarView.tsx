@@ -24,7 +24,7 @@ export interface CalendarInstance {
     focus: () => void;
 }
 
-export interface CalendarBaseProps extends DomProps, StyleProps, FocusEvents, AccessibilityProps {
+export interface CalendarViewProps extends DomProps, StyleProps, FocusEvents, AccessibilityProps {
     state: CalendarState | RangeCalendarState;
     /**
      * The size of the element.
@@ -32,8 +32,8 @@ export interface CalendarBaseProps extends DomProps, StyleProps, FocusEvents, Ac
      */
     size?: CalendarSize;
 }
-export const CalendarBase = React.forwardRef<CalendarInstance, CalendarBaseProps>(function Calendar(
-    props: CalendarBaseProps,
+export const CalendarView = React.forwardRef<CalendarInstance, CalendarViewProps>(function Calendar(
+    props: CalendarViewProps,
     ref,
 ) {
     const {state} = props;

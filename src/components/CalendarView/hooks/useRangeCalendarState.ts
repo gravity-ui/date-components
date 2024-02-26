@@ -3,17 +3,16 @@ import React from 'react';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
-import type {RangeValue, ValueBase} from '../../types';
+import type {RangeValue} from '../../types';
 import {mergeDateTime} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {constrainValue} from '../utils';
 
-import type {CalendarLayout, CalendarStateOptionsBase, RangeCalendarState} from './types';
+import type {CalendarLayout, RangeCalendarState} from './types';
 import {useCalendarState} from './useCalendarState';
+import type {CalendarStateOptions} from './useCalendarState';
 
-export interface RangeCalendarStateOptions
-    extends ValueBase<RangeValue<DateTime> | null, RangeValue<DateTime>>,
-        CalendarStateOptionsBase {}
+export interface RangeCalendarStateOptions extends CalendarStateOptions<RangeValue<DateTime>> {}
 
 export type {RangeCalendarState} from './types';
 
@@ -42,11 +41,12 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     const minMode = calendar.availableModes[0];
 
     const handleSetValue = (v: RangeValue<DateTime>) => {
+        let {start, end} = v;
         if (value) {
-            v.start = mergeDateTime(v.start, value.start.timeZone(timeZone));
-            v.end = mergeDateTime(v.end, value.end.timeZone(timeZone));
+            start = mergeDateTime(start, value.start.timeZone(timeZone));
+            end = mergeDateTime(end, value.end.timeZone(timeZone));
         }
-        setValue({start: v.start.timeZone(inputTimeZone), end: v.end.timeZone(inputTimeZone)});
+        setValue({start: start.timeZone(inputTimeZone), end: end.timeZone(inputTimeZone)});
     };
 
     const selectDate = (date: DateTime, force = false) => {
@@ -63,17 +63,17 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
             return;
         }
 
-        date = constrainValue(date, calendar.minValue, calendar.maxValue);
-        if (calendar.isCellUnavailable(date)) {
+        const newDate = constrainValue(date, calendar.minValue, calendar.maxValue);
+        if (calendar.isCellUnavailable(newDate)) {
             return;
         }
 
         if (anchorDate) {
-            const range = makeRange(anchorDate, date, calendar.mode);
+            const range = makeRange(anchorDate, newDate, calendar.mode);
             handleSetValue(range);
             setAnchorDateState(undefined);
         } else {
-            setAnchorDateState(date);
+            setAnchorDateState(newDate);
         }
     };
 

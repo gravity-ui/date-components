@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {CalendarBase} from '../CalendarBase/CalendarBase';
-import type {CalendarInstance, CalendarSize} from '../CalendarBase/CalendarBase';
-import {useRangeCalendarState} from '../CalendarBase/hooks/useRangeCalendarState';
-import type {RangeCalendarStateOptions} from '../CalendarBase/hooks/useRangeCalendarState';
+import {CalendarView} from '../CalendarView/CalendarView';
+import type {CalendarInstance, CalendarSize} from '../CalendarView/CalendarView';
+import {useRangeCalendarState} from '../CalendarView/hooks/useRangeCalendarState';
+import type {RangeCalendarStateOptions} from '../CalendarView/hooks/useRangeCalendarState';
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
 
-import '../CalendarBase/Calendar.scss';
+import '../CalendarView/Calendar.scss';
 
 export interface RangeCalendarProps
     extends RangeCalendarStateOptions,
@@ -30,6 +30,6 @@ export const RangeCalendar = React.forwardRef<CalendarInstance, RangeCalendarPro
             }
             props.onBlur?.(e);
         };
-        return <CalendarBase ref={ref} {...props} state={state} onBlur={handleBlur} />;
+        return <CalendarView ref={ref} {...props} state={state} onBlur={handleBlur} />;
     },
 );
