@@ -2,7 +2,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import {i18n} from './i18n';
 
-interface ValidationResult {
+export interface ValidationResult {
     isInvalid: boolean;
     errors: string[];
 }
