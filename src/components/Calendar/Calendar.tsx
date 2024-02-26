@@ -1,15 +1,17 @@
 import React from 'react';
 
-import {CalendarBase} from '../CalendarBase/CalendarBase';
-import type {CalendarInstance, CalendarSize} from '../CalendarBase/CalendarBase';
-import {useCalendarState} from '../CalendarBase/hooks/useCalendarState';
-import type {CalendarStateOptions} from '../CalendarBase/hooks/useCalendarState';
+import type {DateTime} from '@gravity-ui/date-utils';
+
+import {CalendarView} from '../CalendarView/CalendarView';
+import type {CalendarInstance, CalendarSize} from '../CalendarView/CalendarView';
+import {useCalendarState} from '../CalendarView/hooks/useCalendarState';
+import type {CalendarStateOptions} from '../CalendarView/hooks/useCalendarState';
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
 
-import '../CalendarBase/Calendar.scss';
+import '../CalendarView/Calendar.scss';
 
-export interface CalendarProps
-    extends CalendarStateOptions,
+export interface CalendarProps<T = DateTime>
+    extends CalendarStateOptions<T>,
         DomProps,
         StyleProps,
         FocusEvents,
@@ -26,5 +28,5 @@ export const Calendar = React.forwardRef<CalendarInstance, CalendarProps>(functi
 ) {
     const state = useCalendarState(props);
 
-    return <CalendarBase ref={ref} {...props} state={state} />;
+    return <CalendarView ref={ref} {...props} state={state} />;
 });
