@@ -12,9 +12,10 @@ import {
     EDITABLE_SEGMENTS,
     addSegment,
     getEditableSections,
+    isAllSegmentsValid,
     parseDateFromString,
     setSegment,
-    splitFormatIntoSections,
+    useFormatSections,
 } from '../utils';
 
 import {useBaseDateFieldState} from './useBaseDateFieldState';
@@ -64,13 +65,13 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     let validSegments = validSegmentsState[0];
     const setValidSegments = validSegmentsState[1];
 
-    if (value && Object.keys(validSegments).length < Object.keys(allSegments).length) {
+    if (value && !isAllSegmentsValid(allSegments, validSegments)) {
         setValidSegments({...allSegments});
     }
 
     if (
         !value &&
-        Object.keys(validSegments).length > 0 &&
+        isAllSegmentsValid(allSegments, validSegments) &&
         Object.keys(validSegments).length === Object.keys(allSegments).length
     ) {
         validSegments = {};
@@ -84,9 +85,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     }
 
     const displayValue =
-        value &&
-        isValid(value) &&
-        Object.keys(validSegments).length >= Object.keys(allSegments).length
+        value && isValid(value) && isAllSegmentsValid(allSegments, validSegments)
             ? value.timeZone(timeZone)
             : placeholderDate.timeZone(timeZone);
     const sectionsState = useSectionsState(sections, displayValue, validSegments);
@@ -128,7 +127,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
             return;
         }
 
-        if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
+        if (isAllSegmentsValid(allSegments, validSegments)) {
             if (!value || !newValue.isSame(value)) {
                 handleUpdateDate(newValue);
             }
@@ -153,24 +152,31 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
     function setSection(sectionIndex: number, amount: number) {
         const section = sectionsState.editableSections[sectionIndex];
-        markValid(section.type);
-        setValue(setSegment(section, displayValue, amount));
+        if (section) {
+            markValid(section.type);
+            setValue(setSegment(section, displayValue, amount));
+        }
     }
 
     function adjustSection(sectionIndex: number, amount: number) {
         const section = sectionsState.editableSections[sectionIndex];
-        if (validSegments[section.type]) {
-            setValue(addSegment(section, displayValue, amount));
-        } else {
-            markValid(section.type);
-            if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
-                setValue(displayValue);
+        if (section) {
+            if (validSegments[section.type]) {
+                setValue(addSegment(section, displayValue, amount));
+            } else {
+                markValid(section.type);
+                if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
+                    setValue(displayValue);
+                }
             }
         }
     }
 
     function flushValidSection(sectionIndex: number) {
-        delete validSegments[sectionsState.editableSections[sectionIndex].type];
+        const section = sectionsState.editableSections[sectionIndex];
+        if (section) {
+            delete validSegments[section.type];
+        }
         setValidSegments({...validSegments});
     }
 
@@ -208,7 +214,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : undefined) ||
         (value && props.isDateUnavailable?.(value) ? 'invalid' : undefined);
 
-    return useBaseDateFieldState<DateTime>({
+    return useBaseDateFieldState({
         value,
         displayValue,
         placeholderValue: props.placeholderValue,
@@ -232,19 +238,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         createPlaceholder,
         setValueFromString,
     });
-}
-
-function useFormatSections(format: string) {
-    const usedFormat = format;
-    const [sections, setSections] = React.useState(() => splitFormatIntoSections(usedFormat));
-
-    const [previousFormat, setFormat] = React.useState(usedFormat);
-    if (usedFormat !== previousFormat) {
-        setFormat(usedFormat);
-        setSections(splitFormatIntoSections(usedFormat));
-    }
-
-    return sections;
 }
 
 function useSectionsState(
