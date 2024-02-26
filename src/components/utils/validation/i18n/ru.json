@@ -1,0 +1,6 @@
+{
+  "Value must be {minValue} or later.": "{value} должно ровняться {minValue} или быть позже.",
+  "Value must be {maxValue} or earlier.": "{value} должно ровняться {maxValue} или быть раньше.",
+  "Selected date unavailable.": "Выбранная дата недоступна.",
+  "Value is required.": "{value} обязательно."
+}

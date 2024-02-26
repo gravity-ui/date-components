@@ -1,0 +1,48 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}relative-range-date-picker-dialog';
+
+#{$block} {
+    &__content {
+        --_--popup-content-padding: var(--g-spacing-2);
+
+        padding: var(--_--popup-content-padding);
+
+        &_mobile {
+            --_--popup-content-padding: var(--g-spacing-5);
+        }
+
+        &:not(&_mobile) {
+            width: 310px;
+        }
+
+        &_size_xl:not(&_mobile) {
+            width: 380px;
+        }
+    }
+
+    &__pickers {
+        display: flex;
+        flex-direction: column;
+        gap: var(--g-spacing-2);
+
+        .g-text-input__label {
+            width: 40px;
+
+            #{$block}__content_size_xl & {
+                width: 50px;
+            }
+        }
+    }
+
+    &__apply {
+        margin-block-start: var(--g-spacing-2);
+    }
+
+    &__zone {
+        margin-block: var(--g-spacing-2) calc(-1 * var(--_--popup-content-padding));
+        margin-inline: calc(-1 * var(--_--popup-content-padding));
+
+        border-block-start: 1px solid var(--g-color-line-generic);
+    }
+}
