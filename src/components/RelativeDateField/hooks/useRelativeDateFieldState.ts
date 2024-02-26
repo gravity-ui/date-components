@@ -33,6 +33,8 @@ export interface RelativeDateFieldState {
 
 export interface RelativeDateFieldOptions extends ValueBase<string | null>, InputBase, Validation {
     timeZone?: string;
+    /** Round up parsed date to the nearest granularity. */
+    roundUp?: boolean;
 }
 export function useRelativeDateFieldState(props: RelativeDateFieldOptions): RelativeDateFieldState {
     const [value, setValue] = useControlledState(
@@ -67,7 +69,7 @@ export function useRelativeDateFieldState(props: RelativeDateFieldOptions): Rela
         if (!value) {
             return null;
         }
-        return dateTimeParse(value, {timeZone: props.timeZone}) ?? null;
+        return dateTimeParse(value, {timeZone: props.timeZone, roundUp: props.roundUp}) ?? null;
     }, [value, props.timeZone]);
 
     const [lastCorrectDate, setLastCorrectDate] = React.useState(parsedDate);

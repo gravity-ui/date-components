@@ -21,7 +21,10 @@ export type Value =
 
 export type RelativeDatePickerMode = Value['type'];
 
-export interface RelativeDatePickerStateOptions extends DateFieldBase<Value> {}
+export interface RelativeDatePickerStateOptions extends DateFieldBase<Value> {
+    /** Round up parsed date to the nearest granularity. */
+    roundUp?: boolean;
+}
 
 export interface RelativeDatePickerState {
     value: Value | null;
@@ -114,6 +117,7 @@ export function useRelativeDatePickerState(
         disabled: props.disabled,
         readOnly: props.readOnly,
         timeZone: datePickerState.timeZone,
+        roundUp: props.roundUp,
     });
 
     if (!value) {
