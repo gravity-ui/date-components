@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/gravity-ui/date-components/compare/v2.0.0...v2.0.1) (2024-02-26)
+
+
+### Bug Fixes
+
+* **build:** fix declarations generation ([#55](https://github.com/gravity-ui/date-components/issues/55)) ([dff7b25](https://github.com/gravity-ui/date-components/commit/dff7b259dc0637dae30215f0b5cc8dd67df48539))
+
 ## [2.0.0](https://github.com/gravity-ui/date-components/compare/v1.6.0...v2.0.0) (2024-02-26)
 
 
