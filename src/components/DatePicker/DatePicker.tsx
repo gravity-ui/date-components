@@ -11,6 +11,7 @@ import type {
     DateFieldBase,
     DomProps,
     FocusableProps,
+    InputDOMProps,
     KeyboardEvents,
     StyleProps,
     TextInputProps,
@@ -29,20 +30,16 @@ export interface DatePickerProps
         FocusableProps,
         KeyboardEvents,
         DomProps,
+        InputDOMProps,
         StyleProps,
         AccessibilityProps {
     children?: (props: CalendarProps) => React.ReactNode;
 }
 
-export function DatePicker({value, defaultValue, onUpdate, className, ...props}: DatePickerProps) {
+export function DatePicker({className, ...props}: DatePickerProps) {
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
-    const state = useDatePickerState({
-        ...props,
-        value,
-        defaultValue,
-        onUpdate,
-    });
+    const state = useDatePickerState(props);
 
     const {groupProps, fieldProps, calendarButtonProps, popupProps, calendarProps, timeInputProps} =
         useDatePickerProps(state, props);
@@ -84,6 +81,14 @@ export function DatePicker({value, defaultValue, onUpdate, className, ...props}:
                         </Button>
                     )
                 }
+            />
+            <input
+                type="text"
+                hidden
+                name={props.name}
+                value={state.value ? state.value.toISOString() : ''}
+                // Ignore React warning
+                onChange={() => {}}
             />
         </div>
     );

@@ -30,6 +30,14 @@ export function DateField({className, ...props}: DateFieldProps) {
                 {...inputProps}
                 value={state.isEmpty && !isActive && props.placeholder ? '' : inputProps.value}
             />
+            <input
+                type="text"
+                hidden
+                name={props.name}
+                value={state.value ? state.value.toISOString() : ''}
+                // Ignore React warning
+                onChange={() => {}}
+            />
         </div>
     );
 }
