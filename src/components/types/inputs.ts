@@ -35,6 +35,12 @@ export interface DomProps {
     id?: string;
 }
 
+export interface InputDOMProps {
+    /**
+     * The name of the input element, used when submitting an HTML form.
+     */
+    name?: string;
+}
 export interface InputBase {
     /**
      * Whether the field is disabled.

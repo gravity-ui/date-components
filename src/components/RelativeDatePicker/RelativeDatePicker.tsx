@@ -12,6 +12,7 @@ import type {
     AccessibilityProps,
     DomProps,
     FocusableProps,
+    InputDOMProps,
     KeyboardEvents,
     StyleProps,
     TextInputProps,
@@ -19,7 +20,7 @@ import type {
 
 import {useRelativeDatePickerProps} from './hooks/useRelativeDatePickerProps';
 import {useRelativeDatePickerState} from './hooks/useRelativeDatePickerState';
-import type {RelativeDatePickerStateOptions} from './hooks/useRelativeDatePickerState';
+import type {RelativeDatePickerStateOptions, Value} from './hooks/useRelativeDatePickerState';
 
 import './RelativeDatePicker.scss';
 
@@ -31,6 +32,7 @@ export interface RelativeDatePickerProps
         FocusableProps,
         KeyboardEvents,
         DomProps,
+        InputDOMProps,
         StyleProps,
         AccessibilityProps {
     children?: (props: CalendarProps) => React.ReactNode;
@@ -69,6 +71,12 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
             )}
             <TextInput
                 {...fieldProps}
+                controlProps={{
+                    ...fieldProps.controlProps,
+                    disabled: isMobile && state.mode === 'absolute',
+                    className: b('input', {mobile: isMobile && state.mode === 'absolute'}),
+                }}
+                hasClear={props.hasClear && !(isMobile && state.mode === 'absolute')}
                 startContent={
                     <Button {...modeSwitcherProps}>
                         <Icon data={FunctionIcon} />
@@ -90,6 +98,14 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                     </React.Fragment>
                 }
             />
+            <input
+                type="text"
+                hidden
+                name={props.name}
+                value={getNativeValue(state.value)}
+                // Ignore React warning
+                onChange={() => {}}
+            />
             {!isMobile && (
                 <Popup {...popupProps} anchorRef={anchorRef}>
                     <div className={b('popup-content')}>
@@ -108,4 +124,14 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
             )}
         </div>
     );
+}
+
+function getNativeValue(value: Value | null) {
+    if (!value) {
+        return '';
+    }
+    if (value.type === 'relative') {
+        return value.value;
+    }
+    return value.value.toISOString();
 }
