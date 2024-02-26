@@ -11,8 +11,8 @@ import {calendarLayouts, constrainValue} from '../utils';
 
 import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './types';
 
-export interface CalendarStateOptions
-    extends ValueBase<DateTime | null, DateTime>,
+export interface CalendarStateOptions<T = DateTime>
+    extends ValueBase<T | null, T>,
         CalendarStateOptionsBase {}
 export type {CalendarState} from './types';
 
@@ -182,15 +182,15 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             focusCell(getEndDate(focusedDate, this.mode));
         },
         zoomIn() {
-            const index = availableModes.indexOf(this.mode) - 1;
-            if (index >= 0) {
-                this.setMode(availableModes[index]);
+            const nextMode = availableModes[availableModes.indexOf(this.mode) - 1];
+            if (nextMode) {
+                this.setMode(nextMode);
             }
         },
         zoomOut() {
-            const index = availableModes.indexOf(this.mode) + 1;
-            if (index < availableModes.length) {
-                this.setMode(availableModes[index]);
+            const nextMode = availableModes[availableModes.indexOf(this.mode) + 1];
+            if (nextMode) {
+                this.setMode(nextMode);
             }
         },
         selectFocusedDate() {
