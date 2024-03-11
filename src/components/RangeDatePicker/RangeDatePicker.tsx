@@ -19,21 +19,10 @@ const b = block('range-date-picker');
 
 export type RangeDatePickerProps = DatePickerProps<RangeValue<DateTime>>;
 
-export function RangeDatePicker({
-    value,
-    defaultValue,
-    onUpdate,
-    className,
-    ...props
-}: RangeDatePickerProps) {
+export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
-    const state = useRangeDatePickerState({
-        ...props,
-        value,
-        defaultValue,
-        onUpdate,
-    });
+    const state = useRangeDatePickerState(props);
 
     const {groupProps, fieldProps, calendarButtonProps, popupProps, calendarProps, timeInputProps} =
         useDatePickerProps(state, props);
@@ -44,9 +33,9 @@ export function RangeDatePicker({
                 <Popup anchorRef={anchorRef} {...popupProps}>
                     <div className={b('popup-content')}>
                         {typeof props.children === 'function' ? (
-                            props.children(calendarProps)
+                            props.children({...calendarProps, value: state.value})
                         ) : (
-                            <RangeCalendar {...calendarProps} />
+                            <RangeCalendar {...calendarProps} value={state.value} />
                         )}
                         {state.hasTime && (
                             <div className={b('time-field-wrapper')}>
@@ -59,8 +48,7 @@ export function RangeDatePicker({
             <TextInput
                 {...fieldProps}
                 className={b('field')}
-                hasClear={fieldProps.hasClear}
-                rightContent={
+                endContent={
                     <Button {...calendarButtonProps}>
                         <Icon data={CalendarIcon} />
                     </Button>

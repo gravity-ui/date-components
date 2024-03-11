@@ -16,7 +16,7 @@ import {getDateTimeValue} from '../utils';
 
 import type {DatePickerState} from './useDatePickerState';
 
-interface InnerRelativeDatePickerProps<T = DateTime> {
+interface InnerDatePickerProps<T = DateTime> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     groupProps: React.HTMLAttributes<unknown> & {ref: React.Ref<any>};
     fieldProps: TextInputProps;
@@ -29,7 +29,7 @@ interface InnerRelativeDatePickerProps<T = DateTime> {
 export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
     state: DatePickerState<T>,
     {onFocus, onBlur, ...props}: DatePickerProps<T>,
-): InnerRelativeDatePickerProps<T> {
+): InnerDatePickerProps<T> {
     const [isActive, setActive] = React.useState(false);
 
     const {focusWithinProps} = useFocusWithin({
