@@ -1,0 +1,38 @@
+@use '../variables';
+
+$block: '.#{variables.$ns}stub-button';
+
+#{$block} {
+    position: relative;
+
+    display: inline-block;
+
+    width: 24px;
+    height: 24px;
+
+    &_size_xs {
+        width: 20px;
+        height: 20px;
+    }
+
+    &_size_m {
+        width: 28px;
+        height: 28px;
+    }
+
+    &_size_l {
+        width: 36px;
+        height: 36px;
+    }
+
+    &__icon {
+        position: absolute;
+        inset: 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        color: var(--g-color-text-secondary);
+    }
+}

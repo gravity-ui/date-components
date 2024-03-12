@@ -1,13 +1,18 @@
 import React from 'react';
 
-import {Calendar as CalendarIcon, Function as FunctionIcon} from '@gravity-ui/icons';
+import {
+    Calendar as CalendarIcon,
+    Clock as ClockIcon,
+    Function as FunctionIcon,
+} from '@gravity-ui/icons';
 import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
 import type {CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
-import {MobileCalendar, MobileCalendarIcon} from '../DatePicker/MobileCalendar';
+import {MobileCalendar} from '../DatePicker/MobileCalendar';
+import {StubButton} from '../DatePicker/StubButton';
 import type {
     AccessibilityProps,
     DomProps,
@@ -54,6 +59,7 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
     const isMobile = useMobile();
+    const isOnlyTime = state.datePickerState.hasTime && !state.datePickerState.hasDate;
 
     return (
         <div ref={anchorRef} className={b(null, props.className)} {...groupProps}>
@@ -84,15 +90,18 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                 }
                 endContent={
                     <React.Fragment>
-                        {!isMobile && (
+                        {!isMobile && !isOnlyTime && (
                             <Button {...calendarButtonProps}>
                                 <Icon data={CalendarIcon} />
                             </Button>
                         )}
+                        {!isMobile && isOnlyTime && (
+                            <StubButton size={calendarButtonProps.size} icon={ClockIcon} />
+                        )}
                         {isMobile && state.mode === 'absolute' && (
-                            <MobileCalendarIcon
-                                state={state.datePickerState}
-                                props={{size: props.size}}
+                            <StubButton
+                                size={calendarButtonProps.size}
+                                icon={isOnlyTime ? ClockIcon : CalendarIcon}
                             />
                         )}
                     </React.Fragment>
@@ -106,7 +115,7 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                 // Ignore React warning
                 onChange={() => {}}
             />
-            {!isMobile && (
+            {!isMobile && !isOnlyTime && (
                 <Popup {...popupProps} anchorRef={anchorRef}>
                     <div className={b('popup-content')}>
                         {typeof props.children === 'function' ? (
