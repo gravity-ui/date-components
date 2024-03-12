@@ -55,6 +55,8 @@ export function useDatePickerProps(
         });
     }
 
+    const onlyTime = state.hasTime && !state.hasDate;
+
     return {
         groupProps: {
             ref: groupRef,
@@ -64,7 +66,7 @@ export function useDatePickerProps(
             style: props.style,
             'aria-disabled': state.disabled || undefined,
             onKeyDown: (e) => {
-                if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                if (!onlyTime && e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
                     e.preventDefault();
                     e.stopPropagation();
                     state.setOpen(true);

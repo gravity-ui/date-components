@@ -40,7 +40,7 @@ const data: Preset[] = [
         get title() {
             return i18n('Last 5 minutes');
         },
-        from: 'now — 5m',
+        from: 'now - 5m',
         to: 'now',
     },
     {
@@ -68,8 +68,8 @@ const data: Preset[] = [
         get title() {
             return i18n('Previous month');
         },
-        from: 'now — 1M/M',
-        to: 'now — 1M/M',
+        from: 'now - 1M/M',
+        to: 'now - 1M/M',
     },
 ];
 
