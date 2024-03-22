@@ -1,4 +1,7 @@
 {
   "Previous": "Назад",
-  "Next": "Вперёд"
+  "Next": "Вперёд",
+  "Click to select the month": "Нажмите для выбора месяца",
+  "Click to select the quarter": "Нажмите для выбора квартала",
+  "Click to select the year": "Нажмите для выбора года"
 }
