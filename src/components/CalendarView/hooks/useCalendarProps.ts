@@ -145,9 +145,9 @@ function getAriaDescriptionForModeButton(mode: CalendarLayout, availableModes: C
 
     const ariaLabelMap: Record<CalendarLayout, string> = {
         days: '',
-        months: i18n('Click to select the month'),
-        quarters: i18n('Click to select the quarter'),
-        years: i18n('Click to select the year'),
+        months: i18n('Switch to months view'),
+        quarters: i18n('Switch to quarters view'),
+        years: i18n('Switch to years view'),
     };
     const nextMode = availableModes[nextModeIndex];
     return ariaLabelMap[nextMode];

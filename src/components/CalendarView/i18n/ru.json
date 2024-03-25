@@ -1,7 +1,7 @@
 {
   "Previous": "Назад",
   "Next": "Вперёд",
-  "Click to select the month": "Нажмите для выбора месяца",
-  "Click to select the quarter": "Нажмите для выбора квартала",
-  "Click to select the year": "Нажмите для выбора года"
+  "Switch to months view": "Переключиться на просмотр по месяцам",
+  "Switch to quarters view": "Переключиться на просмотр по кварталам",
+  "Switch to years view": "Переключиться на просмотр по годам"
 }
