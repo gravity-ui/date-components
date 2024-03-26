@@ -6,7 +6,7 @@ import type {ButtonProps} from '@gravity-ui/uikit';
 import type {CalendarProps} from '../../Calendar/Calendar';
 import {i18n} from '../i18n';
 
-import type {CalendarState, RangeCalendarState} from './types';
+import type {CalendarLayout, CalendarState, RangeCalendarState} from './types';
 
 const buttonDisabledClassName = 'yc-button_disabled g-button_disabled';
 
@@ -52,6 +52,8 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
               },
         extraProps: {
             'aria-disabled': modeDisabled ? 'true' : undefined,
+            'aria-description': getAriaDescriptionForModeButton(state.mode, state.availableModes),
+            'aria-live': 'polite',
         },
         children: title,
     };
@@ -132,4 +134,21 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
         nextButtonProps,
         previousButtonProps,
     };
+}
+
+function getAriaDescriptionForModeButton(mode: CalendarLayout, availableModes: CalendarLayout[]) {
+    const nextModeIndex = availableModes.indexOf(mode) + 1;
+    const isModeLast = nextModeIndex === availableModes.length;
+    if (isModeLast) {
+        return undefined;
+    }
+
+    const ariaLabelMap: Record<CalendarLayout, string> = {
+        days: '',
+        months: i18n('Switch to months view'),
+        quarters: i18n('Switch to quarters view'),
+        years: i18n('Switch to years view'),
+    };
+    const nextMode = availableModes[nextModeIndex];
+    return ariaLabelMap[nextMode];
 }
