@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/gravity-ui/date-components/compare/v2.0.1...v2.1.0) (2024-03-26)
+
+
+### Features
+
+* **Calendar:** improve a11y ([#59](https://github.com/gravity-ui/date-components/issues/59)) ([082db0f](https://github.com/gravity-ui/date-components/commit/082db0f286a596bcb0de98cf0009ba013ff44648))
+* **DatePicker:** show clock icon if select only time ([#57](https://github.com/gravity-ui/date-components/issues/57)) ([5400b90](https://github.com/gravity-ui/date-components/commit/5400b904591df28520ee89e289edf7093f5012bd))
+
 ## [2.0.1](https://github.com/gravity-ui/date-components/compare/v2.0.0...v2.0.1) (2024-02-26)
 
 
