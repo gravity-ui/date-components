@@ -105,6 +105,7 @@ function getDateSectionConfigFromFormatToken(formatToken: string): {
     const config = formatTokenMap[formatToken];
 
     if (!config) {
+        // eslint-disable-next-line no-console
         console.error(
             [
                 `The token "${formatToken}" is not supported by the Date field.`,

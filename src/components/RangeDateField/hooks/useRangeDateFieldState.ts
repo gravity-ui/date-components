@@ -6,7 +6,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
 import {useBaseDateFieldState} from '../../DateField';
-import type {BaseDateFieldState} from '../../DateField';
+import type {DateFieldState} from '../../DateField';
 import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../DateField/types';
 import {
     EDITABLE_SEGMENTS,
@@ -28,7 +28,7 @@ export interface RangeDateFieldStateOptions extends DateFieldBase<RangeValue<Dat
 
 const RANGE_FORMAT_DELIMITER = ' — ';
 
-export type RangeDateFieldState = BaseDateFieldState<RangeValue<DateTime>>;
+export type RangeDateFieldState = DateFieldState<RangeValue<DateTime>>;
 
 export function useRangeDateFieldState(props: RangeDateFieldStateOptions): RangeDateFieldState {
     const [value, setRange] = useControlledState(

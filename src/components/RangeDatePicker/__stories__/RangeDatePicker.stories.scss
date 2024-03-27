@@ -1,0 +1,11 @@
+@use '../../variables';
+
+$block: '.range-date-picker-stories';
+
+$field: '.#{variables.$ns}range-date-picker__field';
+
+#{$block} {
+    #{$field} {
+        width: 225px;
+    }
+}

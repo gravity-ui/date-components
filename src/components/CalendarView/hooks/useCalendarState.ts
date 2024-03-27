@@ -14,6 +14,7 @@ import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './ty
 export interface CalendarStateOptions<T = DateTime>
     extends ValueBase<T | null, T>,
         CalendarStateOptionsBase {}
+
 export type {CalendarState} from './types';
 
 const defaultModes: Record<CalendarLayout, boolean> = {
