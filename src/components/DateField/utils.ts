@@ -241,7 +241,7 @@ export function getDurationUnitFromSectionType(type: DateFieldSectionType) {
 export function addSegment(section: DateFieldSection, date: DateTime, amount: number) {
     let val = section.value ?? 0;
     if (section.type === 'dayPeriod') {
-        val = date.hour() + (date.hour() > 12 ? -12 : 12);
+        val = date.hour() + (date.hour() >= 12 ? -12 : 12);
     } else {
         val = val + amount;
         const min = section.minValue;
