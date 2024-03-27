@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.0](https://github.com/gravity-ui/date-components/compare/v2.1.0...v2.2.0) (2024-03-27)
+
+
+### Features
+
+* add a new range date picker component ([#47](https://github.com/gravity-ui/date-components/issues/47)) ([ce19b43](https://github.com/gravity-ui/date-components/commit/ce19b43950dedc6e039867825974aee126594d0f))
+
+
+### Bug Fixes
+
+* correctly change date when switching day period ([#60](https://github.com/gravity-ui/date-components/issues/60)) ([43dc35a](https://github.com/gravity-ui/date-components/commit/43dc35a0db06137d7b64cb372850309e20d06adf))
+
 ## [2.1.0](https://github.com/gravity-ui/date-components/compare/v2.0.1...v2.1.0) (2024-03-26)
 
 
