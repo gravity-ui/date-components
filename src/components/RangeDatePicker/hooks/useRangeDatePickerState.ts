@@ -1,14 +1,12 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {datePickerStateFactory} from '../../DatePicker';
 import type {DatePickerState} from '../../DatePicker';
+import {datePickerStateFactory} from '../../DatePicker/hooks/datePickerStateFactory';
 import {getDateTimeValue} from '../../DatePicker/utils';
 import {useRangeDateFieldState} from '../../RangeDateField';
 import type {RangeDateFieldStateOptions} from '../../RangeDateField';
 import type {RangeValue} from '../../types';
 import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
-
-export type {Granularity} from '../../DatePicker';
 
 export type RangeDatePickerState = DatePickerState<RangeValue<DateTime>>;
 

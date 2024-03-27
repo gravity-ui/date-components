@@ -7,7 +7,7 @@ import {getDateTimeValue} from '../utils';
 
 import {datePickerStateFactory} from './datePickerStateFactory';
 
-export type {DatePickerState, Granularity} from './datePickerStateFactory';
+export type {DatePickerState} from './datePickerStateFactory';
 
 export interface DatePickerStateOptions extends DateFieldBase {}
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Calendar as CalendarIcon, Clock as ClockIcon} from '@gravity-ui/icons';
-import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
+import {Button, Icon, Popup, TextInput} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {RangeCalendar} from '../Calendar';
@@ -28,7 +28,6 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
     const {groupProps, fieldProps, calendarButtonProps, popupProps, calendarProps, timeInputProps} =
         useDatePickerProps(state, props);
 
-    const isMobile = useMobile();
     const isOnlyTime = state.hasTime && !state.hasDate;
 
     return (
@@ -53,23 +52,17 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
             )}
             <TextInput
                 {...fieldProps}
-                className={b('field', {mobile: isMobile})}
-                hasClear={!isMobile && fieldProps.hasClear}
+                className={b('field')}
+                hasClear={fieldProps.hasClear}
                 endContent={
                     <React.Fragment>
-                        {!isMobile && !isOnlyTime && (
+                        {!isOnlyTime && (
                             <Button {...calendarButtonProps}>
                                 <Icon data={CalendarIcon} />
                             </Button>
                         )}
-                        {!isMobile && isOnlyTime && (
+                        {isOnlyTime && (
                             <StubButton size={calendarButtonProps.size} icon={ClockIcon} />
-                        )}
-                        {isMobile && (
-                            <StubButton
-                                size={calendarButtonProps.size}
-                                icon={isOnlyTime ? ClockIcon : CalendarIcon}
-                            />
                         )}
                     </React.Fragment>
                 }

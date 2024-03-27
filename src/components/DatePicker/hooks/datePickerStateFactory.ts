@@ -7,8 +7,6 @@ import type {DateFieldState} from '../../DateField';
 import type {DateFieldBase} from '../../types';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 
-export type Granularity = 'day' | 'hour' | 'minute' | 'second';
-
 export interface DatePickerState<T = DateTime> {
     /** The currently selected date. */
     value: T | null;
