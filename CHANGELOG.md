@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/gravity-ui/date-components/compare/v2.2.0...v2.2.1) (2024-03-29)
+
+
+### Bug Fixes
+
+* **RangeDatePicker:** add component export ([#62](https://github.com/gravity-ui/date-components/issues/62)) ([9cc9915](https://github.com/gravity-ui/date-components/commit/9cc991586f97b397e167dd7efe4fafa25a055ae6))
+
 ## [2.2.0](https://github.com/gravity-ui/date-components/compare/v2.1.0...v2.2.0) (2024-03-27)
 
 
