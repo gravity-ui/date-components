@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/gravity-ui/date-components/compare/v2.2.1...v2.3.0) (2024-04-15)
+
+
+### Features
+
+* **RelativeDate:** support custom relative date input parser ([#65](https://github.com/gravity-ui/date-components/issues/65)) ([f0036ff](https://github.com/gravity-ui/date-components/commit/f0036ff2ae49f4ffe4d219520580e06604bc236f))
+
 ## [2.2.1](https://github.com/gravity-ui/date-components/compare/v2.2.0...v2.2.1) (2024-03-29)
 
 
