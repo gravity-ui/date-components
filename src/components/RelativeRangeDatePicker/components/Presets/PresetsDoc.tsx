@@ -75,22 +75,24 @@ const data: Preset[] = [
 
 interface PresetsExamplesProps {
     size?: 's' | 'm' | 'l' | 'xl';
+    docs: Preset[];
 }
-function PresetsExamples({size}: PresetsExamplesProps) {
-    return <Table columns={columns} data={data} className={b('table', {size})} />;
+function PresetsExamples({size, docs}: PresetsExamplesProps) {
+    return <Table columns={columns} data={docs} className={b('table', {size})} />;
 }
 
 interface DesktopDocProps {
     className?: string;
     size?: 's' | 'm' | 'l' | 'xl';
+    docs: Preset[];
 }
-function DesktopDoc({className, size}: DesktopDocProps) {
+function DesktopDoc({className, size, docs}: DesktopDocProps) {
     return (
         <Popover
             className={b(null, className)}
             tooltipContentClassName={b('content')}
             hasArrow={false}
-            content={<PresetsExamples size={size} />}
+            content={<PresetsExamples size={size} docs={docs} />}
         >
             <Button
                 className={b('button')}
@@ -106,8 +108,9 @@ function DesktopDoc({className, size}: DesktopDocProps) {
 interface MobileDocProps {
     className?: string;
     size?: 's' | 'm' | 'l' | 'xl';
+    docs: Preset[];
 }
-function MobileDoc({className, size}: MobileDocProps) {
+function MobileDoc({className, size, docs}: MobileDocProps) {
     const [open, setOpen] = React.useState(false);
     return (
         <div className={b(null, className)}>
@@ -122,7 +125,7 @@ function MobileDoc({className, size}: MobileDocProps) {
                 <Icon data={CircleQuestion} />
             </Button>
             <Sheet visible={open} onClose={() => setOpen(false)}>
-                <PresetsExamples size={size} />
+                <PresetsExamples size={size} docs={docs} />
             </Sheet>
         </div>
     );
@@ -131,14 +134,19 @@ function MobileDoc({className, size}: MobileDocProps) {
 interface PresetsDocProps {
     className?: string;
     size?: 's' | 'm' | 'l' | 'xl';
+    docs?: Preset[];
 }
 
-export function PresetsDoc({className, size}: PresetsDocProps) {
+export function PresetsDoc({className, size, docs = data}: PresetsDocProps) {
     const isMobile = useMobile();
 
-    if (isMobile) {
-        return <MobileDoc className={className} size={size} />;
+    if (!Array.isArray(docs) || docs.length === 0) {
+        return null;
     }
 
-    return <DesktopDoc className={className} size={size} />;
+    if (isMobile) {
+        return <MobileDoc className={className} size={size} docs={docs} />;
+    }
+
+    return <DesktopDoc className={className} size={size} docs={docs} />;
 }
