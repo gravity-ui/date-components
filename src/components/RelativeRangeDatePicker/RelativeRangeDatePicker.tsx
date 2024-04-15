@@ -18,6 +18,7 @@ import type {
 import {getButtonSizeForInput} from '../utils/getButtonSizeForInput';
 
 import {PickerDialog} from './components/PickerDialog/PickerDialog';
+import type {Preset} from './components/Presets/defaultPresets';
 import type {PresetTab} from './components/Presets/utils';
 import {useRelativeRangeDatePickerState} from './hooks/useRelativeRangeDatePickerState';
 import type {RelativeRangeDatePickerStateOptions} from './hooks/useRelativeRangeDatePickerState';
@@ -47,6 +48,8 @@ export interface RelativeRangeDatePickerProps
     withPresets?: boolean;
     /** Custom preset tabs */
     presetTabs?: PresetTab[];
+    /** Custom docs for presets, if empty array docs will be hidden */
+    docs?: Preset[];
     /** Show selected relative values as absolute dates */
     alwaysShowAsAbsolute?: boolean;
     /** */

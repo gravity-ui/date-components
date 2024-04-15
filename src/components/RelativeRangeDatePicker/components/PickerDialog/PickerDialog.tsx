@@ -135,6 +135,7 @@ function DialogContent(
                         );
                     }}
                     minValue={props.minValue}
+                    docs={props.docs}
                 />
             ) : null}
             {props.withZonesList ? (

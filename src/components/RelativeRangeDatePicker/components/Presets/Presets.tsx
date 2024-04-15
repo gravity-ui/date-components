@@ -21,6 +21,7 @@ export interface PresetProps {
     minValue?: DateTime;
     size?: 's' | 'm' | 'l' | 'xl';
     presetTabs?: PresetTab[];
+    docs?: Preset[];
 }
 export function Presets({
     className,
@@ -29,6 +30,7 @@ export function Presets({
     withTime,
     onChoosePreset,
     presetTabs,
+    docs,
 }: PresetProps) {
     const tabs = React.useMemo(() => {
         return filterPresetTabs(presetTabs ?? getDefaultPresetTabs({withTime}), {minValue});
@@ -58,7 +60,7 @@ export function Presets({
                     items={tabs}
                     size={size === 's' ? 'm' : size}
                 />
-                <PresetsDoc className={b('doc')} size={size} />
+                <PresetsDoc className={b('doc')} size={size} docs={docs} />
             </div>
             <div className={b('content')}>
                 <PresetsList
