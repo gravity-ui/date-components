@@ -9,6 +9,7 @@ import {block} from '../../utils/cn';
 import type {Value} from '../RelativeDatePicker';
 import type {
     DomProps,
+    FocusableProps,
     InputBase,
     RangeValue,
     StyleProps,
@@ -35,6 +36,7 @@ export interface RelativeRangeDatePickerProps
         InputBase,
         TextInputProps,
         Validation,
+        FocusableProps,
         StyleProps {
     /** Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format) */
     format?: string;
@@ -70,16 +72,26 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
     const [open, setOpen] = React.useState(false);
 
     const {focusWithinProps} = useFocusWithin({
-        isDisabled: props.disabled || isMobile,
-        onFocusWithinChange: (isFocusedWithin) => {
-            if (!isFocusedWithin) {
+        isDisabled: props.disabled,
+        onFocusWithin: (e) => {
+            if (!isActive) {
+                props.onFocus?.(e);
+            }
+        },
+        onBlurWithin: (e) => {
+            // when the popup is open and an user clicks outside, focus will be returned to the input
+            const seemsIsClickOutsideInEmptySpace =
+                open &&
+                (document.activeElement === null || document.activeElement === document.body);
+            if (!seemsIsClickOutsideInEmptySpace) {
                 setIsActive(false);
+                props.onBlur?.(e);
             }
         },
     });
 
     const {alwaysShowAsAbsolute, presetTabs, getRangeTitle} = props;
-    const format = props.format ?? 'L';
+    const format = props.format || 'L';
     const text = React.useMemo(
         () =>
             typeof getRangeTitle === 'function'
@@ -116,6 +128,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 }
             >
                 <TextInput
+                    autoFocus={props.autoFocus}
                     controlRef={inputRef}
                     value={text}
                     placeholder={props.placeholder}
