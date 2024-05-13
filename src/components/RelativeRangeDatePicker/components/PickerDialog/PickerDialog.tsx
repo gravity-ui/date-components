@@ -54,6 +54,7 @@ export function PickerDialog({
             role="dialog"
             anchorRef={anchorRef}
             contentClassName={b('content', {size: props.size}, className)}
+            autoFocus
             focusTrap
             restoreFocus
         >
