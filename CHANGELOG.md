@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/gravity-ui/date-components/compare/v2.3.1...v2.4.0) (2024-05-15)
+
+
+### Features
+
+* **RelativeRangeDatePicker:** remove dates hint  ([#75](https://github.com/gravity-ui/date-components/issues/75)) ([88cbce0](https://github.com/gravity-ui/date-components/commit/88cbce0f28410677d34a7327963c5e725ef62846))
+
 ## [2.3.1](https://github.com/gravity-ui/date-components/compare/v2.3.0...v2.3.1) (2024-05-13)
 
 
