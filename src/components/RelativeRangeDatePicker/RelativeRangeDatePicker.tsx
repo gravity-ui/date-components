@@ -1,9 +1,8 @@
 import React from 'react';
 
-import {dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
-import {Button, Icon, Popover, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
+import {Button, Icon, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import type {Value} from '../RelativeDatePicker';
@@ -23,7 +22,6 @@ import type {Preset} from './components/Presets/defaultPresets';
 import type {PresetTab} from './components/Presets/utils';
 import {useRelativeRangeDatePickerState} from './hooks/useRelativeRangeDatePickerState';
 import type {RelativeRangeDatePickerStateOptions} from './hooks/useRelativeRangeDatePickerState';
-import {i18n} from './i18n';
 import {getDefaultTitle} from './utils';
 
 import './RelativeRangeDatePicker.scss';
@@ -116,75 +114,63 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
             className={b(null, props.className)}
             style={props.style}
         >
-            <Popover
-                className={b('value-label')}
-                tooltipContentClassName={b('value-label-tooltip')}
-                disabled={isMobile || open || !state.value}
-                delayOpening={500}
-                placement={['right', 'right-start', 'right-end', 'auto']}
-                hasArrow={false}
-                content={
-                    <ValueLabel value={state.value} format={format} timeZone={state.timeZone} />
-                }
-            >
-                <TextInput
-                    autoFocus={props.autoFocus}
-                    controlRef={inputRef}
-                    value={text}
-                    placeholder={props.placeholder}
-                    onUpdate={(v) => {
-                        if (!props.readOnly && !v) {
-                            state.setValue(null, 'default');
-                        }
-                    }}
-                    controlProps={{
-                        'aria-haspopup': 'dialog',
-                        'aria-expanded': open,
-                        disabled: isMobile,
-                        className: b('input', {mobile: isMobile}),
-                    }}
-                    onKeyDown={(e) => {
-                        if (props.disabled) {
-                            return;
-                        }
-                        if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
-                            e.preventDefault();
-                            setOpen(true);
-                        }
-                    }}
-                    onFocus={() => {
-                        if (!isActive) {
-                            setIsActive(true);
-                            setOpen(true);
-                        }
-                    }}
-                    validationState={validationState}
-                    errorMessage={errorMessage}
-                    errorPlacement={props.errorPlacement}
-                    pin={props.pin}
-                    size={props.size}
-                    label={props.label}
-                    hasClear={props.hasClear}
-                    disabled={props.disabled}
-                    endContent={
-                        <Button
-                            view="flat-secondary"
-                            size={getButtonSizeForInput(props.size)}
-                            disabled={props.disabled}
-                            extraProps={{
-                                'aria-haspopup': 'dialog',
-                                'aria-expanded': open,
-                            }}
-                            onClick={() => {
-                                setIsActive(true);
-                                setOpen(!open);
-                            }}
-                        >
-                            <Icon data={CalendarIcon} />
-                        </Button>
+            <TextInput
+                autoFocus={props.autoFocus}
+                controlRef={inputRef}
+                value={text}
+                placeholder={props.placeholder}
+                onUpdate={(v) => {
+                    if (!props.readOnly && !v) {
+                        state.setValue(null, 'default');
                     }
-                />
-            </Popover>
+                }}
+                controlProps={{
+                    'aria-haspopup': 'dialog',
+                    'aria-expanded': open,
+                    disabled: isMobile,
+                    className: b('input', {mobile: isMobile}),
+                }}
+                onKeyDown={(e) => {
+                    if (props.disabled) {
+                        return;
+                    }
+                    if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                        e.preventDefault();
+                        setOpen(true);
+                    }
+                }}
+                onFocus={() => {
+                    if (!isActive) {
+                        setIsActive(true);
+                        setOpen(true);
+                    }
+                }}
+                validationState={validationState}
+                errorMessage={errorMessage}
+                errorPlacement={props.errorPlacement}
+                pin={props.pin}
+                size={props.size}
+                label={props.label}
+                hasClear={props.hasClear}
+                disabled={props.disabled}
+                endContent={
+                    <Button
+                        view="flat-secondary"
+                        size={getButtonSizeForInput(props.size)}
+                        disabled={props.disabled}
+                        extraProps={{
+                            'aria-haspopup': 'dialog',
+                            'aria-expanded': open,
+                        }}
+                        onClick={() => {
+                            setIsActive(true);
+                            setOpen(!open);
+                        }}
+                    >
+                        <Icon data={CalendarIcon} />
+                    </Button>
+                }
+            />
             {isMobile ? (
                 <button
                     className={b('mobile-trigger', {
@@ -209,26 +195,6 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 isMobile={isMobile}
                 className={props.className}
             />
-        </div>
-    );
-}
-
-interface ValueLabelProps {
-    value: RangeValue<Value | null> | null;
-    format: string;
-    timeZone: string;
-}
-function ValueLabel({value, format, timeZone}: ValueLabelProps) {
-    return (
-        <div className={b('value-label-content')}>
-            <span className={b('value-label-item')}>
-                {dateTimeParse(value?.start?.value, {timeZone})?.format(format)}
-            </span>
-            <span className={b('value-label-to')}>{i18n('to')}</span>
-            <span className={b('value-label-item')}>
-                {dateTimeParse(value?.end?.value, {timeZone, roundUp: true})?.format(format)}
-            </span>
-            {timeZone && <span className={b('value-label-tz')}>{timeZone}</span>}
         </div>
     );
 }
