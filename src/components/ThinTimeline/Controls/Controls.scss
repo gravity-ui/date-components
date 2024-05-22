@@ -1,0 +1,31 @@
+@use '../../variables';
+
+$block: '.#{variables.$ns}thin-timeline-controls';
+
+#{$block} {
+    display: flex;
+
+    padding: 6px 20px;
+
+    &__separator {
+        flex: 0 0 1px;
+
+        margin: 0 8px;
+
+        background-color: var(--g-color-line-generic);
+    }
+
+    .yc-range-datepicker__control_with-time,
+    .yc-range-datepicker__control {
+        width: inherit;
+    }
+
+    .yc-range-datepicker__control {
+        min-width: auto;
+        padding: 0 8px;
+    }
+
+    .yc-range-datepicker__control-actions {
+        display: none;
+    }
+}

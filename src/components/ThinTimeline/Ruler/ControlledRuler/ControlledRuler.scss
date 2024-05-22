@@ -1,0 +1,40 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}thin-timeline-ruler';
+
+#{$block} {
+    --yc-thin-timeline-height: 24px;
+    --yc-thin-timeline-now-color: var(--g-color-line-danger);
+
+    display: flex;
+    align-items: center;
+
+    box-sizing: border-box;
+    height: var(--yc-thin-timeline-height);
+
+    border: 1px solid var(--g-color-line-generic);
+    border-width: 1px 0;
+
+    &__controls {
+        --side-border: 1px solid var(--g-color-line-generic);
+        --side-padding: 3px;
+
+        flex: 0 0 auto;
+
+        &_right {
+            padding-inline-start: var(--side-padding);
+
+            border-inline-start: var(--side-border);
+        }
+
+        &_left {
+            padding-inline-end: var(--side-padding);
+
+            border-inline-end: var(--side-border);
+        }
+    }
+
+    &__control-btn {
+        margin: -1px 0;
+    }
+}

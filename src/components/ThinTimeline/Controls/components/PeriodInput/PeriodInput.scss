@@ -1,0 +1,26 @@
+@use '../../../../variables';
+
+$block: '.#{variables.$ns}thin-timeline-period-input';
+
+#{$block} {
+    &__datepicker {
+        margin-inline-end: 8px;
+    }
+
+    &__custom-control {
+        position: relative;
+
+        display: flex;
+        align-items: center;
+
+        width: 250px;
+
+        &_extended {
+            width: 290px;
+        }
+
+        .yc-text-input__control {
+            border-radius: var(--g-border-radius-m);
+        }
+    }
+}

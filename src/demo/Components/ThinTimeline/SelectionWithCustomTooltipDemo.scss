@@ -1,0 +1,9 @@
+$root: '.g-storybook-thin-timeline-selection-with-tooltip-demo';
+
+#{$root} {
+    &__tooltip {
+        white-space: nowrap;
+
+        background-color: var(--g-color-base-float);
+    }
+}

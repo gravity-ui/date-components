@@ -15,7 +15,8 @@ export function getValidationResult(
     timeZone: string,
     valueTitle = 'Value',
 ): ValidationResult {
-    const rangeOverflow = value && maxValue && maxValue.isBefore(value);
+    const rangeOverflow =
+        value && maxValue && maxValue.isBefore(value) && maxValue.millisecond !== value.millisecond;
     const rangeUnderflow = value && minValue && value.isBefore(minValue);
     const isUnavailable = (value && isDateUnavailable?.(value)) || false;
     const isInvalid = rangeOverflow || rangeUnderflow || isUnavailable;

@@ -1,0 +1,9 @@
+@use '../../../../variables';
+
+$block: '.#{variables.$ns}thin-timeline-refresher';
+
+#{$block} {
+    &__option {
+        padding: 0 8px;
+    }
+}

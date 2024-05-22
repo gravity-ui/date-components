@@ -1,0 +1,79 @@
+@use '../../../variables';
+
+@import '../../../functions';
+
+$block: '.#{variables.$ns}thin-timeline-ruler-handle-tooltip';
+$margin: spacing();
+
+#{$block} {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+
+    visibility: hidden;
+
+    width: fit-content;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    transition:
+        opacity ease-out 0.1s,
+        visibility ease-out 0.1s;
+
+    &_active {
+        visibility: visible;
+
+        opacity: 1;
+    }
+
+    &_left {
+        inset-block-start: 50%;
+        inset-inline: auto;
+        inset-inline-start: 0;
+
+        transform: translate(-100%, -50%);
+    }
+
+    &_top-start {
+        inset-block-start: 0;
+        inset-inline: auto;
+        inset-inline-start: 0;
+
+        transform: translateY(calc(-100% - $margin));
+    }
+
+    &_bottom-start {
+        inset-block-start: calc(100% + $margin);
+        inset-inline: auto;
+        inset-inline-start: 0;
+
+        transform: translateY(0);
+    }
+
+    &_right {
+        inset-block-start: 50%;
+        inset-inline: auto;
+        inset-inline-end: 0;
+
+        transform: translate(100%, -50%);
+    }
+
+    &_top-end {
+        inset-block-start: 0;
+        inset-inline: auto;
+        inset-inline-end: 0;
+
+        transform: translateY(calc(-100% - $margin));
+    }
+
+    &_bottom-end {
+        inset-block-start: calc(100% + $margin);
+        inset-inline: auto;
+        inset-inline-end: 0;
+
+        transform: translateY(0);
+    }
+}

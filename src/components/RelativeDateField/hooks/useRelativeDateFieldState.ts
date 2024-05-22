@@ -103,7 +103,7 @@ export function useRelativeDateFieldState(props: RelativeDateFieldOptions): Rela
     };
 }
 
-function isLikeRelativeDate(text: string) {
+export function isLikeRelativeDate(text: string) {
     if (typeof isLikeRelative === 'function') {
         return isLikeRelative(text);
     }

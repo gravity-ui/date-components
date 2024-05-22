@@ -62,7 +62,6 @@ export interface RelativeRangeDatePickerProps
 
 export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
     const state = useRelativeRangeDatePickerState(props);
-
     const isMobile = useMobile();
 
     const anchorRef = React.useRef<HTMLDivElement>(null);

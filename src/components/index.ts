@@ -7,5 +7,6 @@ export * from './RelativeDateField';
 export * from './RelativeDatePicker';
 export * from './RangeDateField';
 export * from './RelativeRangeDatePicker';
+export * from './ThinTimeline';
 
 export type {RangeValue} from './types';

@@ -1,0 +1,30 @@
+@use '../../../../variables';
+
+$block: '.#{variables.$ns}thin-timeline-custom-btn';
+
+#{$block} {
+    position: relative;
+
+    display: inline-flex;
+    flex: 1 0 auto;
+
+    min-width: 28px;
+    max-width: 50px;
+
+    &__text {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-start: 0;
+
+        width: 100%;
+
+        & .g-text-input__control {
+            padding-inline: 5px;
+            padding-inline-end: 5px;
+        }
+    }
+
+    &__completion-item {
+        padding: 0 8px;
+    }
+}

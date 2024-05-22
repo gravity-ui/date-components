@@ -1,0 +1,28 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}thin-timeline-ruler-viewport';
+
+#{$block} {
+    position: relative;
+
+    flex: 1 1 auto;
+
+    height: 100%;
+
+    &__svg {
+        pointer-events: none;
+    }
+
+    &__now {
+        stroke: var(--yc-thin-timeline-now-color);
+        stroke-width: 2px;
+    }
+
+    &__dragger {
+        position: absolute;
+        inset: 0;
+
+        cursor: move;
+        pointer-events: all;
+    }
+}

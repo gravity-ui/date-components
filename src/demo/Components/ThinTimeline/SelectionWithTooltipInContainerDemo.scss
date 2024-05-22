@@ -1,0 +1,15 @@
+$root: '.g-storybook-thin-timeline-selection-with-tooltip-container-demo';
+
+#{$root} {
+    display: flex;
+
+    &__side-bar {
+        width: 150px;
+
+        background-color: var(--g-color-private-red-450);
+    }
+
+    &__content {
+        flex: 1;
+    }
+}

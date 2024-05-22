@@ -1,0 +1,17 @@
+$root: '.g-storybook-thin-timeline-custom-selection-demo';
+
+#{$root} {
+    &__1 {
+        --thin-timeline-selection-color: var(--g-color-base-positive-light);
+        --thin-timeline-selection-color-hover: var(--g-color-base-positive-light-hover);
+        --thin-timeline-selection-handle-color: var(--g-color-base-positive-medium);
+        --thin-timeline-selection-handle-color-hover: var(--g-color-base-positive-medium-hover);
+    }
+
+    &__2 {
+        --thin-timeline-selection-color: var(--g-color-base-danger-light);
+        --thin-timeline-selection-color-hover: var(--g-color-base-danger-light-hover);
+        --thin-timeline-selection-handle-color: var(--g-color-base-danger-heavy);
+        --thin-timeline-selection-handle-color-hover: var(--g-color-base-danger-heavy-hover);
+    }
+}

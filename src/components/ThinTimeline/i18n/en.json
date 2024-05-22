@@ -1,0 +1,36 @@
+{
+  "duration-name.y": ["{{count}} year", "{{count}} years", "{{count}} years", "{{count}} years"],
+  "duration-name.M": [
+    "{{count}} month",
+    "{{count}} months",
+    "{{count}} months",
+    "{{count}} months"
+  ],
+  "duration-name.w": ["{{count}} week", "{{count}} weeks", "{{count}} weeks", "{{count}} weeks"],
+  "duration-name.d": ["{{count}} day", "{{count}} days", "{{count}} days", "{{count}} days"],
+  "duration-name.h": ["{{count}} hour", "{{count}} hours", "{{count}} hours", "{{count}} hours"],
+  "duration-name.m": [
+    "{{count}} minute",
+    "{{count}} minutes",
+    "{{count}} minutes",
+    "{{count}} minutes"
+  ],
+  "duration-name.s": [
+    "{{count}} second",
+    "{{count}} seconds",
+    "{{count}} seconds",
+    "{{count}} seconds"
+  ],
+  "label.now": "Now",
+  "label.refresh-off": "off",
+  "label_last": ["Last", "Last", "Last", "Last"],
+  "label_last-f": ["Last", "Last", "Last", "Last"],
+  "label_s": ["second", "seconds", "seconds", "seconds"],
+  "label_m": ["minute", "minutes", "minutes", "minutes"],
+  "label_h": ["hour", "hours", "hours", "hours"],
+  "label_d": ["day", "days", "days", "days"],
+  "label_w": ["week", "weeks", "weeks", "weeks"],
+  "label_M": ["month", "months", "months", "months"],
+  "label_y": ["year", "years", "years", "years"],
+  "label_today": "Today"
+}

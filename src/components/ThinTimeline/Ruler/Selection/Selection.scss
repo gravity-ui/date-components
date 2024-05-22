@@ -1,0 +1,82 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}thin-timeline-ruler-selection';
+
+#{$block} {
+    --thin-timeline-selection-color: var(--g-color-base-info-light);
+    --thin-timeline-selection-color-hover: var(--g-color-base-info-light-hover);
+    --thin-timeline-selection-handle-color: var(--g-color-base-brand);
+    --thin-timeline-selection-handle-color-hover: var(--g-color-base-brand-hover);
+
+    position: absolute;
+    inset-block-start: -1px;
+
+    min-width: 12px;
+    height: 24px;
+
+    pointer-events: all;
+
+    &__interactive {
+        position: absolute;
+        inset-inline: 4px;
+        inset-inline-end: 4px;
+
+        height: 100%;
+
+        background: var(--thin-timeline-selection-color);
+
+        &_enabled {
+            cursor: move;
+
+            &:hover {
+                background: var(--thin-timeline-selection-color-hover);
+            }
+        }
+
+        &_bordered {
+            box-sizing: border-box;
+
+            border: 2px solid var(--thin-timeline-selection-handle-color);
+            border-radius: 2px;
+
+            &:hover {
+                border-color: var(--thin-timeline-selection-handle-color-hover);
+            }
+        }
+    }
+
+    &__handle {
+        position: absolute;
+        inset-block-start: 0;
+
+        width: 4px;
+        height: 100%;
+
+        border-radius: 2px;
+        background: var(--thin-timeline-selection-handle-color);
+
+        &_enabled {
+            cursor: ew-resize;
+
+            &:hover {
+                background: var(--thin-timeline-selection-handle-color-hover);
+            }
+        }
+
+        &_left {
+            inset-inline-start: 0;
+        }
+
+        &_right {
+            inset-inline-end: 0;
+        }
+    }
+
+    &__tooltip-label {
+        --_-bg-color: var(--g-color-base-float-heavy);
+
+        white-space: nowrap;
+
+        color: var(--g-color-text-light-primary);
+    }
+}
