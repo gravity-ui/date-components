@@ -40,9 +40,9 @@ export function expandFormat(format: string) {
             const LongLocalizedFormat = localizedFormat && localizedFormat.toUpperCase();
             return (
                 escapeSequence ||
-                localeFormats[localizedFormat as keyof typeof localeFormats] ||
+                localeFormats?.[localizedFormat as keyof typeof localeFormats] ||
                 getShortLocalizedFormatFromLongLocalizedFormat(
-                    localeFormats[LongLocalizedFormat as keyof typeof localeFormats] as string,
+                    localeFormats?.[LongLocalizedFormat as keyof typeof localeFormats] as string,
                 )
             );
         },
