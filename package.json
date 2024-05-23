@@ -60,7 +60,7 @@
     "@gravity-ui/prettier-config": "^1.1.0",
     "@gravity-ui/stylelint-config": "^4.0.1",
     "@gravity-ui/tsconfig": "^1.0.0",
-    "@gravity-ui/uikit": "^6.1.1",
+    "@gravity-ui/uikit": "^6.15.0",
     "@storybook/addon-a11y": "^8.0.10",
     "@storybook/addon-essentials": "^8.0.10",
     "@storybook/addon-viewport": "^8.0.10",
