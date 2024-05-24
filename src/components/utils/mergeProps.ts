@@ -1,4 +1,5 @@
 interface Props {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 
@@ -8,6 +9,7 @@ type TupleTypes<T> = {[P in keyof T]: T[P]} extends {[key: number]: infer V}
     ? NullToObject<V>
     : never;
 type NullToObject<T> = T extends null | undefined ? {} : T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void
     ? I
     : never;
@@ -53,11 +55,11 @@ export function mergeProps<T extends PropsArgs[]>(...args: T): UnionToIntersecti
     return result as UnionToIntersection<TupleTypes<T>>;
 }
 
-function chain(...fns: any[]) {
-    return (...args: any[]) => {
-        for (const callback of fns) {
-            if (typeof callback === 'function') {
-                callback(...args);
+function chain(...fns: unknown[]) {
+    return (...args: unknown[]) => {
+        for (const fn of fns) {
+            if (typeof fn === 'function') {
+                fn(...args);
             }
         }
     };

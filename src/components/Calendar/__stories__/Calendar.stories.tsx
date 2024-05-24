@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {dateTime, dateTimeParse, getTimeZonesList} from '@gravity-ui/date-utils';
+import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
+import {timeZoneControl} from '../../../demo/utils/zones';
 import {Calendar} from '../Calendar';
 
 const meta: Meta<typeof Calendar> = {
@@ -17,11 +18,6 @@ const meta: Meta<typeof Calendar> = {
 export default meta;
 
 type Story = StoryObj<typeof Calendar>;
-
-const zones = getTimeZonesList().reduce<Record<string, string>>((l, zone) => {
-    l[zone] = `${zone} (UTC ${dateTime({timeZone: zone}).format('Z')})`;
-    return l;
-}, {});
 
 export const Default = {
     render: (args) => {
@@ -95,16 +91,7 @@ export const Default = {
                 type: 'radio',
             },
         },
-        timeZone: {
-            options: ['none', ...Object.keys(zones)],
-            mapping: {
-                none: undefined,
-            },
-            control: {
-                type: 'select',
-                labels: zones,
-            },
-        },
+        timeZone: timeZoneControl,
     },
 } satisfies Story;
 

@@ -1,7 +1,8 @@
-import {dateTime, dateTimeParse, getTimeZonesList} from '@gravity-ui/date-utils';
+import {dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
+import {timeZoneControl} from '../../../demo/utils/zones';
 import {DateField} from '../DateField';
 
 const meta: Meta<typeof DateField> = {
@@ -13,11 +14,6 @@ const meta: Meta<typeof DateField> = {
 export default meta;
 
 type Story = StoryObj<typeof DateField>;
-
-const zones = getTimeZonesList().reduce<Record<string, string>>((l, zone) => {
-    l[zone] = `${zone} (UTC ${dateTime({timeZone: zone}).format('Z')})`;
-    return l;
-}, {});
 
 export const Default: Story = {
     render: (args) => {
@@ -82,16 +78,7 @@ export const Default: Story = {
                 none: undefined,
             },
         },
-        timeZone: {
-            options: ['none', ...Object.keys(zones)],
-            mapping: {
-                none: undefined,
-            },
-            control: {
-                type: 'select',
-                labels: zones,
-            },
-        },
+        timeZone: timeZoneControl,
     },
 };
 

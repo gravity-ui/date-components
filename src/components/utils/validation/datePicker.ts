@@ -22,19 +22,19 @@ export function getValidationResult(
     const errors = [];
 
     if (isInvalid) {
-        if (rangeUnderflow) {
+        if (rangeUnderflow && minValue) {
             errors.push(
                 i18n('Value must be {minValue} or later.', {
-                    minValue: minValue!.timeZone(timeZone).format(),
+                    minValue: minValue.timeZone(timeZone).format(),
                     value: valueTitle,
                 }),
             );
         }
 
-        if (rangeOverflow) {
+        if (rangeOverflow && maxValue) {
             errors.push(
                 i18n('Value must be {maxValue} or earlier.', {
-                    maxValue: maxValue!.timeZone(timeZone).format(),
+                    maxValue: maxValue.timeZone(timeZone).format(),
                     value: valueTitle,
                 }),
             );
