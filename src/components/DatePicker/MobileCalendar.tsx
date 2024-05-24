@@ -1,3 +1,5 @@
+'use client';
+
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 

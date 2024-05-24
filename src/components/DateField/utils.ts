@@ -166,13 +166,13 @@ export function getSectionLimits(section: DateFieldSectionWithoutPosition, date:
     return {};
 }
 
-export function getSectionValue(sections: DateFieldSectionWithoutPosition, date: DateTime) {
-    const type = sections.type;
+export function getSectionValue(section: DateFieldSectionWithoutPosition, date: DateTime) {
+    const type = section.type;
     switch (type) {
         case 'year': {
-            return isFourDigitYearFormat(sections.format)
+            return isFourDigitYearFormat(section.format)
                 ? date.year()
-                : Number(date.format(sections.format));
+                : Number(date.format(section.format));
         }
         case 'month':
         case 'hour':

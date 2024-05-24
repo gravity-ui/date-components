@@ -1,3 +1,5 @@
+'use client';
+
 import {dateTime} from '@gravity-ui/date-utils';
 import {Button, Popup, Sheet} from '@gravity-ui/uikit';
 

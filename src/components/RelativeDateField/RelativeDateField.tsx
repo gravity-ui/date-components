@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 import {Popup, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
