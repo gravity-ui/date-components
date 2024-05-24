@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTime, isValid, settings} from '@gravity-ui/date-utils';
+import {dateTime, expandFormat, isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {mergeDateTime} from '../utils/dates';
@@ -23,31 +23,6 @@ export const EDITABLE_SEGMENTS: Partial<Record<DateFieldSectionType, boolean>> =
     dayPeriod: true,
     weekday: true,
 };
-
-export function expandFormat(format: string) {
-    const localeFormats = settings.getLocaleData().formats;
-
-    const getShortLocalizedFormatFromLongLocalizedFormat = (formatBis: string) =>
-        formatBis.replace(
-            /(\[[^\]]+])|(MMMM|MM|DD|dddd)/g,
-            (_: string, escapeSequence: string, localizedFormat: string) =>
-                escapeSequence || localizedFormat.slice(1),
-        );
-
-    return format.replace(
-        /(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g,
-        (_: string, escapeSequence: string, localizedFormat: string) => {
-            const LongLocalizedFormat = localizedFormat && localizedFormat.toUpperCase();
-            return (
-                escapeSequence ||
-                localeFormats?.[localizedFormat as keyof typeof localeFormats] ||
-                getShortLocalizedFormatFromLongLocalizedFormat(
-                    localeFormats?.[LongLocalizedFormat as keyof typeof localeFormats] as string,
-                )
-            );
-        },
-    );
-}
 
 const escapedCharacters = {start: '[', end: ']'};
 
