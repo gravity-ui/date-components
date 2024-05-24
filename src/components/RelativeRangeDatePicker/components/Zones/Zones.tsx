@@ -1,3 +1,5 @@
+'use client';
+
 import {getTimeZonesList} from '@gravity-ui/date-utils';
 import {ChevronRight} from '@gravity-ui/icons';
 import {Button, Icon, Select, Text} from '@gravity-ui/uikit';

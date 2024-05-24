@@ -70,7 +70,7 @@ export function useRelativeDateFieldState(props: RelativeDateFieldOptions): Rela
             return null;
         }
         return dateTimeParse(value, {timeZone: props.timeZone, roundUp: props.roundUp}) ?? null;
-    }, [value, props.timeZone]);
+    }, [value, props.timeZone, props.roundUp]);
 
     const [lastCorrectDate, setLastCorrectDate] = React.useState(parsedDate);
     if (parsedDate && parsedDate !== lastCorrectDate) {

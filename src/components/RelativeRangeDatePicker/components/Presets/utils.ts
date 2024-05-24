@@ -36,7 +36,7 @@ export function getPresetTitle(start: string, end: string, presets: Preset[] = a
     return startText + ' — ' + endText;
 }
 
-function isDateUnit(value: any): value is 'm' | 'h' | 'd' | 'w' | 'M' | 'y' {
+function isDateUnit(value: string): value is 'm' | 'h' | 'd' | 'w' | 'M' | 'y' {
     return ['m', 'h', 'd', 'w', 'M', 'y'].includes(value);
 }
 
