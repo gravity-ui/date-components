@@ -35,7 +35,7 @@ export const Default = {
         return (
             // eslint-disable-next-line jsx-a11y/label-has-associated-control
             <label className="range-date-picker-stories">
-                <span style={{marginRight: 4}}>Event date</span>
+                <span style={{marginInlineEnd: 4}}>Event date</span>
                 <RangeDatePicker {...props} />
             </label>
         );

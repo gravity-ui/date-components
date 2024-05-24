@@ -1,7 +1,8 @@
-import {dateTime, dateTimeParse, getTimeZonesList} from '@gravity-ui/date-utils';
+import {dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
+import {timeZoneControl} from '../../../demo/utils/zones';
 import type {Value} from '../../RelativeDatePicker';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
 
@@ -14,11 +15,6 @@ const meta: Meta<typeof RelativeRangeDatePicker> = {
 export default meta;
 
 type Story = StoryObj<typeof RelativeRangeDatePicker>;
-
-const zones = getTimeZonesList().reduce<Record<string, string>>((l, zone) => {
-    l[zone] = `${zone} (UTC ${dateTime({timeZone: zone}).format('Z')})`;
-    return l;
-}, {});
 
 function stringifyValue(value: Value | null): string {
     if (!value) {
@@ -77,15 +73,6 @@ export const Default = {
                 none: undefined,
             },
         },
-        timeZone: {
-            options: ['none', ...Object.keys(zones)],
-            mapping: {
-                none: undefined,
-            },
-            control: {
-                type: 'select',
-                labels: zones,
-            },
-        },
+        timeZone: timeZoneControl,
     },
 } satisfies Story;
