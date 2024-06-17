@@ -9,6 +9,7 @@ import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 import {Calendar} from '../Calendar';
 import type {CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
+import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {
     AccessibilityProps,
     DateFieldBase,
@@ -98,13 +99,15 @@ export function DatePicker({className, ...props}: DatePickerProps) {
                     </React.Fragment>
                 }
             />
-            <input
-                type="text"
-                hidden
+            <HiddenInput
                 name={props.name}
-                value={state.value ? state.value.toISOString() : ''}
-                // Ignore React warning
-                onChange={() => {}}
+                value={state.value}
+                toStringValue={(value) => value?.toISOString() ?? ''}
+                onReset={(value) => {
+                    state.setValue(value);
+                }}
+                disabled={state.disabled}
+                form={props.form}
             />
         </div>
     );

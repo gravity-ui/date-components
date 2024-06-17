@@ -5,6 +5,7 @@ import React from 'react';
 import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
+import {HiddenInput} from '../HiddenInput/HiddenInput';
 
 import {useDateFieldProps} from './hooks/useDateFieldProps';
 import type {DateFieldProps} from './hooks/useDateFieldProps';
@@ -32,13 +33,15 @@ export function DateField({className, ...props}: DateFieldProps) {
                 {...inputProps}
                 value={state.isEmpty && !isActive && props.placeholder ? '' : inputProps.value}
             />
-            <input
-                type="text"
-                hidden
+            <HiddenInput
                 name={props.name}
-                value={state.value ? state.value.toISOString() : ''}
-                // Ignore React warning
-                onChange={() => {}}
+                value={state.value}
+                toStringValue={(value) => value?.toISOString() ?? ''}
+                onReset={(value) => {
+                    state.setDate(value);
+                }}
+                disabled={state.disabled}
+                form={props.form}
             />
         </div>
     );

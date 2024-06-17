@@ -7,6 +7,7 @@ import {Popup, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
 import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
 import {DateField} from '../DateField';
+import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {
     AccessibilityProps,
     DomProps,
@@ -78,13 +79,14 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
                 }}
                 onBlur={props.onBlur}
             />
-            <input
-                type="text"
-                hidden
+            <HiddenInput
                 name={props.name}
-                value={state.value ?? ''}
-                // Ignore React warning
-                onChange={() => {}}
+                value={state.value}
+                onReset={(value) => {
+                    state.setValue(value);
+                }}
+                disabled={state.disabled}
+                form={props.form}
             />
             {!isMobile && (
                 <Popup anchorRef={anchorRef} open={isOpen}>

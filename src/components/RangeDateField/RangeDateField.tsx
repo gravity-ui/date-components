@@ -8,6 +8,7 @@ import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
 import {block} from '../../utils/cn';
 import {useDateFieldProps} from '../DateField/hooks/useDateFieldProps';
 import type {DateFieldProps} from '../DateField/hooks/useDateFieldProps';
+import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {RangeValue} from '../types';
 
 import {useRangeDateFieldState} from './hooks/useRangeDateFieldState';
@@ -41,6 +42,23 @@ export function RangeDateField({className, ...props}: RangeDateFieldProps) {
             <TextInput
                 {...inputProps}
                 value={state.isEmpty && !isActive && props.placeholder ? '' : inputProps.value}
+            />
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                onReset={(v) => {
+                    state.setDate(v);
+                }}
+                value={state.value ?? null}
+                toStringValue={(v) => (v ? v.start.toISOString() : '')}
+                disabled={state.disabled}
+            />
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                value={state.value ?? null}
+                toStringValue={(v) => (v ? v.end.toISOString() : '')}
+                disabled={state.disabled}
             />
         </div>
     );

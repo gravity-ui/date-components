@@ -40,6 +40,11 @@ export interface InputDOMProps {
      * The name of the input element, used when submitting an HTML form.
      */
     name?: string;
+    /**
+     * The id of a <form> in the same document. If this attribute is not set,
+     * the <input> is associated with its ancestor <form> element, if any.
+     */
+    form?: string;
 }
 export interface InputBase {
     /**

@@ -7,11 +7,13 @@ import {Calendar as CalendarIcon} from '@gravity-ui/icons';
 import {Button, Icon, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
+import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {Value} from '../RelativeDatePicker';
 import type {
     DomProps,
     FocusableProps,
     InputBase,
+    InputDOMProps,
     RangeValue,
     StyleProps,
     TextInputProps,
@@ -34,6 +36,7 @@ export interface RelativeRangeDatePickerProps
     extends RelativeRangeDatePickerStateOptions,
         DomProps,
         InputBase,
+        InputDOMProps,
         TextInputProps,
         Validation,
         FocusableProps,
@@ -186,6 +189,45 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                     }}
                 />
             ) : null}
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                value={state.value}
+                toStringValue={(v) => v?.start?.type ?? ''}
+                disabled={props.disabled}
+            />
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                value={state.value}
+                toStringValue={(v) => getNativeValue(v?.start ?? null)}
+                disabled={props.disabled}
+            />
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                value={state.value}
+                toStringValue={(v) => v?.end?.type ?? ''}
+                disabled={props.disabled}
+            />
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                value={state.value}
+                toStringValue={(v) => getNativeValue(v?.end ?? null)}
+                disabled={props.disabled}
+            />
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                onReset={(v) => {
+                    state.setValue(v.value, v.timeZone);
+                }}
+                value={{value: state.value, timeZone: state.timeZone}}
+                toStringValue={(v) => v.timeZone}
+                disabled={props.disabled}
+            />
+
             <PickerDialog
                 state={state}
                 props={props}
@@ -199,4 +241,14 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
             />
         </div>
     );
+}
+
+function getNativeValue(value: Value | null) {
+    if (!value) {
+        return '';
+    }
+    if (value.type === 'relative') {
+        return value.value;
+    }
+    return value.value.toISOString();
 }
