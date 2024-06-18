@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.5.0](https://github.com/gravity-ui/date-components/compare/v2.4.0...v2.5.0) (2024-06-18)
+
+
+### Features
+
+* support form ([#85](https://github.com/gravity-ui/date-components/issues/85)) ([957aff4](https://github.com/gravity-ui/date-components/commit/957aff419999c7a978ceacfdea338ddd4c6a997c))
+* support RSC ([#80](https://github.com/gravity-ui/date-components/issues/80)) ([a7724dc](https://github.com/gravity-ui/date-components/commit/a7724dc8f3dded9278ee075553e2824e442052e8))
+* update @gravity-ui/date-utils to v2.5.1 ([#78](https://github.com/gravity-ui/date-components/issues/78)) ([5148679](https://github.com/gravity-ui/date-components/commit/5148679012c0c33af1f7fd1c92abbeeb8761326a))
+
+
+### Bug Fixes
+
+* update @gravity-ui/date-utils to v2.5.3 ([#86](https://github.com/gravity-ui/date-components/issues/86)) ([4f8a22e](https://github.com/gravity-ui/date-components/commit/4f8a22e8218c4ffc0a5650d894ab36ce9d707797))
+
 ## [2.4.0](https://github.com/gravity-ui/date-components/compare/v2.3.1...v2.4.0) (2024-05-15)
 
 
