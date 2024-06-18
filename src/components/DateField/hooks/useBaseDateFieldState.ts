@@ -56,6 +56,8 @@ export type DateFieldState<T = DateTime> = {
     displayValue: T;
     /** Sets the field's value. */
     setValue: (value: T) => void;
+    /** Sets the date value. */
+    setDate: (value: T | null) => void;
     /** Formatted value */
     text: string;
     /** Whether the field is read only. */
@@ -156,6 +158,7 @@ export function useBaseDateFieldState<T = DateTime>(
         isEmpty,
         displayValue,
         setValue,
+        setDate,
         text: formatSections(editableSections),
         readOnly: props.readOnly,
         disabled: props.disabled,

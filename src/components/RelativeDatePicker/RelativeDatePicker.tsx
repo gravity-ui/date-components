@@ -15,6 +15,7 @@ import type {CalendarProps} from '../Calendar';
 import {DateField} from '../DateField';
 import {MobileCalendar} from '../DatePicker/MobileCalendar';
 import {StubButton} from '../DatePicker/StubButton';
+import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {
     AccessibilityProps,
     DomProps,
@@ -109,13 +110,21 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                     </React.Fragment>
                 }
             />
-            <input
-                type="text"
-                hidden
+            <HiddenInput
                 name={props.name}
-                value={getNativeValue(state.value)}
-                // Ignore React warning
-                onChange={() => {}}
+                value={state.value?.type}
+                disabled={state.disabled}
+                form={props.form}
+            />
+            <HiddenInput
+                name={props.name}
+                value={state.value}
+                toStringValue={(value) => getNativeValue(value)}
+                onReset={(value) => {
+                    state.setValue(value);
+                }}
+                disabled={state.disabled}
+                form={props.form}
             />
             {!isMobile && !isOnlyTime && (
                 <Popup {...popupProps} anchorRef={anchorRef}>

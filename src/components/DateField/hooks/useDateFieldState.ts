@@ -199,7 +199,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     }
 
     function setValueFromString(str: string) {
-        const date = parseDateFromString(str, props.format || 'L', timeZone);
+        const date = parseDateFromString(str, format, timeZone);
         if (isValid(date)) {
             handleUpdateDate(date);
             return true;

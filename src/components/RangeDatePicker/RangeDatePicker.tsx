@@ -11,6 +11,7 @@ import {RangeCalendar} from '../Calendar';
 import {useDatePickerProps} from '../DatePicker';
 import type {DatePickerProps} from '../DatePicker';
 import {StubButton} from '../DatePicker/StubButton';
+import {HiddenInput} from '../HiddenInput/HiddenInput';
 import {RangeDateField} from '../RangeDateField';
 import type {RangeValue} from '../types';
 
@@ -68,6 +69,23 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
                         )}
                     </React.Fragment>
                 }
+            />
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                onReset={(v) => {
+                    state.dateFieldState.setDate(v);
+                }}
+                value={state.value}
+                toStringValue={(v) => (v ? v.start.toISOString() : '')}
+                disabled={state.disabled}
+            />
+            <HiddenInput
+                name={props.name}
+                form={props.form}
+                value={state.value}
+                toStringValue={(v) => (v ? v.end.toISOString() : '')}
+                disabled={state.disabled}
             />
         </div>
     );
