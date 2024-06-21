@@ -1,7 +1,10 @@
+import React from 'react';
+
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import type {Meta, StoryObj} from '@storybook/react';
 
+import {RangeCalendar} from '../../Calendar';
 import {RangeDatePicker} from '../RangeDatePicker';
 
 import './RangeDatePicker.stories.scss';
@@ -98,3 +101,33 @@ function parseRangeDateTime(text: any, format?: string, timeZone?: string) {
     const end = dateTimeParse(list?.[1]?.trim(), {format, timeZone}) ?? dateTime();
     return {start, end};
 }
+
+export const ControlledOpenState = {
+    ...Default,
+    render: function ControlledOpenState(args) {
+        const [open, onOpenChange] = React.useState(false);
+        return (
+            <div>
+                {Default.render({
+                    ...args,
+                    disableFocusTrap: true,
+                    open,
+                    onOpenChange: (newOpen, reason) => {
+                        if (reason !== 'ClickOutside') {
+                            onOpenChange(newOpen);
+                        }
+                    },
+                    onFocus: (e) => {
+                        if (e.target.nodeName !== 'BUTTON') {
+                            onOpenChange(true);
+                        }
+                    },
+                    onBlur: () => {
+                        onOpenChange(false);
+                    },
+                    children: (props) => <RangeCalendar {...props} autoFocus={false} />,
+                })}
+            </div>
+        );
+    },
+} satisfies Story;

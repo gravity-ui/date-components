@@ -4,8 +4,16 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
 import type {DateFieldState} from '../../DateField';
-import type {DateFieldBase} from '../../types';
+import type {DateFieldBase, PopupTriggerProps} from '../../types';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
+
+type OpenChangeReason =
+    | 'EscapeKeyDown'
+    | 'FocusOut'
+    | 'ClickOutside'
+    | 'ValueSelected'
+    | 'TriggerButtonClick'
+    | 'ShortcutKeyDown';
 
 export interface DatePickerState<T = DateTime> {
     /** The currently selected date. */
@@ -42,7 +50,7 @@ export interface DatePickerState<T = DateTime> {
     /** Whether the calendar popover is currently open. */
     isOpen: boolean;
     /** Sets whether the calendar popover is open. */
-    setOpen: (isOpen: boolean) => void;
+    setOpen: (isOpen: boolean, reason: OpenChangeReason) => void;
     dateFieldState: DateFieldState<T>;
 }
 
@@ -54,7 +62,11 @@ export interface DatePickerStateFactoryOptions<T, O extends DateFieldBase<T>> {
     useDateFieldState: (props: O) => DateFieldState<T>;
 }
 
-export function datePickerStateFactory<T, O extends DateFieldBase<T>>({
+export interface DatePickerStateOptions<T>
+    extends DateFieldBase<T>,
+        PopupTriggerProps<[OpenChangeReason]> {}
+
+export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
     getPlaceholderTime,
     mergeDateTime,
     setTimezone,
@@ -63,7 +75,13 @@ export function datePickerStateFactory<T, O extends DateFieldBase<T>>({
 }: DatePickerStateFactoryOptions<T, O>) {
     return function useDatePickerState(props: O): DatePickerState<T> {
         const {disabled, readOnly} = props;
-        const [isOpen, setOpen] = React.useState(false);
+        const [isOpen, _setOpen] = useControlledState(
+            props.open,
+            props.defaultOpen ?? false,
+            props.onOpenChange,
+        );
+
+        const setOpen: NonNullable<typeof props.onOpenChange> = _setOpen;
 
         const [value, setValue] = useControlledState(
             props.value as never,
@@ -144,7 +162,7 @@ export function datePickerStateFactory<T, O extends DateFieldBase<T>>({
             }
 
             if (shouldClose) {
-                setOpen(false);
+                setOpen(false, 'ValueSelected');
             }
         };
 
@@ -191,7 +209,7 @@ export function datePickerStateFactory<T, O extends DateFieldBase<T>>({
             timeFormat,
             timeZone,
             isOpen,
-            setOpen(newIsOpen) {
+            setOpen(newIsOpen, reason) {
                 if (!newIsOpen && !value && selectedDate && dateFieldState.hasTime) {
                     commitValue(
                         selectedDate,
@@ -199,7 +217,7 @@ export function datePickerStateFactory<T, O extends DateFieldBase<T>>({
                     );
                 }
 
-                setOpen(newIsOpen);
+                setOpen(newIsOpen, reason);
             },
             dateFieldState,
         };
