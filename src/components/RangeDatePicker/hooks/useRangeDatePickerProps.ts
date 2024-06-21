@@ -1,43 +1,48 @@
 import React from 'react';
 
+import type {DateTime} from '@gravity-ui/date-utils';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
 import type {CalendarInstance, CalendarProps} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
+import type {RangeValue} from '../../types';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
 import {mergeProps} from '../../utils/mergeProps';
-import type {DatePickerProps} from '../DatePicker';
+import type {RangeDatePickerProps} from '../RangeDatePicker';
 import {i18n} from '../i18n';
 
-import type {DatePickerState} from './useDatePickerState';
+import type {RangeDatePickerState} from './useRangeDatePickerState';
 
-interface InnerDatePickerProps {
+interface InnerRangeDatePickerProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     groupProps: React.HTMLAttributes<unknown> & {ref: React.Ref<any>};
     fieldProps: TextInputProps;
     calendarButtonProps: ButtonProps & {ref: React.Ref<HTMLButtonElement>};
     popupProps: PopupProps;
-    calendarProps: CalendarProps & {ref: React.Ref<CalendarInstance>};
-    timeInputProps: DateFieldProps;
+    calendarProps: CalendarProps<RangeValue<DateTime>> & {ref: React.Ref<CalendarInstance>};
+    timeInputProps: DateFieldProps<RangeValue<DateTime>>;
 }
 
-export function useDatePickerProps(
-    state: DatePickerState,
-    {onFocus, onBlur, ...props}: DatePickerProps,
-): InnerDatePickerProps {
+export function useRangeDatePickerProps(
+    state: RangeDatePickerState,
+    {onFocus, onBlur, ...props}: RangeDatePickerProps,
+): InnerRangeDatePickerProps {
     const [isActive, setActive] = React.useState(false);
     if (!isActive && state.isOpen) {
         state.setOpen(false);
     }
 
-    const [focusedDate, setFocusedDate] = React.useState(state.dateFieldState.displayValue);
+    const [focusedDate, setFocusedDate] = React.useState(state.dateFieldState.displayValue.start);
     const [prevDateValue, setPrevDateValue] = React.useState(state.dateFieldState.displayValue);
 
-    if (!state.dateFieldState.displayValue.isSame(prevDateValue, 'day')) {
+    if (!state.dateFieldState.displayValue.start.isSame(prevDateValue.start, 'day')) {
         setPrevDateValue(state.dateFieldState.displayValue);
-        setFocusedDate(state.dateFieldState.displayValue);
+        setFocusedDate(state.dateFieldState.displayValue.start);
+    } else if (!state.dateFieldState.displayValue.end.isSame(prevDateValue.end, 'day')) {
+        setPrevDateValue(state.dateFieldState.displayValue);
+        setFocusedDate(state.dateFieldState.displayValue.end);
     }
 
     const [prevOpen, setPrevOpen] = React.useState(state.isOpen);
@@ -46,7 +51,7 @@ export function useDatePickerProps(
         if (!state.isOpen) {
             // FIXME: use popup afterOpenChange instead.
             setTimeout(() => {
-                setFocusedDate(state.dateFieldState.displayValue);
+                setFocusedDate(state.dateFieldState.displayValue.start);
             }, 200);
         }
     }
@@ -156,7 +161,7 @@ export function useDatePickerProps(
                     focusInput();
                 }
             },
-            value: state.dateFieldState.displayValue,
+            value: state.value,
             focusedValue: focusedDate,
             onFocusUpdate: setFocusedDate,
             minValue: props.minValue,
@@ -166,7 +171,7 @@ export function useDatePickerProps(
         },
         timeInputProps: {
             value: state.timeValue,
-            placeholderValue: state.dateFieldState.displayValue,
+            placeholderValue: state.dateFieldState.displayValue.start,
             onUpdate: state.setTimeValue,
             format: state.timeFormat,
             readOnly: state.readOnly,

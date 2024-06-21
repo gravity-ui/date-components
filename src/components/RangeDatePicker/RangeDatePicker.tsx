@@ -8,13 +8,13 @@ import {Button, Icon, Popup, TextInput} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {RangeCalendar} from '../Calendar';
-import {useDatePickerProps} from '../DatePicker';
 import type {DatePickerProps} from '../DatePicker';
 import {StubButton} from '../DatePicker/StubButton';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
 import {RangeDateField} from '../RangeDateField';
 import type {RangeValue} from '../types';
 
+import {useRangeDatePickerProps} from './hooks/useRangeDatePickerProps';
 import {useRangeDatePickerState} from './hooks/useRangeDatePickerState';
 
 import './RangeDatePicker.scss';
@@ -29,7 +29,7 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
     const state = useRangeDatePickerState(props);
 
     const {groupProps, fieldProps, calendarButtonProps, popupProps, calendarProps, timeInputProps} =
-        useDatePickerProps(state, props);
+        useRangeDatePickerProps(state, props);
 
     const isOnlyTime = state.hasTime && !state.hasDate;
 
@@ -42,7 +42,7 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
                             {typeof props.children === 'function' ? (
                                 props.children({...calendarProps, value: state.value})
                             ) : (
-                                <RangeCalendar {...calendarProps} value={state.value} />
+                                <RangeCalendar {...calendarProps} />
                             )}
                             {state.hasTime && (
                                 <div className={b('time-field-wrapper')}>
