@@ -8,6 +8,7 @@ const config: StorybookConfig = {
         '@storybook/addon-a11y',
         './theme-addon/register.tsx',
         '@storybook/addon-webpack5-compiler-babel',
+        '@storybook/addon-storysource',
     ],
     framework: '@storybook/react-webpack5',
     typescript: {
