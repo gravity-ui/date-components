@@ -3,7 +3,7 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
-import {List, Tabs} from '@gravity-ui/uikit';
+import {List, Tabs, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 
@@ -34,6 +34,8 @@ export function Presets({
     presetTabs,
     docs,
 }: PresetProps) {
+    const isMobile = useMobile();
+
     const tabs = React.useMemo(() => {
         return filterPresetTabs(presetTabs ?? getDefaultPresetTabs({withTime}), {minValue});
     }, [withTime, minValue, presetTabs]);
@@ -55,7 +57,7 @@ export function Presets({
 
     return (
         <div className={b({size}, className)}>
-            <div className={b('tabs')}>
+            <div className={b('tabs', {mobile: isMobile})}>
                 <Tabs
                     activeTab={activeTabId}
                     onSelectTab={setActiveTab}
