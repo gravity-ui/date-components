@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {isDateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
@@ -32,13 +33,35 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
 ): InnerDatePickerProps<T> {
     const [isActive, setActive] = React.useState(false);
 
+    const [focusedDate, setFocusedDate] = React.useState(
+        isDateTime(state.dateFieldState.displayValue)
+            ? state.dateFieldState.displayValue
+            : state.dateFieldState.displayValue.start,
+    );
+    const [prevDateValue, setPrevDateValue] = React.useState<any>(
+        state.dateFieldState.displayValue,
+    );
+
+    if (isDateTime(state.dateFieldState.displayValue)) {
+        if (!state.dateFieldState.displayValue.isSame(prevDateValue, 'day')) {
+            setPrevDateValue(state.dateFieldState.displayValue);
+            setFocusedDate(state.dateFieldState.displayValue);
+        }
+    } else if (!state.dateFieldState.displayValue.start.isSame(prevDateValue.start, 'day')) {
+        setPrevDateValue(state.dateFieldState.displayValue);
+        setFocusedDate(state.dateFieldState.displayValue.start);
+    } else if (!state.dateFieldState.displayValue.end.isSame(prevDateValue.end, 'day')) {
+        setPrevDateValue(state.dateFieldState.displayValue);
+        setFocusedDate(state.dateFieldState.displayValue.end);
+    }
+
     const {focusWithinProps} = useFocusWithin({
         onFocusWithin: onFocus,
         onBlurWithin: onBlur,
         onFocusWithinChange(isFocusWithin) {
             setActive(isFocusWithin);
             if (!isFocusWithin) {
-                state.setOpen(false);
+                state.setOpen(false, 'FocusOut');
             }
         },
     });
@@ -73,7 +96,7 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
                 if (!onlyTime && e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
                     e.preventDefault();
                     e.stopPropagation();
-                    state.setOpen(true);
+                    state.setOpen(true, 'ShortcutKeyDown');
                 }
             },
         },
@@ -96,24 +119,32 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             view: 'flat-secondary',
             onClick: () => {
                 setActive(true);
-                state.setOpen(!state.isOpen);
+                state.setOpen(!state.isOpen, 'TriggerButtonClick');
             },
         },
         popupProps: {
             open: state.isOpen,
             onEscapeKeyDown: () => {
-                state.setOpen(false);
+                state.setOpen(false, 'EscapeKeyDown');
                 focusInput();
             },
             onOutsideClick: (e) => {
                 if (e.target !== calendarButtonRef.current) {
-                    state.setOpen(false);
+                    state.setOpen(false, 'ClickOutside');
                 }
                 if (e.target && groupRef.current?.contains(e.target as Node)) {
                     focusInput();
                 }
             },
-            focusTrap: true,
+            onTransitionExited: () => {
+                setFocusedDate(
+                    isDateTime(state.dateFieldState.displayValue)
+                        ? state.dateFieldState.displayValue
+                        : state.dateFieldState.displayValue.start,
+                );
+            },
+            focusTrap: !props.disableFocusTrap,
+            disablePortal: props.disablePortal,
         },
         calendarProps: {
             ref: calendarRef,
@@ -132,6 +163,8 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             maxValue: props.maxValue,
             isDateUnavailable: props.isDateUnavailable,
             timeZone: state.timeZone,
+            focusedValue: focusedDate,
+            onFocusUpdate: setFocusedDate,
         },
         timeInputProps: {
             value: state.timeValue,

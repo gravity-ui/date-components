@@ -144,3 +144,33 @@ export const InsideDialog = {
         );
     },
 } satisfies Story;
+
+export const ControlledOpenState = {
+    ...Default,
+    render: function ControlledOpenState(args) {
+        const [open, onOpenChange] = React.useState(false);
+        return (
+            <div>
+                {Default.render({
+                    ...args,
+                    disableFocusTrap: true,
+                    open,
+                    onOpenChange: (newOpen, reason) => {
+                        if (reason !== 'ClickOutside') {
+                            onOpenChange(newOpen);
+                        }
+                    },
+                    onFocus: (e) => {
+                        if (e.target.nodeName !== 'BUTTON') {
+                            onOpenChange(true);
+                        }
+                    },
+                    onBlur: () => {
+                        onOpenChange(false);
+                    },
+                    children: (props) => <Calendar {...props} autoFocus={false} />,
+                })}
+            </div>
+        );
+    },
+} satisfies Story;

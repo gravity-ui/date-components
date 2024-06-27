@@ -19,3 +19,12 @@ export interface DateFieldBase<T = DateTime> extends ValueBase<T | null>, InputB
      */
     timeZone?: string;
 }
+
+export interface PopupTriggerProps<Args extends unknown[] = []> {
+    /** Whether the popup is open (controlled). */
+    open?: boolean;
+    /** Whether the popup is open by default (uncontrolled). */
+    defaultOpen?: boolean;
+    /** Handler that is called when the popup's open state changes. */
+    onOpenChange?: (open: boolean, ...args: Args) => void;
+}

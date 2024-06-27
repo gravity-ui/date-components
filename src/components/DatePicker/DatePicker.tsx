@@ -12,7 +12,6 @@ import {DateField} from '../DateField';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {
     AccessibilityProps,
-    DateFieldBase,
     DomProps,
     FocusableProps,
     InputDOMProps,
@@ -23,6 +22,7 @@ import type {
 
 import {MobileCalendar} from './MobileCalendar';
 import {StubButton} from './StubButton';
+import type {DatePickerStateOptions} from './hooks/datePickerStateFactory';
 import {useDatePickerProps} from './hooks/useDatePickerProps';
 import {useDatePickerState} from './hooks/useDatePickerState';
 import {b} from './utils';
@@ -30,7 +30,7 @@ import {b} from './utils';
 import './DatePicker.scss';
 
 export interface DatePickerProps<T = DateTime>
-    extends DateFieldBase<T>,
+    extends DatePickerStateOptions<T>,
         TextInputProps,
         FocusableProps,
         KeyboardEvents,
@@ -39,6 +39,8 @@ export interface DatePickerProps<T = DateTime>
         StyleProps,
         AccessibilityProps {
     children?: (props: CalendarProps<T>) => React.ReactNode;
+    disablePortal?: boolean;
+    disableFocusTrap?: boolean;
 }
 
 export function DatePicker({className, ...props}: DatePickerProps) {
