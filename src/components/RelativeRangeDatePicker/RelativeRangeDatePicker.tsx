@@ -82,11 +82,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
             }
         },
         onBlurWithin: (e) => {
-            // when the popup is open and an user clicks outside, focus will be returned to the input
-            const seemsIsClickOutsideInEmptySpace =
-                open &&
-                (document.activeElement === null || document.activeElement === document.body);
-            if (!seemsIsClickOutsideInEmptySpace) {
+            if (!open) {
                 setIsActive(false);
                 props.onBlur?.(e);
             }

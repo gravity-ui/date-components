@@ -64,21 +64,6 @@ export function useRelativeDatePickerProps(
         setOpen(false);
     }
 
-    const [prevOpen, setPrevOpen] = React.useState(isOpen);
-    if (isOpen !== prevOpen) {
-        setPrevOpen(isOpen);
-        if (!isOpen) {
-            // FIXME: use popup afterOpenChange instead.
-            setTimeout(() => {
-                setFocusedDate(
-                    mode === 'relative'
-                        ? relativeDateState.lastCorrectDate
-                        : datePickerState.dateFieldState.displayValue,
-                );
-            }, 200);
-        }
-    }
-
     const commonInputProps: TextInputProps = {
         onFocus: () => {
             if (!state.isActive) {
@@ -202,6 +187,13 @@ export function useRelativeDatePickerProps(
             onEscapeKeyDown: () => {
                 setOpen(false);
                 focusInput();
+            },
+            onTransitionExited: () => {
+                setFocusedDate(
+                    mode === 'relative'
+                        ? relativeDateState.lastCorrectDate
+                        : datePickerState.dateFieldState.displayValue,
+                );
             },
         },
         calendarProps: {

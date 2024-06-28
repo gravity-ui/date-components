@@ -2,6 +2,7 @@ import React from 'react';
 
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
+import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {RangeCalendar} from '../../Calendar';
@@ -13,6 +14,10 @@ const meta: Meta<typeof RangeDatePicker> = {
     title: 'Components/RangeDatePicker',
     component: RangeDatePicker,
     tags: ['autodocs'],
+    args: {
+        onFocus: action('onFocus'),
+        onBlur: action('onBlur'),
+    },
 };
 
 export default meta;
