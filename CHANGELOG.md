@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.0](https://github.com/gravity-ui/date-components/compare/v2.5.0...v2.6.0) (2024-06-28)
+
+
+### Features
+
+* **DatePicker, RangeDatePicker:** add popup trigger props ([#89](https://github.com/gravity-ui/date-components/issues/89)) ([5139151](https://github.com/gravity-ui/date-components/commit/5139151f89c07f1f281e725f8f95a80015323417))
+
+
+### Bug Fixes
+
+* **RelativeRangeDatePicker:** set id on input ([#94](https://github.com/gravity-ui/date-components/issues/94)) ([f54f1b9](https://github.com/gravity-ui/date-components/commit/f54f1b912f6e58c85d8bcb3d6978103704a68c3a))
+
 ## [2.5.0](https://github.com/gravity-ui/date-components/compare/v2.4.0...v2.5.0) (2024-06-18)
 
 
