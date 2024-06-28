@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/gravity-ui/date-components/compare/v2.6.0...v2.6.1) (2024-06-28)
+
+
+### Bug Fixes
+
+* **RelativeRangeDatePicker:** close popup on outside click after switch browser tabs ([#98](https://github.com/gravity-ui/date-components/issues/98)) ([e7ac61b](https://github.com/gravity-ui/date-components/commit/e7ac61be417eef64ca15ee85bc819d2debc0ba38))
+
 ## [2.6.0](https://github.com/gravity-ui/date-components/compare/v2.5.0...v2.6.0) (2024-06-28)
 
 
