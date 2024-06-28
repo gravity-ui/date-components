@@ -4,6 +4,7 @@ import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Tabs} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
+import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
@@ -13,6 +14,10 @@ const meta: Meta<typeof Calendar> = {
     title: 'Components/Calendar',
     component: Calendar,
     tags: ['autodocs'],
+    args: {
+        onFocus: action('onFocus'),
+        onBlur: action('onBlur'),
+    },
 };
 
 export default meta;

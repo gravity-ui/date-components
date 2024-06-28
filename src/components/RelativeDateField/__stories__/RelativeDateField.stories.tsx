@@ -1,4 +1,5 @@
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
+import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
@@ -8,6 +9,10 @@ const meta: Meta<typeof RelativeDateField> = {
     title: 'Components/RelativeDateField',
     component: RelativeDateField,
     tags: ['autodocs'],
+    args: {
+        onFocus: action('onFocus'),
+        onBlur: action('onBlur'),
+    },
 };
 
 export default meta;
