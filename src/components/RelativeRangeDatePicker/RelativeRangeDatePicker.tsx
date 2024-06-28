@@ -120,6 +120,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
             style={props.style}
         >
             <TextInput
+                id={props.id}
                 autoFocus={props.autoFocus}
                 controlRef={inputRef}
                 value={text}
