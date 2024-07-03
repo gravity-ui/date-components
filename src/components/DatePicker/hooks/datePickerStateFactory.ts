@@ -133,9 +133,25 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
         });
 
         const timeFormat = React.useMemo(() => {
-            const hasSeconds = dateFieldState.sections.some((s) => s.type === 'second');
-            return hasSeconds ? 'LTS' : 'LT';
-        }, [dateFieldState.sections]);
+            if (!dateFieldState.hasTime) {
+                return undefined;
+            }
+            const timeFormatParts: string[] = [];
+            const hours = dateFieldState.sections.find((s) => s.type === 'hour');
+            if (hours) {
+                timeFormatParts.push(hours.format);
+            }
+            const minutes = dateFieldState.sections.find((s) => s.type === 'minute');
+            if (minutes) {
+                timeFormatParts.push(minutes.format);
+            }
+            const seconds = dateFieldState.sections.find((s) => s.type === 'second');
+            if (seconds) {
+                timeFormatParts.push(seconds.format);
+            }
+            const dayPeriod = dateFieldState.sections.find((s) => s.type === 'dayPeriod');
+            return timeFormatParts.join(':') + (dayPeriod ? ` ${dayPeriod.format}` : '');
+        }, [dateFieldState.hasTime, dateFieldState.sections]);
 
         if (value) {
             selectedDate = setTimezone(value, timeZone);
