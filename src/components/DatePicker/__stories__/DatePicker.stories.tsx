@@ -153,29 +153,57 @@ export const InsideDialog = {
 export const ControlledOpenState = {
     ...Default,
     render: function ControlledOpenState(args) {
-        const [open, onOpenChange] = React.useState(false);
+        const [open, setOpen] = React.useState(false);
+        const timeZone = args.timeZone;
+        const props = {
+            ...args,
+            minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
+            maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
+            value: args.value ? dateTimeParse(args.value, {timeZone}) : undefined,
+            defaultValue: args.defaultValue
+                ? dateTimeParse(args.defaultValue, {timeZone})
+                : undefined,
+            placeholderValue: args.placeholderValue
+                ? dateTimeParse(args.placeholderValue, {timeZone})
+                : undefined,
+        };
         return (
-            <div>
-                {Default.render({
-                    ...args,
-                    disableFocusTrap: true,
-                    open,
-                    onOpenChange: (newOpen, reason) => {
-                        if (reason !== 'ClickOutside') {
-                            onOpenChange(newOpen);
+            <label htmlFor={props.id}>
+                <span style={{marginInlineEnd: 4}}>Event date</span>
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                <div
+                    style={{display: 'inline-block'}}
+                    onClick={(e) => {
+                        if (
+                            !open &&
+                            !(e.target instanceof HTMLElement && e.target.nodeName === 'BUTTON')
+                        ) {
+                            setOpen(true);
                         }
-                    },
-                    onFocus: (e) => {
-                        if (e.target.nodeName !== 'BUTTON') {
-                            onOpenChange(true);
-                        }
-                    },
-                    onBlur: () => {
-                        onOpenChange(false);
-                    },
-                    children: (props) => <Calendar {...props} autoFocus={false} />,
-                })}
-            </div>
+                    }}
+                >
+                    <DatePicker
+                        {...props}
+                        open={open}
+                        disableFocusTrap
+                        onOpenChange={(newOpen, reason) => {
+                            if (reason !== 'ClickOutside') {
+                                setOpen(newOpen);
+                            }
+                        }}
+                        onFocus={(e) => {
+                            if (e.target.nodeName !== 'BUTTON') {
+                                setOpen(true);
+                            }
+                        }}
+                        onBlur={() => {
+                            setOpen(false);
+                        }}
+                    >
+                        {(calendarProps) => <Calendar {...calendarProps} autoFocus={false} />}
+                    </DatePicker>
+                </div>
+            </label>
         );
     },
 } satisfies Story;
