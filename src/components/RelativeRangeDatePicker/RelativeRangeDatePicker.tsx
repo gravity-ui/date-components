@@ -131,6 +131,15 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                     'aria-expanded': open,
                     disabled: isMobile,
                     className: b('input', {mobile: isMobile}),
+                    onClick: () => {
+                        if (props.disabled) {
+                            return;
+                        }
+                        if (!open) {
+                            setIsActive(true);
+                            setOpen(true);
+                        }
+                    },
                 }}
                 onKeyDown={(e) => {
                     if (props.disabled) {

@@ -73,6 +73,17 @@ export function useRelativeDatePickerProps(
         },
         errorMessage: props.errorMessage,
         errorPlacement: props.errorPlacement,
+        controlProps: {
+            onClick: () => {
+                if (state.disabled) {
+                    return;
+                }
+                if (!isOpen) {
+                    state.setActive(true);
+                    setOpen(true);
+                }
+            },
+        },
     };
 
     const {inputProps} = useDateFieldProps(datePickerState.dateFieldState, {
