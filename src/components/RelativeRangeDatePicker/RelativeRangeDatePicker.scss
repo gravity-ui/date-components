@@ -8,6 +8,8 @@ $block: '.#{variables.$ns}relative-range-date-picker';
     display: inline-flex;
 
     &__input {
+        caret-color: transparent;
+
         &_mobile {
             pointer-events: none;
         }
