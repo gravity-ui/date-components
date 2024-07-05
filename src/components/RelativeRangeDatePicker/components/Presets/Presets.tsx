@@ -24,6 +24,7 @@ export interface PresetProps {
     size?: 's' | 'm' | 'l' | 'xl';
     presetTabs?: PresetTab[];
     docs?: Preset[];
+    concatPresetsWithDefault?: boolean;
 }
 export function Presets({
     className,
@@ -33,10 +34,18 @@ export function Presets({
     onChoosePreset,
     presetTabs,
     docs,
+    concatPresetsWithDefault,
 }: PresetProps) {
     const tabs = React.useMemo(() => {
+        if (concatPresetsWithDefault) {
+            return filterPresetTabs(
+                getDefaultPresetTabs({withTime}).concat([...(presetTabs || [])]),
+                {minValue},
+            );
+        }
+
         return filterPresetTabs(presetTabs ?? getDefaultPresetTabs({withTime}), {minValue});
-    }, [withTime, minValue, presetTabs]);
+    }, [withTime, minValue, presetTabs, concatPresetsWithDefault]);
 
     const [activeTabId, setActiveTab] = React.useState(tabs[0]?.id);
 

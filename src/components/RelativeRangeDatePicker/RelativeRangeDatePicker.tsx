@@ -61,6 +61,8 @@ export interface RelativeRangeDatePickerProps
     getRangeTitle?: (value: RangeValue<Value | null> | null, timeZone: string) => string;
     /** Sets the CSS className for the popup element. */
     popupClassName?: string;
+    /** Not override default presets */
+    concatPresetsWithDefault?: boolean;
 }
 
 export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {

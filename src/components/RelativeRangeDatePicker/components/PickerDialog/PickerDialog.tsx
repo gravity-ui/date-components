@@ -139,6 +139,7 @@ function DialogContent(
                     }}
                     minValue={props.minValue}
                     docs={props.docs}
+                    concatPresetsWithDefault={props.concatPresetsWithDefault}
                 />
             ) : null}
             {props.withZonesList ? (
