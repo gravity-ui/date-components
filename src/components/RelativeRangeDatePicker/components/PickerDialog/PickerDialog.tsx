@@ -139,6 +139,7 @@ function DialogContent(
                     }}
                     minValue={props.minValue}
                     docs={props.docs}
+                    className={b('presets')}
                 />
             ) : null}
             {props.withZonesList ? (
