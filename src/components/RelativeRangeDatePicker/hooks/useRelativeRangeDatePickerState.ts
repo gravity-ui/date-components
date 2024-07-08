@@ -9,18 +9,20 @@ import type {RangeValue} from '../../types';
 import {getValidationResult} from '../../utils/validation/datePicker';
 import {i18n} from '../i18n';
 
+export type RelativeRangeDatePickerValue = RangeValue<Value | null>;
+
 export interface RelativeRangeDatePickerState {
-    value: RangeValue<Value | null> | null;
+    value: RelativeRangeDatePickerValue | null;
     timeZone: string;
-    setValue: (value: RangeValue<Value | null> | null, timeZone: string) => void;
+    setValue: (value: RelativeRangeDatePickerValue | null, timeZone: string) => void;
     isInvalid: boolean;
     errors: string[];
 }
 
 export interface RelativeRangeDatePickerStateOptions {
-    value?: RangeValue<Value | null> | null;
-    defaultValue?: RangeValue<Value | null>;
-    onUpdate?: (value: RangeValue<Value | null> | null, timeZone: string) => void;
+    value?: RelativeRangeDatePickerValue | null;
+    defaultValue?: RelativeRangeDatePickerValue;
+    onUpdate?: (value: RelativeRangeDatePickerValue | null, timeZone: string) => void;
     timeZone?: string;
     defaultTimeZone?: string;
     onUpdateTimeZone?: (timeZone: string) => void;
@@ -79,7 +81,7 @@ export function useRelativeRangeDatePickerState(
 }
 
 function getRangeValidationResult(
-    value: RangeValue<Value | null> | null,
+    value: RelativeRangeDatePickerValue | null,
     allowNullableValues: boolean | undefined,
     minValue: DateTime | undefined,
     maxValue: DateTime | undefined,
