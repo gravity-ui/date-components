@@ -136,6 +136,9 @@ function DialogContent(
                             {type: 'relative', value: start},
                             {type: 'relative', value: end},
                         );
+                        if (!props.withApplyButton) {
+                            props.onApply();
+                        }
                     }}
                     minValue={props.minValue}
                     docs={props.docs}
