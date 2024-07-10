@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.7.0](https://github.com/gravity-ui/date-components/compare/v2.6.0...v2.7.0) (2024-07-10)
+
+
+### Features
+
+* **RelativeRangeDatePicker:** add RelativeRangeDatePickerValue public type ([#107](https://github.com/gravity-ui/date-components/issues/107)) ([137a3d4](https://github.com/gravity-ui/date-components/commit/137a3d46bf89bf696adfad0840756cbfdeca6988))
+* **RelativeRangeDatePicker:** export default presets ([#108](https://github.com/gravity-ui/date-components/issues/108)) ([95b9b4d](https://github.com/gravity-ui/date-components/commit/95b9b4deace290d09e34a55dea752355df24443c))
+
+
+### Bug Fixes
+
+* **Pickers:** extract time format in pickers from format props ([#102](https://github.com/gravity-ui/date-components/issues/102)) ([9006c8f](https://github.com/gravity-ui/date-components/commit/9006c8fa9e54ad98b259bbbbe5d45cc57246f535))
+* **RelativePickers:** always open popup on click on input ([#105](https://github.com/gravity-ui/date-components/issues/105)) ([27390e5](https://github.com/gravity-ui/date-components/commit/27390e59e924d316afe4829d06e5b895b2f026ad))
+* **RelativeRangeDatePicker:** close popup on outside click after switch browser tabs ([#98](https://github.com/gravity-ui/date-components/issues/98)) ([e7ac61b](https://github.com/gravity-ui/date-components/commit/e7ac61be417eef64ca15ee85bc819d2debc0ba38))
+* **RelativeRangeDatePicker:** close popup on select preset ([#111](https://github.com/gravity-ui/date-components/issues/111)) ([695bc2c](https://github.com/gravity-ui/date-components/commit/695bc2c2e3ddf51139a089bf3d7615bd5ab6b173))
+* **RelativeRangeDatePicker:** do not show offset for default timezone ([#112](https://github.com/gravity-ui/date-components/issues/112)) ([c95cbc2](https://github.com/gravity-ui/date-components/commit/c95cbc2ed9d788af6a4a5554029601ac0b5b6025))
+* **RelativeRangeDatePicker:** preset popup padding ([#91](https://github.com/gravity-ui/date-components/issues/91)) ([873703f](https://github.com/gravity-ui/date-components/commit/873703fc5e7dda129abd24f174f0654d40182c29))
+* **RelativeRangeDatePicker:** transparent caret in the main input ([#104](https://github.com/gravity-ui/date-components/issues/104)) ([29016df](https://github.com/gravity-ui/date-components/commit/29016df042baf6cb7d9ce5b4e582382cd171201c))
+
 ## [2.6.0](https://github.com/gravity-ui/date-components/compare/v2.5.0...v2.6.0) (2024-06-28)
 
 
