@@ -45,7 +45,7 @@ export function getDefaultTitle({
         return '';
     }
 
-    const tz = timeZone === 'system' ? '' : ` (${getTimeZoneOffset(timeZone)})`;
+    const tz = timeZone === 'default' ? '' : ` (${getTimeZoneOffset(timeZone)})`;
 
     let from = '';
     if (value.start) {
