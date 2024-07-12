@@ -243,7 +243,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 }}
                 anchorRef={anchorRef}
                 isMobile={isMobile}
-                className={props.className}
+                className={props.popupClassName}
             />
         </div>
     );
