@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.1](https://github.com/gravity-ui/date-components/compare/v2.7.0...v2.7.1) (2024-07-12)
+
+
+### Bug Fixes
+
+* **RelativeRangeDatePicker:** pass popupClassName into popup component ([#113](https://github.com/gravity-ui/date-components/issues/113)) ([c7860b5](https://github.com/gravity-ui/date-components/commit/c7860b59fab18c35ef518fd6d19bbf5177a8439d))
+
 ## [2.7.0](https://github.com/gravity-ui/date-components/compare/v2.6.0...v2.7.0) (2024-07-10)
 
 
