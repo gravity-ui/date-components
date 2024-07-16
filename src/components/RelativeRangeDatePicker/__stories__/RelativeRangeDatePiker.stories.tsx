@@ -14,6 +14,7 @@ const meta: Meta<typeof RelativeRangeDatePicker> = {
     args: {
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
+        onOpenChange: action('onOpenChange'),
     },
 };
 
