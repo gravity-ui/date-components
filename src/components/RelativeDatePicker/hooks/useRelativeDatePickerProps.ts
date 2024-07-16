@@ -125,7 +125,7 @@ export function useRelativeDatePickerProps(
 
     function focusInput() {
         setTimeout(() => {
-            inputRef.current?.focus();
+            inputRef.current?.focus({preventScroll: true});
         });
     }
     const groupRef = React.useRef<HTMLElement>(null);

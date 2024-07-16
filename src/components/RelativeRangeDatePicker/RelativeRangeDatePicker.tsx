@@ -252,7 +252,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 }}
                 focusInput={() => {
                     setTimeout(() => {
-                        inputRef.current?.focus();
+                        inputRef.current?.focus({preventScroll: true});
                     });
                 }}
                 anchorRef={anchorRef}
