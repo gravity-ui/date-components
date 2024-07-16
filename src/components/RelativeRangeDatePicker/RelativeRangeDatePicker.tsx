@@ -4,7 +4,14 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
-import {Button, Icon, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
+import {
+    Button,
+    Icon,
+    TextInput,
+    useControlledState,
+    useFocusWithin,
+    useMobile,
+} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
@@ -61,6 +68,8 @@ export interface RelativeRangeDatePickerProps
     getRangeTitle?: (value: RangeValue<Value | null> | null, timeZone: string) => string;
     /** Sets the CSS className for the popup element. */
     popupClassName?: string;
+    /** Handler that is called when the popup's open state changes. */
+    onOpenChange?: (open: boolean) => void;
 }
 
 export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
@@ -72,7 +81,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const [isActive, setIsActive] = React.useState(false);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useControlledState<boolean>(undefined, false, props.onOpenChange);
 
     const {focusWithinProps} = useFocusWithin({
         isDisabled: props.disabled,

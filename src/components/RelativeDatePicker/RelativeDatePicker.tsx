@@ -44,6 +44,8 @@ export interface RelativeDatePickerProps
         StyleProps,
         AccessibilityProps {
     children?: (props: CalendarProps) => React.ReactNode;
+    /** Handler that is called when the popup's open state changes. */
+    onOpenChange?: (open: boolean) => void;
 }
 
 export function RelativeDatePicker(props: RelativeDatePickerProps) {

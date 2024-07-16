@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
+import {useControlledState, useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
 import type {Calendar, CalendarInstance} from '../../Calendar';
@@ -59,7 +59,7 @@ export function useRelativeDatePickerProps(
         },
     });
 
-    const [isOpen, setOpen] = React.useState(false);
+    const [isOpen, setOpen] = useControlledState<boolean>(undefined, false, props.onOpenChange);
     if (!state.isActive && isOpen) {
         setOpen(false);
     }
