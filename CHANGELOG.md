@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.8.0](https://github.com/gravity-ui/date-components/compare/v2.7.1...v2.8.0) (2024-07-16)
+
+
+### Features
+
+* **RelativePickers:** add onOpenChange event handler ([#118](https://github.com/gravity-ui/date-components/issues/118)) ([8270119](https://github.com/gravity-ui/date-components/commit/82701198fe5c3bac1342356b2c6b412b86bfb895))
+
+
+### Bug Fixes
+
+* **RelativeRangeDatePicker:** correctly close picker popup inside dialog ([#117](https://github.com/gravity-ui/date-components/issues/117)) ([f122950](https://github.com/gravity-ui/date-components/commit/f1229508a9091864d753a613c75af858f7ca81c2))
+
 ## [2.7.1](https://github.com/gravity-ui/date-components/compare/v2.7.0...v2.7.1) (2024-07-12)
 
 
