@@ -1,4 +1,7 @@
+import React from 'react';
+
 import {dateTimeParse} from '@gravity-ui/date-utils';
+import {Button, Dialog} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -6,6 +9,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {timeZoneControl} from '../../../demo/utils/zones';
 import type {Value} from '../../RelativeDatePicker';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
+import type {RelativeRangeDatePickerProps} from '../RelativeRangeDatePicker';
 
 const meta: Meta<typeof RelativeRangeDatePicker> = {
     title: 'Components/RelativeRangeDatePicker',
@@ -82,3 +86,40 @@ export const Default = {
         timeZone: timeZoneControl,
     },
 } satisfies Story;
+
+export const InsideDialog: StoryObj<
+    RelativeRangeDatePickerProps & {disableDialogFocusTrap?: boolean}
+> = {
+    ...Default,
+    render: function InsideDialog(args) {
+        const [isOpen, setOpen] = React.useState(false);
+        return (
+            <React.Fragment>
+                <Button
+                    onClick={() => {
+                        setOpen(true);
+                    }}
+                >
+                    Open dialog
+                </Button>
+                <Dialog
+                    open={isOpen}
+                    onClose={() => setOpen(false)}
+                    disableFocusTrap={args.disableDialogFocusTrap}
+                >
+                    <Dialog.Header />
+                    <Dialog.Body>
+                        <div style={{paddingTop: 16}}>{Default.render(args)}</div>
+                    </Dialog.Body>
+                </Dialog>
+            </React.Fragment>
+        );
+    },
+    argTypes: {
+        disableDialogFocusTrap: {
+            control: {
+                type: 'boolean',
+            },
+        },
+    },
+};

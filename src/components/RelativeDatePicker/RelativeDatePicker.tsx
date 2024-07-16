@@ -7,7 +7,7 @@ import {
     Clock as ClockIcon,
     Function as FunctionIcon,
 } from '@gravity-ui/icons';
-import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
+import {Button, Icon, Popup, TextInput, useForkRef, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
@@ -62,12 +62,13 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
     } = useRelativeDatePickerProps(state, props);
 
     const anchorRef = React.useRef<HTMLDivElement>(null);
+    const handleRef = useForkRef(anchorRef, groupProps.ref);
 
     const isMobile = useMobile();
     const isOnlyTime = state.datePickerState.hasTime && !state.datePickerState.hasDate;
 
     return (
-        <div ref={anchorRef} className={b(null, props.className)} {...groupProps}>
+        <div {...groupProps} ref={handleRef} className={b(null, props.className)}>
             {isMobile && state.mode === 'absolute' && (
                 <MobileCalendar
                     state={state.datePickerState}

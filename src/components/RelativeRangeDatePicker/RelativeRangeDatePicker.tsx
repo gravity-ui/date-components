@@ -250,6 +250,11 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 onClose={() => {
                     setOpen(false);
                 }}
+                focusInput={() => {
+                    setTimeout(() => {
+                        inputRef.current?.focus({preventScroll: true});
+                    });
+                }}
                 anchorRef={anchorRef}
                 isMobile={isMobile}
                 className={props.popupClassName}

@@ -15,7 +15,7 @@ import {i18n} from '../i18n';
 import type {RelativeDatePickerState} from './useRelativeDatePickerState';
 
 interface InnerRelativeDatePickerProps {
-    groupProps: React.HTMLAttributes<unknown>;
+    groupProps: React.HTMLAttributes<unknown> & {ref: React.Ref<HTMLElement>};
     fieldProps: TextInputProps;
     modeSwitcherProps: ButtonProps;
     calendarButtonProps: ButtonProps;
@@ -125,12 +125,14 @@ export function useRelativeDatePickerProps(
 
     function focusInput() {
         setTimeout(() => {
-            inputRef.current?.focus();
+            inputRef.current?.focus({preventScroll: true});
         });
     }
+    const groupRef = React.useRef<HTMLElement>(null);
 
     return {
         groupProps: {
+            ref: groupRef,
             tabIndex: -1,
             role: 'group',
             ...focusWithinProps,
@@ -198,6 +200,11 @@ export function useRelativeDatePickerProps(
             onEscapeKeyDown: () => {
                 setOpen(false);
                 focusInput();
+            },
+            onOutsideClick: (e) => {
+                if (e.target && !groupRef.current?.contains(e.target as Node)) {
+                    setOpen(false);
+                }
             },
             onTransitionExited: () => {
                 setFocusedDate(

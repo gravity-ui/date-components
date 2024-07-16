@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
-import {Tabs, useControlledState} from '@gravity-ui/uikit';
+import {Button, Dialog, Tabs, useControlledState} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
 import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -10,6 +10,7 @@ import {timeZoneControl} from '../../../demo/utils/zones';
 import {Calendar} from '../../Calendar';
 import {constrainValue} from '../../CalendarView/utils';
 import {RelativeDatePicker} from '../RelativeDatePicker';
+import type {RelativeDatePickerProps} from '../RelativeDatePicker';
 import type {Value} from '../hooks/useRelativeDatePickerState';
 
 const meta: Meta<typeof RelativeDatePicker> = {
@@ -180,3 +181,39 @@ export const WithCustomCalendar = {
         });
     },
 } satisfies Story;
+
+export const InsideDialog: StoryObj<RelativeDatePickerProps & {disableDialogFocusTrap?: boolean}> =
+    {
+        ...Default,
+        render: function InsideDialog(args) {
+            const [isOpen, setOpen] = React.useState(false);
+            return (
+                <React.Fragment>
+                    <Button
+                        onClick={() => {
+                            setOpen(true);
+                        }}
+                    >
+                        Open dialog
+                    </Button>
+                    <Dialog
+                        open={isOpen}
+                        onClose={() => setOpen(false)}
+                        disableFocusTrap={args.disableDialogFocusTrap}
+                    >
+                        <Dialog.Header />
+                        <Dialog.Body>
+                            <div style={{paddingTop: 16}}>{Default.render(args)}</div>
+                        </Dialog.Body>
+                    </Dialog>
+                </React.Fragment>
+            );
+        },
+        argTypes: {
+            disableDialogFocusTrap: {
+                control: {
+                    type: 'boolean',
+                },
+            },
+        },
+    };

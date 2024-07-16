@@ -78,7 +78,7 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
 
     function focusInput() {
         setTimeout(() => {
-            inputRef.current?.focus();
+            inputRef.current?.focus({preventScroll: true});
         });
     }
 
