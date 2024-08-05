@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.1](https://github.com/gravity-ui/date-components/compare/v2.8.0...v2.8.1) (2024-08-05)
+
+
+### Bug Fixes
+
+* do not crash due to incorrect format ([#124](https://github.com/gravity-ui/date-components/issues/124)) ([690337c](https://github.com/gravity-ui/date-components/commit/690337caa5738bfbd633b8e13f5cc04fbf2d3ac6))
+
 ## [2.8.0](https://github.com/gravity-ui/date-components/compare/v2.7.1...v2.8.0) (2024-07-16)
 
 
