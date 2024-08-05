@@ -80,6 +80,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
     if (
         !value &&
+        Object.keys(allSegments).length > 0 &&
         isAllSegmentsValid(allSegments, validSegments.start) &&
         Object.keys(validSegments.start).length === Object.keys(allSegments).length &&
         isAllSegmentsValid(allSegments, validSegments.end) &&
