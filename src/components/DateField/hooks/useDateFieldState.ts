@@ -69,6 +69,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
     if (
         !value &&
+        Object.keys(allSegments).length > 0 &&
         isAllSegmentsValid(allSegments, validSegments) &&
         Object.keys(validSegments).length === Object.keys(allSegments).length
     ) {
