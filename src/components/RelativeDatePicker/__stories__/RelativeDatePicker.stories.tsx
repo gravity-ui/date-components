@@ -8,7 +8,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {Calendar} from '../../Calendar';
-import {constrainValue} from '../../CalendarView/utils';
+import {constrainValue} from '../../utils/dates';
 import {RelativeDatePicker} from '../RelativeDatePicker';
 import type {RelativeDatePickerProps} from '../RelativeDatePicker';
 import type {Value} from '../hooks/useRelativeDatePickerState';

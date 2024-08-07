@@ -4,9 +4,8 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
 import type {RangeValue} from '../../types';
-import {mergeDateTime} from '../../utils/dates';
+import {constrainValue, mergeDateTime} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
-import {constrainValue} from '../utils';
 
 import type {CalendarLayout, RangeCalendarState} from './types';
 import {useCalendarState} from './useCalendarState';

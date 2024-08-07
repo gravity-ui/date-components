@@ -3,21 +3,6 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {CalendarLayout} from './hooks/types';
 
-export function constrainValue(
-    value: DateTime,
-    minValue: DateTime | undefined,
-    maxValue: DateTime | undefined,
-) {
-    if (minValue && value.isBefore(minValue)) {
-        return minValue;
-    }
-    if (maxValue && maxValue.isBefore(value)) {
-        return maxValue;
-    }
-
-    return value;
-}
-
 export function getDaysInPeriod(startDate: DateTime, _endDate: DateTime, mode: CalendarLayout) {
     const days: DateTime[] = [];
 
