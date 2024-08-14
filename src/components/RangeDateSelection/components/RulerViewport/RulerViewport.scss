@@ -1,0 +1,37 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}ruler-viewport';
+
+#{$block} {
+    --_--g-date-ruler-viewport-background: var(
+        --g-date-ruler-viewport-background,
+        var(--g-color-base-background)
+    );
+
+    --g-date-thin-timeline-height: 22px;
+    --g-date-thin-timeline-now-color: var(--g-color-line-danger);
+
+    position: relative;
+
+    box-sizing: border-box;
+    height: var(--g-date-thin-timeline-height);
+
+    &__dragger {
+        position: absolute;
+        inset: 0;
+
+        cursor: grab;
+
+        &:focus-visible {
+            outline: 2px solid var(--g-color-line-focus);
+        }
+
+        &_disabled {
+            pointer-events: none;
+        }
+    }
+
+    &__svg {
+        pointer-events: none;
+    }
+}

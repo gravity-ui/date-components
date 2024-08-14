@@ -1,0 +1,44 @@
+@use '../variables';
+@use '../mixins';
+
+$block: '.#{variables.$ns}range-date-selection';
+
+#{$block} {
+    display: grid;
+    align-items: center;
+    grid-template-areas: 'buttons-start ruler buttons-end';
+    grid-template-columns: auto 1fr auto;
+
+    border-block: 1px solid var(--g-color-line-generic);
+
+    &__ruler {
+        grid-area: ruler;
+
+        &_dragging #{$block}__selection {
+            pointer-events: none;
+        }
+    }
+
+    &__buttons {
+        display: flex;
+        align-items: center;
+
+        height: 22px;
+
+        &_position_start {
+            grid-area: buttons-start;
+
+            padding-inline-end: var(--g-spacing-half);
+
+            border-inline-end: 1px solid var(--g-color-line-generic);
+        }
+
+        &_position_end {
+            grid-area: buttons-end;
+
+            padding-inline-start: var(--g-spacing-half);
+
+            border-inline-start: 1px solid var(--g-color-line-generic);
+        }
+    }
+}

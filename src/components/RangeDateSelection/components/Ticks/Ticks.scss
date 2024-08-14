@@ -1,0 +1,25 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}timeline-ticks';
+
+#{$block} {
+    stroke: var(--g-color-text-secondary);
+
+    fill: var(--g-color-text-secondary);
+    stroke-width: 1px;
+
+    &_theme_dim {
+        stroke: var(--g-color-line-generic-accent);
+
+        fill: var(--g-color-line-generic-accent);
+    }
+
+    &__label {
+        font-size: 11px;
+        line-height: 14px;
+        user-select: none;
+
+        fill: var(--g-color-text-secondary);
+        text-anchor: middle;
+    }
+}

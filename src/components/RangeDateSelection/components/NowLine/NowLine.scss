@@ -1,0 +1,8 @@
+@use '../../../variables';
+
+$block: '.#{variables.$ns}timeline-now-line';
+
+#{$block} {
+    stroke: var(--g-date-thin-timeline-now-color);
+    stroke-width: 2px;
+}
