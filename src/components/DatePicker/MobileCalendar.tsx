@@ -32,7 +32,7 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
             className={b()}
             disabled={props.disabled}
             type={type}
-            value={formatNative(state.dateFieldState.displayValue, type)}
+            value={formatNative(state.dateFieldState.value, type)}
             id={props.id}
             min={formatNative(props.minValue?.timeZone(state.timeZone), type)}
             max={formatNative(props.maxValue?.timeZone(state.timeZone), type)}
