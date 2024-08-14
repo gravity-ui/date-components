@@ -105,7 +105,10 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             state.dateFieldState.isEmpty && !isActive && props.placeholder
                 ? {value: ''}
                 : undefined,
-            {controlRef: handleRef},
+            {
+                controlRef: handleRef,
+                controlProps: {role: 'combobox', 'aria-expanded': state.isOpen},
+            },
         ),
         calendarButtonProps: {
             ref: calendarButtonRef,

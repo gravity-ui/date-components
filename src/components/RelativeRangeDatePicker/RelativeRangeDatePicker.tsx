@@ -33,6 +33,7 @@ import type {Preset} from './components/Presets/defaultPresets';
 import type {PresetTab} from './components/Presets/utils';
 import {useRelativeRangeDatePickerState} from './hooks/useRelativeRangeDatePickerState';
 import type {RelativeRangeDatePickerStateOptions} from './hooks/useRelativeRangeDatePickerState';
+import {i18n} from './i18n';
 import {getDefaultTitle} from './utils';
 
 import './RelativeRangeDatePicker.scss';
@@ -136,7 +137,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                     }
                 }}
                 controlProps={{
-                    'aria-haspopup': 'dialog',
+                    role: 'combobox',
                     'aria-expanded': open,
                     disabled: isMobile,
                     className: b('input', {mobile: isMobile}),
@@ -181,6 +182,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                         extraProps={{
                             'aria-haspopup': 'dialog',
                             'aria-expanded': open,
+                            'aria-label': i18n('Range date picker'),
                         }}
                         onClick={() => {
                             setIsActive(true);

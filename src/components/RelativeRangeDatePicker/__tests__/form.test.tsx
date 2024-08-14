@@ -4,7 +4,7 @@ import React from 'react';
 import {dateTime} from '@gravity-ui/date-utils';
 import userEvent from '@testing-library/user-event';
 
-import {render, screen, within} from '../../../../test-utils/utils';
+import {act, render, screen, within} from '../../../../test-utils/utils';
 import type {Value} from '../../RelativeDatePicker';
 import type {RangeValue} from '../../types';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
@@ -126,9 +126,11 @@ describe('RelativeRangeDatePicker: form', () => {
         expect(inputs[3]).toHaveValue('now');
 
         await userEvent.tab();
-        const fields = within(document.activeElement as HTMLElement).getAllByRole('textbox');
+        const fields = within(document.activeElement as HTMLElement).getAllByRole('combobox');
         expect(fields.length).toBe(2);
-        fields[0].focus();
+        act(() => {
+            fields[0].focus();
+        });
         await userEvent.keyboard('{ArrowUp}');
 
         expect(inputs[0]).toHaveValue('absolute');
