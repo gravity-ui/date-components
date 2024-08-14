@@ -25,13 +25,43 @@
   "From start of month": "С начала месяца",
   "From start of year": "С начала года",
   "Previous month": "Предыдущий месяц",
-  "Last {count} {unit}": "Last {{count}} {{unit}}",
-  "m": ["minute", "minutes", "minutes"],
-  "h": ["hour", "hours", "hours"],
-  "d": ["day", "days", "days"],
-  "w": ["week", "weeks", "weeks"],
-  "M": ["month", "months", "months"],
-  "y": ["year", "years", "years"],
+  "Last second": "Последняя секунда",
+  "Last minute": "Последняя минута",
+  "Last {count} second": [
+    "Последняя {{count}} секунда",
+    "Последние {{count}} секунды",
+    "Последние {{count}} секунд"
+  ],
+  "Last {count} minute": [
+    "Последняя {{count}} минута",
+    "Последние {{count}} минуты",
+    "Последние {{count}} минут"
+  ],
+  "Last {count} hour": [
+    "Последний {{count}} час",
+    "Последние {{count}} часа",
+    "Последние {{count}} часов"
+  ],
+  "Last {count} day": [
+    "Последний {{count}} день",
+    "Последние {{count}} дня",
+    "Последние {{count}} дней"
+  ],
+  "Last {count} week": [
+    "Последняя {{count}} неделя",
+    "Последние {{count}} недели",
+    "Последние {{count}} недель"
+  ],
+  "Last {count} month": [
+    "Последний {{count}} месяц",
+    "Последние {{count}} месяца",
+    "Последние {{count}} месяцев"
+  ],
+  "Last {count} year": [
+    "Последний {{count}} год",
+    "Последние {{count}} года",
+    "Последние {{count}} лет"
+  ],
   "Main": "Основные",
   "Other": "Другие",
   "Range": "Период",

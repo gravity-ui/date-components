@@ -10,6 +10,28 @@ import {
 import type {Preset} from './defaultPresets';
 import {i18n} from './i18n';
 
+const lastRe = /^now-(\d+)([smhdwMy])$/;
+
+const oneUnit = {
+    s: 'Last second',
+    m: 'Last minute',
+    h: 'Last hour',
+    d: 'Last day',
+    w: 'Last week',
+    M: 'Last month',
+    y: 'Last year',
+} as const;
+
+const countUnit = {
+    s: 'Last {count} second',
+    m: 'Last {count} minute',
+    h: 'Last {count} hour',
+    d: 'Last {count} day',
+    w: 'Last {count} week',
+    M: 'Last {count} month',
+    y: 'Last {count} year',
+} as const;
+
 export function getPresetTitle(start: string, end: string, presets: Preset[] = allPresets) {
     const startText = start.replace(/\s+/g, '');
     const endText = end.replace(/\s+/g, '');
@@ -21,14 +43,12 @@ export function getPresetTitle(start: string, end: string, presets: Preset[] = a
     }
 
     if (end === 'now') {
-        const match = /^now-(\d+)([m|h|d|w|M|y])$/.exec(start);
+        const match = lastRe.exec(startText);
         if (match) {
             const [, count, unit] = match;
             if (isDateUnit(unit)) {
-                return i18n('Last {count} {unit}', {
-                    count,
-                    unit: i18n(unit, {count: Number(count)}),
-                });
+                const template = Number(count) === 1 ? oneUnit[unit] : countUnit[unit];
+                return i18n(template, {count});
             }
         }
     }
@@ -36,8 +56,8 @@ export function getPresetTitle(start: string, end: string, presets: Preset[] = a
     return startText + ' — ' + endText;
 }
 
-function isDateUnit(value: string): value is 'm' | 'h' | 'd' | 'w' | 'M' | 'y' {
-    return ['m', 'h', 'd', 'w', 'M', 'y'].includes(value);
+function isDateUnit(value: string): value is 's' | 'm' | 'h' | 'd' | 'w' | 'M' | 'y' {
+    return ['s', 'm', 'h', 'd', 'w', 'M', 'y'].includes(value);
 }
 
 export function filterPresets(presets: Preset[], minValue?: DateTime) {
