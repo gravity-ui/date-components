@@ -83,6 +83,8 @@ export function useRelativeDatePickerProps(
                     setOpen(true);
                 }
             },
+            role: 'combobox',
+            'aria-expanded': isOpen,
         },
     };
 
