@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.8.2](https://github.com/gravity-ui/date-components/compare/v2.8.1...v2.8.2) (2024-08-14)
+
+
+### Bug Fixes
+
+* **a11y:** set role and aria attributes for pickers ([#128](https://github.com/gravity-ui/date-components/issues/128)) ([5155e18](https://github.com/gravity-ui/date-components/commit/5155e1884e264d3b79db34cda966836fe9ebfc18))
+* **DatePicker:** select initial date in mobile picker ([#127](https://github.com/gravity-ui/date-components/issues/127)) ([3fb09fe](https://github.com/gravity-ui/date-components/commit/3fb09fe331f54b5ba8abef43ecc0d37aa4637e08))
+* **RelativeRangeDatePicker:** last period preset title ([#130](https://github.com/gravity-ui/date-components/issues/130)) ([ae3dd3c](https://github.com/gravity-ui/date-components/commit/ae3dd3c31efd564647b06558cbb5b41e8e53e565))
+
 ## [2.8.1](https://github.com/gravity-ui/date-components/compare/v2.8.0...v2.8.1) (2024-08-05)
 
 
