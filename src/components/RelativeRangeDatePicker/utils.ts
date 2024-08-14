@@ -67,7 +67,7 @@ export function getDefaultTitle({
         value.start?.type === 'relative' &&
         value.end?.type === 'relative'
     ) {
-        return `${getPresetTitle(value.start.value, value.end.value, presets)}${tz}`;
+        return `${getPresetTitle(value.start.value, value.end.value, presets)}`;
     }
 
     const delimiter = ' — ';
