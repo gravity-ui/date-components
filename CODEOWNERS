@@ -1,5 +1,4 @@
 * @amje @ValeraS @korvin89
-# Allow everyone to publish releases
+# Allow everyone to update dependencies
 /package.json
 /package-lock.json
-/CHANGELOG.md
