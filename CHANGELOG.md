@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.3](https://github.com/gravity-ui/date-components/compare/v2.8.2...v2.8.3) (2024-08-21)
+
+
+### Bug Fixes
+
+* remove type field from package.json ([#135](https://github.com/gravity-ui/date-components/issues/135)) ([4122eb9](https://github.com/gravity-ui/date-components/commit/4122eb90ec7e385aead8ef53c6f9a606a5fad4d8))
+
 ## [2.8.2](https://github.com/gravity-ui/date-components/compare/v2.8.1...v2.8.2) (2024-08-14)
 
 
