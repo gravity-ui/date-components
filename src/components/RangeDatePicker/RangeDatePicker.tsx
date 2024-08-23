@@ -56,7 +56,6 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
             <TextInput
                 {...fieldProps}
                 className={b('field')}
-                hasClear={fieldProps.hasClear}
                 endContent={
                     <React.Fragment>
                         {!isOnlyTime && (

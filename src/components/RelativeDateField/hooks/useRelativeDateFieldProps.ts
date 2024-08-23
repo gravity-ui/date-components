@@ -54,6 +54,7 @@ export function useRelativeDateFieldProps(
                 'aria-describedby': props['aria-describedby'] || undefined,
                 'aria-details': props['aria-details'] || undefined,
                 'aria-disabled': state.disabled || undefined,
+                readOnly: state.readOnly,
             },
         },
         calendarProps: {
