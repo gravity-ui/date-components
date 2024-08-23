@@ -2,7 +2,9 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import type {CalendarLayout, CalendarState, RangeCalendarState} from './types';
+import {formatDateTime} from '../../utils/dates';
+
+import type {CalendarState, RangeCalendarState} from './types';
 
 export function useCalendarCellProps(date: DateTime, state: CalendarState | RangeCalendarState) {
     const ref = React.useRef<HTMLDivElement>(null);
@@ -30,7 +32,7 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
     const isCurrent = state.isCurrent(date);
     const isWeekend = state.isWeekend(date);
 
-    const label = getDateLabel(date, state.mode);
+    const label = getDateLabel(date, state);
 
     const cellProps: React.HTMLAttributes<unknown> = {
         role: 'gridcell',
@@ -64,13 +66,13 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
         },
     };
 
-    let formattedDate = date.format('D');
+    let formattedDate = formatDateTime(date, 'D', state.timeZone);
     if (state.mode === 'months') {
-        formattedDate = date.format('MMM');
+        formattedDate = formatDateTime(date, 'MMM', state.timeZone);
     } else if (state.mode === 'quarters') {
-        formattedDate = date.format('[Q]Q');
+        formattedDate = formatDateTime(date, '[Q]Q', state.timeZone);
     } else if (state.mode === 'years') {
-        formattedDate = date.format('YYYY');
+        formattedDate = formatDateTime(date, 'YYYY', state.timeZone);
     }
 
     return {
@@ -89,16 +91,21 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
     };
 }
 
-function getDateLabel(date: DateTime, mode: CalendarLayout) {
-    let label = '';
-    if (mode === 'days') {
-        label = `${date.format('dddd')}, ${date.format('LL')}`;
-    } else if (mode === 'months') {
-        label = `${date.format('MMMM YYYY')}`;
-    } else if (mode === 'quarters') {
-        label = `${date.format('[Q]Q YYYY')}`;
-    } else if (mode === 'years') {
-        label = `${date.format('YYYY')}`;
+function getDateLabel(date: DateTime, state: CalendarState | RangeCalendarState) {
+    switch (state.mode) {
+        case 'days': {
+            return `${formatDateTime(date, 'dddd', state.timeZone)}, ${formatDateTime(date, 'LL', state.timeZone)}`;
+        }
+        case 'months': {
+            return `${formatDateTime(date, 'MMMM YYYY', state.timeZone)}`;
+        }
+        case 'quarters': {
+            return `${formatDateTime(date, '[Q]Q YYYY', state.timeZone)}`;
+        }
+        case 'years': {
+            return `${formatDateTime(date, 'YYYY', state.timeZone)}`;
+        }
+        default:
+            return '';
     }
-    return label;
 }
