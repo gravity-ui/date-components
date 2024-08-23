@@ -30,6 +30,21 @@ export function isInvalid(
     return false;
 }
 
+export function constrainValue(
+    value: DateTime,
+    minValue: DateTime | undefined,
+    maxValue: DateTime | undefined,
+) {
+    if (minValue && value.isBefore(minValue)) {
+        return minValue;
+    }
+    if (maxValue && maxValue.isBefore(value)) {
+        return maxValue;
+    }
+
+    return value;
+}
+
 export function mergeDateTime(date: DateTime, time: DateTime) {
     return date
         .set('hours', time.hour())

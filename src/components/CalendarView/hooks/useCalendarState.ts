@@ -5,9 +5,9 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
 import type {ValueBase} from '../../types';
-import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
+import {constrainValue, createPlaceholderValue, mergeDateTime} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
-import {calendarLayouts, constrainValue} from '../utils';
+import {calendarLayouts} from '../utils';
 
 import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './types';
 
