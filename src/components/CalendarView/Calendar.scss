@@ -286,7 +286,7 @@ $block: '.#{variables.$ns}calendar';
             content: '';
 
             border-radius: 50%;
-            background-color: var(--g-color-text-primary);
+            background-color: currentColor;
 
             transform: translateY(8px);
         }

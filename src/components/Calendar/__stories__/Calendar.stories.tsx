@@ -42,6 +42,7 @@ export const Default = {
                 ? dateTimeParse(args.defaultFocusedValue, {timeZone})
                 : undefined,
             isDateUnavailable: getIsDateUnavailable(args.isDateUnavailable as unknown as string),
+            isWeekend: getIsWeekend(args.isWeekend as unknown as string),
         };
         return <Calendar {...props} />;
     },
@@ -96,6 +97,12 @@ export const Default = {
                 type: 'radio',
             },
         },
+        isWeekend: {
+            options: ['default', 'none', 'Friday and Saturday'],
+            control: {
+                type: 'radio',
+            },
+        },
         timeZone: timeZoneControl,
     },
 } satisfies Story;
@@ -121,6 +128,18 @@ function getIsDateUnavailable(variant: string) {
                     (date.isSame(interval[0], 'date') || date.isAfter(interval[0])) &&
                     (date.isSame(interval[1], 'date') || date.isBefore(interval[1])),
             );
+    }
+
+    return undefined;
+}
+
+function getIsWeekend(variant: string) {
+    if (variant === 'Friday and Saturday') {
+        return (date: DateTime) => [5, 6].includes(date.day());
+    }
+
+    if (variant === 'none') {
+        return () => false;
     }
 
     return undefined;

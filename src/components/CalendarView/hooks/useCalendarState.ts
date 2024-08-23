@@ -5,7 +5,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
 import type {ValueBase} from '../../types';
-import {constrainValue, createPlaceholderValue, mergeDateTime} from '../../utils/dates';
+import {constrainValue, createPlaceholderValue, isWeekend, mergeDateTime} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {calendarLayouts} from '../utils';
 
@@ -231,7 +231,13 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             return this.disabled || this.isInvalid(date);
         },
         isWeekend(date: DateTime) {
-            return this.mode === 'days' && [0, 6].includes(date.day());
+            if (this.mode !== 'days') {
+                return false;
+            }
+            if (typeof props.isWeekend === 'function') {
+                return props.isWeekend(date);
+            }
+            return isWeekend(date);
         },
         isCurrent(date: DateTime) {
             return dateTime({timeZone}).isSame(date, this.mode);

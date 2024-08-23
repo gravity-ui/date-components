@@ -1,6 +1,10 @@
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
+export function isWeekend(date: DateTime) {
+    return [0, 6].includes(date.day());
+}
+
 export interface PlaceholderValueOptions {
     placeholderValue?: DateTime;
     timeZone?: string;
