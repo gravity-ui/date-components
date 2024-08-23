@@ -140,6 +140,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                     role: 'combobox',
                     'aria-expanded': open,
                     disabled: isMobile,
+                    readOnly: props.readOnly,
                     className: b('input', {mobile: isMobile}),
                     onClick: () => {
                         if (props.disabled) {

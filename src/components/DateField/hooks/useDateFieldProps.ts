@@ -74,10 +74,6 @@ export function useDateFieldProps<T = DateTime>(
     });
 
     function syncSelectionFromDOM() {
-        if (state.readOnly) {
-            setSelectedSections(-1);
-            return;
-        }
         state.focusSectionInPosition(inputRef.current?.selectionStart ?? 0);
         setInnerState({});
     }
@@ -192,6 +188,7 @@ export function useDateFieldProps<T = DateTime>(
                 'aria-describedby': props['aria-describedby'] || undefined,
                 'aria-details': props['aria-details'] || undefined,
                 'aria-disabled': state.disabled || undefined,
+                readOnly: state.readOnly,
                 inputMode,
                 onClick() {
                     syncSelectionFromDOM();

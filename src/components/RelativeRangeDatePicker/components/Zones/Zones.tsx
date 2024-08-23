@@ -61,6 +61,7 @@ export function Zones(props: ZonesProps) {
     const size = props.isMobile ? 'xl' : props.size;
     return (
         <Select
+            disabled={props.disabled}
             value={[timeZone]}
             options={zones}
             size={size}
@@ -82,6 +83,7 @@ export function Zones(props: ZonesProps) {
                         width="max"
                         pin="clear-clear"
                         size={size}
+                        disabled={props.disabled}
                         extraProps={{
                             'aria-haspopup': 'listbox',
                             'aria-expanded': controlProps.open,
