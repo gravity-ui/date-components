@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.9.0](https://github.com/gravity-ui/date-components/compare/v2.8.3...v2.9.0) (2024-08-23)
+
+
+### Features
+
+* **Calendar:** add isWeekend prop ([#141](https://github.com/gravity-ui/date-components/issues/141)) ([b97fc99](https://github.com/gravity-ui/date-components/commit/b97fc994e97f5d723e3afa08ee5774b56beb1441))
+
+
+### Bug Fixes
+
+* **Calendar:** always render dates with current locale ([#142](https://github.com/gravity-ui/date-components/issues/142)) ([3767684](https://github.com/gravity-ui/date-components/commit/37676845500c1b8f62c3f2e88765220aa8ab30c2))
+* set readonly attribute on inputs ([#139](https://github.com/gravity-ui/date-components/issues/139)) ([a34501d](https://github.com/gravity-ui/date-components/commit/a34501d57b1faed1d39f9de03ee25b453959e10c))
+
 ## [2.8.3](https://github.com/gravity-ui/date-components/compare/v2.8.2...v2.8.3) (2024-08-21)
 
 
