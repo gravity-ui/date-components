@@ -11,6 +11,8 @@ export interface CalendarStateOptionsBase extends InputBase {
     maxValue?: DateTime;
     /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
     isDateUnavailable?: (date: DateTime) => boolean;
+    /** Callback that is called for each date of the calendar. If it returns true, then the date is weekend. */
+    isWeekend?: (date: DateTime) => boolean;
     /**
      * Which timezone use to show values. Example: 'default', 'system', 'Europe/Amsterdam'.
      * @default The timezone of the `value` or `defaultValue` or `focusedValue` or `defaultFocusedValue`, 'default' otherwise.
