@@ -4,6 +4,7 @@ import {useFocusWithin} from '@gravity-ui/uikit';
 import type {ButtonProps} from '@gravity-ui/uikit';
 
 import type {CalendarProps} from '../../Calendar/Calendar';
+import {formatDateTime} from '../../utils/dates';
 import {i18n} from '../i18n';
 
 import type {CalendarLayout, CalendarState, RangeCalendarState} from './types';
@@ -15,7 +16,11 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
     const title =
         state.mode === 'years' || state.mode === 'quarters'
             ? `${state.startDate.year()} — ${state.endDate.year()}`
-            : state.focusedDate.format(state.mode === 'days' ? 'MMMM YYYY' : 'YYYY');
+            : formatDateTime(
+                  state.focusedDate,
+                  state.mode === 'days' ? 'MMMM YYYY' : 'YYYY',
+                  state.timeZone,
+              );
 
     const {focusWithinProps} = useFocusWithin({
         onFocusWithin: props.onFocus,

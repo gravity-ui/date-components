@@ -1,5 +1,7 @@
 import {useFocusWithin} from '@gravity-ui/uikit';
 
+import {formatDateTime} from '../../utils/dates';
+
 import type {CalendarState, RangeCalendarState} from './types';
 
 export function useCalendarGridProps(state: CalendarState | RangeCalendarState) {
@@ -14,7 +16,11 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
         'aria-label':
             state.mode === 'years' || state.mode === 'quarters'
                 ? `${state.startDate.year()} — ${state.endDate.year()}`
-                : state.focusedDate.format(state.mode === 'days' ? 'MMMM YYYY' : 'YYYY'),
+                : formatDateTime(
+                      state.focusedDate,
+                      state.mode === 'days' ? 'MMMM YYYY' : 'YYYY',
+                      state.timeZone,
+                  ),
         'aria-disabled': state.disabled ? 'true' : undefined,
         'aria-readonly': state.readOnly ? 'true' : undefined,
         ...focusWithinProps,

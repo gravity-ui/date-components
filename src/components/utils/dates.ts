@@ -55,3 +55,7 @@ export function mergeDateTime(date: DateTime, time: DateTime) {
         .set('minutes', time.minute())
         .set('seconds', time.second());
 }
+
+export function formatDateTime(date: DateTime, format: string, timezone: string) {
+    return dateTime({input: date, timeZone: timezone}).format(format);
+}

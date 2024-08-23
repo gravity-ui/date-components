@@ -8,6 +8,7 @@ import {ArrowToggle, Button} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
+import {formatDateTime} from '../utils/dates';
 
 import type {RangeCalendarState} from './hooks/types';
 import {useCalendarCellProps} from './hooks/useCalendarCellProps';
@@ -165,9 +166,9 @@ function Weekdays({state}: WeekdaysProps) {
                         key={date.day()}
                         className={b('weekday', {weekend: state.isWeekend(date)})}
                         role="columnheader"
-                        aria-label={date.format('dddd')}
+                        aria-label={formatDateTime(date, 'dddd', state.timeZone)}
                     >
-                        {date.format('dd')}
+                        {formatDateTime(date, 'dd', state.timeZone)}
                     </div>
                 );
             })}
@@ -188,7 +189,7 @@ function CalendarGridCells({state}: CalendarGridProps) {
                 <div key={rowIndex} className={b('grid-row')} role="row">
                     {state.mode === 'quarters' ? (
                         <span role="rowheader" className={b('grid-rowgroup-header')}>
-                            {days[rowIndex * columnsInRow].format('YYYY')}
+                            {formatDateTime(days[rowIndex * columnsInRow], 'YYYY', state.timeZone)}
                         </span>
                     ) : null}
                     {days
