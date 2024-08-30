@@ -3,12 +3,10 @@ import React from 'react';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {block} from '../../../../utils/cn';
-import type {RangeValue} from '../../../types';
-import {getLerpCoeff} from '../../utils/span';
 import {useViewportDimensions, useViewportInterval} from '../Ruler/Ruler';
 
 import type {Geometry} from './utils';
-import {makeMiddleTicksGeometry, makeSlitTicksGeometry} from './utils';
+import {calculatePosition, makeMiddleTicksGeometry, makeSlitTicksGeometry} from './utils';
 
 import './Ticks.scss';
 
@@ -73,19 +71,4 @@ export function UnavailableTicks({
     const ticksPath = <path className={b({theme}, className)} d={ticksGeometry} />;
 
     return <React.Fragment>{ticksPath}</React.Fragment>;
-}
-
-function calculatePosition(
-    value: DateTime | undefined,
-    interval: RangeValue<DateTime>,
-    width: number,
-) {
-    if (!value) {
-        return NaN;
-    }
-    const timeToXCoeff = getLerpCoeff(
-        {start: interval.start.valueOf(), end: interval.end.valueOf()},
-        {start: 0, end: width},
-    );
-    return Math.round((value.valueOf() - interval.start.valueOf()) * timeToXCoeff);
 }

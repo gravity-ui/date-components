@@ -1,7 +1,9 @@
 import {dateTimeUtc, settings} from '@gravity-ui/date-utils';
 import type {DateTime, DurationUnit} from '@gravity-ui/date-utils/build/typings';
 
+import type {RangeValue} from '../../../types';
 import {DAY, HOUR, MINUTE, MONTH, SECOND, WEEK, YEAR} from '../../../utils/constants';
+import {getLerpCoeff} from '../../utils/span';
 
 const MAX_TICKS = 100000;
 
@@ -221,4 +223,19 @@ export function makeUnavailableTicksGeometry({
     const w = tickHeight;
     const h = viewportHeight;
     return (x) => `M${x},0l${h},${h}l${w},0l${-h},${-h}l${-w},0`;
+}
+
+export function calculatePosition(
+    value: DateTime | undefined,
+    interval: RangeValue<DateTime>,
+    width: number,
+) {
+    if (!value) {
+        return NaN;
+    }
+    const timeToXCoeff = getLerpCoeff(
+        {start: interval.start.valueOf(), end: interval.end.valueOf()},
+        {start: 0, end: width},
+    );
+    return Math.round((value.valueOf() - interval.start.valueOf()) * timeToXCoeff);
 }

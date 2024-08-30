@@ -10,6 +10,7 @@ import {timeZoneControl} from '../../../demo/utils/zones';
 import {RelativeRangeDatePicker} from '../../RelativeRangeDatePicker';
 import type {RelativeRangeDatePickerValue} from '../../RelativeRangeDatePicker';
 import {RangeDateSelection} from '../RangeDateSelection';
+import type {ViewportDimensions, ViewportInterval} from '../components/Ruler/Ruler';
 
 const meta: Meta<typeof RangeDateSelection> = {
     title: 'Components/RangeDateSelection',
@@ -34,6 +35,10 @@ export const Default = {
             placeholderValue: args.placeholderValue
                 ? dateTimeParse(args.placeholderValue, {timeZone})
                 : undefined,
+            renderAdditionalRulerContent:
+                (args.renderAdditionalRulerContent as unknown as string) === 'fill'
+                    ? renderAdditionalRulerContent
+                    : undefined,
         };
         return <RangeDateSelection {...props} />;
     },
@@ -54,6 +59,12 @@ export const Default = {
             },
         },
         timeZone: timeZoneControl,
+        renderAdditionalRulerContent: {
+            options: ['none', 'fill'],
+            control: {
+                type: 'radio',
+            },
+        },
     },
 } satisfies Story;
 
@@ -181,4 +192,23 @@ function toAbsoluteRange(interval: RelativeRangeDatePickerValue, timeZone?: stri
             : interval.end!.value;
 
     return {start, end};
+}
+
+function renderAdditionalRulerContent(props: {
+    interval: ViewportInterval;
+    dimensions: ViewportDimensions;
+}) {
+    const {width, height} = props.dimensions;
+    return (
+        <React.Fragment>
+            {Array.from({length: 12}, (_, i) => (
+                <path
+                    key={i}
+                    d={`M${(i * width) / 12},0l${width / 12},0l0,${height}l${-width / 12},0`}
+                    fill={`hsl(${i * 30}, 100%, 50%)`}
+                    fillOpacity={0.05}
+                />
+            ))}
+        </React.Fragment>
+    );
 }

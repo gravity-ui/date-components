@@ -11,6 +11,7 @@ import type {AccessibilityProps, DomProps, StyleProps} from '../types';
 import {filterDOMProps} from '../utils/filterDOMProps';
 
 import {DateTimeRuler} from './components/Ruler/Ruler';
+import type {ViewportDimensions, ViewportInterval} from './components/Ruler/Ruler';
 import {SelectionControl} from './components/SelectionControl/SelectionControl';
 import {useRangeDateSelectionState} from './hooks/useRangeDateSelectionState';
 import type {RangeDateSelectionOptions} from './hooks/useRangeDateSelectionState';
@@ -35,6 +36,11 @@ export interface RangeDateSelectionProps
     hasScaleButtons?: boolean;
     /** Position of scale buttons */
     scaleButtonsPosition?: 'start' | 'end';
+    /** Renders additional svg content in the ruler */
+    renderAdditionalRulerContent?: (props: {
+        interval: ViewportInterval;
+        dimensions: ViewportDimensions;
+    }) => React.ReactNode;
 }
 
 export function RangeDateSelection(props: RangeDateSelectionProps) {
@@ -79,6 +85,7 @@ export function RangeDateSelection(props: RangeDateSelectionProps) {
                 maxValue={props.maxValue}
                 formatTime={props.formatTime}
                 timeZone={state.timeZone}
+                renderAdditionalRulerContent={props.renderAdditionalRulerContent}
             >
                 <SelectionControl className={b('selection')} state={state} aria-labelledby={id} />
             </DateTimeRuler>

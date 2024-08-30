@@ -30,14 +30,18 @@ interface RulerProps {
     formatTime?: (time: DateTime) => string;
     timeZone?: string;
     dragDisabled?: boolean;
+    renderAdditionalRulerContent?: (props: {
+        interval: ViewportInterval;
+        dimensions: ViewportDimensions;
+    }) => React.ReactNode;
 }
 
-interface ViewportDimensions {
+export interface ViewportDimensions {
     width: number;
     height: number;
 }
 
-type ViewportInterval = RangeValue<DateTime>;
+export type ViewportInterval = RangeValue<DateTime>;
 
 const viewportDimensionsContext = React.createContext<ViewportDimensions | null>(null);
 const viewportIntervalContext = React.createContext<ViewportInterval | null>(null);
@@ -56,6 +60,7 @@ export function DateTimeRuler({
     formatTime,
     timeZone,
     dragDisabled,
+    renderAdditionalRulerContent,
 }: RulerProps) {
     const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
     const viewportInterval = React.useMemo(() => ({start, end}), [start, end]);
@@ -103,6 +108,10 @@ export function DateTimeRuler({
                             />
                         ) : null}
                         {displayNow ? <NowLine /> : null}
+                        {renderAdditionalRulerContent?.({
+                            interval: viewportInterval,
+                            dimensions: viewportDimensions,
+                        })}
                     </RulerViewport>
                     {container ? ReactDOM.createPortal(children, container) : null}
                 </viewportDimensionsContext.Provider>
