@@ -9,11 +9,16 @@ import {constrainValue, createPlaceholderValue} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {alignDateTime} from '../utils/date';
 
-function getViewPortIntervalFromDates(start: DateTime, end: DateTime, parts = 4, fraction = 0.5) {
+function getViewportIntervalFromDates(
+    start: DateTime,
+    end: DateTime,
+    numberOfIntervals = 4,
+    placeInViewport = 0.5,
+) {
     const diff = end.diff(start);
     return {
-        start: start.subtract(diff * (parts - 1) * fraction),
-        end: end.add(diff * (parts - 1) * (1 - fraction)),
+        start: start.subtract(diff * (numberOfIntervals - 1) * placeInViewport),
+        end: end.add(diff * (numberOfIntervals - 1) * (1 - placeInViewport)),
     };
 }
 
@@ -52,11 +57,19 @@ export interface RangeDateSelectionOptions extends ValueBase<RangeValue<DateTime
      * @default The timezone of the `value` or `defaultValue` or `placeholderValue`, 'default' otherwise.
      */
     timeZone?: string;
-    // TODO: think about renaming these props
-    /** Number of parts to divide the underline ruler into. Defaults to 4. */
-    parts?: number;
-    /** Fraction of the underline ruler to show before the selection. Defaults to 0.5. Value must be between 0 and 1. */
-    fraction?: number;
+    /**
+     * The number of selection intervals that fit into the underlying ruler.
+     *
+     * @default 4
+     */
+    numberOfIntervals?: number;
+    /**
+     * Place of the selection on the underlying ruler.
+     * Value must be between 0 and 1, where 0 is the start of the ruler and 1 is the end.
+     *
+     * @default 0.5 - center of the ruler
+     */
+    placeOnRuler?: number;
 }
 
 export function useRangeDateSelectionState(
@@ -98,11 +111,11 @@ export function useRangeDateSelectionState(
     };
     const interval = isDragging ? displayValue : currentValue ?? displayValue;
 
-    const viewportInterval = getViewPortIntervalFromDates(
+    const viewportInterval = getViewportIntervalFromDates(
         interval.start,
         interval.end,
-        props.parts,
-        props.fraction,
+        props.numberOfIntervals,
+        props.placeOnRuler,
     );
 
     const minValue = props.minValue?.isAfter(viewportInterval.start)
