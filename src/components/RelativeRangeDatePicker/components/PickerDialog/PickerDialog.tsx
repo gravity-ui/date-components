@@ -6,8 +6,8 @@ import {Button, Popup, Sheet} from '@gravity-ui/uikit';
 import {block} from '../../../../utils/cn';
 import {RelativeDatePicker} from '../../../RelativeDatePicker';
 import type {RelativeDatePickerProps} from '../../../RelativeDatePicker';
-import type {RelativeRangeDatePickerProps} from '../../RelativeRangeDatePicker';
 import type {RelativeRangeDatePickerState} from '../../hooks/useRelativeRangeDatePickerState';
+import type {RelativeRangeDatePickerProps} from '../../types';
 import {Presets} from '../Presets/Presets';
 import {Zones} from '../Zones/Zones';
 

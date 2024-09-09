@@ -9,7 +9,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {timeZoneControl} from '../../../demo/utils/zones';
 import type {Value} from '../../RelativeDatePicker';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
-import type {RelativeRangeDatePickerProps} from '../RelativeRangeDatePicker';
+import type {RelativeRangeDatePickerProps} from '../types';
 
 const meta: Meta<typeof RelativeRangeDatePicker> = {
     title: 'Components/RelativeRangeDatePicker',
@@ -121,5 +121,23 @@ export const InsideDialog: StoryObj<
                 type: 'boolean',
             },
         },
+    },
+};
+
+export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
+    ...Default,
+    render: (props) => {
+        return (
+            <RelativeRangeDatePicker
+                {...props}
+                renderControl={({title, onClick, onFocus, ref}) => {
+                    return (
+                        <Button ref={ref} onClick={onClick} onFocus={onFocus}>
+                            {title || 'Not selected'}
+                        </Button>
+                    );
+                }}
+            />
+        );
     },
 };
