@@ -19,19 +19,33 @@ import type {
     RelativeRangeDatePickerValue,
 } from './hooks/useRelativeRangeDatePickerState';
 
+export type RelativeRangeDatePickerTriggerProps = Pick<
+    React.InputHTMLAttributes<HTMLElement>,
+    | 'id'
+    | 'role'
+    | 'aria-controls'
+    | 'aria-haspopup'
+    | 'aria-expanded'
+    | 'aria-label'
+    | 'aria-labelledby'
+    | 'aria-describedby'
+    | 'aria-details'
+    | 'onClick'
+    | 'onKeyDown'
+    | 'onFocus'
+    | 'disabled'
+    | 'readOnly'
+>;
+
 export interface RelativeRangeDatePickerRenderControlProps {
-    open: boolean;
-    isMobile?: boolean;
-    ref: React.Ref<HTMLInputElement>;
+    ref: React.Ref<HTMLElement>;
     value: RelativeRangeDatePickerValue | null;
     title: string;
     errorMessage?: React.ReactNode;
     validationState?: 'invalid';
-    onClick: (e: React.MouseEvent<HTMLElement>) => void;
-    onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
-    onFocus: (e: React.FocusEvent<HTMLElement>) => void;
-    onClickCalendar: (e: React.MouseEvent<HTMLElement>) => void;
-    onUpdate: (value: string) => void;
+    open: boolean;
+    isMobile?: boolean;
+    triggerProps: RelativeRangeDatePickerTriggerProps;
 }
 
 export interface RelativeRangeDatePickerProps
