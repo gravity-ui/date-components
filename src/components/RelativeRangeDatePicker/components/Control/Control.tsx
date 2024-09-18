@@ -11,6 +11,8 @@ import {getDefaultTitle} from '../../utils';
 
 import {i18n} from './i18n';
 
+import './Control.scss';
+
 export type ControlProps = {
     props: RelativeRangeDatePickerProps;
     state: RelativeRangeDatePickerState;
@@ -51,13 +53,17 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
         const errorMessage = props.errorMessage ?? state.errors.join('\n');
 
         const triggerProps: RelativeRangeDatePickerTriggerProps = {
+            id: props.id,
             role: 'combobox',
             'aria-expanded': open,
+            'aria-label': props['aria-label'],
+            'aria-labelledby': props['aria-labelledby'],
+            'aria-describedby': props['aria-describedby'],
+            'aria-details': props['aria-details'],
             disabled: props.disabled,
             readOnly: props.readOnly,
-            onClick,
+            onClick: onClickCalendar,
             onKeyDown,
-            onFocus,
         };
 
         return props.renderControl ? (
@@ -68,7 +74,6 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                 validationState,
                 errorMessage,
                 open,
-                isMobile,
                 triggerProps,
             })
         ) : (
@@ -84,6 +89,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                         className: b('input', {mobile: isMobile}),
                         ...triggerProps,
                         disabled: isMobile,
+                        onClick,
                     }}
                     onKeyDown={onKeyDown}
                     onFocus={onFocus}

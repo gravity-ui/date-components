@@ -132,7 +132,7 @@ export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
                 {...props}
                 renderControl={({title, triggerProps, ref}) => {
                     return (
-                        <Button ref={ref} {...triggerProps}>
+                        <Button ref={ref} {...triggerProps} extraProps={triggerProps}>
                             {title || 'Not selected'}
                         </Button>
                     );

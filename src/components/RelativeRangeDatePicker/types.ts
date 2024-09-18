@@ -2,6 +2,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {Value} from '../RelativeDatePicker';
 import type {
+    AccessibilityProps,
     DomProps,
     FocusableProps,
     InputBase,
@@ -32,7 +33,6 @@ export type RelativeRangeDatePickerTriggerProps = Pick<
     | 'aria-details'
     | 'onClick'
     | 'onKeyDown'
-    | 'onFocus'
     | 'disabled'
     | 'readOnly'
 >;
@@ -44,13 +44,13 @@ export interface RelativeRangeDatePickerRenderControlProps {
     errorMessage?: React.ReactNode;
     validationState?: 'invalid';
     open: boolean;
-    isMobile?: boolean;
     triggerProps: RelativeRangeDatePickerTriggerProps;
 }
 
 export interface RelativeRangeDatePickerProps
     extends RelativeRangeDatePickerStateOptions,
         DomProps,
+        AccessibilityProps,
         InputBase,
         InputDOMProps,
         TextInputProps,
