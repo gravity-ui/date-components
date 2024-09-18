@@ -7,51 +7,6 @@ $block: '.#{variables.$ns}relative-range-date-picker';
 
     display: inline-flex;
 
-    &__input {
-        caret-color: transparent;
-
-        &_mobile {
-            pointer-events: none;
-        }
-    }
-
-    &__mobile-trigger {
-        --_--g-date-mobile-trigger-clear-width: 0px;
-        --_--g-date-mobile-trigger-errors-width: 0px;
-        --_--g-date-mobile-trigger-button-width: 24px;
-
-        position: absolute;
-        inset: 0;
-        inset-inline-end: calc(
-            var(--g-spacing-2) + var(--_--g-date-mobile-trigger-button-width) +
-                var(--_--g-date-mobile-trigger-clear-width) +
-                var(--_--g-date-mobile-trigger-errors-width)
-        );
-
-        opacity: 0;
-
-        &_size_s {
-            --_--g-date-mobile-trigger-button-width: 20px;
-        }
-        &_size_l {
-            --_--g-date-mobile-trigger-button-width: 28px;
-        }
-        &_size_xl {
-            --_--g-date-mobile-trigger-button-width: 36px;
-        }
-
-        &_has-clear {
-            --_--g-date-mobile-trigger-clear-width: calc(
-                var(--_--g-date-mobile-trigger-button-width) + 2px
-            );
-        }
-        &_has-errors {
-            --_--g-date-mobile-trigger-errors-width: calc(
-                var(--_--g-date-mobile-trigger-button-width) + 2px
-            );
-        }
-    }
-
     &__value-label {
         display: flex;
 

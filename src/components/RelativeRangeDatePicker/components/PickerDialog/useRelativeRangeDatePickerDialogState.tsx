@@ -6,8 +6,8 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import type {Value} from '../../../RelativeDatePicker';
 import type {RangeValue} from '../../../types';
 import {getValidationResult} from '../../../utils/validation/datePicker';
-import type {RelativeRangeDatePickerProps} from '../../RelativeRangeDatePicker';
 import type {RelativeRangeDatePickerState} from '../../hooks/useRelativeRangeDatePickerState';
+import type {RelativeRangeDatePickerProps} from '../../types';
 
 import {i18n} from './i18n';
 
