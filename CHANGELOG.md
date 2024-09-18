@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.0](https://github.com/gravity-ui/date-components/compare/v2.9.0...v2.10.0) (2024-09-18)
+
+
+### Features
+
+* **RelativeRangeDatePicker:** add renderControl props ([#144](https://github.com/gravity-ui/date-components/issues/144)) ([d389eea](https://github.com/gravity-ui/date-components/commit/d389eeace08b3bec750b292c004058008fb96efd))
+
 ## [2.9.0](https://github.com/gravity-ui/date-components/compare/v2.8.3...v2.9.0) (2024-08-23)
 
 
