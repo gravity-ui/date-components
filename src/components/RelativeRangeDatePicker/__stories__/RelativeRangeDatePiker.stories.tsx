@@ -126,6 +126,10 @@ export const InsideDialog: StoryObj<
 
 export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
     ...Default,
+    args: {
+        ...Default.args,
+        style: undefined,
+    },
     render: (props) => {
         return (
             <RelativeRangeDatePicker
