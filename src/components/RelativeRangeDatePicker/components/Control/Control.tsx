@@ -55,6 +55,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
         const triggerProps: RelativeRangeDatePickerTriggerProps = {
             id: props.id,
             role: 'combobox',
+            'aria-haspopup': 'dialog',
             'aria-expanded': open,
             'aria-label': props['aria-label'],
             'aria-labelledby': props['aria-labelledby'],
