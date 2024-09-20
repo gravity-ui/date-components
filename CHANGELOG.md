@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.1](https://github.com/gravity-ui/date-components/compare/v2.10.0...v2.10.1) (2024-09-20)
+
+
+### Bug Fixes
+
+* **RelativeRangeDatePicker:** export RelativeRangeDatePickerProps ([#146](https://github.com/gravity-ui/date-components/issues/146)) ([a3396b1](https://github.com/gravity-ui/date-components/commit/a3396b10fb3f3466716fac3db59f687736bd3ce8))
+
 ## [2.10.0](https://github.com/gravity-ui/date-components/compare/v2.9.0...v2.10.0) (2024-09-18)
 
 
