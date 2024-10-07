@@ -156,7 +156,7 @@ interface WeekdaysProps {
     state: CalendarState | RangeCalendarState;
 }
 function Weekdays({state}: WeekdaysProps) {
-    const weekdays = getWeekDays();
+    const weekdays = getWeekDays(state);
 
     return (
         <div className={b('grid-row')} role="row">
@@ -182,7 +182,7 @@ interface CalendarGridProps {
 function CalendarGridCells({state}: CalendarGridProps) {
     const rowsInPeriod = state.mode === 'days' ? 6 : 4;
     const columnsInRow = state.mode === 'days' ? 7 : 3 + (state.mode === 'quarters' ? 1 : 0);
-    const days = getDaysInPeriod(state.startDate, state.endDate, state.mode);
+    const days = getDaysInPeriod(state);
     return (
         <div className={b('grid-rowgroup', {mode: state.mode})} role="rowgroup">
             {[...new Array(rowsInPeriod).keys()].map((rowIndex) => (
