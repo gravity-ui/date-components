@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.2](https://github.com/gravity-ui/date-components/compare/v2.10.1...v2.10.2) (2024-10-07)
+
+
+### Bug Fixes
+
+* **Calendar:** should show days and weekdays in current lang and selected timezone ([#149](https://github.com/gravity-ui/date-components/issues/149)) ([b012151](https://github.com/gravity-ui/date-components/commit/b01215100cd49484fd799d073c6ae0609d82b011))
+
 ## [2.10.1](https://github.com/gravity-ui/date-components/compare/v2.10.0...v2.10.1) (2024-09-20)
 
 
