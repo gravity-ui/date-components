@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTime, expandFormat, isValid} from '@gravity-ui/date-utils';
+import {dateTime, expandFormat} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {mergeDateTime} from '../utils/dates';
@@ -612,7 +612,7 @@ export function formatSections(sections: DateFieldSection[]): string {
 
 function parseDate(options: {input: string; format: string; timeZone?: string}) {
     let date = dateTime(options);
-    if (!isValid(date)) {
+    if (!date.isValid()) {
         date = dateTime({...options, format: undefined});
     }
     return date;
@@ -624,7 +624,7 @@ function isDateStringWithTimeZone(str: string) {
 
 export function parseDateFromString(str: string, format: string, timeZone?: string): DateTime {
     let date = parseDate({input: str, format, timeZone});
-    if (isValid(date)) {
+    if (date.isValid()) {
         if (timeZone && !isDateStringWithTimeZone(str)) {
             const time = parseDate({input: str, format});
             date = mergeDateTime(date, time);

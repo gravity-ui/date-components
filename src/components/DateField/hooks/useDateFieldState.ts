@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
@@ -84,7 +83,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     }
 
     const displayValue =
-        value && isValid(value) && isAllSegmentsValid(allSegments, validSegments)
+        value && value.isValid() && isAllSegmentsValid(allSegments, validSegments)
             ? value.timeZone(timeZone)
             : placeholderDate.timeZone(timeZone);
     const sectionsState = useSectionsState(sections, displayValue, validSegments);
@@ -201,7 +200,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
     function setValueFromString(str: string) {
         const date = parseDateFromString(str, format, timeZone);
-        if (isValid(date)) {
+        if (date.isValid()) {
             handleUpdateDate(date);
             return true;
         }

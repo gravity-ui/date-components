@@ -1,7 +1,6 @@
 /* eslint-disable complexity */
 import React from 'react';
 
-import {isValid} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
@@ -98,8 +97,8 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
     const displayValue =
         value &&
-        isValid(value.start) &&
-        isValid(value.end) &&
+        value.start.isValid() &&
+        value.end.isValid() &&
         Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
         Object.keys(validSegments.end).length >= Object.keys(allSegments).length
             ? {start: value.start.timeZone(timeZone), end: value.end.timeZone(timeZone)}
@@ -236,7 +235,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         const start = parseDateFromString(list?.[0]?.trim(), format, timeZone);
         const end = parseDateFromString(list?.[1]?.trim(), format, timeZone);
         const range = {start, end};
-        if (isValid(range.start) && isValid(range.end)) {
+        if (range.start.isValid() && range.end.isValid()) {
             handleUpdateRange(range);
             return true;
         }
