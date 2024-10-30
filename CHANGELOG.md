@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.3](https://github.com/gravity-ui/date-components/compare/v2.10.2...v2.10.3) (2024-10-30)
+
+
+### Bug Fixes
+
+* use DateTime instance method isValid ([#151](https://github.com/gravity-ui/date-components/issues/151)) ([4dba903](https://github.com/gravity-ui/date-components/commit/4dba903b973d2c65fc493505ee5f5adcbdca40cb))
+
 ## [2.10.2](https://github.com/gravity-ui/date-components/compare/v2.10.1...v2.10.2) (2024-10-07)
 
 
