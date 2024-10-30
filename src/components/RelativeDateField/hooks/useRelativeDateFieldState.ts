@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTimeParse, isLikeRelative, isValid} from '@gravity-ui/date-utils';
+import {dateTimeParse, isLikeRelative} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
@@ -55,7 +55,7 @@ export function useRelativeDateFieldState(props: RelativeDateFieldOptions): Rela
         setText(t);
         if (isLikeRelative(t)) {
             const date = dateTimeParse(t);
-            if (date && isValid(date)) {
+            if (date && date.isValid()) {
                 setValue(t);
             } else {
                 setValue(null);
