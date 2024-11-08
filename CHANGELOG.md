@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.0](https://github.com/gravity-ui/date-components/compare/v2.10.3...v2.11.0) (2024-11-08)
+
+
+### Features
+
+* **RangeDateSelection:** add new component ([#132](https://github.com/gravity-ui/date-components/issues/132)) ([0f10d44](https://github.com/gravity-ui/date-components/commit/0f10d44e4d1a37ee3ea0f6de863d1927ee9e4570))
+
 ## [2.10.3](https://github.com/gravity-ui/date-components/compare/v2.10.2...v2.10.3) (2024-10-30)
 
 
