@@ -1,5 +1,3 @@
-// import {dateTime} from '@gravity-ui/date-utils';
-
 import React from 'react';
 
 import {block} from '../../../../utils/cn';
