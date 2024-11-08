@@ -3,6 +3,7 @@ export * from './RangeCalendar';
 export * from './DateField';
 export * from './DatePicker';
 export * from './RangeDatePicker';
+export * from './RangeDateSelection';
 export * from './RelativeDateField';
 export * from './RelativeDatePicker';
 export * from './RangeDateField';

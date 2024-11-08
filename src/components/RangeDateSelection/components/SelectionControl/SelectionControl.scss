@@ -1,0 +1,101 @@
+@use '../../../variables';
+@use '../../../mixins';
+
+$block: '.#{variables.$ns}range-date-selection-control';
+
+#{$block} {
+    --_--g-date-timeline-color-selection: var(
+        --g-date-timeline-color-selection,
+        var(--g-color-base-info-light)
+    );
+
+    --_--g-date-timeline-color-selection-hover: var(
+        --g-date-timeline-color-selection-hover,
+        var(--g-color-base-info-light-hover)
+    );
+
+    --_--g-date-timeline-color-selection-handle: var(
+        --g-date-timeline-color-selection-handle,
+        var(--g-color-base-brand)
+    );
+
+    --_--g-date-timeline-color-selection-handle-hover: var(
+        --g-date-timeline-color-selection-handle-hover,
+        var(--g-color-base-brand-hover)
+    );
+
+    position: absolute;
+    z-index: 1;
+    inset-block: 0;
+
+    @supports (selector(:has(*))) and (selector(:focus-visible)) {
+        &__start:has(&__slider-input:focus-visible),
+        &__end:has(&__slider-input:focus-visible),
+        &__dragger:has(&__slider-input:focus-visible) {
+            border-radius: var(--g-border-radius-xs);
+            outline: var(--g-color-line-focus) solid 2px;
+        }
+    }
+
+    @supports not (selector(:has(*))) {
+        &__start:focus-within,
+        &__end:focus-within,
+        &__dragger:focus-within {
+            border-radius: var(--g-border-radius-xs);
+            outline: var(--g-color-line-focus) solid 2px;
+        }
+    }
+
+    &__dragger {
+        position: absolute;
+        inset-block: 0;
+        inset-inline: 2px;
+
+        cursor: move;
+
+        background: var(--_--g-date-timeline-color-selection);
+
+        &:hover,
+        &_dragging {
+            background: var(--_--g-date-timeline-color-selection-hover);
+        }
+
+        &_disabled {
+            pointer-events: none;
+        }
+    }
+
+    &__start {
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 0;
+
+        width: 4px;
+
+        background: var(--_--g-date-timeline-color-selection-handle);
+    }
+
+    &__end {
+        position: absolute;
+        inset-inline-end: 0;
+
+        width: 4px;
+        height: 100%;
+
+        background: var(--_--g-date-timeline-color-selection-handle);
+    }
+
+    &__start,
+    &__end {
+        cursor: ew-resize;
+
+        &:hover,
+        &_dragging {
+            background: var(--_--g-date-timeline-color-selection-handle-hover);
+        }
+    }
+
+    &__slider-input-wrapper {
+        @include mixins.visually-hidden();
+    }
+}
