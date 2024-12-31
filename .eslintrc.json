@@ -24,10 +24,6 @@
       }
     ],
     "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
-    "@typescript-eslint/consistent-type-imports": [
-      "error",
-      {"prefer": "type-imports", "fixStyle": "separate-type-imports"}
-    ],
     "jsx-a11y/no-autofocus": [
       "error",
       {
@@ -36,6 +32,15 @@
     ]
   },
   "overrides": [
+    {
+      "files": ["**/*.tsx?"],
+      "rules": {
+        "@typescript-eslint/consistent-type-imports": [
+          "error",
+          {"prefer": "type-imports", "fixStyle": "separate-type-imports"}
+        ]
+      }
+    },
     {
       "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
       "extends": ["plugin:testing-library/react"],

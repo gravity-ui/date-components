@@ -3,7 +3,8 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
-    "module": "esnext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "importHelpers": true
   },
