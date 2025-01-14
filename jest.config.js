@@ -1,6 +1,5 @@
-import type {Config} from 'jest';
-
-const config: Config = {
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+const config = {
     verbose: true,
     moduleFileExtensions: ['js', 'json', 'ts', 'tsx'],
     rootDir: '.',

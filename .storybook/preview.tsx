@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/order
-import '@gravity-ui/uikit/styles/styles.scss';
+import '@gravity-ui/uikit/styles/styles.css';
 
 import React from 'react';
 
