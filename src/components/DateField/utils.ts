@@ -362,7 +362,11 @@ function getSectionPlaceholder(
         }
 
         case 'hour': {
-            return i18n('hour_placeholder').repeat(2);
+            if (isHour12(currentTokenValue)) {
+                return i18n('hour_placeholder').repeat(2);
+            }
+
+            return i18n('hour24_placeholder').repeat(2);
         }
 
         case 'minute': {

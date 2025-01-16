@@ -4,6 +4,7 @@
   "weekday_placeholder": "E",
   "day_placeholder": "D",
   "hour_placeholder": "h",
+  "hour24_placeholder": "H",
   "minute_placeholder": "m",
   "second_placeholder": "s",
   "dayPeriod_placeholder": "aa"
