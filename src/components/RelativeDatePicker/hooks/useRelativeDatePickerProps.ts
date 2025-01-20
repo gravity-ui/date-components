@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useControlledState, useFocusWithin, useForkRef} from '@gravity-ui/uikit';
-import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
 import type {Calendar, CalendarInstance} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
@@ -18,8 +18,8 @@ import type {RelativeDatePickerState} from './useRelativeDatePickerState';
 interface InnerRelativeDatePickerProps {
     groupProps: React.HTMLAttributes<unknown> & {ref: React.Ref<HTMLElement>};
     fieldProps: TextInputProps;
-    modeSwitcherProps: ButtonProps;
-    calendarButtonProps: ButtonProps;
+    modeSwitcherProps: ButtonButtonProps;
+    calendarButtonProps: ButtonButtonProps;
     popupProps: PopupProps;
     calendarProps: React.ComponentProps<typeof Calendar>;
     timeInputProps: DateFieldProps;
@@ -166,9 +166,7 @@ export function useRelativeDatePickerProps(
             view: 'flat-secondary',
             style: {zIndex: 2, marginInlineEnd: 2},
             selected: mode === 'relative',
-            extraProps: {
-                'aria-label': i18n('Formula input mode'),
-            },
+            'aria-label': i18n('Formula input mode'),
             onClick: () => {
                 setMode(mode === 'relative' ? 'absolute' : 'relative');
                 if (mode === 'relative') {
@@ -185,11 +183,9 @@ export function useRelativeDatePickerProps(
         calendarButtonProps: {
             size: getButtonSizeForInput(props.size),
             disabled: state.disabled,
-            extraProps: {
-                'aria-label': i18n('Calendar'),
-                'aria-haspopup': 'dialog',
-                'aria-expanded': isOpen,
-            },
+            'aria-label': i18n('Calendar'),
+            'aria-haspopup': 'dialog',
+            'aria-expanded': isOpen,
             view: 'flat-secondary',
             onClick: () => {
                 state.setActive(true);
@@ -210,7 +206,7 @@ export function useRelativeDatePickerProps(
                     setOpen(false);
                 }
             },
-            onTransitionExited: () => {
+            onTransitionOutComplete: () => {
                 setFocusedDate(
                     mode === 'relative'
                         ? relativeDateState.lastCorrectDate

@@ -61,8 +61,8 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
         timeInputProps,
     } = useRelativeDatePickerProps(state, props);
 
-    const anchorRef = React.useRef<HTMLDivElement>(null);
-    const handleRef = useForkRef(anchorRef, groupProps.ref);
+    const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+    const handleRef = useForkRef(groupProps.ref, setAnchor);
 
     const isMobile = useMobile();
     const isOnlyTime =
@@ -131,7 +131,7 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                 form={props.form}
             />
             {!isMobile && !isOnlyTime && (
-                <Popup {...popupProps} anchorRef={anchorRef}>
+                <Popup {...popupProps} anchorElement={anchor}>
                     <div className={b('popup-content')}>
                         {typeof props.children === 'function' ? (
                             props.children(calendarProps)

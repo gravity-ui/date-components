@@ -1,4 +1,5 @@
 import type {DateTime} from '@gravity-ui/date-utils';
+import type {PopupPlacement} from '@gravity-ui/uikit';
 
 import type {Value} from '../RelativeDatePicker';
 import type {
@@ -21,7 +22,7 @@ import type {
 } from './hooks/useRelativeRangeDatePickerState';
 
 export type RelativeRangeDatePickerTriggerProps = Pick<
-    React.InputHTMLAttributes<HTMLElement>,
+    React.AllHTMLAttributes<HTMLElement>,
     | 'id'
     | 'role'
     | 'aria-controls'
@@ -77,6 +78,8 @@ export interface RelativeRangeDatePickerProps
     getRangeTitle?: (value: RangeValue<Value | null> | null, timeZone: string) => string;
     /** Sets the CSS className for the popup element. */
     popupClassName?: string;
+    /** */
+    popupPlacement?: PopupPlacement;
     /** Handler that is called when the popup's open state changes. */
     onOpenChange?: (open: boolean) => void;
     /** Used to render control. */

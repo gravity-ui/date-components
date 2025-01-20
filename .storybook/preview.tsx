@@ -3,7 +3,15 @@ import '@gravity-ui/uikit/styles/styles.css';
 
 import React from 'react';
 
-import {Lang, MobileProvider, ThemeProvider, configure} from '@gravity-ui/uikit';
+import {
+    Lang,
+    MobileProvider,
+    ThemeProvider,
+    ToasterComponent,
+    ToasterProvider,
+    configure,
+} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {MINIMAL_VIEWPORTS} from '@storybook/addon-viewport';
 import type {Decorator, Preview} from '@storybook/react';
 
@@ -21,7 +29,10 @@ const WithContextProvider: Decorator = (Story, context) => {
         <React.StrictMode>
             <ThemeProvider theme={context.globals.theme} direction={context.globals.direction}>
                 <MobileProvider mobile={context.globals.platform === 'mobile'}>
-                    <Story {...context} />
+                    <ToasterProvider toaster={toaster}>
+                        <Story {...context} />
+                        <ToasterComponent />
+                    </ToasterProvider>
                 </MobileProvider>
             </ThemeProvider>
         </React.StrictMode>
