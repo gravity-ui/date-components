@@ -44,7 +44,7 @@ export interface DatePickerProps<T = DateTime>
 }
 
 export function DatePicker({className, ...props}: DatePickerProps) {
-    const anchorRef = React.useRef<HTMLDivElement>(null);
+    const [anchor, setAnchor] = React.useState<HTMLDivElement | null>(null);
 
     const state = useDatePickerState(props);
 
@@ -60,8 +60,8 @@ export function DatePicker({className, ...props}: DatePickerProps) {
                 <MobileCalendar props={props} state={state} />
             ) : (
                 !isOnlyTime && (
-                    <div ref={anchorRef} className={b('popup-anchor')}>
-                        <Popup anchorRef={anchorRef} {...popupProps}>
+                    <div ref={setAnchor} className={b('popup-anchor')}>
+                        <Popup anchorElement={anchor} {...popupProps}>
                             <div className={b('popup-content')}>
                                 {typeof props.children === 'function' ? (
                                     props.children(calendarProps)
@@ -89,10 +89,7 @@ export function DatePicker({className, ...props}: DatePickerProps) {
                                 <Icon data={CalendarIcon} />
                             </Button>
                         )}
-                        {!isMobile && isOnlyTime && (
-                            <StubButton size={calendarButtonProps.size} icon={ClockIcon} />
-                        )}
-                        {isMobile && (
+                        {(isMobile || isOnlyTime) && (
                             <StubButton
                                 size={calendarButtonProps.size}
                                 icon={isOnlyTime ? ClockIcon : CalendarIcon}

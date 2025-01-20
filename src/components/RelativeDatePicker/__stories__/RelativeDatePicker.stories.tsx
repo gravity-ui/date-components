@@ -182,38 +182,26 @@ export const WithCustomCalendar = {
     },
 } satisfies Story;
 
-export const InsideDialog: StoryObj<RelativeDatePickerProps & {disableDialogFocusTrap?: boolean}> =
-    {
-        ...Default,
-        render: function InsideDialog(args) {
-            const [isOpen, setOpen] = React.useState(false);
-            return (
-                <React.Fragment>
-                    <Button
-                        onClick={() => {
-                            setOpen(true);
-                        }}
-                    >
-                        Open dialog
-                    </Button>
-                    <Dialog
-                        open={isOpen}
-                        onClose={() => setOpen(false)}
-                        disableFocusTrap={args.disableDialogFocusTrap}
-                    >
-                        <Dialog.Header />
-                        <Dialog.Body>
-                            <div style={{paddingTop: 16}}>{Default.render(args)}</div>
-                        </Dialog.Body>
-                    </Dialog>
-                </React.Fragment>
-            );
-        },
-        argTypes: {
-            disableDialogFocusTrap: {
-                control: {
-                    type: 'boolean',
-                },
-            },
-        },
-    };
+export const InsideDialog: StoryObj<RelativeDatePickerProps> = {
+    ...Default,
+    render: function InsideDialog(args) {
+        const [isOpen, setOpen] = React.useState(false);
+        return (
+            <React.Fragment>
+                <Button
+                    onClick={() => {
+                        setOpen(true);
+                    }}
+                >
+                    Open dialog
+                </Button>
+                <Dialog open={isOpen} onClose={() => setOpen(false)}>
+                    <Dialog.Header />
+                    <Dialog.Body>
+                        <div style={{paddingTop: 16}}>{Default.render(args)}</div>
+                    </Dialog.Body>
+                </Dialog>
+            </React.Fragment>
+        );
+    },
+};

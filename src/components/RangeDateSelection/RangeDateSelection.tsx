@@ -99,7 +99,7 @@ export function RangeDateSelection(props: RangeDateSelectionProps) {
                             state.scale(0.5);
                             state.endDragging();
                         }}
-                        extraProps={{'aria-label': i18n('Decrease range')}}
+                        aria-label={i18n('Decrease range')}
                     >
                         <Icon data={Minus} />
                     </Button>
@@ -111,7 +111,7 @@ export function RangeDateSelection(props: RangeDateSelectionProps) {
                             state.scale(1.5);
                             state.endDragging();
                         }}
-                        extraProps={{'aria-label': i18n('Increase range')}}
+                        aria-label={i18n('Increase range')}
                     >
                         <Icon data={Plus} />
                     </Button>

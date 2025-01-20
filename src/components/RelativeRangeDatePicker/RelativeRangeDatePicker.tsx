@@ -22,7 +22,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
 
     const isMobile = useMobile();
 
-    const anchorRef = React.useRef<HTMLDivElement>(null);
+    const [anchor, setAnchor] = React.useState<HTMLDivElement | null>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const [isActive, setIsActive] = React.useState(false);
@@ -45,7 +45,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
 
     return (
         <div
-            ref={anchorRef}
+            ref={setAnchor}
             {...focusWithinProps}
             className={b(null, props.className)}
             style={props.style}
@@ -141,9 +141,10 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                         inputRef.current?.focus({preventScroll: true});
                     });
                 }}
-                anchorRef={anchorRef}
+                anchor={anchor}
                 isMobile={isMobile}
                 className={props.popupClassName}
+                placement={props.popupPlacement}
             />
         </div>
     );

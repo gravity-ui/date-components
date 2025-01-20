@@ -107,11 +107,9 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                             view="flat-secondary"
                             size={getButtonSizeForInput(props.size)}
                             disabled={props.disabled}
-                            extraProps={{
-                                'aria-haspopup': 'dialog',
-                                'aria-expanded': open,
-                                'aria-label': i18n('Range date picker'),
-                            }}
+                            aria-haspopup="dialog"
+                            aria-expanded={open}
+                            aria-label={i18n('Range date picker')}
                             onClick={onClickCalendar}
                         >
                             <Icon data={CalendarIcon} />

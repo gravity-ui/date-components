@@ -2,6 +2,7 @@
 
 import {dateTime} from '@gravity-ui/date-utils';
 import {Button, Popup, Sheet} from '@gravity-ui/uikit';
+import type {PopupOffset, PopupPlacement} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 import {RelativeDatePicker} from '../../../RelativeDatePicker';
@@ -23,8 +24,10 @@ export interface PickerDialogProps {
     state: RelativeRangeDatePickerState;
     props: RelativeRangeDatePickerProps;
     open: boolean;
+    placement?: PopupPlacement;
+    offset?: PopupOffset;
     isMobile?: boolean;
-    anchorRef?: React.RefObject<HTMLElement>;
+    anchor: HTMLElement | null;
     onClose: () => void;
     focusInput: () => void;
 }
@@ -36,8 +39,10 @@ export function PickerDialog({
     onClose,
     focusInput,
     isMobile,
-    anchorRef,
+    anchor,
     className,
+    placement,
+    offset,
 }: PickerDialogProps) {
     if (isMobile) {
         return (
@@ -54,16 +59,20 @@ export function PickerDialog({
     return (
         <Popup
             open={open}
-            onEscapeKeyDown={() => {
-                onClose();
-                focusInput();
+            onOpenChange={(isOpen, _event, reason) => {
+                if (!isOpen) {
+                    onClose();
+                    if (reason === 'escape-key') {
+                        focusInput();
+                    }
+                }
             }}
-            onClose={onClose}
+            placement={placement}
+            offset={offset}
             role="dialog"
-            anchorRef={anchorRef}
-            contentClassName={b('content', {size: props.size}, className)}
-            autoFocus
-            focusTrap
+            anchorElement={anchor}
+            className={b('content', {size: props.size}, className)}
+            modal
         >
             <DialogContent {...props} state={state} onApply={onClose} />
         </Popup>

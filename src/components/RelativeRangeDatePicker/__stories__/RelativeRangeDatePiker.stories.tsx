@@ -87,9 +87,7 @@ export const Default = {
     },
 } satisfies Story;
 
-export const InsideDialog: StoryObj<
-    RelativeRangeDatePickerProps & {disableDialogFocusTrap?: boolean}
-> = {
+export const InsideDialog: StoryObj<RelativeRangeDatePickerProps> = {
     ...Default,
     render: function InsideDialog(args) {
         const [isOpen, setOpen] = React.useState(false);
@@ -102,11 +100,7 @@ export const InsideDialog: StoryObj<
                 >
                     Open dialog
                 </Button>
-                <Dialog
-                    open={isOpen}
-                    onClose={() => setOpen(false)}
-                    disableFocusTrap={args.disableDialogFocusTrap}
-                >
+                <Dialog open={isOpen} onClose={() => setOpen(false)}>
                     <Dialog.Header />
                     <Dialog.Body>
                         <div style={{paddingTop: 16}}>{Default.render(args)}</div>
@@ -114,13 +108,6 @@ export const InsideDialog: StoryObj<
                 </Dialog>
             </React.Fragment>
         );
-    },
-    argTypes: {
-        disableDialogFocusTrap: {
-            control: {
-                type: 'boolean',
-            },
-        },
     },
 };
 
@@ -136,7 +123,7 @@ export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
                 {...props}
                 renderControl={({title, triggerProps, ref}) => {
                     return (
-                        <Button ref={ref} {...triggerProps} extraProps={triggerProps}>
+                        <Button ref={ref} component="button" {...triggerProps}>
                             {title || 'Not selected'}
                         </Button>
                     );

@@ -91,13 +91,12 @@ interface DesktopDocProps {
 function DesktopDoc({className, size, docs}: DesktopDocProps) {
     return (
         <Popover
-            className={b(null, className)}
-            tooltipContentClassName={b('content')}
+            className={b(null)}
             hasArrow={false}
             content={<PresetsExamples size={size} docs={docs} />}
         >
             <Button
-                className={b('button')}
+                className={b('button', className)}
                 view="flat-secondary"
                 size={getButtonSizeForInput(size)}
             >

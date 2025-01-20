@@ -77,18 +77,17 @@ export function Zones(props: ZonesProps) {
                     timeZone === 'system' || timeZone === 'default' ? i18n(timeZone) : timeZone;
                 return (
                     <Button
-                        onClick={controlProps.onClick}
+                        component="button"
                         ref={controlProps.ref}
+                        onClick={controlProps.triggerProps.onClick}
                         view="flat-secondary"
                         width="max"
                         pin="clear-clear"
                         size={size}
                         disabled={props.disabled}
-                        extraProps={{
-                            'aria-haspopup': 'listbox',
-                            'aria-expanded': controlProps.open,
-                            onKeyDown: controlProps.onKeyDown,
-                        }}
+                        aria-haspopup="listbox"
+                        aria-expanded={controlProps.open}
+                        onKeyDown={controlProps.triggerProps.onKeyDown}
                         className={b('control')}
                     >
                         {`${value} (${getTimeZoneOffset(timeZone)})`}
