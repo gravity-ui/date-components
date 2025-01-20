@@ -2,8 +2,8 @@ import React from 'react';
 
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
-import {Tabs} from '@gravity-ui/uikit';
-import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
+import {Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -151,19 +151,18 @@ export const Custom: Story = {
         const [mode, setMode] = React.useState('days');
 
         return (
-            <div>
-                <Tabs
-                    activeTab={mode}
-                    onSelectTab={(id) => {
-                        setMode(id);
-                    }}
-                    items={['days', 'months', 'quarters', 'years'].map((item) => ({
-                        id: item,
-                        title: item[0].toUpperCase() + item.slice(1),
-                    }))}
-                />
-                {Default.render?.({...args, modes: {[mode]: true}})}
-            </div>
+            <TabProvider value={mode} onUpdate={setMode}>
+                <TabList>
+                    {['days', 'months', 'quarters', 'years'].map((item) => (
+                        <Tab key={item} value={item}>
+                            {item[0].toUpperCase() + item.slice(1)}
+                        </Tab>
+                    ))}
+                </TabList>
+                <TabPanel value={mode}>
+                    {Default.render?.({...args, modes: {[mode]: true}})}
+                </TabPanel>
+            </TabProvider>
         );
     },
     parameters: {

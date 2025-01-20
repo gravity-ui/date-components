@@ -1,5 +1,5 @@
 import {dateTimeParse} from '@gravity-ui/date-utils';
-import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 

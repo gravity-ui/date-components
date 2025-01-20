@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useFocusWithin} from '@gravity-ui/uikit';
-import type {ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps} from '@gravity-ui/uikit';
 
 import type {CalendarProps} from '../../Calendar/Calendar';
 import {formatDateTime} from '../../utils/dates';
@@ -43,7 +43,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
     const isNextModeLast = modeIndex + 2 === state.availableModes.length;
     const modeDisabled = state.disabled || isModeLast;
 
-    const modeButtonProps: ButtonProps = {
+    const modeButtonProps: ButtonButtonProps = {
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: modeDisabled ? buttonDisabledClassName : undefined,
@@ -55,11 +55,9 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
                       state.setFocused(true);
                   }
               },
-        extraProps: {
-            'aria-disabled': modeDisabled ? 'true' : undefined,
-            'aria-description': getAriaDescriptionForModeButton(state.mode, state.availableModes),
-            'aria-live': 'polite',
-        },
+        'aria-disabled': modeDisabled ? 'true' : undefined,
+        'aria-description': getAriaDescriptionForModeButton(state.mode, state.availableModes),
+        'aria-live': 'polite',
         children: title,
     };
 
@@ -73,7 +71,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
         }
     });
 
-    const previousButtonProps: ButtonProps = {
+    const previousButtonProps: ButtonButtonProps = {
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: previousDisabled ? buttonDisabledClassName : undefined,
@@ -92,10 +90,8 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
             : () => {
                   previousFocused.current = false;
               },
-        extraProps: {
-            'aria-label': i18n('Previous'),
-            'aria-disabled': previousDisabled ? 'true' : undefined,
-        },
+        'aria-label': i18n('Previous'),
+        'aria-disabled': previousDisabled ? 'true' : undefined,
     };
 
     const nextFocused = React.useRef(false);
@@ -108,7 +104,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
         }
     });
 
-    const nextButtonProps: ButtonProps = {
+    const nextButtonProps: ButtonButtonProps = {
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: nextDisabled ? buttonDisabledClassName : undefined,
@@ -127,10 +123,8 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
             : () => {
                   nextFocused.current = false;
               },
-        extraProps: {
-            'aria-label': i18n('Next'),
-            'aria-disabled': previousDisabled ? 'true' : undefined,
-        },
+        'aria-label': i18n('Next'),
+        'aria-disabled': previousDisabled ? 'true' : undefined,
     };
 
     return {

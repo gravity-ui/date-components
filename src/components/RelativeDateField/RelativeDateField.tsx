@@ -49,13 +49,13 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
 
     const isMobile = useMobile();
 
-    const anchorRef = React.useRef<HTMLElement>(null);
+    const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
     const [isOpen, setOpen] = React.useState(false);
 
     const {focusWithinProps} = useFocusWithin({
-        onBlurWithin: () => {
-            setOpen(false);
+        onFocusWithinChange: (isFocusWithin) => {
+            setOpen(isFocusWithin);
         },
         isDisabled: isMobile,
     });
@@ -70,14 +70,20 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
             <TextInput
                 {...inputProps}
                 className={b('field')}
-                ref={anchorRef}
-                onFocus={(e) => {
-                    if (!isMobile) {
+                ref={setAnchor}
+                onBlur={props.onBlur}
+                onKeyDown={(e) => {
+                    inputProps.onKeyDown?.(e);
+                    if (
+                        !e.defaultPrevented &&
+                        e.altKey &&
+                        (e.key === 'ArrowDown' || e.key === 'ArrowUp')
+                    ) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         setOpen(true);
                     }
-                    props.onFocus?.(e);
                 }}
-                onBlur={props.onBlur}
             />
             <HiddenInput
                 name={props.name}
@@ -89,7 +95,15 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
                 form={props.form}
             />
             {!isMobile && (
-                <Popup anchorRef={anchorRef} open={isOpen}>
+                <Popup
+                    anchorElement={anchor}
+                    open={isOpen}
+                    onOpenChange={(_open, _event, reason) => {
+                        if (reason === 'escape-key') {
+                            setOpen(false);
+                        }
+                    }}
+                >
                     <div className={b('popup-content')}>
                         <Calendar {...calendarProps} />
                         {props.hasTime ? (

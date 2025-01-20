@@ -24,7 +24,7 @@ const b = block('range-date-picker');
 export type RangeDatePickerProps = DatePickerProps<RangeValue<DateTime>>;
 
 export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
-    const anchorRef = React.useRef<HTMLDivElement>(null);
+    const [anchor, setAnchor] = React.useState<HTMLDivElement | null>(null);
 
     const state = useRangeDatePickerState(props);
 
@@ -36,8 +36,8 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
     return (
         <div className={b(null, className)} {...groupProps}>
             {!isOnlyTime && (
-                <div ref={anchorRef} className={b('popup-anchor')}>
-                    <Popup anchorRef={anchorRef} {...popupProps}>
+                <div ref={setAnchor} className={b('popup-anchor')}>
+                    <Popup anchorElement={anchor} {...popupProps}>
                         <div className={b('popup-content')}>
                             {typeof props.children === 'function' ? (
                                 props.children({...calendarProps, value: state.value})

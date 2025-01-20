@@ -3,7 +3,7 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
-import {List, Tabs} from '@gravity-ui/uikit';
+import {List, Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 
@@ -55,22 +55,25 @@ export function Presets({
 
     return (
         <div className={b({size}, className)}>
-            <div className={b('tabs')}>
-                <Tabs
-                    activeTab={activeTabId}
-                    onSelectTab={setActiveTab}
-                    items={tabs}
-                    size={size === 's' ? 'm' : size}
-                />
-                <PresetsDoc className={b('doc')} size={size} docs={docs} />
-            </div>
-            <div className={b('content')}>
-                <PresetsList
-                    presets={activeTab.presets}
-                    onChoosePreset={onChoosePreset}
-                    size={size}
-                />
-            </div>
+            <TabProvider value={activeTabId} onUpdate={setActiveTab}>
+                <div className={b('tabs')}>
+                    <TabList size={size === 's' ? 'm' : size}>
+                        {tabs.map(({id, title}) => (
+                            <Tab key={id} value={id}>
+                                {title}
+                            </Tab>
+                        ))}
+                    </TabList>
+                    <PresetsDoc className={b('doc')} size={size} docs={docs} />
+                </div>
+                <TabPanel className={b('content')} value={activeTabId}>
+                    <PresetsList
+                        presets={activeTab.presets}
+                        onChoosePreset={onChoosePreset}
+                        size={size}
+                    />
+                </TabPanel>
+            </TabProvider>
         </div>
     );
 }

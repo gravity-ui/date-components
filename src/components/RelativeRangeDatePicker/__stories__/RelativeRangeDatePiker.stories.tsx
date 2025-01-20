@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
-import {Button, Dialog} from '@gravity-ui/uikit';
-import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
+import {Button, Dialog, Text} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -54,12 +54,16 @@ export const Default = {
                 theme: 'success',
                 content: (
                     <div>
-                        <div>
-                            value:{' '}
-                            {res
-                                ? `{start: ${stringifyValue(res.start)}, end: ${stringifyValue(res.end)}}, ${timeZone}`
-                                : 'null'}
-                        </div>
+                        value:
+                        {res ? (
+                            <Text as="code" variant="code-1">
+                                <pre>
+                                    {`start: ${stringifyValue(res.start)}\nend: ${stringifyValue(res.end)}\n${timeZone}`}
+                                </pre>
+                            </Text>
+                        ) : (
+                            ' null'
+                        )}
                     </div>
                 ),
             });
@@ -87,9 +91,7 @@ export const Default = {
     },
 } satisfies Story;
 
-export const InsideDialog: StoryObj<
-    RelativeRangeDatePickerProps & {disableDialogFocusTrap?: boolean}
-> = {
+export const InsideDialog: StoryObj<RelativeRangeDatePickerProps> = {
     ...Default,
     render: function InsideDialog(args) {
         const [isOpen, setOpen] = React.useState(false);
@@ -102,11 +104,7 @@ export const InsideDialog: StoryObj<
                 >
                     Open dialog
                 </Button>
-                <Dialog
-                    open={isOpen}
-                    onClose={() => setOpen(false)}
-                    disableFocusTrap={args.disableDialogFocusTrap}
-                >
+                <Dialog open={isOpen} onClose={() => setOpen(false)}>
                     <Dialog.Header />
                     <Dialog.Body>
                         <div style={{paddingTop: 16}}>{Default.render(args)}</div>
@@ -114,13 +112,6 @@ export const InsideDialog: StoryObj<
                 </Dialog>
             </React.Fragment>
         );
-    },
-    argTypes: {
-        disableDialogFocusTrap: {
-            control: {
-                type: 'boolean',
-            },
-        },
     },
 };
 
@@ -136,7 +127,7 @@ export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
                 {...props}
                 renderControl={({title, triggerProps, ref}) => {
                     return (
-                        <Button ref={ref} {...triggerProps} extraProps={triggerProps}>
+                        <Button ref={ref as React.Ref<HTMLButtonElement>} {...triggerProps}>
                             {title || 'Not selected'}
                         </Button>
                     );

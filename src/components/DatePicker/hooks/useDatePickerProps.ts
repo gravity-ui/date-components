@@ -3,7 +3,7 @@ import React from 'react';
 import {isDateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
-import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
 import type {CalendarInstance, CalendarProps} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
@@ -21,7 +21,7 @@ interface InnerDatePickerProps<T = DateTime> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     groupProps: React.HTMLAttributes<unknown> & {ref: React.Ref<any>};
     fieldProps: TextInputProps;
-    calendarButtonProps: ButtonProps & {ref: React.Ref<HTMLButtonElement>};
+    calendarButtonProps: ButtonButtonProps & {ref: React.Ref<HTMLButtonElement>};
     popupProps: PopupProps;
     calendarProps: CalendarProps<T> & {ref: React.Ref<CalendarInstance>};
     timeInputProps: DateFieldProps<T>;
@@ -115,11 +115,9 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             ref: calendarButtonRef,
             size: getButtonSizeForInput(props.size),
             disabled: state.disabled,
-            extraProps: {
-                'aria-label': i18n('Calendar'),
-                'aria-haspopup': 'dialog',
-                'aria-expanded': state.isOpen,
-            },
+            'aria-label': i18n('Calendar'),
+            'aria-haspopup': 'dialog',
+            'aria-expanded': state.isOpen,
             view: 'flat-secondary',
             onClick: () => {
                 setActive(true);
@@ -128,26 +126,30 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
         },
         popupProps: {
             open: state.isOpen,
-            onEscapeKeyDown: () => {
-                state.setOpen(false, 'EscapeKeyDown');
-                focusInput();
-            },
-            onOutsideClick: (e) => {
-                if (e.target !== calendarButtonRef.current) {
-                    state.setOpen(false, 'ClickOutside');
+            onOpenChange: (open, e, reason) => {
+                if (!open) {
+                    if (reason === 'escape-key') {
+                        state.setOpen(false, 'EscapeKeyDown');
+                        focusInput();
+                    } else if (reason === 'outside-press') {
+                        if (!e?.target || !calendarButtonRef.current?.contains(e.target as Node)) {
+                            state.setOpen(false, 'ClickOutside');
+                        }
+
+                        if (e?.target && groupRef.current?.contains(e.target as Node)) {
+                            focusInput();
+                        }
+                    }
                 }
-                if (e.target && groupRef.current?.contains(e.target as Node)) {
-                    focusInput();
-                }
             },
-            onTransitionExited: () => {
+            onTransitionOutComplete: () => {
                 setFocusedDate(
                     isDateTime(state.dateFieldState.displayValue)
                         ? state.dateFieldState.displayValue
                         : state.dateFieldState.displayValue.start,
                 );
             },
-            focusTrap: !props.disableFocusTrap,
+            modal: !props.disableFocusTrap,
             disablePortal: props.disablePortal,
         },
         calendarProps: {

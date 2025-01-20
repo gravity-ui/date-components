@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
-import {Button, Dialog, Tabs} from '@gravity-ui/uikit';
-import {toaster} from '@gravity-ui/uikit/toaster-singleton-react-18';
+import {Button, Dialog, Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -105,21 +105,18 @@ export const WithCustomCalendar = {
                 const [mode, setMode] = React.useState('days');
 
                 return (
-                    <div>
-                        <div style={{paddingInline: 5}}>
-                            <Tabs
-                                activeTab={mode}
-                                onSelectTab={(id) => {
-                                    setMode(id);
-                                }}
-                                items={['days', 'months', 'quarters', 'years'].map((item) => ({
-                                    id: item,
-                                    title: item[0].toUpperCase() + item.slice(1, -1),
-                                }))}
-                            />
-                        </div>
-                        <Calendar {...props} modes={{[mode]: true}} />
-                    </div>
+                    <TabProvider value={mode} onUpdate={setMode}>
+                        <TabList style={{paddingInline: 5}}>
+                            {['days', 'months', 'quarters', 'years'].map((item) => (
+                                <Tab key={item} value={item}>
+                                    {item[0].toUpperCase() + item.slice(1)}
+                                </Tab>
+                            ))}
+                        </TabList>
+                        <TabPanel value={mode}>
+                            <Calendar {...props} modes={{[mode]: true}} />
+                        </TabPanel>
+                    </TabProvider>
                 );
             },
         });
