@@ -10,7 +10,10 @@ import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../
 import {
     EDITABLE_SEGMENTS,
     addSegment,
+    adjustDateToFormat,
+    getFormatInfo,
     isAllSegmentsValid,
+    markValidSection,
     parseDateFromString,
     setSegment,
     useFormatSections,
@@ -57,12 +60,9 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     const format = props.format || 'L';
     const delimiter = props.delimiter ?? RANGE_FORMAT_DELIMITER;
     const sections = useFormatSections(format);
+    const formatInfo = React.useMemo(() => getFormatInfo(sections), [sections]);
 
-    const allSegments: typeof EDITABLE_SEGMENTS = React.useMemo(() => {
-        return sections
-            .filter((seg) => EDITABLE_SEGMENTS[seg.type])
-            .reduce<typeof EDITABLE_SEGMENTS>((p, seg) => ({...p, [seg.type]: true}), {});
-    }, [sections]);
+    const allSegments = formatInfo.availableUnits;
 
     // eslint-disable-next-line prefer-const
     let [validSegments, setValidSegments] = React.useState<RangeValue<typeof EDITABLE_SEGMENTS>>(
@@ -150,7 +150,10 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
             isAllSegmentsValid(allSegments, validSegments.end)
         ) {
             if (!value || !(newValue.start.isSame(value.start) && newValue.end.isSame(value.end))) {
-                handleUpdateRange(newValue);
+                handleUpdateRange({
+                    start: adjustDateToFormat(newValue.start, formatInfo, 'startOf'),
+                    end: adjustDateToFormat(newValue.end, formatInfo, 'endOf'),
+                });
             }
         } else {
             if (value) {
@@ -161,18 +164,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     }
 
     function markValid(portion: 'start' | 'end', part: DateFieldSectionType) {
-        validSegments[portion][part] = true;
-        if (
-            validSegments[portion].day &&
-            validSegments[portion].month &&
-            validSegments[portion].year &&
-            allSegments.weekday
-        ) {
-            validSegments[portion].weekday = true;
-        }
-        if (validSegments[portion].hour && allSegments.dayPeriod) {
-            validSegments[portion].dayPeriod = true;
-        }
+        validSegments[portion] = markValidSection(allSegments, validSegments[portion], part);
         setValidSegments({...validSegments, [portion]: {...validSegments[portion]}});
     }
 
@@ -257,6 +249,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         timeZone,
         validationState,
         editableSections: sectionsState.editableSections,
+        formatInfo,
         readOnly: props.readOnly,
         disabled: props.disabled,
         selectedSectionIndexes,

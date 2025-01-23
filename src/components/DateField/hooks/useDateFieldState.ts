@@ -6,12 +6,18 @@ import {useControlledState} from '@gravity-ui/uikit';
 import type {DateFieldBase} from '../../types/datePicker';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
-import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../types';
+import type {
+    AvailableSections,
+    DateFieldSectionType,
+    DateFieldSectionWithoutPosition,
+} from '../types';
 import {
-    EDITABLE_SEGMENTS,
     addSegment,
+    adjustDateToFormat,
     getEditableSections,
+    getFormatInfo,
     isAllSegmentsValid,
+    markValidSection,
     parseDateFromString,
     setSegment,
     useFormatSections,
@@ -47,15 +53,10 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
     const format = props.format || 'L';
     const sections = useFormatSections(format);
-    const allSegments: typeof EDITABLE_SEGMENTS = React.useMemo(
-        () =>
-            sections
-                .filter((seg) => EDITABLE_SEGMENTS[seg.type])
-                .reduce<typeof EDITABLE_SEGMENTS>((p, seg) => ({...p, [seg.type]: true}), {}),
-        [sections],
-    );
+    const formatInfo = React.useMemo(() => getFormatInfo(sections), [sections]);
+    const allSegments = formatInfo.availableUnits;
 
-    const validSegmentsState = React.useState<typeof EDITABLE_SEGMENTS>(() =>
+    const validSegmentsState = React.useState<AvailableSections>(() =>
         value ? {...allSegments} : {},
     );
 
@@ -127,7 +128,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
         if (isAllSegmentsValid(allSegments, validSegments)) {
             if (!value || !newValue.isSame(value)) {
-                handleUpdateDate(newValue);
+                handleUpdateDate(adjustDateToFormat(newValue, formatInfo));
             }
         } else {
             if (value) {
@@ -138,13 +139,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     }
 
     function markValid(part: DateFieldSectionType) {
-        validSegments[part] = true;
-        if (validSegments.day && validSegments.month && validSegments.year && allSegments.weekday) {
-            validSegments.weekday = true;
-        }
-        if (validSegments.hour && allSegments.dayPeriod) {
-            validSegments.dayPeriod = true;
-        }
+        validSegments = markValidSection(allSegments, validSegments, part);
         setValidSegments({...validSegments});
     }
 
@@ -219,6 +214,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         timeZone,
         validationState,
         editableSections: sectionsState.editableSections,
+        formatInfo,
         readOnly: props.readOnly,
         disabled: props.disabled,
         selectedSectionIndexes,
@@ -241,7 +237,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 function useSectionsState(
     sections: DateFieldSectionWithoutPosition[],
     value: DateTime,
-    validSegments: typeof EDITABLE_SEGMENTS,
+    validSegments: AvailableSections,
 ) {
     const [state, setState] = React.useState(() => {
         return {

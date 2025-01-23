@@ -52,7 +52,7 @@ export function DatePicker({className, ...props}: DatePickerProps) {
         useDatePickerProps(state, props);
 
     const isMobile = useMobile();
-    const isOnlyTime = state.hasTime && !state.hasDate;
+    const isOnlyTime = state.formatInfo.hasTime && !state.formatInfo.hasDate;
 
     return (
         <div className={b(null, className)} {...groupProps}>

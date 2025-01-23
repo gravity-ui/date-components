@@ -1,12 +1,15 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
+import type {FormatInfo} from '../../DateField/types';
+import {adjustDateToFormat} from '../../DateField/utils';
 import type {DatePickerState} from '../../DatePicker';
 import {datePickerStateFactory} from '../../DatePicker/hooks/datePickerStateFactory';
 import {getDateTimeValue} from '../../DatePicker/utils';
 import {useRangeDateFieldState} from '../../RangeDateField';
 import type {RangeDateFieldStateOptions} from '../../RangeDateField';
+import {createPlaceholderRangeValue} from '../../RangeDateField/utils';
 import type {RangeValue} from '../../types';
-import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
+import {mergeDateTime} from '../../utils/dates';
 
 export type RangeDatePickerState = DatePickerState<RangeValue<DateTime>>;
 
@@ -18,14 +21,14 @@ export const useRangeDatePickerState = datePickerStateFactory({
     setTimezone,
     getDateTime: getDateTimeValue,
     useDateFieldState: useRangeDateFieldState,
+    adjustDateToFormat: adjustRangeToFormat,
 });
 
 function getPlaceholderTime(
     placeholderValue: DateTime | undefined,
     timeZone?: string,
 ): RangeValue<DateTime> {
-    const date = createPlaceholderValue({placeholderValue, timeZone});
-    return {start: date, end: date};
+    return createPlaceholderRangeValue({placeholderValue, timeZone});
 }
 
 function mergeRangeDateTime(
@@ -40,5 +43,11 @@ function mergeRangeDateTime(
 function setTimezone(date: RangeValue<DateTime>, timeZone: string): RangeValue<DateTime> {
     const start = date.start.timeZone(timeZone);
     const end = date.end.timeZone(timeZone);
+    return {start, end};
+}
+
+function adjustRangeToFormat(date: RangeValue<DateTime>, sectionsInfo: FormatInfo) {
+    const start = adjustDateToFormat(date.start, sectionsInfo, 'startOf');
+    const end = adjustDateToFormat(date.end, sectionsInfo, 'endOf');
     return {start, end};
 }

@@ -7,14 +7,17 @@ import {mergeDateTime} from '../utils/dates';
 
 import {i18n} from './i18n';
 import type {
+    AvailableSections,
     DateFieldSection,
     DateFieldSectionType,
     DateFieldSectionWithoutPosition,
     DateFormatTokenMap,
+    FormatInfo,
 } from './types';
 
-export const EDITABLE_SEGMENTS: Partial<Record<DateFieldSectionType, boolean>> = {
+export const EDITABLE_SEGMENTS: AvailableSections = {
     year: true,
+    quarter: true,
     month: true,
     day: true,
     hour: true,
@@ -30,6 +33,9 @@ const formatTokenMap: DateFormatTokenMap = {
     // Year
     YY: 'year',
     YYYY: 'year',
+
+    // Quarter
+    Q: 'quarter',
 
     // Month
     M: 'month',
@@ -124,6 +130,9 @@ export function getSectionLimits(section: DateFieldSectionWithoutPosition, date:
                 maxValue: isFourDigit ? 9999 : 99,
             };
         }
+        case 'quarter': {
+            return {minValue: 1, maxValue: 4};
+        }
         case 'month': {
             return {
                 minValue: 0,
@@ -174,6 +183,7 @@ export function getSectionValue(section: DateFieldSectionWithoutPosition, date: 
                 ? date.year()
                 : Number(date.format(section.format));
         }
+        case 'quarter':
         case 'month':
         case 'hour':
         case 'minute':
@@ -232,6 +242,10 @@ export function addSegment(section: DateFieldSection, date: DateTime, amount: nu
         val = dateTime({input: `${val}`.padStart(2, '0'), format: section.format}).year();
     }
 
+    if (section.type === 'quarter') {
+        return date.set(getDurationUnitFromSectionType('month'), val * 3 - 1);
+    }
+
     const type = getDurationUnitFromSectionType(section.type);
     return date.set(type, val);
 }
@@ -249,6 +263,9 @@ export function setSegment(section: DateFieldSection, date: DateTime, amount: nu
                           format: section.format,
                       }).year(),
             );
+        }
+        case 'quarter': {
+            return date.set(getDurationUnitFromSectionType('month'), amount * 3 - 1);
         }
         case 'day':
         case 'weekday':
@@ -308,6 +325,10 @@ function doesSectionHaveLeadingZeros(
             return formatted2001 === '01';
         }
 
+        case 'quarter': {
+            return false;
+        }
+
         case 'month': {
             return dateTime().startOf('year').format(format).length > 1;
         }
@@ -345,6 +366,10 @@ function getSectionPlaceholder(
     switch (sectionConfig.type) {
         case 'year': {
             return i18n('year_placeholder').repeat(dateTime().format(currentTokenValue).length);
+        }
+
+        case 'quarter': {
+            return i18n('quarter_placeholder');
         }
 
         case 'month': {
@@ -512,7 +537,7 @@ export function cleanString(dirtyString: string) {
 export function getEditableSections(
     sections: DateFieldSectionWithoutPosition[],
     value: DateTime,
-    validSegments: typeof EDITABLE_SEGMENTS,
+    validSegments: AvailableSections,
 ) {
     let position = 1;
     const newSections: DateFieldSection[] = [];
@@ -559,7 +584,7 @@ export function isEditableSection(section: DateFieldSectionWithoutPosition): boo
 export function toEditableSection(
     section: DateFieldSectionWithoutPosition,
     value: DateTime,
-    validSegments: typeof EDITABLE_SEGMENTS,
+    validSegments: AvailableSections,
     position: number,
     previousEditableSection: number,
 ): DateFieldSection {
@@ -635,12 +660,10 @@ export function parseDateFromString(str: string, format: string, timeZone?: stri
 }
 
 export function isAllSegmentsValid(
-    allSegments: typeof EDITABLE_SEGMENTS,
-    validSegments: typeof EDITABLE_SEGMENTS,
+    allSegments: AvailableSections,
+    validSegments: AvailableSections,
 ) {
-    return Object.keys(allSegments).every(
-        (key) => validSegments[key as keyof typeof EDITABLE_SEGMENTS],
-    );
+    return Object.keys(allSegments).every((key) => validSegments[key as keyof AvailableSections]);
 }
 
 export function useFormatSections(format: string) {
@@ -654,4 +677,78 @@ export function useFormatSections(format: string) {
     }
 
     return sections;
+}
+
+const dateUnits = ['day', 'month', 'quarter', 'year'] satisfies DateFieldSectionType[];
+const timeUnits = ['second', 'minute', 'hour'] satisfies DateFieldSectionType[];
+
+export function getFormatInfo(sections: DateFieldSectionWithoutPosition[]): FormatInfo {
+    const availableUnits: AvailableSections = {};
+    let hasDate = false;
+    let hasTime = false;
+    let minDateUnitIndex = dateUnits.length - 1;
+    let minTimeUnitIndex = timeUnits.length - 1;
+    for (const s of sections) {
+        if (!isEditableSection(s)) {
+            continue;
+        }
+        const dateUnitIndex = dateUnits.indexOf(s.type as any);
+        const timeUnitIndex = timeUnits.indexOf(s.type as any);
+        availableUnits[s.type] = true;
+        hasDate ||= dateUnitIndex !== -1;
+        hasTime ||= timeUnitIndex !== -1;
+        minDateUnitIndex =
+            dateUnitIndex === -1 ? minDateUnitIndex : Math.min(dateUnitIndex, minDateUnitIndex);
+        minTimeUnitIndex =
+            timeUnitIndex === -1 ? minTimeUnitIndex : Math.min(timeUnitIndex, minTimeUnitIndex);
+    }
+    return {
+        availableUnits,
+        hasDate,
+        hasTime,
+        minDateUnit: dateUnits[minDateUnitIndex] ?? 'day',
+        minTimeUnit: timeUnits[minTimeUnitIndex] ?? 'second',
+    };
+}
+
+export function adjustDateToFormat(
+    date: DateTime,
+    formatInfo: FormatInfo,
+    method: 'startOf' | 'endOf' = 'startOf',
+) {
+    let newDate = date;
+    if (formatInfo.hasDate) {
+        if (formatInfo.minDateUnit !== 'day') {
+            newDate = newDate[method](formatInfo.minDateUnit);
+            newDate = mergeDateTime(newDate, date);
+        }
+    }
+    if (formatInfo.hasTime) {
+        newDate = mergeDateTime(newDate, date[method](formatInfo.minTimeUnit));
+    }
+
+    return newDate;
+}
+
+export function markValidSection(
+    allSections: AvailableSections,
+    editableSections: AvailableSections,
+    unit: DateFieldSectionType,
+) {
+    const validSections = {...editableSections};
+    validSections[unit] = true;
+    if (validSections.day && validSections.month && validSections.year && allSections.weekday) {
+        validSections.weekday = true;
+    }
+    if (validSections.month && allSections.quarter) {
+        validSections.quarter = true;
+    }
+    if (validSections.quarter && allSections.month) {
+        validSections.month = true;
+    }
+    if (validSections.hour && allSections.dayPeriod) {
+        validSections.dayPeriod = true;
+    }
+
+    return validSections;
 }

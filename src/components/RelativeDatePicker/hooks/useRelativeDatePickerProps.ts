@@ -6,6 +6,7 @@ import type {ButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 import type {Calendar, CalendarInstance} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
+import {getCalendarModes} from '../../DatePicker/utils';
 import {useRelativeDateFieldProps} from '../../RelativeDateField';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
 import {mergeProps} from '../../utils/mergeProps';
@@ -131,6 +132,7 @@ export function useRelativeDatePickerProps(
         });
     }
     const groupRef = React.useRef<HTMLElement>(null);
+    const calendarModes = getCalendarModes(datePickerState.formatInfo);
 
     return {
         groupProps: {
@@ -223,7 +225,7 @@ export function useRelativeDatePickerProps(
             value: state.selectedDate,
             onUpdate: (v) => {
                 datePickerState.setDateValue(v);
-                if (!state.datePickerState.hasTime) {
+                if (!state.datePickerState.formatInfo.hasTime) {
                     setOpen(false);
                     focusInput();
                 }
@@ -232,6 +234,7 @@ export function useRelativeDatePickerProps(
             onFocusUpdate: setFocusedDate,
             minValue: props.minValue,
             maxValue: props.maxValue,
+            modes: mode === 'absolute' ? calendarModes : undefined,
         },
         timeInputProps: {
             value: datePickerState.timeValue,

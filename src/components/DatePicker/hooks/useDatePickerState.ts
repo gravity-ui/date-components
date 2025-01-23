@@ -1,6 +1,7 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {useDateFieldState} from '../../DateField';
+import {adjustDateToFormat} from '../../DateField/utils';
 import type {DateFieldBase} from '../../types';
 import {createPlaceholderValue, mergeDateTime} from '../../utils/dates';
 import {getDateTimeValue} from '../utils';
@@ -17,6 +18,7 @@ export const useDatePickerState = datePickerStateFactory({
     setTimezone: (date, timeZone) => date.timeZone(timeZone),
     getDateTime: getDateTimeValue,
     useDateFieldState,
+    adjustDateToFormat,
 });
 
 function getPlaceholderTime(placeholderValue: DateTime | undefined, timeZone?: string) {

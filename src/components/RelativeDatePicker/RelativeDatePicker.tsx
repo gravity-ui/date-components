@@ -137,7 +137,7 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                         ) : (
                             <Calendar {...calendarProps} />
                         )}
-                        {state.datePickerState.hasTime && (
+                        {state.datePickerState.formatInfo.hasTime && (
                             <div className={b('time-field-wrapper')}>
                                 <DateField {...timeInputProps} />
                             </div>

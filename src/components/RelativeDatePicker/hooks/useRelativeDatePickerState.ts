@@ -3,6 +3,7 @@ import React from 'react';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
+import {adjustDateToFormat} from '../../DateField/utils';
 import {useDatePickerState} from '../../DatePicker';
 import type {DatePickerState} from '../../DatePicker';
 import {useRelativeDateFieldState} from '../../RelativeDateField';
@@ -78,13 +79,20 @@ export function useRelativeDatePickerState(
     const datePickerState = useDatePickerState({
         value: valueDate,
         onUpdate: (date) => {
-            setValueDate(date);
+            let newDate = date;
+            if (newDate && props.roundUp) {
+                newDate = adjustDateToFormat(newDate, datePickerState.formatInfo, 'endOf');
+                if (!datePickerState.formatInfo.hasTime) {
+                    newDate = newDate.endOf('day');
+                }
+            }
+            setValueDate(newDate);
 
-            if (value?.type === 'absolute' && date?.isSame(value.value)) {
+            if (value?.type === 'absolute' && newDate?.isSame(value.value)) {
                 return;
             }
 
-            setValue(date ? {type: 'absolute', value: date} : null);
+            setValue(newDate ? {type: 'absolute', value: newDate} : null);
         },
         format: props.format,
         placeholderValue: props.placeholderValue,

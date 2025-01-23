@@ -4,7 +4,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {ValidationState} from '../../types';
 import {createPlaceholderValue} from '../../utils/dates';
-import type {DateFieldSection, DateFieldSectionType} from '../types';
+import type {DateFieldSection, DateFieldSectionType, FormatInfo} from '../types';
 import {
     EDITABLE_SEGMENTS,
     formatSections,
@@ -14,6 +14,7 @@ import {
 
 const PAGE_STEP: Partial<Record<DateFieldSectionType, number>> = {
     year: 5,
+    quarter: 2,
     month: 2,
     weekday: 3,
     day: 7,
@@ -29,6 +30,7 @@ export type BaseDateFieldStateOptions<T = DateTime> = {
     timeZone: string;
     validationState?: ValidationState;
     editableSections: DateFieldSection[];
+    formatInfo: FormatInfo;
     readOnly?: boolean;
     disabled?: boolean;
     selectedSectionIndexes: {startIndex: number; endIndex: number} | null;
@@ -66,9 +68,17 @@ export type DateFieldState<T = DateTime> = {
     disabled?: boolean;
     /** A list of segments for the current value. */
     sections: DateFieldSection[];
-    /** Whether the the format is containing date parts */
+    /** Some info about available sections */
+    formatInfo: FormatInfo;
+    /**
+     * @deprecated use formatInfo.hasDate instead.
+     * Whether the the format is containing date parts
+     */
     hasDate: boolean;
-    /** Whether the the format is containing time parts */
+    /**
+     * @deprecated use formatInfo.hasTime instead.
+     * Whether the the format is containing time parts
+     */
     hasTime: boolean;
     /** Selected sections */
     selectedSectionIndexes: {startIndex: number; endIndex: number} | null;
@@ -122,6 +132,7 @@ export function useBaseDateFieldState<T = DateTime>(
         validationState,
         displayValue,
         editableSections,
+        formatInfo,
         selectedSectionIndexes,
         selectedSections,
         isEmpty,
@@ -140,19 +151,6 @@ export function useBaseDateFieldState<T = DateTime>(
 
     const enteredKeys = React.useRef('');
 
-    const {hasDate, hasTime} = React.useMemo(() => {
-        let hasDateInner = false;
-        let hasTimeInner = false;
-        for (const s of editableSections) {
-            hasTimeInner ||= ['hour', 'minute', 'second'].includes(s.type);
-            hasDateInner ||= ['day', 'month', 'year'].includes(s.type);
-        }
-        return {
-            hasTime: hasTimeInner,
-            hasDate: hasDateInner,
-        };
-    }, [editableSections]);
-
     return {
         value,
         isEmpty,
@@ -163,8 +161,9 @@ export function useBaseDateFieldState<T = DateTime>(
         readOnly: props.readOnly,
         disabled: props.disabled,
         sections: editableSections,
-        hasDate,
-        hasTime,
+        formatInfo,
+        hasDate: formatInfo.hasDate,
+        hasTime: formatInfo.hasTime,
         selectedSectionIndexes,
         validationState,
         setSelectedSections(position) {
@@ -425,6 +424,7 @@ export function useBaseDateFieldState<T = DateTime>(
                 case 'hour':
                 case 'minute':
                 case 'second':
+                case 'quarter':
                 case 'year': {
                     if (!Number.isInteger(Number(newValue))) {
                         return;

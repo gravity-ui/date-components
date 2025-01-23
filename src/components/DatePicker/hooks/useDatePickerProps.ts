@@ -13,7 +13,7 @@ import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
 import {mergeProps} from '../../utils/mergeProps';
 import type {DatePickerProps} from '../DatePicker';
 import {i18n} from '../i18n';
-import {getDateTimeValue} from '../utils';
+import {getCalendarModes, getDateTimeValue} from '../utils';
 
 import type {DatePickerState} from './useDatePickerState';
 
@@ -82,7 +82,8 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
         });
     }
 
-    const onlyTime = state.hasTime && !state.hasDate;
+    const onlyTime = state.formatInfo.hasTime && !state.formatInfo.hasDate;
+    const calendarModes = getCalendarModes(state.formatInfo);
 
     return {
         groupProps: {
@@ -168,6 +169,7 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             timeZone: state.timeZone,
             focusedValue: focusedDate,
             onFocusUpdate: setFocusedDate,
+            modes: calendarModes,
         },
         timeInputProps: {
             value: state.timeValue,
