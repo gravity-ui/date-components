@@ -9,7 +9,6 @@ const config: StorybookConfig = {
         './theme-addon/register.tsx',
         '@storybook/addon-webpack5-compiler-babel',
         '@storybook/addon-storysource',
-        '@storybook/addon-styling-webpack',
         {
             name: '@storybook/addon-styling-webpack',
             options: {

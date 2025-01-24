@@ -4,12 +4,10 @@
 $block: '.#{variables.$ns}relative-range-date-picker-presets-doc';
 
 #{$block} {
+    padding: var(--g-spacing-4);
+
     &__button {
         --g-button-background-color-hover: transparent;
-    }
-
-    &__content {
-        --g-popover-max-width: 'none';
     }
 
     &__table {
