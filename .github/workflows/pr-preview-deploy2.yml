@@ -1,0 +1,42 @@
+name: PR Preview Deploy 2
+
+on:
+  workflow_run:
+    workflows: ['PR Preview Build']
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: Deploy
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GRAVITY_UI_BOT_GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Extract PR Number
+        id: pr
+        run: echo "::set-output name=id::$(<pr/pr-id.txt)"
+        shell: bash
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.STORYBOOK_S3_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.STORYBOOK_S3_SECRET_KEY }}
+          aws-region: ru-central1
+      - name: Upload to S3
+        env:
+          AWS_EC2_METADATA_DISABLED: true
+        run: aws s3 cp static s3://storybook-static/date-components/pulls/${{ steps.pr.outputs.id }}/ --endpoint-url=https://storage.yandexcloud.net --recursive
+        shell: bash
+      - name: Create Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GRAVITY_UI_BOT_GITHUB_TOKEN }}
+          number: ${{ steps.pr.outputs.id }}
+          message: '[Preview](https://preview.gravity-ui.com/date-components/${{ steps.pr.outputs.id }}/) is ready.'
