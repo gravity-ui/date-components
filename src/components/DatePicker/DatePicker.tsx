@@ -68,7 +68,7 @@ export function DatePicker({className, ...props}: DatePickerProps) {
                                 ) : (
                                     <Calendar {...calendarProps} />
                                 )}
-                                {state.hasTime && (
+                                {state.formatInfo.hasTime && (
                                     <div className={b('time-field-wrapper')}>
                                         <DateField {...timeInputProps} />
                                     </div>

@@ -31,7 +31,7 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
     const {groupProps, fieldProps, calendarButtonProps, popupProps, calendarProps, timeInputProps} =
         useDatePickerProps(state, props);
 
-    const isOnlyTime = state.hasTime && !state.hasDate;
+    const isOnlyTime = state.formatInfo.hasTime && !state.formatInfo.hasDate;
 
     return (
         <div className={b(null, className)} {...groupProps}>
@@ -44,7 +44,7 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
                             ) : (
                                 <RangeCalendar {...calendarProps} value={state.value} />
                             )}
-                            {state.hasTime && (
+                            {state.formatInfo.hasTime && (
                                 <div className={b('time-field-wrapper')}>
                                     <RangeDateField {...timeInputProps} />
                                 </div>

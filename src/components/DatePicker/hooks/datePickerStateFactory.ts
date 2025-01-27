@@ -211,7 +211,7 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
             }
         };
 
-        if (dateFieldState.hasTime && !selectedTime) {
+        if (dateFieldState.formatInfo.hasTime && !selectedTime) {
             selectedTime = dateFieldState.displayValue;
         }
 

@@ -65,7 +65,8 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
     const handleRef = useForkRef(anchorRef, groupProps.ref);
 
     const isMobile = useMobile();
-    const isOnlyTime = state.datePickerState.hasTime && !state.datePickerState.hasDate;
+    const isOnlyTime =
+        state.datePickerState.formatInfo.hasTime && !state.datePickerState.formatInfo.hasDate;
 
     return (
         <div {...groupProps} ref={handleRef} className={b(null, props.className)}>

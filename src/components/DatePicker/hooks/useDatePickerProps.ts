@@ -158,7 +158,7 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             readOnly: props.readOnly,
             onUpdate: (d) => {
                 state.setDateValue(d);
-                if (!state.hasTime) {
+                if (!state.formatInfo.hasTime) {
                     focusInput();
                 }
             },

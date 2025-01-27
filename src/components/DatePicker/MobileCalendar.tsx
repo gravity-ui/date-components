@@ -21,9 +21,9 @@ interface MobileCalendarProps {
 }
 export function MobileCalendar({props, state}: MobileCalendarProps) {
     let type: InputDateType = 'date';
-    if (state.hasTime && state.hasDate) {
+    if (state.formatInfo.hasTime && state.formatInfo.hasDate) {
         type = 'datetime-local';
-    } else if (state.hasTime) {
+    } else if (state.formatInfo.hasTime) {
         type = 'time';
     }
 
@@ -48,13 +48,13 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
                         format: getDateFormat(type),
                         timeZone: 'system',
                     }).timeZone(state.timeZone, true);
-                    let newDate = state.hasDate
+                    let newDate = state.formatInfo.hasDate
                         ? localDate
                         : createPlaceholderValue({
                               placeholderValue: props.placeholderValue?.timeZone(state.timeZone),
                               timeZone: state.timeZone,
                           });
-                    if (state.hasTime) {
+                    if (state.formatInfo.hasTime) {
                         newDate = mergeDateTime(newDate, localDate);
                     } else if (state.value) {
                         newDate = mergeDateTime(newDate, state.value.timeZone(state.timeZone));
