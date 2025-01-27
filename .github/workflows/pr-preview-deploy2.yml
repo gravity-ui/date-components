@@ -24,36 +24,10 @@ jobs:
         run: echo "::set-output name=id::$(<pr/pr-id.txt)"
         shell: bash
       - name: Install AWS CLI
-        run: |
-          workdir="2.22.35"
-          mkdir -p "$workdir"
-          cd "$workdir"
-          curl -I -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.22.35.zip" -o "awscliv2.zip"
-          wait
-          unzip -qq awscliv2.zip
-          wait
-          aws_path=$(which aws || true)
-          [[ -n "$aws_path" ]] && msg_log "aws_path = ${aws_path}"
-          if [[ "$aws_path" =~ ^qemu-aarch64.* ]]; then
-              msg_error "Failed to install AWS CLI - Make sure AWS_CLI_ARCH is set properly, current value is ${provided_arch}"
-          elif [[ "$aws_path" =~ ^.*aws.*not.*found || -z "$aws_path" ]]; then
-              # Fresh install
-              ./aws/install --bin-dir "$_BINDIR" --install-dir "${_INSTALLROOTDIR}/aws-cli"
-          else
-              # Update
-              ./aws/install --bin-dir "$_BINDIR" --install-dir "${_INSTALLROOTDIR}/aws-cli" --update
-          fi
-          test_results="$(aws --version 2>&1 || true)"
-          if [[ "$test_results" =~ ^aws-cli/.*  ]]; then
-              echo "$test_results"
-          else
-              msg_error "Installation failed - ${test_results}"
-              if [[ "$test_results" =~ ^qemu-aarch64.*Could.*not.*open ]]; then
-                  msg_log "Make sure AWS_CLI_ARCH is set properly, current value is - ${provided_arch}"
-              fi        
-          fi
-          [[ -d "$workdir" ]] && rm -r "$workdir"
-        shell: bash
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          version: 2.22.35
+          arch: amd64
       - name: Upload to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.STORYBOOK_S3_KEY_ID }}
