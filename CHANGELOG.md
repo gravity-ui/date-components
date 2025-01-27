@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.12.0](https://github.com/gravity-ui/date-components/compare/v2.11.0...v2.12.0) (2025-01-27)
+
+
+### Features
+
+* **RelativeRangeDatePickerDialog:** allow disable focus trap ([#167](https://github.com/gravity-ui/date-components/issues/167)) ([984deb4](https://github.com/gravity-ui/date-components/commit/984deb489976ef32cc58e94938db9c7240edb188))
+* support quarters, show callendar according to format ([#164](https://github.com/gravity-ui/date-components/issues/164)) ([58ff5d8](https://github.com/gravity-ui/date-components/commit/58ff5d8e7aae97f3ab6322ed5449d58a9ced10e7))
+
+
+### Bug Fixes
+
+* action ([8f9a9f3](https://github.com/gravity-ui/date-components/commit/8f9a9f38a52916c5abda7847e7edea70a22b2b25))
+
 ## [2.11.0](https://github.com/gravity-ui/date-components/compare/v2.10.3...v2.11.0) (2024-11-08)
 
 
