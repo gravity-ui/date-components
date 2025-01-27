@@ -29,7 +29,9 @@ jobs:
           mkdir -p "$workdir"
           cd "$workdir"
           curl -I -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.22.35.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
+          wait
+          unzip -qq awscliv2.zip
+          wait
           aws_path=$(which aws || true)
           [[ -n "$aws_path" ]] && msg_log "aws_path = ${aws_path}"
           if [[ "$aws_path" =~ ^qemu-aarch64.* ]]; then
