@@ -23,6 +23,11 @@ jobs:
       - name: Build Storybook
         run: npx storybook build
         shell: bash
+      - name: Install AWS CLI
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          version: 2.22.35
+          arch: amd64
       - name: Upload to S3
         uses: gravity-ui/preview-upload-to-s3-action@v1
         with:
