@@ -1,17 +1,19 @@
-export type DateFieldSectionType = Extract<
-    Intl.DateTimeFormatPartTypes,
-    | 'day'
-    | 'dayPeriod'
-    | 'hour'
-    | 'literal'
-    | 'minute'
-    | 'month'
-    | 'second'
-    | 'timeZoneName'
-    | 'weekday'
-    | 'year'
-    | 'unknown'
->;
+export type DateFieldSectionType =
+    | Extract<
+          Intl.DateTimeFormatPartTypes,
+          | 'day'
+          | 'dayPeriod'
+          | 'hour'
+          | 'literal'
+          | 'minute'
+          | 'month'
+          | 'second'
+          | 'timeZoneName'
+          | 'weekday'
+          | 'year'
+          | 'unknown'
+      >
+    | 'quarter';
 
 export type DateFormatTokenMap = {
     [formatToken: string]:
@@ -91,3 +93,13 @@ export type DateFieldSectionWithoutPosition<TSection extends DateFieldSection = 
         | 'previousEditableSection'
         | 'nextEditableSection'
     >;
+
+export type AvailableSections = Partial<Record<DateFieldSectionType, boolean>>;
+
+export interface FormatInfo {
+    hasTime: boolean;
+    hasDate: boolean;
+    availableUnits: AvailableSections;
+    minDateUnit: 'day' | 'month' | 'quarter' | 'year';
+    minTimeUnit: 'second' | 'minute' | 'hour';
+}

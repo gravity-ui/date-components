@@ -52,7 +52,7 @@ export function DatePicker({className, ...props}: DatePickerProps) {
         useDatePickerProps(state, props);
 
     const isMobile = useMobile();
-    const isOnlyTime = state.hasTime && !state.hasDate;
+    const isOnlyTime = state.formatInfo.hasTime && !state.formatInfo.hasDate;
 
     return (
         <div className={b(null, className)} {...groupProps}>
@@ -68,7 +68,7 @@ export function DatePicker({className, ...props}: DatePickerProps) {
                                 ) : (
                                     <Calendar {...calendarProps} />
                                 )}
-                                {state.hasTime && (
+                                {state.formatInfo.hasTime && (
                                     <div className={b('time-field-wrapper')}>
                                         <DateField {...timeInputProps} />
                                     </div>

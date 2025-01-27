@@ -85,8 +85,8 @@ test('call onUpdate only if the entire value is valid', () => {
     expect(cleanString(result.current.text)).toBe('31.01.2024 — 29.02.2024');
 
     expect(onUpdateSpy).toHaveBeenLastCalledWith({
-        start: dateTime({input: '2024-01-31T00:00:00', timeZone}),
-        end: dateTime({input: '2024-02-29T00:00:00', timeZone}),
+        start: dateTime({input: '2024-01-31T00:00:00', timeZone}).startOf('day'),
+        end: dateTime({input: '2024-02-29T00:00:00', timeZone}).endOf('day'),
     });
 });
 

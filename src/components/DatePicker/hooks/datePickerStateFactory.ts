@@ -4,6 +4,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
 import type {DateFieldState} from '../../DateField';
+import type {FormatInfo} from '../../DateField/types';
 import type {DateFieldBase, PopupTriggerProps} from '../../types';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 
@@ -40,9 +41,17 @@ export interface DatePickerState<T = DateTime> {
     disabled?: boolean;
     /** Format of the date when rendered in the input. */
     format: string;
-    /** Whether the date picker supports selecting a date. */
+    /** Format info */
+    formatInfo: FormatInfo;
+    /**
+     * @deprecated use formatInfo.hasDate instead
+     * Whether the date picker supports selecting a date.
+     */
     hasDate: boolean;
-    /** Whether the date picker supports selecting a time. */
+    /**
+     * @deprecated use formatInfo.hasTime instead
+     * Whether the date picker supports selecting a time.
+     */
     hasTime: boolean;
     /** Format of the time when rendered in the input. */
     timeFormat?: string;
@@ -60,6 +69,7 @@ export interface DatePickerStateFactoryOptions<T, O extends DateFieldBase<T>> {
     setTimezone: (date: T, timeZone: string) => T;
     getDateTime: (date: T | null | undefined) => DateTime | undefined;
     useDateFieldState: (props: O) => DateFieldState<T>;
+    adjustDateToFormat: (date: T, info: FormatInfo) => T;
 }
 
 export interface DatePickerStateOptions<T>
@@ -72,6 +82,7 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
     setTimezone,
     getDateTime,
     useDateFieldState,
+    adjustDateToFormat,
 }: DatePickerStateFactoryOptions<T, O>) {
     return function useDatePickerState(props: O): DatePickerState<T> {
         const {disabled, readOnly} = props;
@@ -133,7 +144,7 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
         });
 
         const timeFormat = React.useMemo(() => {
-            if (!dateFieldState.hasTime) {
+            if (!dateFieldState.formatInfo.hasTime) {
                 return undefined;
             }
             const timeFormatParts: string[] = [];
@@ -151,12 +162,12 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
             }
             const dayPeriod = dateFieldState.sections.find((s) => s.type === 'dayPeriod');
             return timeFormatParts.join(':') + (dayPeriod ? ` ${dayPeriod.format}` : '');
-        }, [dateFieldState.hasTime, dateFieldState.sections]);
+        }, [dateFieldState.formatInfo.hasTime, dateFieldState.sections]);
 
         if (value) {
             selectedDate = setTimezone(value, timeZone);
-            if (dateFieldState.hasTime) {
-                selectedTime = setTimezone(value, timeZone);
+            if (dateFieldState.formatInfo.hasTime) {
+                selectedTime = selectedDate;
             }
         }
 
@@ -166,15 +177,16 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
                 return;
             }
 
-            const shouldClose = !dateFieldState.hasTime;
-            if (dateFieldState.hasTime) {
+            const newDate = adjustDateToFormat(newValue, dateFieldState.formatInfo);
+            const shouldClose = !dateFieldState.formatInfo.hasTime;
+            if (dateFieldState.formatInfo.hasTime) {
                 if (selectedTime || shouldClose) {
-                    commitValue(newValue, selectedTime || newValue);
+                    commitValue(newDate, selectedTime || newDate);
                 } else {
-                    setSelectedDate(newValue);
+                    setSelectedDate(newDate);
                 }
             } else {
-                commitValue(newValue, newValue);
+                commitValue(newDate, newDate);
             }
 
             if (shouldClose) {
@@ -187,7 +199,10 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
                 return;
             }
 
-            const newTime = newValue ?? getPlaceholderTime(props.placeholderValue, timeZone);
+            const newTime = adjustDateToFormat(
+                newValue ?? getPlaceholderTime(props.placeholderValue, timeZone),
+                dateFieldState.formatInfo,
+            );
 
             if (selectedDate) {
                 commitValue(selectedDate, newTime);
@@ -196,7 +211,7 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
             }
         };
 
-        if (dateFieldState.hasTime && !selectedTime) {
+        if (dateFieldState.formatInfo.hasTime && !selectedTime) {
             selectedTime = dateFieldState.displayValue;
         }
 
@@ -220,13 +235,14 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
             disabled,
             readOnly,
             format,
-            hasDate: dateFieldState.hasDate,
-            hasTime: dateFieldState.hasTime,
+            formatInfo: dateFieldState.formatInfo,
+            hasDate: dateFieldState.formatInfo.hasDate,
+            hasTime: dateFieldState.formatInfo.hasTime,
             timeFormat,
             timeZone,
             isOpen,
             setOpen(newIsOpen, reason) {
-                if (!newIsOpen && !value && selectedDate && dateFieldState.hasTime) {
+                if (!newIsOpen && !value && selectedDate && dateFieldState.formatInfo.hasTime) {
                     commitValue(
                         selectedDate,
                         selectedTime || getPlaceholderTime(props.placeholderValue, props.timeZone),

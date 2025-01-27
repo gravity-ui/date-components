@@ -10,9 +10,7 @@ export interface PlaceholderValueOptions {
     timeZone?: string;
 }
 export function createPlaceholderValue({placeholderValue, timeZone}: PlaceholderValueOptions) {
-    return (
-        placeholderValue ?? dateTime({timeZone}).set('hour', 0).set('minute', 0).set('second', 0)
-    );
+    return placeholderValue ?? dateTime({timeZone}).startOf('day');
 }
 
 export function isInvalid(
