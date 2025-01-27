@@ -25,7 +25,7 @@ jobs:
         shell: bash
       - name: Install AWS CLI
         run: |
-          $workdir="2.22.35"
+          workdir="2.22.35"
           mkdir -p "$workdir"
           cd "$workdir"
           curl -I -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.22.35.zip" -o "awscliv2.zip"
