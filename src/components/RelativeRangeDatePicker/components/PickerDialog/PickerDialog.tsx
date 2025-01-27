@@ -26,7 +26,8 @@ export interface PickerDialogProps {
     isMobile?: boolean;
     anchorRef?: React.RefObject<HTMLElement>;
     onClose: () => void;
-    focusInput: () => void;
+    focusInput?: () => void;
+    disableFocusTrap?: boolean;
 }
 
 export function PickerDialog({
@@ -38,6 +39,7 @@ export function PickerDialog({
     isMobile,
     anchorRef,
     className,
+    disableFocusTrap,
 }: PickerDialogProps) {
     if (isMobile) {
         return (
@@ -56,14 +58,14 @@ export function PickerDialog({
             open={open}
             onEscapeKeyDown={() => {
                 onClose();
-                focusInput();
+                focusInput?.();
             }}
             onClose={onClose}
             role="dialog"
             anchorRef={anchorRef}
             contentClassName={b('content', {size: props.size}, className)}
-            autoFocus
-            focusTrap
+            autoFocus={!disableFocusTrap}
+            focusTrap={!disableFocusTrap}
         >
             <DialogContent {...props} state={state} onApply={onClose} />
         </Popup>
