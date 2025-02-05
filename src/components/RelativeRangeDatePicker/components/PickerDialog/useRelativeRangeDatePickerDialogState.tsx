@@ -1,69 +1,119 @@
 import React from 'react';
 
-import {dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+import {useControlledState} from '@gravity-ui/uikit';
 
 import type {Value} from '../../../RelativeDatePicker';
 import type {RangeValue} from '../../../types';
-import {getValidationResult} from '../../../utils/validation/datePicker';
-import type {RelativeRangeDatePickerState} from '../../hooks/useRelativeRangeDatePickerState';
-import type {RelativeRangeDatePickerProps} from '../../types';
+import {getRangeValidationResult} from '../../hooks/useRelativeRangeDatePickerState';
 
-import {i18n} from './i18n';
+import type {PickerFormProps} from './PickerForm';
 
-export function useRelativeRangeDatePickerDialogState(
-    state: RelativeRangeDatePickerState,
-    props: RelativeRangeDatePickerProps,
-) {
-    const {withApplyButton, allowNullableValues} = props;
+export function useRelativeRangeDatePickerDialogState(props: PickerFormProps) {
+    const [userTimeZone, setUserTimeZone] = useControlledState(
+        props.timeZone,
+        props.defaultTimeZone ?? 'default',
+        props.onUpdateTimeZone,
+    );
 
-    const [start, setStart] = React.useState<Value | null>(state.value?.start ?? null);
-    const [end, setEnd] = React.useState<Value | null>(state.value?.end ?? null);
-    const [innerTimeZone, setTimeZone] = React.useState(state.timeZone);
+    const [value, setValue] = useControlledState(
+        props.value,
+        props.defaultValue ?? null,
+        (v, tz: string) => {
+            setUserTimeZone(tz);
+            if (value !== v || (value && userTimeZone !== tz)) {
+                props.onUpdate?.(v, tz);
+            }
+        },
+    );
 
-    const timeZone = withApplyButton ? innerTimeZone : state.timeZone;
+    const {withApplyButton} = props;
+
+    const [start, setStart] = React.useState<Value | null>(value?.start ?? null);
+    const [end, setEnd] = React.useState<Value | null>(value?.end ?? null);
+    const [innerTimeZone, setTimeZone] = React.useState(userTimeZone);
+
+    const timeZone = withApplyButton ? innerTimeZone : userTimeZone;
+    const allowNullableValues = props.allowNullableValues;
 
     function setStartValue(newValue: Value | null) {
+        if (props.readOnly) {
+            return;
+        }
         setStart(newValue);
         if (!withApplyButton) {
-            state.setValue(getRangeValue(newValue, end, {...props, timeZone}), timeZone);
+            setValue(
+                getRangeValue(newValue, end, {...props, timeZone, allowNullableValues}),
+                timeZone,
+            );
         }
     }
 
     function setEndValue(newValue: Value | null) {
+        if (props.readOnly) {
+            return;
+        }
         setEnd(newValue);
         if (!withApplyButton) {
-            state.setValue(getRangeValue(start, newValue, {...props, timeZone}), timeZone);
+            setValue(
+                getRangeValue(start, newValue, {...props, timeZone, allowNullableValues}),
+                timeZone,
+            );
         }
     }
 
     function setTimeZoneValue(newTimeZone: string) {
+        if (props.readOnly) {
+            return;
+        }
         setTimeZone(newTimeZone);
+        const newStart = start ? {...start} : start;
+        if (newStart?.type === 'absolute') {
+            newStart.value = newStart.value.timeZone(newTimeZone, true);
+            setStart(newStart);
+        }
+        const newEnd = end ? {...end} : end;
+        if (newEnd?.type === 'absolute') {
+            newEnd.value = newEnd.value.timeZone(newTimeZone, true);
+            setEnd(newEnd);
+        }
         if (!withApplyButton) {
-            state.setValue(
-                getRangeValue(start, end, {...props, timeZone: newTimeZone}),
+            setValue(
+                getRangeValue(newStart, newEnd, {
+                    ...props,
+                    timeZone: newTimeZone,
+                    allowNullableValues,
+                }),
                 newTimeZone,
             );
         }
     }
 
     function setRange(newStart: Value, newEnd: Value) {
+        if (props.readOnly) {
+            return;
+        }
         setStart(newStart);
         setEnd(newEnd);
         if (!withApplyButton) {
-            state.setValue(getRangeValue(newStart, newEnd, {...props, timeZone}), timeZone);
+            setValue(
+                getRangeValue(newStart, newEnd, {...props, timeZone, allowNullableValues}),
+                timeZone,
+            );
         }
     }
 
     function applyValue() {
-        state.setValue(getRangeValue(start, end, {...props, timeZone}), timeZone);
+        if (props.readOnly) {
+            return;
+        }
+        setValue(getRangeValue(start, end, {...props, timeZone, allowNullableValues}), timeZone);
     }
 
     const validation = React.useMemo(
         () =>
             getRangeValidationResult(
-                start,
-                end,
+                start || end ? {start, end} : null,
                 allowNullableValues,
                 props.minValue,
                 props.maxValue,
@@ -100,7 +150,7 @@ interface GetRangeValueOptions {
     allowNullableValues?: boolean;
     minValue?: DateTime;
     maxValue?: DateTime;
-    isDateUnavailable?: (v: DateTime) => boolean;
+    isDateUnavailable?: (v: DateTime, endPoint: 'start' | 'end') => boolean;
     timeZone?: string;
 }
 function getRangeValue(
@@ -113,8 +163,7 @@ function getRangeValue(
     }
 
     const {isInvalid} = getRangeValidationResult(
-        start,
-        end,
+        {start, end},
         options.allowNullableValues,
         options.minValue,
         options.maxValue,
@@ -127,58 +176,4 @@ function getRangeValue(
     }
 
     return {start, end};
-}
-
-function getRangeValidationResult(
-    start: Value | null | undefined,
-    end: Value | null | undefined,
-    allowNullableValues: boolean | undefined,
-    minValue: DateTime | undefined,
-    maxValue: DateTime | undefined,
-    isDateUnavailable: ((v: DateTime) => boolean) | undefined,
-    timeZone: string,
-) {
-    if (!start && !end) {
-        return {isInvalid: false};
-    }
-
-    const startDate = start ? dateTimeParse(start.value, {timeZone}) : null;
-    const endDate = end ? dateTimeParse(end.value, {timeZone, roundUp: true}) : null;
-
-    const startValidationResult = getValidationResult(
-        startDate,
-        minValue,
-        maxValue,
-        isDateUnavailable,
-        timeZone,
-    );
-
-    if (!startDate && !allowNullableValues) {
-        startValidationResult.isInvalid = true;
-        startValidationResult.errors.push(i18n('Value is required.'));
-    }
-
-    const endValidationResult = getValidationResult(
-        endDate,
-        minValue,
-        maxValue,
-        isDateUnavailable,
-        timeZone,
-    );
-
-    if (!endDate && !allowNullableValues) {
-        endValidationResult.isInvalid = true;
-        endValidationResult.errors.push(i18n('Value is required.'));
-    }
-
-    if (startDate && endDate && endDate.isBefore(startDate)) {
-        startValidationResult.isInvalid = true;
-        startValidationResult.errors.push(i18n(`"From" can't be after "To".`));
-    }
-
-    return {
-        isInvalid: startValidationResult.isInvalid || endValidationResult.isInvalid,
-        startValidationResult,
-        endValidationResult,
-    };
 }

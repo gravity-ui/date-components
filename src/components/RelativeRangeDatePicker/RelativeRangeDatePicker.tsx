@@ -130,8 +130,9 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
             />
 
             <PickerDialog
-                state={state}
-                props={props}
+                value={state.value}
+                onUpdate={state.setValue}
+                timeZone={state.timeZone}
                 open={open}
                 onClose={(reason) => {
                     setOpen(false);
@@ -143,9 +144,24 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 }}
                 anchor={anchor}
                 modal
+                popupClassName={props.popupClassName}
+                popupStyle={props.popupStyle}
+                popupPlacement={props.popupPlacement}
+                popupOffset={props.popupOffset}
                 isMobile={isMobile}
-                className={props.popupClassName}
-                placement={props.popupPlacement}
+                size={props.size}
+                format={props.format}
+                readOnly={props.readOnly}
+                minValue={props.minValue}
+                maxValue={props.maxValue}
+                allowNullableValues={props.allowNullableValues}
+                isDateUnavailable={props.isDateUnavailable}
+                placeholderValue={props.placeholderValue}
+                withPresets={props.withPresets}
+                presetTabs={props.presetTabs}
+                docs={props.docs}
+                withApplyButton={props.withApplyButton}
+                withZonesList={props.withZonesList}
             />
         </div>
     );

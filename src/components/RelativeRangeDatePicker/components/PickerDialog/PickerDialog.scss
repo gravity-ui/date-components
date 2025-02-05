@@ -22,33 +22,4 @@ $block: '.#{variables.$ns}relative-range-date-picker-dialog';
             width: 380px;
         }
     }
-
-    &__pickers {
-        display: flex;
-        flex-direction: column;
-        gap: var(--g-spacing-2);
-
-        .g-text-input__label {
-            width: 40px;
-
-            #{$block}__content_size_xl & {
-                width: 50px;
-            }
-        }
-    }
-
-    &__apply {
-        margin-block-start: var(--g-spacing-2);
-    }
-
-    &__zone {
-        margin-block: var(--g-spacing-2) calc(-1 * var(--_--popup-content-padding));
-        margin-inline: calc(-1 * var(--_--popup-content-padding));
-
-        border-block-start: 1px solid var(--g-color-line-generic);
-    }
-
-    &__presets {
-        margin-inline: calc(-1 * var(--_--popup-content-padding));
-    }
 }
