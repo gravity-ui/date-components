@@ -16,6 +16,7 @@ import type {
     FocusableProps,
     InputDOMProps,
     KeyboardEvents,
+    PopupStyleProps,
     StyleProps,
     TextInputProps,
 } from '../types';
@@ -37,7 +38,8 @@ export interface DatePickerProps<T = DateTime>
         DomProps,
         InputDOMProps,
         StyleProps,
-        AccessibilityProps {
+        AccessibilityProps,
+        PopupStyleProps {
     children?: (props: CalendarProps<T>) => React.ReactNode;
     disablePortal?: boolean;
     disableFocusTrap?: boolean;

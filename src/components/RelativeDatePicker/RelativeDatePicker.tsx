@@ -22,6 +22,7 @@ import type {
     FocusableProps,
     InputDOMProps,
     KeyboardEvents,
+    PopupStyleProps,
     StyleProps,
     TextInputProps,
 } from '../types';
@@ -42,7 +43,8 @@ export interface RelativeDatePickerProps
         DomProps,
         InputDOMProps,
         StyleProps,
-        AccessibilityProps {
+        AccessibilityProps,
+        PopupStyleProps {
     children?: (props: CalendarProps) => React.ReactNode;
     /** Handler that is called when the popup's open state changes. */
     onOpenChange?: (open: boolean) => void;

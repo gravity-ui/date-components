@@ -1,4 +1,5 @@
 import type {DateTime} from '@gravity-ui/date-utils';
+import type {CSSProperties, PopupOffset, PopupPlacement} from '@gravity-ui/uikit';
 
 import type {InputBase, Validation, ValueBase} from './inputs';
 
@@ -27,4 +28,15 @@ export interface PopupTriggerProps<Args extends unknown[] = []> {
     defaultOpen?: boolean;
     /** Handler that is called when the popup's open state changes. */
     onOpenChange?: (open: boolean, ...args: Args) => void;
+}
+
+export interface PopupStyleProps {
+    /** Sets the CSS className for the popup element. */
+    popupClassName?: string;
+    /** Sets the CSS style attribute for the popup element. */
+    popupStyle?: CSSProperties;
+    /** Popup placement */
+    popupPlacement?: PopupPlacement;
+    /** Popup offset relative to anchor */
+    popupOffset?: PopupOffset;
 }
