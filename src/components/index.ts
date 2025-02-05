@@ -10,3 +10,5 @@ export * from './RangeDateField';
 export * from './RelativeRangeDatePicker';
 
 export type {RangeValue} from './types';
+
+export type {Keysets, PartialKeysets} from './types/i18n';
