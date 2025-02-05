@@ -213,6 +213,10 @@ export function useRelativeDatePickerProps(
                         : datePickerState.dateFieldState.displayValue,
                 );
             },
+            placement: props.popupPlacement,
+            offset: props.popupOffset,
+            className: props.popupClassName,
+            style: props.popupStyle,
         },
         calendarProps: {
             ref: calendarRef,

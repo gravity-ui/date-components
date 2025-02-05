@@ -14,6 +14,7 @@ import type {
     FocusableProps,
     InputDOMProps,
     KeyboardEvents,
+    PopupStyleProps,
     StyleProps,
     TextInputExtendProps,
     TextInputProps,
@@ -36,7 +37,8 @@ export interface RelativeDateFieldProps
         StyleProps,
         AccessibilityProps,
         FocusableProps,
-        KeyboardEvents {
+        KeyboardEvents,
+        PopupStyleProps {
     /**
      * Show time field in popup
      * @default false
@@ -103,6 +105,10 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
                             setOpen(false);
                         }
                     }}
+                    placement={props.popupPlacement}
+                    offset={props.popupOffset}
+                    className={props.popupClassName}
+                    style={props.popupStyle}
                 >
                     <div className={b('popup-content')}>
                         <Calendar {...calendarProps} />
