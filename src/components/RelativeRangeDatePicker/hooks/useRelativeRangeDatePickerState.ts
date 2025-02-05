@@ -31,7 +31,7 @@ export interface RelativeRangeDatePickerStateOptions {
     /** The maximum allowed date that a user may select. */
     maxValue?: DateTime;
     /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
-    isDateUnavailable?: (date: DateTime) => boolean;
+    isDateUnavailable?: (date: DateTime, endpoint: 'start' | 'end') => boolean;
     allowNullableValues?: boolean;
 }
 
@@ -80,12 +80,12 @@ export function useRelativeRangeDatePickerState(
     };
 }
 
-function getRangeValidationResult(
+export function getRangeValidationResult(
     value: RelativeRangeDatePickerValue | null,
     allowNullableValues: boolean | undefined,
     minValue: DateTime | undefined,
     maxValue: DateTime | undefined,
-    isDateUnavailable: ((v: DateTime) => boolean) | undefined,
+    isDateUnavailable: ((v: DateTime, endpoint: 'start' | 'end') => boolean) | undefined,
     timeZone: string,
 ) {
     if (!value) {
@@ -99,7 +99,7 @@ function getRangeValidationResult(
         startDate,
         minValue,
         maxValue,
-        isDateUnavailable,
+        isDateUnavailable ? (date) => isDateUnavailable(date, 'start') : undefined,
         timeZone,
         i18n('"From"'),
     );
@@ -113,7 +113,7 @@ function getRangeValidationResult(
         endDate,
         minValue,
         maxValue,
-        isDateUnavailable,
+        isDateUnavailable ? (date) => isDateUnavailable(date, 'end') : undefined,
         timeZone,
         i18n('"To"'),
     );
@@ -130,6 +130,8 @@ function getRangeValidationResult(
 
     return {
         isInvalid: startValidationResult.isInvalid || endValidationResult.isInvalid,
+        startValidationResult,
+        endValidationResult,
         errors: startValidationResult.errors.concat(endValidationResult.errors),
     };
 }
