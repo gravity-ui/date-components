@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.0.0](https://github.com/gravity-ui/date-components/compare/v2.12.0...v3.0.0) (2025-02-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* streamline relative range date picker dialog props, extract picker form
+* update to uikit 7
+
+### Features
+
+* add i18n keysets types ([225a190](https://github.com/gravity-ui/date-components/commit/225a1904f60905485d5d573b7704431207fd95e7))
+* **Pickers:** add popup style/positioning props ([fac625d](https://github.com/gravity-ui/date-components/commit/fac625dbb61640ff0a929289a6ea23e26bca1a31))
+* streamline relative range date picker dialog props, extract picker form ([0fa205d](https://github.com/gravity-ui/date-components/commit/0fa205d87b8119e4c79853ae24db43ea32028ab4))
+* update to uikit 7 ([52272a2](https://github.com/gravity-ui/date-components/commit/52272a2904ff11e6d9b748d5cb16d37cfb7d4b82))
+
 ## [2.12.0](https://github.com/gravity-ui/date-components/compare/v2.11.0...v2.12.0) (2025-01-27)
 
 
