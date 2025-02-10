@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/gravity-ui/date-components/compare/v3.0.0...v3.0.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* validations templates phrases for ru ([#172](https://github.com/gravity-ui/date-components/issues/172)) ([aea37f9](https://github.com/gravity-ui/date-components/commit/aea37f953e08dd7e55e6f1a3ed818262f209c62b))
+
 ## [3.0.0](https://github.com/gravity-ui/date-components/compare/v2.12.0...v3.0.0) (2025-02-07)
 
 
