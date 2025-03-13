@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/gravity-ui/date-components/compare/v3.0.1...v3.0.2) (2025-03-13)
+
+
+### Bug Fixes
+
+* **Calendar:** apply the provided className and style ([#175](https://github.com/gravity-ui/date-components/issues/175)) ([1284cd7](https://github.com/gravity-ui/date-components/commit/1284cd7afe2a7bb61af9d9e7357fc0e9af26817e))
+
 ## [3.0.1](https://github.com/gravity-ui/date-components/compare/v3.0.0...v3.0.1) (2025-02-10)
 
 
