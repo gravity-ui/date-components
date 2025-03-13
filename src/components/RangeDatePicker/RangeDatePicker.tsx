@@ -8,6 +8,7 @@ import {Button, Icon, Popup, TextInput} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {RangeCalendar} from '../Calendar';
+import type {RangeCalendarRenderProps} from '../Calendar';
 import {useDatePickerProps} from '../DatePicker';
 import type {DatePickerProps} from '../DatePicker';
 import {StubButton} from '../DatePicker/StubButton';
@@ -21,7 +22,7 @@ import './RangeDatePicker.scss';
 
 const b = block('range-date-picker');
 
-export type RangeDatePickerProps = DatePickerProps<RangeValue<DateTime>>;
+export type RangeDatePickerProps = DatePickerProps<RangeValue<DateTime>, RangeCalendarRenderProps>;
 
 export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
     const [anchor, setAnchor] = React.useState<HTMLDivElement | null>(null);
