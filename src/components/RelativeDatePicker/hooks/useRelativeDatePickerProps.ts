@@ -3,7 +3,7 @@ import React from 'react';
 import {useControlledState, useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {Calendar, CalendarInstance} from '../../Calendar';
+import type {Calendar} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
 import {getCalendarModes} from '../../DatePicker/utils';
@@ -118,7 +118,7 @@ export function useRelativeDatePickerProps(
         mode === 'relative' ? relativeDateProps.controlRef : inputProps.controlRef,
     );
 
-    const calendarRef = React.useRef<CalendarInstance>(null);
+    const calendarRef = React.useRef<HTMLDivElement>(null);
 
     function focusCalendar() {
         setTimeout(() => {

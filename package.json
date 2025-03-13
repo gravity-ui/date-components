@@ -18,6 +18,16 @@
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
+    },
+    "./uikit": {
+      "import": {
+        "types": "./dist/esm/uikit.d.ts",
+        "default": "./dist/esm/uikit.js"
+      },
+      "require": {
+        "types": "./dist/cjs/uikit.d.ts",
+        "default": "./dist/cjs/uikit.js"
+      }
     }
   },
   "sideEffects": [

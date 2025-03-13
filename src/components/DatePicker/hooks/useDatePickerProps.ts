@@ -5,7 +5,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {CalendarInstance, CalendarProps} from '../../Calendar';
+import type {CalendarProps, CalendarRenderProps} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
 import type {RangeValue} from '../../types';
@@ -17,20 +17,20 @@ import {getCalendarModes, getDateTimeValue} from '../utils';
 
 import type {DatePickerState} from './useDatePickerState';
 
-interface InnerDatePickerProps<T = DateTime> {
+interface InnerDatePickerProps<T = DateTime, RT = CalendarRenderProps> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     groupProps: React.HTMLAttributes<unknown> & {ref: React.Ref<any>};
     fieldProps: TextInputProps;
     calendarButtonProps: ButtonButtonProps & {ref: React.Ref<HTMLButtonElement>};
     popupProps: PopupProps;
-    calendarProps: CalendarProps<T> & {ref: React.Ref<CalendarInstance>};
+    calendarProps: CalendarProps<T, RT> & {ref?: React.Ref<HTMLDivElement>};
     timeInputProps: DateFieldProps<T>;
 }
 
-export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
+export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>, RT>(
     state: DatePickerState<T>,
-    {onFocus, onBlur, ...props}: DatePickerProps<T>,
-): InnerDatePickerProps<T> {
+    {onFocus, onBlur, ...props}: DatePickerProps<T, RT>,
+): InnerDatePickerProps<T, RT> {
     const [isActive, setActive] = React.useState(false);
 
     const [focusedDate, setFocusedDate] = React.useState(
@@ -72,7 +72,6 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
 
     const handleRef = useForkRef(inputRef, inputProps.controlRef);
 
-    const calendarRef = React.useRef<CalendarInstance>(null);
     const calendarButtonRef = React.useRef<HTMLButtonElement>(null);
     const groupRef = React.useRef<HTMLElement>(null);
 
@@ -157,7 +156,6 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             style: props.popupStyle,
         },
         calendarProps: {
-            ref: calendarRef,
             autoFocus: true,
             size: props.size === 's' ? 'm' : props.size,
             disabled: props.disabled,

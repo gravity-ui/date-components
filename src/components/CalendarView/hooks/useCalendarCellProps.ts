@@ -21,10 +21,12 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
     const isSelected = state.isSelected(date);
     const highlightedRange = 'highlightedRange' in state && state.highlightedRange;
     const isRangeSelection = Boolean(highlightedRange && isSelected);
-    const isSelectionStart =
-        isSelected && highlightedRange && date.isSame(highlightedRange.start, state.mode);
-    const isSelectionEnd =
-        isSelected && highlightedRange && date.isSame(highlightedRange.end, state.mode);
+    const isSelectionStart = Boolean(
+        isSelected && highlightedRange && date.isSame(highlightedRange.start, state.mode),
+    );
+    const isSelectionEnd = Boolean(
+        isSelected && highlightedRange && date.isSame(highlightedRange.end, state.mode),
+    );
     const isOutsideCurrentRange =
         state.mode === 'days' ? !state.focusedDate.isSame(date, 'month') : false;
     const isUnavailable = state.isCellUnavailable(date);
@@ -81,6 +83,7 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
         formattedDate,
         isDisabled,
         isSelected,
+        isFocused,
         isRangeSelection,
         isSelectionStart,
         isSelectionEnd,
