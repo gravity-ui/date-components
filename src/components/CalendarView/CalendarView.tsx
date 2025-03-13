@@ -52,7 +52,11 @@ export const CalendarView = React.forwardRef<CalendarInstance, CalendarViewProps
     }));
 
     return (
-        <div {...calendarProps} className={b({size: props.size})}>
+        <div
+            {...calendarProps}
+            className={b({size: props.size}, props.className)}
+            style={props.style}
+        >
             <div className={b('header')}>
                 <Button {...modeButtonProps} view="flat" size={props.size}>
                     {state.availableModes.indexOf(state.mode) + 1 ===
