@@ -17,6 +17,14 @@ $block: '.#{variables.$ns}relative-range-date-picker-form';
         }
     }
 
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: var(--g-spacing-1);
+
+        margin-block-end: var(--g-spacing-2);
+    }
+
     &__apply {
         margin-block-start: var(--g-spacing-2);
     }

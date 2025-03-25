@@ -162,6 +162,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 docs={props.docs}
                 withApplyButton={props.withApplyButton}
                 withZonesList={props.withZonesList}
+                withHeader={props.withHeader}
             />
         </div>
     );
