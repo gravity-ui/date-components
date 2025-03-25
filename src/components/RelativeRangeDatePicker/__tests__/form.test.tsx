@@ -97,6 +97,42 @@ describe('RelativeRangeDatePicker: form', () => {
         ]);
     });
 
+    it('should submit docs preset after selection', async () => {
+        let value;
+        const onSubmit = jest.fn((e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            value = [...formData.entries()];
+        });
+        render(
+            <form data-qa="form" onSubmit={onSubmit}>
+                <RelativeRangeDatePicker name="date-field" />
+                <button type="submit" data-qa="submit">
+                    submit
+                </button>
+            </form>,
+        );
+        await userEvent.tab();
+        await userEvent.tab();
+        await userEvent.keyboard('{Enter}');
+
+        await userEvent.click(screen.getByRole('button', {name: 'now - 5m'}));
+        await userEvent.click(screen.getAllByRole('button', {name: 'now'})[0]);
+
+        expect(screen.getByText('Last 5 minutes')).toBeVisible();
+
+        await userEvent.click(screen.getByTestId('submit'));
+
+        expect(onSubmit).toHaveBeenCalledTimes(1);
+        expect(value).toEqual([
+            ['date-field', 'relative'],
+            ['date-field', 'now - 5m'],
+            ['date-field', 'relative'],
+            ['date-field', 'now'],
+            ['date-field', 'default'],
+        ]);
+    });
+
     it('supports form reset', async () => {
         function Test() {
             const [value, setValue] = React.useState<RangeValue<Value | null> | null>({
