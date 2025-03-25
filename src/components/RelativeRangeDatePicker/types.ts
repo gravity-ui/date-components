@@ -69,9 +69,11 @@ export interface RelativeRangeDatePickerProps
     withZonesList?: boolean;
     /** Show relative range presets */
     withPresets?: boolean;
+    /** Show header with docs tooltip */
+    withHeader?: boolean;
     /** Custom preset tabs */
     presetTabs?: PresetTab[];
-    /** Custom docs for presets, if empty array docs will be hidden */
+    /** Custom docs for picker, if empty array docs will be hidden */
     docs?: Preset[];
     /** Show selected relative values as absolute dates */
     alwaysShowAsAbsolute?: boolean;

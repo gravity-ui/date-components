@@ -1,7 +1,7 @@
 'use client';
 
 import type {DateTime} from '@gravity-ui/date-utils';
-import {Button} from '@gravity-ui/uikit';
+import {Button, Text} from '@gravity-ui/uikit';
 import type {TextInputSize} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
@@ -14,6 +14,7 @@ import type {Preset} from '../Presets/defaultPresets';
 import type {PresetTab} from '../Presets/utils';
 import {Zones} from '../Zones/Zones';
 
+import {PickerDoc} from './PickerDoc';
 import {i18n} from './i18n';
 import {useRelativeRangeDatePickerDialogState} from './useRelativeRangeDatePickerDialogState';
 
@@ -39,9 +40,11 @@ export interface PickerFormProps extends RelativeRangeDatePickerStateOptions, Do
     withZonesList?: boolean;
     /** Show relative range presets */
     withPresets?: boolean;
+    /** Show header with docs tooltip */
+    withHeader?: boolean;
     /** Custom preset tabs */
     presetTabs?: PresetTab[];
-    /** Custom docs for presets, if empty array docs will be hidden */
+    /** Custom docs for picker, if empty array docs will be hidden */
     docs?: Preset[];
 }
 
@@ -62,9 +65,27 @@ export function PickerForm(
         size: props.size,
         errorPlacement: 'inside',
     };
-    const {isDateUnavailable} = props;
+    const {isDateUnavailable, withHeader = true} = props;
     return (
         <div className={b({size: props.size}, props.className)} style={props.style}>
+            {withHeader && (
+                <div className={b('header')}>
+                    <Text variant={props.size === 'xl' ? 'subheader-3' : 'subheader-2'}>
+                        {i18n('Specify the interval')}
+                    </Text>
+                    <PickerDoc
+                        size={props.size}
+                        docs={props.docs}
+                        onStartUpdate={(start) => {
+                            state.setStart({type: 'relative', value: start});
+                        }}
+                        onEndUpdate={(start) => {
+                            state.setEnd({type: 'relative', value: start});
+                        }}
+                    />
+                </div>
+            )}
+
             <div className={b('pickers')}>
                 <RelativeDatePicker
                     {...fieldProps}
@@ -124,7 +145,6 @@ export function PickerForm(
                         }
                     }}
                     minValue={props.minValue}
-                    docs={props.docs}
                     className={b('presets')}
                 />
             ) : null}

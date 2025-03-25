@@ -1,11 +1,9 @@
 @use '@gravity-ui/uikit/styles/mixins';
 @use '../../../variables';
 
-$block: '.#{variables.$ns}relative-range-date-picker-presets-doc';
+$block: '.#{variables.$ns}relative-range-date-picker-doc';
 
 #{$block} {
-    padding: var(--g-spacing-4);
-
     &__button {
         --g-button-background-color-hover: transparent;
     }
@@ -18,5 +16,9 @@ $block: '.#{variables.$ns}relative-range-date-picker-presets-doc';
         & > table {
             width: 100%;
         }
+    }
+
+    &__row {
+        vertical-align: baseline;
     }
 }
