@@ -79,8 +79,8 @@ export function PickerForm(
                         onStartUpdate={(start) => {
                             state.setStart({type: 'relative', value: start});
                         }}
-                        onEndUpdate={(start) => {
-                            state.setEnd({type: 'relative', value: start});
+                        onEndUpdate={(end) => {
+                            state.setEnd({type: 'relative', value: end});
                         }}
                     />
                 </div>

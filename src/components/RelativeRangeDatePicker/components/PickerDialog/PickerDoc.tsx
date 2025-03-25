@@ -67,7 +67,6 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                 name: () => {
                     return i18n('Range');
                 },
-                template: (item) => <span>{item.title}</span>,
             },
             {
                 id: 'from',
