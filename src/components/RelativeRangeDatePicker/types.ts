@@ -45,6 +45,7 @@ export interface RelativeRangeDatePickerRenderControlProps {
     errorMessage?: React.ReactNode;
     validationState?: 'invalid';
     open: boolean;
+    setOpen: (open: boolean) => void;
     triggerProps: RelativeRangeDatePickerTriggerProps;
 }
 
