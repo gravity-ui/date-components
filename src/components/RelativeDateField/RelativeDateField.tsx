@@ -54,10 +54,13 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
     const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
     const [isOpen, setOpen] = React.useState(false);
+    const dialogClosing = React.useRef(false);
 
     const {focusWithinProps} = useFocusWithin({
         onFocusWithinChange: (isFocusWithin) => {
-            setOpen(isFocusWithin);
+            if (!dialogClosing.current) {
+                setOpen(isFocusWithin);
+            }
         },
         isDisabled: isMobile,
     });
@@ -86,6 +89,12 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
                         setOpen(true);
                     }
                 }}
+                controlProps={{
+                    ...inputProps.controlProps,
+                    onClick: () => {
+                        setOpen(true);
+                    },
+                }}
             />
             <HiddenInput
                 name={props.name}
@@ -100,10 +109,16 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
                 <Popup
                     anchorElement={anchor}
                     open={isOpen}
-                    onOpenChange={(_open, _event, reason) => {
-                        if (reason === 'escape-key') {
+                    onOpenChange={(open) => {
+                        if (!open) {
                             setOpen(false);
                         }
+                        dialogClosing.current = !open;
+                    }}
+                    onTransitionOutComplete={() => {
+                        setTimeout(() => {
+                            dialogClosing.current = false;
+                        });
                     }}
                     placement={props.popupPlacement}
                     offset={props.popupOffset}
