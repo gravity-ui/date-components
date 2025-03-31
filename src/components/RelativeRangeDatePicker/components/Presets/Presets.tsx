@@ -7,7 +7,6 @@ import {List, Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 
-import {PresetsDoc} from './PresetsDoc';
 import type {Preset} from './defaultPresets';
 import {filterPresetTabs, getDefaultPresetTabs} from './utils';
 import type {PresetTab} from './utils';
@@ -23,7 +22,6 @@ export interface PresetProps {
     minValue?: DateTime;
     size?: 's' | 'm' | 'l' | 'xl';
     presetTabs?: PresetTab[];
-    docs?: Preset[];
 }
 export function Presets({
     className,
@@ -32,7 +30,6 @@ export function Presets({
     withTime,
     onChoosePreset,
     presetTabs,
-    docs,
 }: PresetProps) {
     const tabs = React.useMemo(() => {
         return filterPresetTabs(presetTabs ?? getDefaultPresetTabs({withTime}), {minValue});
@@ -64,7 +61,6 @@ export function Presets({
                             </Tab>
                         ))}
                     </TabList>
-                    <PresetsDoc className={b('doc')} size={size} docs={docs} />
                 </div>
                 <TabPanel className={b('content')} value={activeTabId}>
                     <PresetsList
