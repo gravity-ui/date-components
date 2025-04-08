@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.3](https://github.com/gravity-ui/date-components/compare/v3.0.2...v3.0.3) (2025-03-31)
+
+
+### Bug Fixes
+
+* correctly close relative pickers dialogs ([#180](https://github.com/gravity-ui/date-components/issues/180)) ([945b8b5](https://github.com/gravity-ui/date-components/commit/945b8b552869fb71036926eeedc8edc42e4aee1b))
+
 ## [3.0.2](https://github.com/gravity-ui/date-components/compare/v3.0.1...v3.0.2) (2025-03-13)
 
 
