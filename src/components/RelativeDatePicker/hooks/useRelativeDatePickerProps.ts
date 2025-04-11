@@ -217,6 +217,7 @@ export function useRelativeDatePickerProps(
             offset: props.popupOffset,
             className: props.popupClassName,
             style: props.popupStyle,
+            returnFocus: false,
         },
         calendarProps: {
             ref: calendarRef,

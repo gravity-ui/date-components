@@ -23,22 +23,22 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
     const isMobile = useMobile();
 
     const [anchor, setAnchor] = React.useState<HTMLDivElement | null>(null);
-    const inputRef = React.useRef<HTMLInputElement>(null);
+    const dialogClosing = React.useRef(false);
 
-    const [isActive, setIsActive] = React.useState(false);
     const [open, setOpen] = useControlledState<boolean>(undefined, false, props.onOpenChange);
 
     const {focusWithinProps} = useFocusWithin({
         isDisabled: props.disabled,
-        onFocusWithin: (e) => {
-            if (!isActive) {
-                props.onFocus?.(e);
-            }
-        },
-        onBlurWithin: (e) => {
-            if (!open) {
-                setIsActive(false);
-                props.onBlur?.(e);
+        onFocusWithin: props.onFocus,
+        onBlurWithin: props.onBlur,
+        onFocusWithinChange: (isFocusWithin) => {
+            if (
+                isFocusWithin &&
+                !dialogClosing.current &&
+                !props.renderControl &&
+                document.activeElement?.tagName !== 'BUTTON'
+            ) {
+                setOpen(true);
             }
         },
     });
@@ -54,16 +54,13 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 props={props}
                 state={state}
                 open={open}
+                setOpen={setOpen}
                 isMobile={isMobile}
-                ref={inputRef}
                 onClick={() => {
                     if (props.disabled) {
                         return;
                     }
-                    if (!open) {
-                        setIsActive(true);
-                        setOpen(true);
-                    }
+                    setOpen(true);
                 }}
                 onKeyDown={(e) => {
                     if (props.disabled) {
@@ -75,14 +72,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                     }
                 }}
                 onClickCalendar={() => {
-                    setIsActive(true);
                     setOpen(!open);
-                }}
-                onFocus={() => {
-                    if (!isActive) {
-                        setIsActive(true);
-                        setOpen(true);
-                    }
                 }}
                 onUpdate={(v: string) => {
                     if (!props.readOnly && !v) {
@@ -134,16 +124,18 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 onUpdate={state.setValue}
                 timeZone={state.timeZone}
                 open={open}
-                onClose={(reason) => {
+                onClose={() => {
                     setOpen(false);
-                    if (reason === 'escape-key') {
-                        setTimeout(() => {
-                            inputRef.current?.focus({preventScroll: true});
-                        });
-                    }
+                    dialogClosing.current = true;
+                }}
+                onRemove={() => {
+                    setTimeout(() => {
+                        dialogClosing.current = false;
+                    });
                 }}
                 anchor={anchor}
                 modal
+                returnFocus
                 popupClassName={props.popupClassName}
                 popupStyle={props.popupStyle}
                 popupPlacement={props.popupPlacement}

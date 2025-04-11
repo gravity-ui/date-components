@@ -150,6 +150,7 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
                 );
             },
             modal: !props.disableFocusTrap,
+            returnFocus: !props.disableFocusTrap,
             disablePortal: props.disablePortal,
             placement: props.popupPlacement,
             offset: props.popupOffset,

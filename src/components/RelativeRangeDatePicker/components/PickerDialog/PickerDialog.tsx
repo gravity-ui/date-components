@@ -20,8 +20,12 @@ export interface PickerDialogProps extends PickerFormProps, PopupStyleProps {
     open: boolean;
     /** Handles popup close event */
     onClose: (reason?: Parameters<NonNullable<PopupProps['onOpenChange']>>[2] | 'apply') => void;
+    /** Handles popup remove from DOM event */
+    onRemove?: () => void;
     /** If true `Popup` act like a modal dialog */
     modal?: boolean;
+    /** Element which focus should be returned to */
+    returnFocus?: PopupProps['returnFocus'];
     /** If true `Sheet` is used instead of `Popup`  */
     isMobile?: boolean;
 }
@@ -36,6 +40,8 @@ export function PickerDialog({
     popupPlacement,
     popupOffset,
     modal,
+    returnFocus = false,
+    onRemove,
     ...props
 }: PickerDialogProps) {
     if (isMobile) {
@@ -44,6 +50,9 @@ export function PickerDialog({
                 visible={open}
                 onClose={() => {
                     onClose('outside-press');
+                    setTimeout(() => {
+                        onRemove?.();
+                    });
                 }}
                 contentClassName={b('content', {mobile: true, size: 'xl'}, popupClassName)}
             >
@@ -73,6 +82,8 @@ export function PickerDialog({
             className={b('content', {size: props.size}, popupClassName)}
             style={popupStyle}
             modal={modal}
+            returnFocus={returnFocus}
+            onTransitionOutComplete={onRemove}
         >
             <PickerForm
                 {...props}

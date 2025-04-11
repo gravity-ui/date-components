@@ -17,10 +17,11 @@ export type ControlProps = {
     props: RelativeRangeDatePickerProps;
     state: RelativeRangeDatePickerState;
     open: boolean;
+    setOpen: (open: boolean) => void;
     isMobile?: boolean;
     onClick: (e: React.MouseEvent<HTMLElement>) => void;
     onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
-    onFocus: (e: React.FocusEvent<HTMLElement>) => void;
+    onFocus?: (e: React.FocusEvent<HTMLElement>) => void;
     onClickCalendar: (e: React.MouseEvent<HTMLElement>) => void;
     onUpdate: (value: string) => void;
 };
@@ -29,7 +30,18 @@ const b = block('relative-range-date-picker-control');
 
 export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
     (
-        {props, state, open, isMobile, onClick, onKeyDown, onFocus, onClickCalendar, onUpdate},
+        {
+            props,
+            state,
+            open,
+            setOpen,
+            isMobile,
+            onClick,
+            onKeyDown,
+            onFocus,
+            onClickCalendar,
+            onUpdate,
+        },
         ref,
     ) => {
         const {alwaysShowAsAbsolute, presetTabs, getRangeTitle} = props;
@@ -75,6 +87,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                 validationState,
                 errorMessage,
                 open,
+                setOpen,
                 triggerProps,
             })
         ) : (
@@ -111,6 +124,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                             aria-expanded={open}
                             aria-label={i18n('Range date picker')}
                             onClick={onClickCalendar}
+                            tabIndex={-1}
                         >
                             <Icon data={CalendarIcon} />
                         </Button>
