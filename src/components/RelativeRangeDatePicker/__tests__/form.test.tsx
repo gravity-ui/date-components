@@ -106,7 +106,7 @@ describe('RelativeRangeDatePicker: form', () => {
         });
         render(
             <form data-qa="form" onSubmit={onSubmit}>
-                <RelativeRangeDatePicker name="date-field" />
+                <RelativeRangeDatePicker name="date-field" withHeader />
                 <button type="submit" data-qa="submit">
                     submit
                 </button>

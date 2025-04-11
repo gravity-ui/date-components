@@ -65,13 +65,13 @@ export function PickerForm(
         size: props.size,
         errorPlacement: 'inside',
     };
-    const {isDateUnavailable, withHeader = true} = props;
+    const {isDateUnavailable, withHeader = false} = props;
     return (
         <div className={b({size: props.size}, props.className)} style={props.style}>
             {withHeader && (
                 <div className={b('header')}>
                     <Text variant={props.size === 'xl' ? 'subheader-3' : 'subheader-2'}>
-                        {i18n('Specify the interval')}
+                        {i18n('Select the interval')}
                     </Text>
                     <PickerDoc
                         size={props.size}
