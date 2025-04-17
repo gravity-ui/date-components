@@ -647,8 +647,19 @@ function isDateStringWithTimeZone(str: string) {
     return /z$/i.test(str) || /[+-]\d\d:\d\d$/.test(str);
 }
 
+/**
+ * Trims leading and trailing spaces from a string and replaces multiple consecutive spaces with a single space.
+ *
+ * @param str - The input string to process.
+ * @returns The processed string with trimmed spaces and single spaces between words.
+ */
+function trimExtraSpaces(str: string) {
+    return str.trim().replace(/\s+/g, ' ');
+}
+
 export function parseDateFromString(str: string, format: string, timeZone?: string): DateTime {
-    let date = parseDate({input: str, format, timeZone});
+    const input = typeof str === 'string' ? trimExtraSpaces(str) : str;
+    let date = parseDate({input, format, timeZone});
     if (date.isValid()) {
         if (timeZone && !isDateStringWithTimeZone(str)) {
             const time = parseDate({input: str, format});
