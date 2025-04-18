@@ -100,15 +100,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
         [isMobile, onEndUpdate, onStartUpdate, size],
     );
 
-    return (
-        <Table
-            columns={columns}
-            data={docs}
-            className={b('table', {size})}
-            wordWrap
-            getRowDescriptor={() => ({classNames: [b('row')]})}
-        />
-    );
+    return <Table columns={columns} data={docs} className={b('table', {size})} wordWrap />;
 }
 
 interface DesktopDocProps extends Omit<PresetsDocProps, 'docs'> {
