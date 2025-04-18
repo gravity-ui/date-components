@@ -10,7 +10,7 @@ import {Calendar} from '@gravity-ui/date-components';
 
 `Calendar` is a flexible, user-friendly calendar component for React applications. It allows users to view, select, and manage dates with ease. Ideal for event scheduling, booking systems, and any application where date selection is essential. It can be controlled if you set `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with optional property `defaultValue`. Component is uncontrolled by default.
 
-### Useful addition
+## Useful addition
 
 To set dates in the right format you may need to include additional helpers from [Date Utils library](https://gravity-ui.com/libraries/date-utils)
 
@@ -173,6 +173,49 @@ LANDING_BLOCK-->
 ## Time zone
 
 `timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
+
+## Customization
+
+A calendar consists of a grouping element containing date / month / quarter / year grid, a previous and next button for navigating between date ranges, heading for displaying current date range and layout switch button for switching layout mode e.g. days / months / quarters / years. Calendar grid consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
+
+```jsx
+import {Flex} from '@gravity-ui/uikit';
+import {Button, Text} from '@gravity-ui/date-components/uikit';
+import {
+  Calendar,
+  CalendarGrid,
+  CalendarGridHeader,
+  CalendarGridHeaderCells,
+  CalendarGridHeaderCell,
+  CalendarGridBody,
+  CalendarGridRow,
+  CalendarGridRowHeader,
+  CalendarGridRowCells,
+  CalendarGridRowCell,
+} from '@gravity-ui/date-components';
+
+<Calendar>
+  <Flex justifyContent="space-between">
+    <Button slot="previous" />
+    <Text slot="heading" />
+    <Button slot="next" />
+  </Flex>
+  <CalendarGrid>
+    <CalendarGridHeader>
+      <div role="columnheader">#</div>
+      <CalendarGridHeaderCells>
+        {(date) => <CalendarGridHeaderCell date={date} />}
+      </CalendarGridHeaderCells>
+    </CalendarGridHeader>
+    <CalendarGridBody>
+      <CalendarGridRow>
+        <CalendarGridRowHeader>{({dates}) => dates[0].format('W')}</CalendarGridRowHeader>
+        <CalendarGridRowCells>{(date) => <CalendarGridRowCell day={day} />}</CalendarGridRowCells>
+      </CalendarGridRow>
+    </CalendarGridBody>
+  </CalendarGrid>
+</Calendar>;
+```
 
 ## Properties
 

@@ -4,18 +4,27 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
+import {Provider, useContextProps} from '../../utils/providers';
 import type {CalendarProps} from '../Calendar/Calendar';
-import {CalendarView} from '../CalendarView/CalendarView';
-import type {CalendarInstance} from '../CalendarView/CalendarView';
+import {CalendarContext, CalendarStateContext, CalendarView} from '../CalendarView/CalendarView';
 import {useRangeCalendarState} from '../CalendarView/hooks/useRangeCalendarState';
+import type {RangeCalendarState} from '../CalendarView/hooks/useRangeCalendarState';
 import type {RangeValue} from '../types';
 
 import '../CalendarView/Calendar.scss';
 
-export type RangeCalendarProps = CalendarProps<RangeValue<DateTime>>;
+export interface RangeCalendarRenderProps {
+    /**
+     * State of the calendar.
+     */
+    state: RangeCalendarState;
+}
 
-export const RangeCalendar = React.forwardRef<CalendarInstance, RangeCalendarProps>(
-    function Calendar(props: RangeCalendarProps, ref) {
+export type RangeCalendarProps = CalendarProps<RangeValue<DateTime>, RangeCalendarRenderProps>;
+
+export const RangeCalendar = React.forwardRef<HTMLDivElement, RangeCalendarProps>(
+    function Calendar(props, forwardedRef) {
+        const [mergedProps, ref] = useContextProps(props, forwardedRef, CalendarContext);
         const state = useRangeCalendarState(props);
 
         const handleBlur = (e: React.FocusEvent) => {
@@ -24,6 +33,15 @@ export const RangeCalendar = React.forwardRef<CalendarInstance, RangeCalendarPro
             }
             props.onBlur?.(e);
         };
-        return <CalendarView ref={ref} {...props} state={state} onBlur={handleBlur} />;
+        return (
+            <Provider
+                values={[
+                    [CalendarStateContext, state],
+                    [CalendarContext, props],
+                ]}
+            >
+                <CalendarView ref={ref} {...mergedProps} onBlur={handleBlur} />
+            </Provider>
+        );
     },
 );

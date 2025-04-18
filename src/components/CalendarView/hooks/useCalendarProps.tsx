@@ -1,15 +1,19 @@
 import React from 'react';
 
-import {useFocusWithin} from '@gravity-ui/uikit';
-import type {ButtonButtonProps} from '@gravity-ui/uikit';
+import {ChevronLeft, ChevronRight} from '@gravity-ui/icons';
+import {ButtonIcon, useFocusWithin} from '@gravity-ui/uikit';
 
+import {block} from '../../../utils/cn';
 import type {CalendarProps} from '../../Calendar/Calendar';
+import type {ButtonProps} from '../../common/Button';
 import {formatDateTime} from '../../utils/dates';
+import {mergeProps} from '../../utils/mergeProps';
 import {i18n} from '../i18n';
 
 import type {CalendarLayout, CalendarState, RangeCalendarState} from './types';
 
 const buttonDisabledClassName = 'yc-button_disabled g-button_disabled';
+const b = block('calendar');
 
 // eslint-disable-next-line complexity
 export function useCalendarProps(props: CalendarProps, state: CalendarState | RangeCalendarState) {
@@ -27,23 +31,36 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
         onBlurWithin: props.onBlur,
     });
 
-    const calendarProps: React.HTMLAttributes<HTMLElement> = {
-        role: 'group',
-        id: props.id,
-        'aria-label': [props['aria-label'], title].filter(Boolean).join(', '),
-        'aria-labelledby': props['aria-labelledby'] || undefined,
-        'aria-describedby': props['aria-describedby'] || undefined,
-        'aria-details': props['aria-details'] || undefined,
-        'aria-disabled': state.disabled || undefined,
-        ...focusWithinProps,
-    };
+    const calendarProps: React.HTMLAttributes<HTMLElement> = mergeProps(
+        {
+            role: 'application',
+            id: props.id,
+            'aria-label': [props['aria-label'], title].filter(Boolean).join(', '),
+            'aria-labelledby': props['aria-labelledby'] || undefined,
+            'aria-describedby': props['aria-describedby'] || undefined,
+            'aria-details': props['aria-details'] || undefined,
+            'aria-disabled': state.disabled || undefined,
+            tabIndex: -1,
+            onFocus: (event) => {
+                if (state.disabled) {
+                    return;
+                }
+                if (event.target === event.currentTarget) {
+                    state.setFocused(true);
+                }
+            },
+        } satisfies React.HTMLAttributes<HTMLElement>,
+        focusWithinProps,
+    );
 
     const modeIndex = state.availableModes.indexOf(state.mode);
     const isModeLast = modeIndex + 1 === state.availableModes.length;
     const isNextModeLast = modeIndex + 2 === state.availableModes.length;
     const modeDisabled = state.disabled || isModeLast;
 
-    const modeButtonProps: ButtonButtonProps = {
+    const modeButtonProps: ButtonProps = {
+        view: 'flat',
+        size: props.size,
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: modeDisabled ? buttonDisabledClassName : undefined,
@@ -71,7 +88,9 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
         }
     });
 
-    const previousButtonProps: ButtonButtonProps = {
+    const previousButtonProps: ButtonProps = {
+        view: 'flat',
+        size: props.size,
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: previousDisabled ? buttonDisabledClassName : undefined,
@@ -92,6 +111,11 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
               },
         'aria-label': i18n('Previous'),
         'aria-disabled': previousDisabled ? 'true' : undefined,
+        children: (
+            <ButtonIcon>
+                <ChevronLeft className={b('control-icon')} />
+            </ButtonIcon>
+        ),
     };
 
     const nextFocused = React.useRef(false);
@@ -104,7 +128,9 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
         }
     });
 
-    const nextButtonProps: ButtonButtonProps = {
+    const nextButtonProps: ButtonProps = {
+        view: 'flat',
+        size: props.size,
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: nextDisabled ? buttonDisabledClassName : undefined,
@@ -125,6 +151,11 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
               },
         'aria-label': i18n('Next'),
         'aria-disabled': previousDisabled ? 'true' : undefined,
+        children: (
+            <ButtonIcon>
+                <ChevronRight className={b('control-icon')} />
+            </ButtonIcon>
+        ),
     };
 
     return {
