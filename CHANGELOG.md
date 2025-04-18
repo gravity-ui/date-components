@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/gravity-ui/date-components/compare/v3.0.3...v3.1.0) (2025-04-18)
+
+
+### Features
+
+* **RelativeRangeDatePicker:** added interactive tooltip and header ([#178](https://github.com/gravity-ui/date-components/issues/178)) ([3ea92ad](https://github.com/gravity-ui/date-components/commit/3ea92ad3c4355a89f92cc15612ccdc1c935122e2))
+
 ## [3.0.3](https://github.com/gravity-ui/date-components/compare/v3.0.2...v3.0.3) (2025-03-31)
 
 
