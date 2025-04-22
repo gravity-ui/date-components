@@ -4,31 +4,51 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import {CalendarView} from '../CalendarView/CalendarView';
-import type {CalendarInstance, CalendarSize} from '../CalendarView/CalendarView';
+import {Provider, useContextProps} from '../../utils/providers';
+import type {RenderProps, SlotProps} from '../../utils/providers';
+import {CalendarContext, CalendarStateContext, CalendarView} from '../CalendarView/CalendarView';
+import type {CalendarSize} from '../CalendarView/CalendarView';
 import {useCalendarState} from '../CalendarView/hooks/useCalendarState';
-import type {CalendarStateOptions} from '../CalendarView/hooks/useCalendarState';
-import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
+import type {CalendarState, CalendarStateOptions} from '../CalendarView/hooks/useCalendarState';
+import type {AccessibilityProps, DomProps, FocusEvents} from '../types';
 
 import '../CalendarView/Calendar.scss';
 
-export interface CalendarProps<T = DateTime>
+export interface CalendarRenderProps {
+    /**
+     * State of the calendar.
+     */
+    state: CalendarState;
+}
+
+export interface CalendarProps<T = DateTime, RP = CalendarRenderProps>
     extends CalendarStateOptions<T>,
+        RenderProps<RP>,
         DomProps,
-        StyleProps,
         FocusEvents,
-        AccessibilityProps {
+        AccessibilityProps,
+        SlotProps {
     /**
      * The size of the element.
      * @default m
      */
     size?: CalendarSize;
 }
-export const Calendar = React.forwardRef<CalendarInstance, CalendarProps>(function Calendar(
+export const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function Calendar(
     props: CalendarProps,
-    ref,
+    forwardedRef,
 ) {
-    const state = useCalendarState(props);
+    const [mergedProps, ref] = useContextProps(props, forwardedRef, CalendarContext);
+    const state = useCalendarState(mergedProps as any);
 
-    return <CalendarView ref={ref} {...props} state={state} />;
+    return (
+        <Provider
+            values={[
+                [CalendarStateContext, state],
+                [CalendarContext, mergedProps],
+            ]}
+        >
+            <CalendarView ref={ref} {...mergedProps} />
+        </Provider>
+    );
 });
