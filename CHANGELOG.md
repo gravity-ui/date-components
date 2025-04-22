@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.1.0](https://github.com/gravity-ui/date-components/compare/v3.0.3...v3.1.0) (2025-04-22)
+
+
+### Features
+
+* **RelativeRangeDatePicker:** added interactive tooltip and header ([#178](https://github.com/gravity-ui/date-components/issues/178)) ([3ea92ad](https://github.com/gravity-ui/date-components/commit/3ea92ad3c4355a89f92cc15612ccdc1c935122e2))
+* **RelativeRangeDatePicker:** export getRelativeRangeDatePickerPresetTitle helper ([#182](https://github.com/gravity-ui/date-components/issues/182)) ([b8fc335](https://github.com/gravity-ui/date-components/commit/b8fc3357213c377eca28cb6fcb176f0bdb7bc194))
+
+
+### Bug Fixes
+
+* **DateField:** fix pasting string from clipboard with duplicate spaces ([#183](https://github.com/gravity-ui/date-components/issues/183)) ([e51759f](https://github.com/gravity-ui/date-components/commit/e51759f980425e355b257a25eb490f0c9247279d))
+* trigger release action ([#185](https://github.com/gravity-ui/date-components/issues/185)) ([1ac3ab5](https://github.com/gravity-ui/date-components/commit/1ac3ab538afc45e9b8d60c049e7209dab23bc2ea))
+
 ## [3.0.3](https://github.com/gravity-ui/date-components/compare/v3.0.2...v3.0.3) (2025-03-31)
 
 
