@@ -13,3 +13,4 @@ export {
 export {getDefaultPresetTabs} from './components/Presets/utils';
 export type {Preset as RelativeRangeDatePickerPreset} from './components/Presets/defaultPresets';
 export type {PresetTab as RelativeRangeDatePickerPresetTab} from './components/Presets/utils';
+export {getPresetTitle as getRelativeRangeDatePickerPresetTitle} from './components/Presets/utils';
