@@ -46,6 +46,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     );
     const timeZone = props.timeZone || inputTimeZone;
 
+    const cellFocusable = props.cellFocusable ?? true;
+
     const minValue = React.useMemo(
         () => (props.minValue ? props.minValue.timeZone(timeZone) : undefined),
         [timeZone, props.minValue],
@@ -225,7 +227,12 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             }
         },
         isCellFocused(date: DateTime) {
-            return this.isFocused && focusedDate && date.isSame(focusedDate, currentMode);
+            return (
+                cellFocusable &&
+                this.isFocused &&
+                focusedDate &&
+                date.isSame(focusedDate, currentMode)
+            );
         },
         isCellDisabled(date: DateTime) {
             return this.disabled || this.isInvalid(date);

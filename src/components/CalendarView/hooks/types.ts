@@ -25,6 +25,10 @@ export interface CalendarStateOptionsBase extends InputBase {
     autoFocus?: boolean;
     /** Controls the currently focused date within the calendar. */
     focusedValue?: DateTime | null;
+    /** Whether to automatically focus the cell
+     * * @default true
+     */
+    cellFocusable?: boolean;
     /** The date that is focused when the calendar first mounts (uncontrolled). */
     defaultFocusedValue?: DateTime;
     /** Handler that is called when the focused date changes. */
