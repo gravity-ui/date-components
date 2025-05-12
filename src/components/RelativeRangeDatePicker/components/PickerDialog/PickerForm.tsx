@@ -146,8 +146,8 @@ export function PickerForm(
                     presetTabs={props.presetTabs}
                     onChoosePreset={(start, end) => {
                         state.setRange(
-                            {type: 'relative', value: start},
-                            {type: 'relative', value: end},
+                            start === null ? null : {type: 'relative', value: start},
+                            end === null ? null : {type: 'relative', value: end},
                             props.applyPresetsImmediately,
                         );
                         if (!props.withApplyButton || props.applyPresetsImmediately) {

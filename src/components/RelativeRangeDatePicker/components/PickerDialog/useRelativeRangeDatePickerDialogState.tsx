@@ -90,7 +90,7 @@ export function useRelativeRangeDatePickerDialogState(props: PickerFormProps) {
         }
     }
 
-    function setRange(newStart: Value, newEnd: Value, force?: boolean) {
+    function setRange(newStart: Value | null, newEnd: Value | null, force?: boolean) {
         if (props.readOnly) {
             return;
         }
