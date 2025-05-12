@@ -17,7 +17,7 @@ const b = block('relative-range-date-picker-presets');
 
 export interface PresetProps {
     className?: string;
-    onChoosePreset: (start: string, end: string) => void;
+    onChoosePreset: (start: string | null, end: string | null) => void;
     withTime?: boolean;
     minValue?: DateTime;
     size?: 's' | 'm' | 'l' | 'xl';
