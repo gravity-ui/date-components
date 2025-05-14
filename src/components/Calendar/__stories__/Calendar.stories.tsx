@@ -2,7 +2,7 @@ import React from 'react';
 
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
-import {Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
+import {Popup, Tab, TabList, TabPanel, TabProvider, Text, TextInput} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -167,5 +167,43 @@ export const Custom: Story = {
     },
     parameters: {
         controls: {exclude: ['mode', 'defaultMode', 'modes']},
+    },
+};
+
+export const InputFocus: Story = {
+    ...Default,
+    render: function InputFocus(args) {
+        const [inputFocused, setInputFocused] = React.useState(false);
+
+        // Code from Tokenized Input
+        // Prevent losing focus on the input when clicking on the popup
+        const onMouseDown = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+            e.preventDefault();
+        }, []);
+
+        const inputRef = React.useRef<HTMLInputElement>(null);
+
+        return (
+            <div>
+                <Text as="h3">
+                    When clicking in the calendar, the focus on the input should not be lost.
+                </Text>
+                <TextInput
+                    style={{width: 200}}
+                    ref={inputRef}
+                    type="text"
+                    onFocus={() => {
+                        setInputFocused(true);
+                    }}
+                    onBlur={() => {
+                        setInputFocused(false);
+                    }}
+                />
+                <Popup anchorElement={inputRef?.current} open={inputFocused} returnFocus={false}>
+                    {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions*/}
+                    <div onMouseDown={onMouseDown}>{Default.render?.({...args})}</div>
+                </Popup>
+            </div>
+        );
     },
 };
