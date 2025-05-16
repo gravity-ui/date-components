@@ -35,13 +35,13 @@ const countUnit = {
 } as const;
 
 export function getPresetTitle(
-    start: string,
-    end: string,
+    start?: string | null,
+    end?: string | null,
     presets: Preset[] = allPresets,
     t: ExtractFunctionType<typeof i18n> = i18n,
 ): string {
-    const startText = start.replace(/\s+/g, '');
-    const endText = end.replace(/\s+/g, '');
+    const startText = start?.replace(/\s+/g, '') ?? start;
+    const endText = end?.replace(/\s+/g, '') ?? end;
 
     for (const preset of presets) {
         if (preset.from === startText && preset.to === endText) {
@@ -50,7 +50,7 @@ export function getPresetTitle(
     }
 
     if (end === 'now') {
-        const match = lastRe.exec(startText);
+        const match = lastRe.exec(startText || '');
         if (match) {
             const [, count, unit] = match;
             if (isDateUnit(unit)) {
@@ -72,15 +72,11 @@ function filterPresets(presets: Preset[], minValue?: DateTime) {
         const from = dateTimeParse(preset.from);
         const to = dateTimeParse(preset.to, {roundUp: true});
 
-        if (!from || !to) {
+        if (to?.isBefore(from)) {
             return false;
         }
 
-        if (to.isBefore(from)) {
-            return false;
-        }
-
-        if (minValue && from.isBefore(minValue)) {
+        if (minValue && from?.isBefore(minValue)) {
             return false;
         }
 

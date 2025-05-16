@@ -10,6 +10,26 @@ import preview from '#.storybook/preview';
 import {timeZoneControl} from '../../../demo/utils/zones';
 import type {Value} from '../../RelativeDatePicker';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
+import type {RelativeRangeDatePickerProps} from '../types';
+
+const DEFAULT_RANGE_DATE_PICKER_PRESET: RelativeRangeDatePickerProps['presetTabs'] = [
+    {
+        id: 'main',
+        title: 'Presets',
+        presets: [
+            {
+                from: 'now',
+                to: 'now+30d',
+                title: '30 days',
+            },
+            {
+                from: 'now',
+                to: null,
+                title: 'Unlimited',
+            },
+        ],
+    },
+];
 
 const meta = preview.meta({
     title: 'Components/RelativeRangeDatePicker',
@@ -40,7 +60,16 @@ export const Default = meta.story({
         const minValue = props.minValue ? dateTimeParse(props.minValue, {timeZone}) : undefined;
         const maxValue = props.maxValue ? dateTimeParse(props.maxValue, {timeZone}) : undefined;
 
-        return <RelativeRangeDatePicker {...props} minValue={minValue} maxValue={maxValue} />;
+        return (
+            <RelativeRangeDatePicker
+                {...props}
+                minValue={minValue}
+                maxValue={maxValue}
+                allowNullableValues
+                withPresets
+                presetTabs={DEFAULT_RANGE_DATE_PICKER_PRESET}
+            />
+        );
     },
     args: {
         onUpdate: (res, timeZone) => {

@@ -85,7 +85,7 @@ const SIZE_TO_ITEM_HEIGHT = {
 interface PresetsListProps {
     size?: 's' | 'm' | 'l' | 'xl';
     presets: Preset[];
-    onChoosePreset: (start: string, end: string) => void;
+    onChoosePreset: (start: string | null, end: string | null) => void;
 }
 function PresetsList({presets, onChoosePreset, size = 'm'}: PresetsListProps) {
     const ref = React.useRef<List<Preset>>(null);
@@ -125,7 +125,7 @@ function PresetsList({presets, onChoosePreset, size = 'm'}: PresetsListProps) {
             renderItem={(item) => t(item.title as any)}
             itemHeight={SIZE_TO_ITEM_HEIGHT[size]}
             onItemClick={(item) => {
-                onChoosePreset(item.from, item.to);
+                onChoosePreset(item?.from, item?.to);
             }}
         />
     );
