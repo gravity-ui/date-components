@@ -1,8 +1,8 @@
 import {i18n} from './i18n';
 
 export interface Preset {
-    from: string;
-    to: string;
+    from: string | null;
+    to: string | null;
     title: string;
 }
 
