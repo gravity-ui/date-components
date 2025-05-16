@@ -34,6 +34,26 @@ interface GetDefaultTitleArgs {
     format?: string;
     presets?: Preset[];
 }
+
+const isPresetValue = (value: RangeValue<Value | null> | null) => {
+    if (!value) {
+        return null;
+    }
+    let start, end;
+    if (value.start === null) {
+        start = null;
+    }
+    if (value.start?.type === 'relative') {
+        start = value.start?.value || '';
+    }
+    if (value.end === null) {
+        end = null;
+    }
+    if (value.end?.type === 'relative') {
+        end = value.end?.value || '';
+    }
+    return {start, end};
+};
 export function getDefaultTitle({
     value,
     timeZone,
@@ -62,12 +82,9 @@ export function getDefaultTitle({
                 : dateTimeParse(value.end.value, {timeZone, roundUp: true})?.format(format) ?? '';
     }
 
-    if (
-        !alwaysShowAsAbsolute &&
-        value.start?.type === 'relative' &&
-        value.end?.type === 'relative'
-    ) {
-        return `${getPresetTitle(value.start.value, value.end.value, presets)}`;
+    const presetSearch = isPresetValue(value);
+    if (!alwaysShowAsAbsolute && presetSearch) {
+        return `${getPresetTitle(presetSearch.start, presetSearch.end, presets)}`;
     }
 
     const delimiter = ' — ';

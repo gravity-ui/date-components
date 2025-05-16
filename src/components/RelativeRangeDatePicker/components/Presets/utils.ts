@@ -32,9 +32,13 @@ const countUnit = {
     y: 'Last {count} year',
 } as const;
 
-export function getPresetTitle(start: string, end: string, presets: Preset[] = allPresets) {
-    const startText = start.replace(/\s+/g, '');
-    const endText = end.replace(/\s+/g, '');
+export function getPresetTitle(
+    start?: string | null,
+    end?: string | null,
+    presets: Preset[] = allPresets,
+) {
+    const startText = start?.replace(/\s+/g, '') ?? start;
+    const endText = end?.replace(/\s+/g, '') ?? end;
 
     for (const preset of presets) {
         if (preset.from === startText && preset.to === endText) {
@@ -43,7 +47,7 @@ export function getPresetTitle(start: string, end: string, presets: Preset[] = a
     }
 
     if (end === 'now') {
-        const match = lastRe.exec(startText);
+        const match = lastRe.exec(startText || '');
         if (match) {
             const [, count, unit] = match;
             if (isDateUnit(unit)) {
@@ -65,15 +69,11 @@ export function filterPresets(presets: Preset[], minValue?: DateTime) {
         const from = dateTimeParse(preset.from);
         const to = dateTimeParse(preset.to, {roundUp: true});
 
-        if (!from || !to) {
+        if (to?.isBefore(from)) {
             return false;
         }
 
-        if (to.isBefore(from)) {
-            return false;
-        }
-
-        if (minValue && from.isBefore(minValue)) {
+        if (minValue && from?.isBefore(minValue)) {
             return false;
         }
 

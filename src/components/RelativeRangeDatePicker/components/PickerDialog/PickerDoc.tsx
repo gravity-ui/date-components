@@ -78,7 +78,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                         size={isMobile ? 'l' : getButtonSizeForInput(size)}
                         onClick={() => onStartUpdate(item.from)}
                     >
-                        {item.from}
+                        {item?.from}
                     </Button>
                 ),
             },
@@ -90,7 +90,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                 template: (item) => (
                     <Button
                         size={isMobile ? 'l' : getButtonSizeForInput(size)}
-                        onClick={() => onEndUpdate(item.to)}
+                        onClick={() => onEndUpdate(item?.to)}
                     >
                         {item.to}
                     </Button>
@@ -155,8 +155,8 @@ interface PresetsDocProps {
     className?: string;
     size?: 's' | 'm' | 'l' | 'xl';
     docs?: Preset[];
-    onStartUpdate: (start: string) => void;
-    onEndUpdate: (end: string) => void;
+    onStartUpdate: (start: string | null) => void;
+    onEndUpdate: (end: string | null) => void;
 }
 
 export function PickerDoc({docs = data, ...props}: PresetsDocProps) {

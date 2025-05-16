@@ -77,10 +77,12 @@ export function PickerForm(
                         size={props.size}
                         docs={props.docs}
                         onStartUpdate={(start) => {
-                            state.setStart({type: 'relative', value: start});
+                            state.setStart(
+                                start === null ? null : {type: 'relative', value: start},
+                            );
                         }}
                         onEndUpdate={(end) => {
-                            state.setEnd({type: 'relative', value: end});
+                            state.setEnd(end === null ? null : {type: 'relative', value: end});
                         }}
                     />
                 </div>
