@@ -22,6 +22,7 @@ export interface PresetProps {
     minValue?: DateTime;
     size?: 's' | 'm' | 'l' | 'xl';
     presetTabs?: PresetTab[];
+    allowNullableValues?: boolean;
 }
 export function Presets({
     className,
@@ -30,9 +31,13 @@ export function Presets({
     withTime,
     onChoosePreset,
     presetTabs,
+    allowNullableValues,
 }: PresetProps) {
     const tabs = React.useMemo(() => {
-        return filterPresetTabs(presetTabs ?? getDefaultPresetTabs({withTime}), {minValue});
+        return filterPresetTabs(
+            presetTabs ?? getDefaultPresetTabs({withTime, allowNullableValues}),
+            {minValue, allowNullableValues},
+        );
     }, [withTime, minValue, presetTabs]);
 
     const [activeTabId, setActiveTab] = React.useState(tabs[0]?.id);

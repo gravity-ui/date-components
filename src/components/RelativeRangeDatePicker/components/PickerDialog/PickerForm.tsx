@@ -147,6 +147,7 @@ export function PickerForm(
                         }
                     }}
                     minValue={props.minValue}
+                    allowNullableValues={props.allowNullableValues}
                     className={b('presets')}
                 />
             ) : null}
