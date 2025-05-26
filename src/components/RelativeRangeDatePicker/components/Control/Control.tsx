@@ -45,7 +45,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
         },
         ref,
     ) => {
-        const {alwaysShowAsAbsolute, presetTabs, getRangeTitle} = props;
+        const {alwaysShowAsAbsolute, presetTabs, getRangeTitle, allowNullableValues} = props;
         const format = props.format || 'L';
 
         const {t} = i18n.useTranslation();
@@ -60,6 +60,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                           value: state.value,
                           timeZone: state.timeZone,
                           alwaysShowAsAbsolute,
+                          allowNullableValues,
                           format,
                           presets: presetTabs?.flatMap(({presets}) => presets),
                           presetsTranslations,

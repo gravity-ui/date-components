@@ -48,6 +48,12 @@ export function getPresetTitle(
             return t(preset.title as any);
         }
     }
+    if (!start) {
+        return `${t('To')}: ${endText}`;
+    }
+    if (!end) {
+        return `${t('From')}: ${startText}`;
+    }
 
     if (end === 'now') {
         const match = lastRe.exec(startText || '');
@@ -67,10 +73,18 @@ function isDateUnit(value: string): value is 's' | 'm' | 'h' | 'd' | 'w' | 'M' |
     return ['s', 'm', 'h', 'd', 'w', 'M', 'y'].includes(value);
 }
 
-function filterPresets(presets: Preset[], minValue?: DateTime) {
+export function filterPresets(
+    presets: Preset[],
+    minValue?: DateTime,
+    allowNullableValues?: boolean,
+) {
     return presets.filter((preset) => {
         const from = dateTimeParse(preset.from);
         const to = dateTimeParse(preset.to, {roundUp: true});
+
+        if (!allowNullableValues && (!from || !to)) {
+            return false;
+        }
 
         if (to?.isBefore(from)) {
             return false;
@@ -93,10 +107,12 @@ export interface PresetTab {
 export function getDefaultPresetTabs({
     withTime,
     minValue,
+    allowNullableValues,
     t = i18n,
 }: {
     minValue?: DateTime;
     withTime?: boolean;
+    allowNullableValues?: boolean;
     t?: (key: 'Main' | 'Other') => string;
 }) {
     const tabs: PresetTab[] = [];
@@ -110,7 +126,7 @@ export function getDefaultPresetTabs({
     if (withTime) {
         mainPresets.unshift(...DEFAULT_TIME_PRESETS);
     }
-    mainTab.presets = filterPresets(mainPresets, minValue);
+    mainTab.presets = filterPresets(mainPresets, minValue, allowNullableValues);
 
     if (mainTab.presets.length > 0) {
         tabs.push(mainTab);
@@ -129,9 +145,12 @@ export function getDefaultPresetTabs({
     return tabs;
 }
 
-export function filterPresetTabs(tabs: PresetTab[], {minValue}: {minValue?: DateTime} = {}) {
+export function filterPresetTabs(
+    tabs: PresetTab[],
+    {minValue, allowNullableValues}: {minValue?: DateTime; allowNullableValues?: boolean} = {},
+) {
     return tabs.reduce<PresetTab[]>((acc, tab) => {
-        const presets = filterPresets(tab.presets, minValue);
+        const presets = filterPresets(tab.presets, minValue, allowNullableValues);
         if (presets.length) {
             acc.push({
                 ...tab,
