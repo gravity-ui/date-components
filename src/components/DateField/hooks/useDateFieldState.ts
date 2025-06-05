@@ -194,7 +194,8 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     }
 
     function setValueFromString(str: string) {
-        const date = parseDateFromString(str, format, timeZone);
+        const {dateFromStringParser = parseDateFromString} = props;
+        const date = dateFromStringParser(str, format, timeZone);
         if (date.isValid()) {
             handleUpdateDate(date);
             return true;
