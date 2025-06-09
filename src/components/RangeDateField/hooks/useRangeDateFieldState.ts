@@ -223,10 +223,10 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     }
 
     function setValueFromString(str: string) {
-        const {dateFromStringParser = parseDateFromString} = props;
         const list = str.split(delimiter);
-        const start = dateFromStringParser(list?.[0], format, timeZone);
-        const end = dateFromStringParser(list?.[1], format, timeZone);
+        const parseDate = props.parseDateFromString ?? parseDateFromString;
+        const start = parseDate(list?.[0], format, timeZone);
+        const end = parseDate(list?.[1], format, timeZone);
         const range = {start, end};
         if (range.start.isValid() && range.end.isValid()) {
             handleUpdateRange(range);

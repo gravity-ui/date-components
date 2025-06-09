@@ -13,7 +13,7 @@ const mockedParseDateFromString = parseDateFromString as jest.MockedFunction<
     typeof parseDateFromString
 >;
 
-describe('DateField: dateFromStringParser', () => {
+describe('DateField: parseDateFromString', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockedParseDateFromString.mockImplementation((str, format, timeZone) => {
@@ -21,13 +21,13 @@ describe('DateField: dateFromStringParser', () => {
         });
     });
 
-    it('should call custom dateFromStringParser when provided', () => {
+    it('should call custom parseDateFromString when provided', () => {
         const customParser = jest.fn().mockReturnValue(dateTime({input: '2024-01-15T00:00:00Z'}));
 
         const {result} = renderHook(() =>
             useDateFieldState({
                 format: 'DD.MM.YYYY',
-                dateFromStringParser: customParser,
+                parseDateFromString: customParser,
             }),
         );
 
@@ -39,7 +39,7 @@ describe('DateField: dateFromStringParser', () => {
         expect(mockedParseDateFromString).not.toHaveBeenCalled();
     });
 
-    it('should use default parseDateFromString when dateFromStringParser is not provided', () => {
+    it('should use default parseDateFromString when parseDateFromString is not provided', () => {
         const validDate = dateTime({input: '2024-01-15T00:00:00Z'});
         mockedParseDateFromString.mockReturnValue(validDate);
 
