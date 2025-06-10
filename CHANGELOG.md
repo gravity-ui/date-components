@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/gravity-ui/date-components/compare/v3.1.0...v3.1.1) (2025-06-05)
+
+
+### Bug Fixes
+
+* **DateField:** unpredictable behavior on typing zeros ([#192](https://github.com/gravity-ui/date-components/issues/192)) ([8ca2117](https://github.com/gravity-ui/date-components/commit/8ca2117fabf9a04c6f4b30ffb4c310c26d4e1e0e))
+
 ## [3.1.0](https://github.com/gravity-ui/date-components/compare/v3.0.3...v3.1.0) (2025-04-22)
 
 
