@@ -11,6 +11,25 @@ import type {Value} from '../../RelativeDatePicker';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
 import type {RelativeRangeDatePickerProps} from '../types';
 
+const DEFAULT_RANGE_DATE_PICKER_PRESET: RelativeRangeDatePickerProps['presetTabs'] = [
+    {
+        id: 'main',
+        title: 'Presets',
+        presets: [
+            {
+                from: 'now',
+                to: 'now+30d',
+                title: '30 days',
+            },
+            {
+                from: 'now',
+                to: null,
+                title: 'Unlimited',
+            },
+        ],
+    },
+];
+
 const meta: Meta<typeof RelativeRangeDatePicker> = {
     title: 'Components/RelativeRangeDatePicker',
     component: RelativeRangeDatePicker,
@@ -69,6 +88,9 @@ export const Default = {
             });
         },
         style: {width: 326},
+        allowNullableValues: true,
+        withPresets: true,
+        presetTabs: DEFAULT_RANGE_DATE_PICKER_PRESET,
     },
     argTypes: {
         minValue: {
