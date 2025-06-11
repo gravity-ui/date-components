@@ -19,6 +19,8 @@ export interface DateFieldBase<T = DateTime> extends ValueBase<T | null>, InputB
      * @default The timezone of the `value` or `defaultValue` or `placeholderValue`, 'default' otherwise.
      */
     timeZone?: string;
+    /** Custom parser function for parsing pasted date strings. If not provided, the default parser will be used. */
+    parseDateFromString?: (dateStr: string, format: string, timeZone?: string) => DateTime;
 }
 
 export interface PopupTriggerProps<Args extends unknown[] = []> {
