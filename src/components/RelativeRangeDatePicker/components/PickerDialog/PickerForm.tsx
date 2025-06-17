@@ -40,6 +40,8 @@ export interface PickerFormProps extends RelativeRangeDatePickerStateOptions, Do
     withZonesList?: boolean;
     /** Show relative range presets */
     withPresets?: boolean;
+    /** Apply presets immediately */
+    applyPresetsImmediately?: boolean;
     /** Show header with docs tooltip */
     withHeader?: boolean;
     /** Custom preset tabs */
@@ -139,8 +141,9 @@ export function PickerForm(
                         state.setRange(
                             {type: 'relative', value: start},
                             {type: 'relative', value: end},
+                            props.applyPresetsImmediately,
                         );
-                        if (!props.withApplyButton) {
+                        if (!props.withApplyButton || props.applyPresetsImmediately) {
                             props.onApply();
                         }
                     }}

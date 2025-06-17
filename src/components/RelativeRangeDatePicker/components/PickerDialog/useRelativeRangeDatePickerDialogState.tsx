@@ -67,12 +67,12 @@ export function useRelativeRangeDatePickerDialogState(props: PickerFormProps) {
             return;
         }
         setTimeZone(newTimeZone);
-        const newStart = start ? {...start} : start;
+        const newStart = start ? {...start} : null;
         if (newStart?.type === 'absolute') {
             newStart.value = newStart.value.timeZone(newTimeZone, true);
             setStart(newStart);
         }
-        const newEnd = end ? {...end} : end;
+        const newEnd = end ? {...end} : null;
         if (newEnd?.type === 'absolute') {
             newEnd.value = newEnd.value.timeZone(newTimeZone, true);
             setEnd(newEnd);
@@ -89,13 +89,13 @@ export function useRelativeRangeDatePickerDialogState(props: PickerFormProps) {
         }
     }
 
-    function setRange(newStart: Value, newEnd: Value) {
+    function setRange(newStart: Value, newEnd: Value, force?: boolean) {
         if (props.readOnly) {
             return;
         }
         setStart(newStart);
         setEnd(newEnd);
-        if (!withApplyButton) {
+        if (!withApplyButton || force) {
             setValue(
                 getRangeValue(newStart, newEnd, {...props, timeZone, allowNullableValues}),
                 timeZone,

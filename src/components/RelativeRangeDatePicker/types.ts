@@ -70,6 +70,8 @@ export interface RelativeRangeDatePickerProps
     withZonesList?: boolean;
     /** Show relative range presets */
     withPresets?: boolean;
+    /** Apply presets immediately */
+    applyPresetsImmediately?: boolean;
     /** Show header with docs tooltip */
     withHeader?: boolean;
     /** Custom preset tabs */
