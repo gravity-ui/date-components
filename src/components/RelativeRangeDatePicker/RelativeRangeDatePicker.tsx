@@ -150,6 +150,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 isDateUnavailable={props.isDateUnavailable}
                 placeholderValue={props.placeholderValue}
                 withPresets={props.withPresets}
+                applyPresetsImmediately={props.applyPresetsImmediately}
                 presetTabs={props.presetTabs}
                 docs={props.docs}
                 withApplyButton={props.withApplyButton}
