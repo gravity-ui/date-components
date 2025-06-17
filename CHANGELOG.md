@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.0](https://github.com/gravity-ui/date-components/compare/v3.1.1...v3.2.0) (2025-06-17)
+
+
+### Features
+
+* **DateField:** add `parseDateFromString` property ([#190](https://github.com/gravity-ui/date-components/issues/190)) ([c4fb393](https://github.com/gravity-ui/date-components/commit/c4fb39309be00a1f3f865b43a66c80ef79d505b6))
+* **RelativeRangeDatePicker:** allow apply presets immediately ([#196](https://github.com/gravity-ui/date-components/issues/196)) ([61a9268](https://github.com/gravity-ui/date-components/commit/61a92681e94efb8c1eedb2256cef4a762d80d910))
+
 ## [3.1.1](https://github.com/gravity-ui/date-components/compare/v3.1.0...v3.1.1) (2025-06-05)
 
 
