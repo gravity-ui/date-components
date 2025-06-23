@@ -384,7 +384,7 @@ export function useBaseDateFieldState<T = DateTime>(
                         this.focusNextSection();
                     }
                 } else {
-                    enteredKeys.current = newValue === '0' ? '' : newValue;
+                    enteredKeys.current = newValue === '0' && !allowsZero ? '' : newValue;
                 }
             };
 
