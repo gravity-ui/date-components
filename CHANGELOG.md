@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/gravity-ui/date-components/compare/v3.2.0...v3.2.1) (2025-06-23)
+
+
+### Bug Fixes
+
+* **DateField:** can not switch segment when entering "00" ([#198](https://github.com/gravity-ui/date-components/issues/198)) ([a680c68](https://github.com/gravity-ui/date-components/commit/a680c68bb7b0411c5e15d8a33fe4f52518fe7d93))
+
 ## [3.2.0](https://github.com/gravity-ui/date-components/compare/v3.1.1...v3.2.0) (2025-06-17)
 
 
