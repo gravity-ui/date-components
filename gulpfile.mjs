@@ -51,7 +51,10 @@ async function compileTs(modules = false) {
             .pipe(
                 addVirtualFile({
                     fileName: 'package.json',
-                    text: JSON.stringify({type: modules ? 'module' : 'commonjs'}),
+                    text: JSON.stringify({
+                        type: modules ? 'module' : 'commonjs',
+                        sideEffects: ['*.css', '*.scss'],
+                    }),
                 }),
             )
             .pipe(dest(path.resolve(BUILD_DIR, modules ? 'esm' : 'cjs')))
