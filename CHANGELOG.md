@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/gravity-ui/date-components/compare/v3.2.1...v3.2.2) (2025-06-30)
+
+
+### Bug Fixes
+
+* **build:** treeshaking ([#200](https://github.com/gravity-ui/date-components/issues/200)) ([2988371](https://github.com/gravity-ui/date-components/commit/298837163487affe99632c7f354d42cce9d82b0b))
+
 ## [3.2.1](https://github.com/gravity-ui/date-components/compare/v3.2.0...v3.2.1) (2025-06-23)
 
 
