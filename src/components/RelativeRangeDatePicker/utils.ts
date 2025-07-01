@@ -44,18 +44,13 @@ const isPresetValue = (value: RangeValue<Value | null> | null, allowNullableValu
         // we can't get here with no nullable values allowed but just in case...
         return null;
     }
-    let start, end;
-    if (value.start === null) {
-        start = null;
-    }
+    let start = null;
+    let end = null;
     if (value.start?.type === 'relative') {
-        start = value.start?.value || '';
-    }
-    if (value.end === null) {
-        end = null;
+        start = value.start.value;
     }
     if (value.end?.type === 'relative') {
-        end = value.end?.value || '';
+        end = value.end.value;
     }
     return {start, end};
 };
