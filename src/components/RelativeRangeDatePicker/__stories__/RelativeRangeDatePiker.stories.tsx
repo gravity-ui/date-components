@@ -59,8 +59,19 @@ export const Default = meta.story({
         const timeZone = props.timeZone;
         const minValue = props.minValue ? dateTimeParse(props.minValue, {timeZone}) : undefined;
         const maxValue = props.maxValue ? dateTimeParse(props.maxValue, {timeZone}) : undefined;
+        let presetTabs;
+        if (props.withPresets) {
+            presetTabs = DEFAULT_RANGE_DATE_PICKER_PRESET;
+        }
 
-        return <RelativeRangeDatePicker {...props} minValue={minValue} maxValue={maxValue} />;
+        return (
+            <RelativeRangeDatePicker
+                {...props}
+                minValue={minValue}
+                maxValue={maxValue}
+                presetTabs={presetTabs}
+            />
+        );
     },
     args: {
         onUpdate: (res, timeZone) => {
@@ -86,9 +97,6 @@ export const Default = meta.story({
             });
         },
         style: {width: 326},
-        allowNullableValues: true,
-        withPresets: true,
-        presetTabs: DEFAULT_RANGE_DATE_PICKER_PRESET,
     },
     argTypes: {
         minValue: {
@@ -108,6 +116,16 @@ export const Default = meta.story({
             },
         },
         timeZone: timeZoneControl,
+        allowNullableValues: {
+            control: {
+                type: 'boolean',
+            },
+        },
+        withPresets: {
+            control: {
+                type: 'boolean',
+            },
+        },
     },
 });
 
