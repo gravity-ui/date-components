@@ -127,7 +127,7 @@ function PresetsList({presets, onChoosePreset, size = 'm'}: PresetsListProps) {
             renderItem={(item) => item.title}
             itemHeight={SIZE_TO_ITEM_HEIGHT[size]}
             onItemClick={(item) => {
-                onChoosePreset(item?.from, item?.to);
+                onChoosePreset(item.from, item.to);
             }}
         />
     );

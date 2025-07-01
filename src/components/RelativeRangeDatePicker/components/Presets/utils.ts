@@ -33,8 +33,8 @@ const countUnit = {
 } as const;
 
 export function getPresetTitle(
-    start?: string | null,
-    end?: string | null,
+    start: string | null,
+    end: string | null,
     presets: Preset[] = allPresets,
 ) {
     const startText = start?.replace(/\s+/g, '') ?? start;
@@ -45,15 +45,15 @@ export function getPresetTitle(
             return preset.title;
         }
     }
-    if (!start) {
+    if (!startText) {
         return `${i18n('To')}: ${endText}`;
     }
-    if (!end) {
+    if (!endText) {
         return `${i18n('From')}: ${startText}`;
     }
 
-    if (end === 'now') {
-        const match = lastRe.exec(startText || '');
+    if (endText === 'now') {
+        const match = lastRe.exec(startText);
         if (match) {
             const [, count, unit] = match;
             if (isDateUnit(unit)) {
@@ -130,7 +130,7 @@ export function getDefaultPresetTabs({
     const otherTab: PresetTab = {
         id: 'other',
         title: i18n('Other'),
-        presets: filterPresets(DEFAULT_OTHERS_PRESETS, minValue),
+        presets: filterPresets(DEFAULT_OTHERS_PRESETS, minValue, allowNullableValues),
     };
 
     if (otherTab.presets.length > 0) {
