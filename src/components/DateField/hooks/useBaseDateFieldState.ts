@@ -346,25 +346,37 @@ export function useBaseDateFieldState<T = DateTime>(
             }
 
             const section = this.sections[sectionIndex];
+            const isLastSection = section.nextEditableSection === sectionIndex;
             let newValue = enteredKeys.current + key;
 
             const onInputNumber = (numberValue: number) => {
                 let sectionValue = section.type === 'month' ? numberValue - 1 : numberValue;
+                const sectionMaxValue = section.maxValue ?? 0;
                 const allowsZero = section.minValue === 0;
+                let shouldResetUserInput;
                 if (
+                    // 12-hour clock format with AM/PM
                     section.type === 'hour' &&
-                    (section.minValue === 12 || section.maxValue === 11)
+                    (sectionMaxValue === 11 || section.minValue === 12)
                 ) {
-                    if (numberValue > 12) {
+                    if (sectionValue > 12) {
                         sectionValue = Number(key);
+                        newValue = key;
                     }
-                    if (section.minValue === 12 && sectionValue > 1) {
+                    if (sectionValue === 0) {
+                        sectionValue = -Infinity;
+                    }
+                    if (sectionValue === 12) {
+                        sectionValue = 0;
+                    }
+                    if (section.minValue === 12) {
                         sectionValue += 12;
                     }
-                } else if (sectionValue > (section.maxValue ?? 0)) {
+                    shouldResetUserInput = Number(newValue + '0') > 12;
+                } else if (sectionValue > sectionMaxValue) {
                     sectionValue = Number(key) - (section.type === 'month' ? 1 : 0);
                     newValue = key;
-                    if (sectionValue > (section.maxValue ?? 0)) {
+                    if (sectionValue > sectionMaxValue) {
                         enteredKeys.current = '';
                         return;
                     }
@@ -375,16 +387,19 @@ export function useBaseDateFieldState<T = DateTime>(
                     setSection(sectionIndex, sectionValue);
                 }
 
-                if (
-                    Number(numberValue + '0') > (section.maxValue ?? 0) ||
-                    newValue.length >= String(section.maxValue).length
-                ) {
+                if (shouldResetUserInput === undefined) {
+                    shouldResetUserInput = Number(newValue + '0') > sectionMaxValue;
+                }
+                const isMaxLength = newValue.length >= String(sectionMaxValue).length;
+                if (shouldResetUserInput) {
                     enteredKeys.current = '';
                     if (shouldSetValue) {
                         this.focusNextSection();
                     }
+                } else if (isMaxLength && shouldSetValue && !isLastSection) {
+                    this.focusNextSection();
                 } else {
-                    enteredKeys.current = newValue === '0' && !allowsZero ? '' : newValue;
+                    enteredKeys.current = newValue;
                 }
             };
 
