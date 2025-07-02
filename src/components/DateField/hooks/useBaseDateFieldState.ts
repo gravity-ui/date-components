@@ -384,7 +384,8 @@ export function useBaseDateFieldState<T = DateTime>(
                         this.focusNextSection();
                     }
                 } else {
-                    enteredKeys.current = newValue === '0' && !allowsZero ? '' : newValue;
+                    enteredKeys.current =
+                        newValue === '0' && !allowsZero && section.type !== 'day' ? '' : newValue;
                 }
             };
 
