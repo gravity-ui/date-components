@@ -7,7 +7,7 @@ import {Calendar as CalendarIcon, Clock as ClockIcon} from '@gravity-ui/icons';
 import {Button, Icon, Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
 import {Calendar} from '../Calendar';
-import type {CalendarProps} from '../Calendar';
+import type {CalendarProps, CalendarRenderProps} from '../Calendar';
 import {DateField} from '../DateField';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {
@@ -30,7 +30,7 @@ import {b} from './utils';
 
 import './DatePicker.scss';
 
-export interface DatePickerProps<T = DateTime>
+export interface DatePickerProps<T = DateTime, RT = CalendarRenderProps>
     extends DatePickerStateOptions<T>,
         TextInputProps,
         FocusableProps,
@@ -40,7 +40,7 @@ export interface DatePickerProps<T = DateTime>
         StyleProps,
         AccessibilityProps,
         PopupStyleProps {
-    children?: (props: CalendarProps<T>) => React.ReactNode;
+    children?: (props: CalendarProps<T, RT>) => React.ReactNode;
     disablePortal?: boolean;
     disableFocusTrap?: boolean;
 }
