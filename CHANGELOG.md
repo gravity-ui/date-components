@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.3](https://github.com/gravity-ui/date-components/compare/v3.2.2...v3.2.3) (2025-07-03)
+
+
+### Bug Fixes
+
+* **DateField:** correctly check sections constraints on user input ([#206](https://github.com/gravity-ui/date-components/issues/206)) ([f5eed7a](https://github.com/gravity-ui/date-components/commit/f5eed7a0d21eff93cfe829f06649b7f3ec0bf7ee))
+
 ## [3.2.2](https://github.com/gravity-ui/date-components/compare/v3.2.1...v3.2.2) (2025-06-30)
 
 
