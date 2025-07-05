@@ -39,34 +39,33 @@ export function UnavailableTicks({
     const endPoint = calculatePosition(minValue, interval, viewport.width);
     const startPoint = calculatePosition(maxValue, interval, viewport.width);
 
-    const tickCoords: number[] = [];
-    if (!isNaN(endPoint) && endPoint > 0) {
-        let x = endPoint - tickWidth;
-        if (endPoint > viewport.width) {
-            x = endPoint - tickWidth * Math.floor((endPoint - viewport.width) / tickWidth);
-        }
-        tickCoords.push(x);
-        while (x > 0) {
-            x -= tickWidth;
-            tickCoords.push(x);
-        }
-    }
-
-    if (!isNaN(startPoint) && startPoint < viewport.width) {
-        let x = startPoint;
-        if (startPoint < 0) {
-            x = startPoint + tickWidth * Math.floor((0 - startPoint) / tickWidth) - tickWidth;
-        }
-        tickCoords.push(x);
-        while (x < viewport.width) {
-            x += tickWidth;
-            tickCoords.push(x);
-        }
-    }
-
     const ticksGeometry = React.useMemo(() => {
+        const tickCoords: number[] = [];
+        if (!isNaN(endPoint) && endPoint > 0) {
+            let x = endPoint - tickWidth;
+            if (endPoint > viewport.width) {
+                x = endPoint - tickWidth * Math.floor((endPoint - viewport.width) / tickWidth);
+            }
+            tickCoords.push(x);
+            while (x > 0) {
+                x -= tickWidth;
+                tickCoords.push(x);
+            }
+        }
+
+        if (!isNaN(startPoint) && startPoint < viewport.width) {
+            let x = startPoint;
+            if (startPoint < 0) {
+                x = startPoint + tickWidth * Math.floor((0 - startPoint) / tickWidth) - tickWidth;
+            }
+            tickCoords.push(x);
+            while (x < viewport.width) {
+                x += tickWidth;
+                tickCoords.push(x);
+            }
+        }
         return tickCoords.map(geometry).join('');
-    }, [geometry, tickCoords]);
+    }, [endPoint, geometry, startPoint, tickWidth, viewport.width]);
 
     const ticksPath = <path className={b({theme}, className)} d={ticksGeometry} />;
 

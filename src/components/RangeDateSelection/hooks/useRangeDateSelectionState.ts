@@ -59,14 +59,12 @@ export interface RangeDateSelectionOptions extends ValueBase<RangeValue<DateTime
     timeZone?: string;
     /**
      * The number of selection intervals that fit into the underlying ruler.
-     *
      * @default 4
      */
     numberOfIntervals?: number;
     /**
      * Place of the selection on the underlying ruler.
      * Value must be between 0 and 1, where 0 is the start of the ruler and 1 is the end.
-     *
      * @default 0.5 - center of the ruler
      */
     placeOnRuler?: number;
@@ -109,7 +107,7 @@ export function useRangeDateSelectionState(
         start: value.start.timeZone(timeZone),
         end: value.end.timeZone(timeZone),
     };
-    const interval = isDragging ? displayValue : currentValue ?? displayValue;
+    const interval = isDragging ? displayValue : (currentValue ?? displayValue);
 
     const viewportInterval = getViewportIntervalFromDates(
         interval.start,

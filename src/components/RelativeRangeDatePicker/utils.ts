@@ -52,14 +52,14 @@ export function getDefaultTitle({
         from =
             value.start.type === 'relative' && !alwaysShowAsAbsolute
                 ? value.start.value
-                : dateTimeParse(value.start.value, {timeZone})?.format(format) ?? '';
+                : (dateTimeParse(value.start.value, {timeZone})?.format(format) ?? '');
     }
     let to = '';
     if (value.end) {
         to =
             value.end.type === 'relative' && !alwaysShowAsAbsolute
                 ? value.end.value
-                : dateTimeParse(value.end.value, {timeZone, roundUp: true})?.format(format) ?? '';
+                : (dateTimeParse(value.end.value, {timeZone, roundUp: true})?.format(format) ?? '');
     }
 
     if (

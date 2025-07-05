@@ -38,21 +38,24 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             ? state.dateFieldState.displayValue
             : state.dateFieldState.displayValue.start,
     );
-    const [prevDateValue, setPrevDateValue] = React.useState<any>(
-        state.dateFieldState.displayValue,
-    );
+    const [prevDateValue, setPrevDateValue] = React.useState(state.dateFieldState.displayValue);
 
-    if (isDateTime(state.dateFieldState.displayValue)) {
-        if (!state.dateFieldState.displayValue.isSame(prevDateValue, 'day')) {
+    if (isDateTime(prevDateValue)) {
+        if (
+            isDateTime(state.dateFieldState.displayValue) &&
+            !state.dateFieldState.displayValue.isSame(prevDateValue, 'day')
+        ) {
             setPrevDateValue(state.dateFieldState.displayValue);
             setFocusedDate(state.dateFieldState.displayValue);
         }
-    } else if (!state.dateFieldState.displayValue.start.isSame(prevDateValue.start, 'day')) {
-        setPrevDateValue(state.dateFieldState.displayValue);
-        setFocusedDate(state.dateFieldState.displayValue.start);
-    } else if (!state.dateFieldState.displayValue.end.isSame(prevDateValue.end, 'day')) {
-        setPrevDateValue(state.dateFieldState.displayValue);
-        setFocusedDate(state.dateFieldState.displayValue.end);
+    } else if (!isDateTime(state.dateFieldState.displayValue)) {
+        if (!state.dateFieldState.displayValue.start.isSame(prevDateValue.start, 'day')) {
+            setPrevDateValue(state.dateFieldState.displayValue);
+            setFocusedDate(state.dateFieldState.displayValue.start);
+        } else if (!state.dateFieldState.displayValue.end.isSame(prevDateValue.end, 'day')) {
+            setPrevDateValue(state.dateFieldState.displayValue);
+            setFocusedDate(state.dateFieldState.displayValue.end);
+        }
     }
 
     const {focusWithinProps} = useFocusWithin({

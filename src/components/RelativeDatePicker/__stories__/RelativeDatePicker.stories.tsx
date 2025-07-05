@@ -11,8 +11,8 @@ import {
     useControlledState,
 } from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import {action} from '@storybook/addon-actions';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
+import {action} from 'storybook/actions';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {Calendar} from '../../Calendar';
@@ -53,6 +53,7 @@ export const Default = {
     },
     args: {
         onUpdate: (res) => {
+            action('onUpdate')(res);
             toaster.add({
                 name: 'on-change-cb',
                 title: 'onUpdate callback',

@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
@@ -7,8 +6,8 @@ import {useControlledState} from '@gravity-ui/uikit';
 import {useBaseDateFieldState} from '../../DateField';
 import type {DateFieldState} from '../../DateField';
 import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../DateField/types';
+import type {EDITABLE_SEGMENTS} from '../../DateField/utils';
 import {
-    EDITABLE_SEGMENTS,
     addSegment,
     adjustDateToFormat,
     getFormatInfo,
@@ -223,13 +222,12 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     }
 
     function setValueFromString(str: string) {
-        const list = str.split(delimiter);
+        const [startDate = '', endDate = ''] = str.split(delimiter);
         const parseDate = props.parseDateFromString ?? parseDateFromString;
-        const start = parseDate(list?.[0], format, timeZone);
-        const end = parseDate(list?.[1], format, timeZone);
-        const range = {start, end};
-        if (range.start.isValid() && range.end.isValid()) {
-            handleUpdateRange(range);
+        const start = parseDate(startDate, format, timeZone);
+        const end = parseDate(endDate, format, timeZone);
+        if (start.isValid() && end.isValid()) {
+            handleUpdateRange({start, end});
             return true;
         }
         return false;

@@ -1,7 +1,7 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import {action} from '@storybook/addon-actions';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
+import {action} from 'storybook/actions';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {RangeDateField} from '../RangeDateField';
@@ -46,6 +46,7 @@ export const Default = {
     },
     args: {
         onUpdate: (res) => {
+            action('onUpdate')(res);
             toaster.add({
                 name: 'date-field-on-update-cb',
                 title: 'onUpdate callback',
