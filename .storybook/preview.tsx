@@ -1,4 +1,6 @@
 // eslint-disable-next-line import/order
+import '@gravity-ui/uikit/styles/fonts.scss';
+// eslint-disable-next-line import/order
 import '@gravity-ui/uikit/styles/styles.css';
 
 import React from 'react';
@@ -12,8 +14,8 @@ import {
     configure,
 } from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import {MINIMAL_VIEWPORTS} from '@storybook/addon-viewport';
-import type {Decorator, Preview} from '@storybook/react';
+import type {Decorator, Preview} from '@storybook/react-webpack5';
+import {MINIMAL_VIEWPORTS} from 'storybook/viewport';
 
 import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator';
 
@@ -47,6 +49,7 @@ const preview: Preview = {
             canvas: {
                 className: 'g-storybook-docs-decorator__canvas',
             },
+            codePanel: true,
         },
         jsx: {showFunctions: false}, // Do not show functions in sources
         viewport: {

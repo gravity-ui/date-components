@@ -41,8 +41,8 @@ export interface InputDOMProps {
      */
     name?: string;
     /**
-     * The id of a <form> in the same document. If this attribute is not set,
-     * the <input> is associated with its ancestor <form> element, if any.
+     * The id of a form element in the same document. If this attribute is not set,
+     * the input element  is associated with its ancestor form element, if any.
      */
     form?: string;
 }

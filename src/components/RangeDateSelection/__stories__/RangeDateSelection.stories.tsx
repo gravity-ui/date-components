@@ -3,8 +3,8 @@ import React from 'react';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Button} from '@gravity-ui/uikit';
-import {action} from '@storybook/addon-actions';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
+import {action} from 'storybook/actions';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {RelativeRangeDatePicker} from '../../RelativeRangeDatePicker';

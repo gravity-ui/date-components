@@ -10,7 +10,7 @@ import {Calendar} from '@gravity-ui/date-components';
 
 `Calendar` is a flexible, user-friendly calendar component for React applications. It allows users to view, select, and manage dates with ease. Ideal for event scheduling, booking systems, and any application where date selection is essential. It can be controlled if you set `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with optional property `defaultValue`. Component is uncontrolled by default.
 
-### Useful addition
+## Useful addition
 
 To set dates in the right format you may need to include additional helpers from [Date Utils library](https://gravity-ui.com/libraries/date-utils)
 

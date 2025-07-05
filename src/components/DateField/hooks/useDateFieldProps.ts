@@ -198,7 +198,6 @@ export function useDateFieldProps<T = DateTime>(
                 },
                 onBeforeInput(e) {
                     e.preventDefault();
-                    // @ts-expect-error
                     const key = e.data;
                     if (key !== undefined && key !== null) {
                         state.onInput(key);

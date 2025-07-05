@@ -29,13 +29,13 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     const calendar = useCalendarState({...calendarProps, value: null, timeZone});
     const highlightedRange = anchorDate
         ? makeRange(anchorDate, calendar.focusedDate, calendar.mode)
-        : (value &&
+        : ((value &&
               makeRange(
                   value.start.timeZone(timeZone),
                   value.end.timeZone(timeZone),
                   calendar.mode,
               )) ??
-          undefined;
+          undefined);
 
     const minMode = calendar.availableModes[0];
 

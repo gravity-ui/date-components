@@ -4,11 +4,10 @@ import * as sass from 'sass';
 const config: StorybookConfig = {
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
     addons: [
-        {name: '@storybook/addon-essentials', options: {backgrounds: false}},
+        '@storybook/addon-docs',
         '@storybook/addon-a11y',
         './theme-addon/register.tsx',
         '@storybook/addon-webpack5-compiler-babel',
-        '@storybook/addon-storysource',
         {
             name: '@storybook/addon-styling-webpack',
             options: {

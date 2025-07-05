@@ -11,7 +11,6 @@ import type {CalendarLayout, CalendarState, RangeCalendarState} from './types';
 
 const buttonDisabledClassName = 'yc-button_disabled g-button_disabled';
 
-// eslint-disable-next-line complexity
 export function useCalendarProps(props: CalendarProps, state: CalendarState | RangeCalendarState) {
     const title =
         state.mode === 'years' || state.mode === 'quarters'

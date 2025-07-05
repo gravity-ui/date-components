@@ -2,8 +2,8 @@ import React from 'react';
 
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import {action} from '@storybook/addon-actions';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
+import {action} from 'storybook/actions';
 
 import {RangeCalendar} from '../../Calendar';
 import {RangeDatePicker} from '../RangeDatePicker';
@@ -50,6 +50,7 @@ export const Default = {
     },
     args: {
         onUpdate: (res) => {
+            action('onUpdate')(res);
             toaster.add({
                 name: 'date-picker-on-update-cb',
                 title: 'onUpdate callback',

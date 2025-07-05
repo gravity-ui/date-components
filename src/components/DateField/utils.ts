@@ -86,7 +86,6 @@ function getDateSectionConfigFromFormatToken(formatToken: string): {
     const config = formatTokenMap[formatToken];
 
     if (!config) {
-        // eslint-disable-next-line no-console
         console.error(
             [
                 `The token "${formatToken}" is not supported by the Date field.`,
@@ -649,7 +648,6 @@ function isDateStringWithTimeZone(str: string) {
 
 /**
  * Trims leading and trailing spaces from a string and replaces multiple consecutive spaces with a single space.
- *
  * @param str - The input string to process.
  * @returns The processed string with trimmed spaces and single spaces between words.
  */

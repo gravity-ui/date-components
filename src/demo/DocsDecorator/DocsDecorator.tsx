@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {MobileProvider, ThemeProvider, getThemeType} from '@gravity-ui/uikit';
-import {DocsContainer} from '@storybook/blocks';
-import type {DocsContainerProps} from '@storybook/blocks';
+import {DocsContainer} from '@storybook/addon-docs/blocks';
+import type {DocsContainerProps} from '@storybook/addon-docs/blocks';
 
 import {themes} from '../../../.storybook/theme';
 import {block} from '../utils/cn';
