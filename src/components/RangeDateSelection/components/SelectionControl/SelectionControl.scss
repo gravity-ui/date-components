@@ -6,12 +6,12 @@ $block: '.#{variables.$ns}range-date-selection-control';
 #{$block} {
     --_--g-date-timeline-color-selection: var(
         --g-date-timeline-color-selection,
-        var(--g-color-base-info-light)
+        var(--g-color-base-selection)
     );
 
     --_--g-date-timeline-color-selection-hover: var(
         --g-date-timeline-color-selection-hover,
-        var(--g-color-base-info-light-hover)
+        var(--g-color-base-selection-hover)
     );
 
     --_--g-date-timeline-color-selection-handle: var(
