@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.4](https://github.com/gravity-ui/date-components/compare/v3.2.3...v3.2.4) (2025-08-04)
+
+
+### Bug Fixes
+
+* **build:** add version to generated package.json files ([#214](https://github.com/gravity-ui/date-components/issues/214)) ([f9030ab](https://github.com/gravity-ui/date-components/commit/f9030abc7873e944e00f13e1acffac84620568bb))
+* **RangeDateSelection:** use base selection color for selected area ([#212](https://github.com/gravity-ui/date-components/issues/212)) ([2191d5b](https://github.com/gravity-ui/date-components/commit/2191d5bce24c79a92494fc7e57bb450324d5b3a9))
+
 ## [3.2.3](https://github.com/gravity-ui/date-components/compare/v3.2.2...v3.2.3) (2025-07-03)
 
 
