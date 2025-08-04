@@ -7,6 +7,8 @@ import sourcemaps from 'gulp-sourcemaps';
 import * as rimraf from 'rimraf';
 import * as sass from 'sass';
 
+import packageJson from './package.json' with {type: 'json'};
+
 const BUILD_DIR = path.resolve('dist');
 const sassLoader = gulpSass(sass);
 
@@ -30,6 +32,7 @@ async function compileTs(modules = false) {
         tsProject.customTransformers.transformLocalModules,
     ];
 
+    const {version, sideEffects} = packageJson;
     return new Promise((resolve) => {
         src([
             'src/**/*.{ts,tsx}',
@@ -53,7 +56,8 @@ async function compileTs(modules = false) {
                     fileName: 'package.json',
                     text: JSON.stringify({
                         type: modules ? 'module' : 'commonjs',
-                        sideEffects: ['*.css', '*.scss'],
+                        version,
+                        sideEffects,
                     }),
                 }),
             )
