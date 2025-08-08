@@ -4,17 +4,18 @@
 $block: '.#{variables.$ns}calendar';
 
 #{$block} {
-    --_--calendar-padding: var(--g-date-calendar-padding, 8px);
+    --_--calendar-padding-x: var(--g-date-calendar-padding-x, 16px);
+    --_--calendar-padding-y: var(--g-date-calendar-padding-y, 8px);
     --_--calendar-day-size: var(--g-date-calendar-day-size, 28px);
     --_--calendar-days-gap: var(--g-date-calendar-days-gap, 2px);
 
     --_--calendar-width: calc(
         7 * var(--_--calendar-day-size) + 6 * var(--_--calendar-days-gap) + 2 *
-            var(--_--calendar-padding)
+            var(--_--calendar-padding-x)
     );
     --_--calendar-grid-height: calc(
         7 * var(--_--calendar-day-size) + 5 * var(--_--calendar-days-gap) +
-            var(--_--calendar-padding)
+            var(--_--calendar-padding-y)
     );
 
     display: inline-block;
@@ -33,8 +34,9 @@ $block: '.#{variables.$ns}calendar';
 
     &__header {
         display: flex;
+        justify-content: space-between;
 
-        padding: var(--_--calendar-padding) var(--_--calendar-padding) 0;
+        padding: var(--_--calendar-padding-y) var(--_--calendar-padding-x) 0;
     }
 
     &__years-label {
@@ -42,7 +44,10 @@ $block: '.#{variables.$ns}calendar';
     }
 
     &__controls {
-        margin-inline-start: auto;
+        display: flex;
+        flex-shrink: 1;
+        justify-content: flex-end;
+        gap: var(--g-spacing-2);
     }
 
     &__control-icon {
@@ -71,7 +76,7 @@ $block: '.#{variables.$ns}calendar';
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        padding: 0 var(--_--calendar-padding) var(--_--calendar-padding);
+        padding: 0 var(--_--calendar-padding-x) var(--_--calendar-padding-y);
 
         @keyframes calendar-forward {
             from {
@@ -239,6 +244,7 @@ $block: '.#{variables.$ns}calendar';
 
         font-weight: var(--g-text-subheader-font-weight);
         cursor: pointer;
+        text-transform: capitalize;
 
         border-radius: 4px;
         outline: none;
@@ -305,5 +311,9 @@ $block: '.#{variables.$ns}calendar';
             opacity: 0.5;
             background-color: var(--g-color-base-generic);
         }
+    }
+
+    &__mode-label {
+        text-transform: capitalize;
     }
 }

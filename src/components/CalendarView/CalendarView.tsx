@@ -45,6 +45,8 @@ export const CalendarView = React.forwardRef<CalendarInstance, CalendarViewProps
         state,
     );
 
+    const buttonView = props.size === 'xl' ? 'outlined' : 'flat';
+
     React.useImperativeHandle(ref, () => ({
         focus() {
             state.setFocused(true);
@@ -58,7 +60,7 @@ export const CalendarView = React.forwardRef<CalendarInstance, CalendarViewProps
             style={props.style}
         >
             <div className={b('header')}>
-                <Button {...modeButtonProps} view="flat" size={props.size}>
+                <Button {...modeButtonProps} view={buttonView} size={props.size}>
                     {state.availableModes.indexOf(state.mode) + 1 ===
                     state.availableModes.length ? (
                         <span key="label" className={b('mode-label', b(`years-label`))}>
@@ -76,12 +78,12 @@ export const CalendarView = React.forwardRef<CalendarInstance, CalendarViewProps
                     )}
                 </Button>
                 <div className={b('controls')}>
-                    <Button {...previousButtonProps} view="flat" size={props.size}>
+                    <Button {...previousButtonProps} view={buttonView} size={props.size}>
                         <Button.Icon>
                             <ChevronLeft className={b('control-icon')} />
                         </Button.Icon>
                     </Button>
-                    <Button {...nextButtonProps} view="flat" size={props.size}>
+                    <Button {...nextButtonProps} view={buttonView} size={props.size}>
                         <Button.Icon>
                             <ChevronRight className={b('control-icon')} />
                         </Button.Icon>
