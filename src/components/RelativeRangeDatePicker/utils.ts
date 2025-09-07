@@ -1,9 +1,10 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 
 import type {Value} from '../RelativeDatePicker';
-import type {RangeValue} from '../types';
+import type {ExtractFunctionType, RangeValue} from '../types';
 
 import type {Preset} from './components/Presets/defaultPresets';
+import {i18n} from './components/Presets/i18n';
 import {getPresetTitle} from './components/Presets/utils';
 
 export function resolveTimeZone(timeZone: string) {
@@ -33,6 +34,8 @@ interface GetDefaultTitleArgs {
     alwaysShowAsAbsolute?: boolean;
     format?: string;
     presets?: Preset[];
+    presetsTranslations?: ExtractFunctionType<typeof i18n>;
+    lang?: string;
 }
 export function getDefaultTitle({
     value,
@@ -40,6 +43,8 @@ export function getDefaultTitle({
     alwaysShowAsAbsolute,
     format = 'L',
     presets,
+    presetsTranslations = i18n,
+    lang = 'en',
 }: GetDefaultTitleArgs) {
     if (!value) {
         return '';
@@ -52,14 +57,16 @@ export function getDefaultTitle({
         from =
             value.start.type === 'relative' && !alwaysShowAsAbsolute
                 ? value.start.value
-                : (dateTimeParse(value.start.value, {timeZone})?.format(format) ?? '');
+                : (dateTimeParse(value.start.value, {timeZone, lang})?.format(format) ?? '');
     }
     let to = '';
     if (value.end) {
         to =
             value.end.type === 'relative' && !alwaysShowAsAbsolute
                 ? value.end.value
-                : (dateTimeParse(value.end.value, {timeZone, roundUp: true})?.format(format) ?? '');
+                : (dateTimeParse(value.end.value, {timeZone, roundUp: true, lang})?.format(
+                      format,
+                  ) ?? '');
     }
 
     if (
@@ -67,7 +74,7 @@ export function getDefaultTitle({
         value.start?.type === 'relative' &&
         value.end?.type === 'relative'
     ) {
-        return `${getPresetTitle(value.start.value, value.end.value, presets)}`;
+        return `${getPresetTitle(value.start.value, value.end.value, presets, presetsTranslations)}`;
     }
 
     const delimiter = ' — ';

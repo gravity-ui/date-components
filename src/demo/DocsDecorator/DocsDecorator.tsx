@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {MobileProvider, ThemeProvider, getThemeType} from '@gravity-ui/uikit';
+import {getThemeType} from '@gravity-ui/uikit';
 import {DocsContainer} from '@storybook/addon-docs/blocks';
 import type {DocsContainerProps} from '@storybook/addon-docs/blocks';
 
@@ -16,12 +16,11 @@ const b = block('docs-decorator');
 export function DocsDecorator({children, context}: DocsDecoratorProps) {
     const storyContext = context.getStoryContext(context.storyById());
     const theme = storyContext.globals.theme;
+
     return (
         <div className={b()}>
             <DocsContainer context={context} theme={themes[getThemeType(theme)]}>
-                <ThemeProvider theme={theme}>
-                    <MobileProvider mobile={false}>{children}</MobileProvider>
-                </ThemeProvider>
+                {children}
             </DocsContainer>
         </div>
     );

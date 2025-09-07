@@ -34,16 +34,10 @@ zones.unshift({
 
 zones.unshift({
     value: 'system',
-    get content() {
-        return i18n('system');
-    },
 });
 
 zones.unshift({
     value: 'default',
-    get content() {
-        return i18n('default');
-    },
 });
 
 const b = block('relative-range-date-picker-zones');
@@ -59,6 +53,7 @@ export interface ZonesProps {
 export function Zones(props: ZonesProps) {
     const timeZone = normalizeTimeZone(props.value);
     const size = props.isMobile ? 'xl' : props.size;
+    const {t} = i18n.useTranslation();
     return (
         <Select
             disabled={props.disabled}
@@ -74,7 +69,7 @@ export function Zones(props: ZonesProps) {
             width="max"
             renderControl={(controlProps) => {
                 const value =
-                    timeZone === 'system' || timeZone === 'default' ? i18n(timeZone) : timeZone;
+                    timeZone === 'system' || timeZone === 'default' ? t(timeZone) : timeZone;
                 return (
                     <Button
                         ref={controlProps.ref as React.Ref<HTMLButtonElement>}
@@ -103,7 +98,7 @@ export function Zones(props: ZonesProps) {
                 return (
                     <span className={b('item')}>
                         <span className={b('item-title')} title={value}>
-                            {v}&nbsp;
+                            {value === 'system' || value === 'default' ? t(value) : v}&nbsp;
                         </span>
                         <Text color="secondary">{getTimeZoneOffset(value)}</Text>
                     </span>

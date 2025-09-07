@@ -68,12 +68,13 @@ export function PickerForm(
         errorPlacement: 'inside',
     };
     const {isDateUnavailable, withHeader = false} = props;
+    const {t} = i18n.useTranslation();
     return (
         <div className={b({size: props.size}, props.className)} style={props.style}>
             {withHeader && (
                 <div className={b('header')}>
                     <Text variant={props.size === 'xl' ? 'subheader-3' : 'subheader-2'}>
-                        {i18n('Select the interval')}
+                        {t('Select the interval')}
                     </Text>
                     <PickerDoc
                         size={props.size}
@@ -96,10 +97,10 @@ export function PickerForm(
                     }
                     validationState={state.startValidation?.isInvalid ? 'invalid' : undefined}
                     errorMessage={
-                        state.startValidation?.errors?.join('\n') || i18n('Value is incorrect.')
+                        state.startValidation?.errors?.join('\n') || t('Value is incorrect.')
                     }
                     placeholderValue={props.placeholderValue?.startOf('day')}
-                    label={i18n('From')}
+                    label={t('From')}
                     value={state.start}
                     onUpdate={state.setStart}
                 />
@@ -110,10 +111,10 @@ export function PickerForm(
                     }
                     validationState={state.endValidation?.isInvalid ? 'invalid' : undefined}
                     errorMessage={
-                        state.endValidation?.errors?.join('\n') || i18n('Value is incorrect.')
+                        state.endValidation?.errors?.join('\n') || t('Value is incorrect.')
                     }
                     placeholderValue={props.placeholderValue?.endOf('day')}
-                    label={i18n('To')}
+                    label={t('To')}
                     value={state.end}
                     onUpdate={state.setEnd}
                     roundUp
@@ -130,7 +131,7 @@ export function PickerForm(
                     className={b('apply')}
                     width="max"
                 >
-                    {i18n('Apply')}
+                    {t('Apply')}
                 </Button>
             ) : null}
             {props.withPresets && !props.readOnly ? (

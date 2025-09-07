@@ -1,5 +1,7 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
+import type {ExtractFunctionType} from '../../types';
+
 import {i18n} from './i18n';
 
 export interface ValidationResult {
@@ -14,6 +16,7 @@ export function getValidationResult(
     isDateUnavailable: ((v: DateTime) => boolean) | undefined,
     timeZone: string,
     valueTitle = 'Value',
+    t: ExtractFunctionType<typeof i18n> = i18n,
 ): ValidationResult {
     const rangeOverflow = value && maxValue && maxValue.isBefore(value);
     const rangeUnderflow = value && minValue && value.isBefore(minValue);
@@ -24,7 +27,7 @@ export function getValidationResult(
     if (isInvalid) {
         if (rangeUnderflow && minValue) {
             errors.push(
-                i18n('Value must be {minValue} or later.', {
+                t('Value must be {minValue} or later.', {
                     minValue: minValue.timeZone(timeZone).format(),
                     value: valueTitle,
                 }),
@@ -33,7 +36,7 @@ export function getValidationResult(
 
         if (rangeOverflow && maxValue) {
             errors.push(
-                i18n('Value must be {maxValue} or earlier.', {
+                t('Value must be {maxValue} or earlier.', {
                     maxValue: maxValue.timeZone(timeZone).format(),
                     value: valueTitle,
                 }),
@@ -41,7 +44,7 @@ export function getValidationResult(
         }
 
         if (isUnavailable) {
-            errors.push(i18n('Selected date unavailable.'));
+            errors.push(t('Selected date unavailable.'));
         }
     }
 

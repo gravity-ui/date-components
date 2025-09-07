@@ -1,4 +1,4 @@
-import {useFocusWithin} from '@gravity-ui/uikit';
+import {useFocusWithin, useLang} from '@gravity-ui/uikit';
 
 import {formatDateTime} from '../../utils/dates';
 
@@ -11,6 +11,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
         },
     });
 
+    const {lang} = useLang();
     const gridProps: React.HTMLAttributes<HTMLElement> = {
         role: 'grid',
         'aria-label':
@@ -20,6 +21,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
                       state.focusedDate,
                       state.mode === 'days' ? 'MMMM YYYY' : 'YYYY',
                       state.timeZone,
+                      lang,
                   ),
         'aria-disabled': state.disabled ? 'true' : undefined,
         'aria-readonly': state.readOnly ? 'true' : undefined,
