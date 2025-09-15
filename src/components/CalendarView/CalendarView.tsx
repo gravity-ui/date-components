@@ -4,7 +4,7 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 import {ChevronLeft, ChevronRight} from '@gravity-ui/icons';
-import {ArrowToggle, Button} from '@gravity-ui/uikit';
+import {ArrowToggle, Button, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
@@ -44,8 +44,9 @@ export const CalendarView = React.forwardRef<CalendarInstance, CalendarViewProps
         props,
         state,
     );
+    const isMobile = useMobile();
 
-    const buttonView = props.size === 'xl' ? 'outlined' : 'flat';
+    const buttonView = isMobile ? 'outlined' : 'flat';
 
     React.useImperativeHandle(ref, () => ({
         focus() {
