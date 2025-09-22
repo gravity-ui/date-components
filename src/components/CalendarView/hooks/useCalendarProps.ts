@@ -43,6 +43,8 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
     const modeDisabled = state.disabled || isModeLast;
 
     const modeButtonProps: ButtonButtonProps = {
+        // Always set a tabIndex so that Safari allows focusing native buttons
+        tabIndex: 0,
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: modeDisabled ? buttonDisabledClassName : undefined,
@@ -71,6 +73,8 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
     });
 
     const previousButtonProps: ButtonButtonProps = {
+        // Always set a tabIndex so that Safari allows focusing native buttons
+        tabIndex: 0,
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: previousDisabled ? buttonDisabledClassName : undefined,
@@ -104,6 +108,8 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
     });
 
     const nextButtonProps: ButtonButtonProps = {
+        // Always set a tabIndex so that Safari allows focusing native buttons
+        tabIndex: 0,
         disabled: state.disabled,
         // FIXME: do not use button class name
         className: nextDisabled ? buttonDisabledClassName : undefined,
