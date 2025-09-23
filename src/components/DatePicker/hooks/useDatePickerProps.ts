@@ -9,6 +9,7 @@ import type {CalendarInstance, CalendarProps} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
 import type {RangeValue} from '../../types';
+import {filterDOMProps} from '../../utils/filterDOMProps';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
 import {mergeProps} from '../../utils/mergeProps';
 import type {DatePickerProps} from '../DatePicker';
@@ -88,8 +89,14 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
     const onlyTime = state.formatInfo.hasTime && !state.formatInfo.hasDate;
     const calendarModes = getCalendarModes(state.formatInfo);
 
+    const {t} = i18n.useTranslation();
+
+    const DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
     return {
         groupProps: {
+            ...DOMProps,
             ref: groupRef,
             tabIndex: -1,
             role: 'group',
@@ -118,7 +125,7 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             ref: calendarButtonRef,
             size: getButtonSizeForInput(props.size),
             disabled: state.disabled,
-            'aria-label': i18n('Calendar'),
+            'aria-label': t('Calendar'),
             'aria-haspopup': 'dialog',
             'aria-expanded': state.isOpen,
             view: 'flat-secondary',

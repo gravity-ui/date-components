@@ -8,6 +8,7 @@ import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
 import {getCalendarModes} from '../../DatePicker/utils';
 import {useRelativeDateFieldProps} from '../../RelativeDateField';
+import {filterDOMProps} from '../../utils/filterDOMProps';
 import {getButtonSizeForInput} from '../../utils/getButtonSizeForInput';
 import {mergeProps} from '../../utils/mergeProps';
 import type {RelativeDatePickerProps} from '../RelativeDatePicker';
@@ -134,8 +135,14 @@ export function useRelativeDatePickerProps(
     const groupRef = React.useRef<HTMLElement>(null);
     const calendarModes = getCalendarModes(datePickerState.formatInfo);
 
+    const {t} = i18n.useTranslation();
+
+    const DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
     return {
         groupProps: {
+            ...DOMProps,
             ref: groupRef,
             tabIndex: -1,
             role: 'group',
@@ -166,7 +173,7 @@ export function useRelativeDatePickerProps(
             view: 'flat-secondary',
             style: {zIndex: 2, marginInlineEnd: 2},
             selected: mode === 'relative',
-            'aria-label': i18n('Formula input mode'),
+            'aria-label': t('Formula input mode'),
             onClick: () => {
                 setMode(mode === 'relative' ? 'absolute' : 'relative');
                 if (mode === 'relative') {
@@ -183,7 +190,7 @@ export function useRelativeDatePickerProps(
         calendarButtonProps: {
             size: getButtonSizeForInput(props.size),
             disabled: state.disabled,
-            'aria-label': i18n('Calendar'),
+            'aria-label': t('Calendar'),
             'aria-haspopup': 'dialog',
             'aria-expanded': isOpen,
             view: 'flat-secondary',

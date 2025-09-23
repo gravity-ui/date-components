@@ -1,13 +1,14 @@
 import React from 'react';
 
 import {Calendar as CalendarIcon} from '@gravity-ui/icons';
-import {Button, Icon, TextInput} from '@gravity-ui/uikit';
+import {Button, Icon, TextInput, useLang} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 import {getButtonSizeForInput} from '../../../utils/getButtonSizeForInput';
 import type {RelativeRangeDatePickerState} from '../../hooks/useRelativeRangeDatePickerState';
 import type {RelativeRangeDatePickerProps, RelativeRangeDatePickerTriggerProps} from '../../types';
 import {getDefaultTitle} from '../../utils';
+import {i18n as i18nPresets} from '../Presets/i18n';
 
 import {i18n} from './i18n';
 
@@ -47,6 +48,10 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
         const {alwaysShowAsAbsolute, presetTabs, getRangeTitle} = props;
         const format = props.format || 'L';
 
+        const {t} = i18n.useTranslation();
+        const {t: presetsTranslations} = i18nPresets.useTranslation();
+        const {lang} = useLang();
+
         const text = React.useMemo(
             () =>
                 typeof getRangeTitle === 'function'
@@ -57,8 +62,19 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                           alwaysShowAsAbsolute,
                           format,
                           presets: presetTabs?.flatMap(({presets}) => presets),
+                          presetsTranslations,
+                          lang,
                       }),
-            [alwaysShowAsAbsolute, format, getRangeTitle, presetTabs, state.timeZone, state.value],
+            [
+                alwaysShowAsAbsolute,
+                format,
+                getRangeTitle,
+                lang,
+                presetTabs,
+                presetsTranslations,
+                state.timeZone,
+                state.value,
+            ],
         );
 
         const validationState = props.validationState || (state.isInvalid ? 'invalid' : undefined);
@@ -122,7 +138,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                             disabled={props.disabled}
                             aria-haspopup="dialog"
                             aria-expanded={open}
-                            aria-label={i18n('Range date picker')}
+                            aria-label={t('Range date picker')}
                             onClick={onClickCalendar}
                             tabIndex={-1}
                         >

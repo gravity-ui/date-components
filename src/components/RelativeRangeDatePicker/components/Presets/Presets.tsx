@@ -8,6 +8,7 @@ import {List, Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
 import {block} from '../../../../utils/cn';
 
 import type {Preset} from './defaultPresets';
+import {i18n} from './i18n';
 import {filterPresetTabs, getDefaultPresetTabs} from './utils';
 import type {PresetTab} from './utils';
 
@@ -31,9 +32,10 @@ export function Presets({
     onChoosePreset,
     presetTabs,
 }: PresetProps) {
+    const {t} = i18n.useTranslation();
     const tabs = React.useMemo(() => {
-        return filterPresetTabs(presetTabs ?? getDefaultPresetTabs({withTime}), {minValue});
-    }, [withTime, minValue, presetTabs]);
+        return filterPresetTabs(presetTabs ?? getDefaultPresetTabs({withTime, t}), {minValue});
+    }, [withTime, minValue, presetTabs, t]);
 
     const [activeTabId, setActiveTab] = React.useState(tabs[0]?.id);
 

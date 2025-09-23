@@ -8,6 +8,7 @@ import type {TableColumnConfig} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 import {getButtonSizeForInput} from '../../../utils/getButtonSizeForInput';
+import {PresetTitle} from '../Presets/defaultPresets';
 import type {Preset} from '../Presets/defaultPresets';
 import {i18n} from '../Presets/i18n';
 
@@ -17,37 +18,27 @@ const b = block('relative-range-date-picker-doc');
 
 const data: Preset[] = [
     {
-        get title() {
-            return i18n('Last 5 minutes');
-        },
+        title: <PresetTitle title="Last 5 minutes" />,
         from: 'now - 5m',
         to: 'now',
     },
     {
-        get title() {
-            return i18n('From start of day');
-        },
+        title: <PresetTitle title="From start of day" />,
         from: 'now/d',
         to: 'now',
     },
     {
-        get title() {
-            return i18n('This week');
-        },
+        title: <PresetTitle title="This week" />,
         from: 'now/w',
         to: 'now/w',
     },
     {
-        get title() {
-            return i18n('From start of week');
-        },
+        title: <PresetTitle title="From start of week" />,
         from: 'now/w',
         to: 'now',
     },
     {
-        get title() {
-            return i18n('Previous month');
-        },
+        title: <PresetTitle title="Previous month" />,
         from: 'now - 1M/M',
         to: 'now - 1M/M',
     },
@@ -60,18 +51,19 @@ interface DocContentProps extends Omit<PresetsDocProps, 'docs' | 'className'> {
 function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
     const isMobile = useMobile();
 
+    const {t} = i18n.useTranslation();
     const columns: TableColumnConfig<Preset>[] = React.useMemo(
         () => [
             {
                 id: 'title',
                 name: () => {
-                    return i18n('Range');
+                    return t('Range');
                 },
             },
             {
                 id: 'from',
                 name: () => {
-                    return i18n('From');
+                    return t('From');
                 },
                 template: (item) => (
                     <Button
@@ -85,7 +77,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
             {
                 id: 'to',
                 name: () => {
-                    return i18n('To');
+                    return t('To');
                 },
                 template: (item) => (
                     <Button
@@ -97,7 +89,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                 ),
             },
         ],
-        [isMobile, onEndUpdate, onStartUpdate, size],
+        [isMobile, onEndUpdate, onStartUpdate, size, t],
     );
 
     return <Table columns={columns} data={docs} className={b('table', {size})} wordWrap />;

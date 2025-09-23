@@ -1,13 +1,12 @@
 import React from 'react';
 
-import {dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
 import type {Value} from '../../RelativeDatePicker';
 import type {RangeValue} from '../../types';
-import {getValidationResult} from '../../utils/validation/datePicker';
-import {i18n} from '../i18n';
+import {i18n} from '../../utils/validation/i18n';
+import {getRangeValidationResult} from '../../utils/validation/relativeRangeDatePicker';
 
 export type RelativeRangeDatePickerValue = RangeValue<Value | null>;
 
@@ -46,6 +45,7 @@ export function useRelativeRangeDatePickerState(
         props.onUpdateTimeZone,
     );
 
+    const {t} = i18n.useTranslation();
     const validation = React.useMemo(
         () =>
             getRangeValidationResult(
@@ -55,6 +55,7 @@ export function useRelativeRangeDatePickerState(
                 props.maxValue,
                 props.isDateUnavailable,
                 timeZone,
+                t,
             ),
         [
             value,
@@ -63,6 +64,7 @@ export function useRelativeRangeDatePickerState(
             props.maxValue,
             props.minValue,
             timeZone,
+            t,
         ],
     );
 
@@ -77,61 +79,5 @@ export function useRelativeRangeDatePickerState(
             }
         },
         ...validation,
-    };
-}
-
-export function getRangeValidationResult(
-    value: RelativeRangeDatePickerValue | null,
-    allowNullableValues: boolean | undefined,
-    minValue: DateTime | undefined,
-    maxValue: DateTime | undefined,
-    isDateUnavailable: ((v: DateTime, endpoint: 'start' | 'end') => boolean) | undefined,
-    timeZone: string,
-) {
-    if (!value) {
-        return {isInvalid: false, errors: []};
-    }
-
-    const startDate = value.start ? dateTimeParse(value.start.value, {timeZone}) : null;
-    const endDate = value.end ? dateTimeParse(value.end.value, {timeZone, roundUp: true}) : null;
-
-    const startValidationResult = getValidationResult(
-        startDate,
-        minValue,
-        maxValue,
-        isDateUnavailable ? (date) => isDateUnavailable(date, 'start') : undefined,
-        timeZone,
-        i18n('"From"'),
-    );
-
-    if (!startDate && !allowNullableValues) {
-        startValidationResult.isInvalid = true;
-        startValidationResult.errors.push(i18n('"From" is required.'));
-    }
-
-    const endValidationResult = getValidationResult(
-        endDate,
-        minValue,
-        maxValue,
-        isDateUnavailable ? (date) => isDateUnavailable(date, 'end') : undefined,
-        timeZone,
-        i18n('"To"'),
-    );
-
-    if (!endDate && !allowNullableValues) {
-        endValidationResult.isInvalid = true;
-        endValidationResult.errors.push(i18n('"To" is required.'));
-    }
-
-    if (startDate && endDate && endDate.isBefore(startDate)) {
-        startValidationResult.isInvalid = true;
-        startValidationResult.errors.push(i18n(`"From" can't be after "To".`));
-    }
-
-    return {
-        isInvalid: startValidationResult.isInvalid || endValidationResult.isInvalid,
-        startValidationResult,
-        endValidationResult,
-        errors: startValidationResult.errors.concat(endValidationResult.errors),
     };
 }

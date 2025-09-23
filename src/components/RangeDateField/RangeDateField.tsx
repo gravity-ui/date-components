@@ -10,6 +10,7 @@ import {useDateFieldProps} from '../DateField/hooks/useDateFieldProps';
 import type {DateFieldProps} from '../DateField/hooks/useDateFieldProps';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {RangeValue} from '../types';
+import {filterDOMProps} from '../utils/filterDOMProps';
 
 import {useRangeDateFieldState} from './hooks/useRangeDateFieldState';
 
@@ -21,7 +22,7 @@ export type RangeDateFieldProps = DateFieldProps<RangeValue<DateTime>> & {
     /**
      * Delimiter separating the start and end parts of the range.
      * @default ' — '
-     * */
+     */
     delimiter?: string;
 };
 
@@ -37,8 +38,11 @@ export function RangeDateField({className, ...props}: RangeDateFieldProps) {
         },
     });
 
+    const DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
     return (
-        <div className={b(null, className)} style={props.style} {...focusWithinProps}>
+        <div {...DOMProps} className={b(null, className)} style={props.style} {...focusWithinProps}>
             <TextInput
                 {...inputProps}
                 value={state.isEmpty && !isActive && props.placeholder ? '' : inputProps.value}

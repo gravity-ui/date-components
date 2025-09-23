@@ -19,6 +19,7 @@ import type {
     TextInputExtendProps,
     TextInputProps,
 } from '../types';
+import {filterDOMProps} from '../utils/filterDOMProps';
 
 import {useRelativeDateFieldProps} from './hooks/useRelativeDateFieldProps';
 import {useRelativeDateFieldState} from './hooks/useRelativeDateFieldState';
@@ -65,8 +66,12 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
         isDisabled: isMobile,
     });
 
+    const DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
     return (
         <div
+            {...DOMProps}
             role="group"
             className={b(null, props.className)}
             style={props.style}

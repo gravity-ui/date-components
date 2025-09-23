@@ -1,6 +1,6 @@
 {
   "name": "@gravity-ui/date-components",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "description": "",
   "license": "MIT",
   "type": "commonjs",
@@ -38,7 +38,7 @@
   "scripts": {
     "prepare": "husky",
     "lint": "run-p lint:*",
-    "lint:js": "eslint --ext .js,.jsx,.ts,.tsx --report-unused-disable-directives .",
+    "lint:js": "eslint --ext .js,.jsx,.mjs,.cjs,.ts,.tsx --report-unused-disable-directives .",
     "lint:styles": "stylelint --report-needless-disables 'src/**/*.scss'",
     "lint:other": "npm run prettier -- --check",
     "prettier": "prettier '**/*.{md,yaml,yml,json}'",
@@ -53,7 +53,6 @@
   },
   "dependencies": {
     "@bem-react/classname": "^1.6.0",
-    "@gravity-ui/date-utils": "^2.5.3",
     "@gravity-ui/icons": "^2.2.0",
     "tslib": "^2.6.2"
   },
@@ -112,18 +111,22 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
-    "@gravity-ui/uikit": "^7.0.0",
+    "@gravity-ui/uikit": "^7.21.0",
+    "@gravity-ui/date-utils": "^2.5.3",
+    "@types/react": ">=17.0.0",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0"
   },
-  "overrides": {
-    "nwsapi": "2.2.2"
+  "peerDependenciesMeta": {
+    "@type/react": {
+      "optional": true
+    }
   },
   "nano-staged": {
     "*.{scss}": [
       "stylelint --fix --quiet --report-needless-disables"
     ],
-    "*.{js,jsx,ts,tsx}": [
+    "*.{js,jsx,mjs,cjs,ts,tsx}": [
       "eslint --fix --quiet --report-unused-disable-directives"
     ],
     "*.{md,json,yml,yaml}": [

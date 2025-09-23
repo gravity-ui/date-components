@@ -1,6 +1,8 @@
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
+import type {ExtractFunctionType} from '../../../types';
+
 import {
     DEFAULT_DATE_PRESETS,
     DEFAULT_OTHERS_PRESETS,
@@ -32,7 +34,12 @@ const countUnit = {
     y: 'Last {count} year',
 } as const;
 
-export function getPresetTitle(start: string, end: string, presets: Preset[] = allPresets) {
+export function getPresetTitle(
+    start: string,
+    end: string,
+    presets: Preset[] = allPresets,
+    t: ExtractFunctionType<typeof i18n> = i18n,
+) {
     const startText = start.replace(/\s+/g, '');
     const endText = end.replace(/\s+/g, '');
 
@@ -48,7 +55,7 @@ export function getPresetTitle(start: string, end: string, presets: Preset[] = a
             const [, count, unit] = match;
             if (isDateUnit(unit)) {
                 const template = Number(count) === 1 ? oneUnit[unit] : countUnit[unit];
-                return i18n(template, {count});
+                return t(template, {count});
             }
         }
     }
@@ -90,15 +97,17 @@ export interface PresetTab {
 export function getDefaultPresetTabs({
     withTime,
     minValue,
+    t = i18n,
 }: {
     minValue?: DateTime;
     withTime?: boolean;
+    t?: (key: 'Main' | 'Other') => string;
 }) {
     const tabs: PresetTab[] = [];
 
     const mainTab: PresetTab = {
         id: 'main',
-        title: i18n('Main'),
+        title: t('Main'),
         presets: [],
     };
     const mainPresets = DEFAULT_DATE_PRESETS;
@@ -113,7 +122,7 @@ export function getDefaultPresetTabs({
 
     const otherTab: PresetTab = {
         id: 'other',
-        title: i18n('Other'),
+        title: t('Other'),
         presets: filterPresets(DEFAULT_OTHERS_PRESETS, minValue),
     };
 

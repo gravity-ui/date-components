@@ -5,31 +5,26 @@ import '@gravity-ui/uikit/styles/styles.css';
 
 import React from 'react';
 
-import {
-    Lang,
-    MobileProvider,
-    ThemeProvider,
-    ToasterComponent,
-    ToasterProvider,
-    configure,
-} from '@gravity-ui/uikit';
+import {settings} from '@gravity-ui/date-utils';
+import {MobileProvider, ThemeProvider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import type {Decorator, Preview} from '@storybook/react-webpack5';
 import {MINIMAL_VIEWPORTS} from 'storybook/viewport';
 
 import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator';
 
-import {WithLang} from './decorators/withLang';
 import {themes} from './theme';
 
-configure({
-    lang: Lang.En,
-});
+settings.loadLocale('ru');
 
 const WithContextProvider: Decorator = (Story, context) => {
     return (
         <React.StrictMode>
-            <ThemeProvider theme={context.globals.theme} direction={context.globals.direction}>
+            <ThemeProvider
+                theme={context.globals.theme}
+                direction={context.globals.direction}
+                lang={context.globals.lang}
+            >
                 <MobileProvider mobile={context.globals.platform === 'mobile'}>
                     <ToasterProvider toaster={toaster}>
                         <Story {...context} />
@@ -46,9 +41,6 @@ const preview: Preview = {
         docs: {
             theme: themes.light,
             container: DocsDecorator,
-            canvas: {
-                className: 'g-storybook-docs-decorator__canvas',
-            },
             codePanel: true,
         },
         jsx: {showFunctions: false}, // Do not show functions in sources
@@ -61,10 +53,9 @@ const preview: Preview = {
             },
         },
     },
-    decorators: [WithLang, WithContextProvider],
+    decorators: [WithContextProvider],
     globalTypes: {
         theme: {
-            defaultValue: 'light',
             toolbar: {
                 title: 'Theme',
                 icon: 'mirror',
@@ -78,7 +69,6 @@ const preview: Preview = {
             },
         },
         lang: {
-            defaultValue: 'en',
             toolbar: {
                 title: 'Language',
                 icon: 'globe',
@@ -90,7 +80,6 @@ const preview: Preview = {
             },
         },
         direction: {
-            defaultValue: 'ltr',
             toolbar: {
                 title: 'Direction',
                 icon: 'menu',
@@ -102,7 +91,6 @@ const preview: Preview = {
             },
         },
         platform: {
-            defaultValue: 'desktop',
             toolbar: {
                 title: 'Platform',
                 items: [
@@ -112,6 +100,12 @@ const preview: Preview = {
                 dynamicTitle: true,
             },
         },
+    },
+    initialGlobals: {
+        theme: 'light',
+        lang: 'en',
+        direction: 'ltr',
+        platform: 'desktop',
     },
 };
 

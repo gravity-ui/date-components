@@ -65,6 +65,8 @@ export function RangeDateSelection(props: RangeDateSelectionProps) {
     let id = React.useId();
     id = props.id ?? id;
 
+    const {t} = i18n.useTranslation();
+
     return (
         <div
             {...filterDOMProps(props, {labelable: true})}
@@ -99,7 +101,7 @@ export function RangeDateSelection(props: RangeDateSelectionProps) {
                             state.scale(0.5);
                             state.endDragging();
                         }}
-                        aria-label={i18n('Decrease range')}
+                        aria-label={t('Decrease range')}
                     >
                         <Icon data={Minus} />
                     </Button>
@@ -111,7 +113,7 @@ export function RangeDateSelection(props: RangeDateSelectionProps) {
                             state.scale(1.5);
                             state.endDragging();
                         }}
-                        aria-label={i18n('Increase range')}
+                        aria-label={t('Increase range')}
                     >
                         <Icon data={Plus} />
                     </Button>
