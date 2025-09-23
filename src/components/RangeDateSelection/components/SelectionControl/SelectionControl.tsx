@@ -124,6 +124,8 @@ export function SelectionControl({state, style, className, ...props}: SelectionC
     let id = React.useId();
     id = props.id ?? id;
 
+    const {t} = i18n.useTranslation();
+
     return (
         <div className={b(null, className)} style={{...style, left: startX, width: endX - startX}}>
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -144,7 +146,7 @@ export function SelectionControl({state, style, className, ...props}: SelectionC
                         className={b('slider-input')}
                         type="range"
                         step={1}
-                        aria-label={i18n('Range')}
+                        aria-label={t('Range')}
                         aria-labelledby={[`${id}-range`, props['aria-labelledby']]
                             .filter(Boolean)
                             .join(' ')}
@@ -174,7 +176,7 @@ export function SelectionControl({state, style, className, ...props}: SelectionC
                             className={b('slider-input')}
                             type="range"
                             step={1}
-                            aria-label={i18n('Start of range')}
+                            aria-label={t('Start of range')}
                             aria-labelledby={[`${id}-start`, props['aria-labelledby']]
                                 .filter(Boolean)
                                 .join(' ')}
@@ -205,7 +207,7 @@ export function SelectionControl({state, style, className, ...props}: SelectionC
                             className={b('slider-input')}
                             type="range"
                             step={1}
-                            aria-label={i18n('End of range')}
+                            aria-label={t('End of range')}
                             aria-labelledby={[`${id}-end`, props['aria-labelledby']]
                                 .filter(Boolean)
                                 .join(' ')}

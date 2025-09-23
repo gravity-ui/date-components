@@ -4,7 +4,7 @@ import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
 import {ChevronLeft, ChevronRight} from '@gravity-ui/icons';
-import {ArrowToggle, Button} from '@gravity-ui/uikit';
+import {ArrowToggle, Button, useLang} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
@@ -161,6 +161,7 @@ interface WeekdaysProps {
 }
 function Weekdays({state}: WeekdaysProps) {
     const weekdays = getWeekDays(state);
+    const {lang} = useLang();
 
     return (
         <div className={b('grid-row')} role="row">
@@ -170,9 +171,9 @@ function Weekdays({state}: WeekdaysProps) {
                         key={date.day()}
                         className={b('weekday', {weekend: state.isWeekend(date)})}
                         role="columnheader"
-                        aria-label={formatDateTime(date, 'dddd', state.timeZone)}
+                        aria-label={formatDateTime(date, 'dddd', state.timeZone, lang)}
                     >
-                        {formatDateTime(date, 'dd', state.timeZone)}
+                        {formatDateTime(date, 'dd', state.timeZone, lang)}
                     </div>
                 );
             })}
@@ -187,13 +188,19 @@ function CalendarGridCells({state}: CalendarGridProps) {
     const rowsInPeriod = state.mode === 'days' ? 6 : 4;
     const columnsInRow = state.mode === 'days' ? 7 : 3 + (state.mode === 'quarters' ? 1 : 0);
     const days = getDaysInPeriod(state);
+    const {lang} = useLang();
     return (
         <div className={b('grid-rowgroup', {mode: state.mode})} role="rowgroup">
             {[...new Array(rowsInPeriod).keys()].map((rowIndex) => (
                 <div key={rowIndex} className={b('grid-row')} role="row">
                     {state.mode === 'quarters' ? (
                         <span role="rowheader" className={b('grid-rowgroup-header')}>
-                            {formatDateTime(days[rowIndex * columnsInRow], 'YYYY', state.timeZone)}
+                            {formatDateTime(
+                                days[rowIndex * columnsInRow],
+                                'YYYY',
+                                state.timeZone,
+                                lang,
+                            )}
                         </span>
                     ) : null}
                     {days

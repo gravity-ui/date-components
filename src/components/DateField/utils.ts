@@ -2,7 +2,11 @@ import React from 'react';
 
 import {dateTime, expandFormat} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+import dayjs from '@gravity-ui/date-utils/build/dayjs';
+import type {LongDateFormat} from '@gravity-ui/date-utils/build/settings/types';
+import {useLang} from '@gravity-ui/uikit';
 
+import type {ExtractFunctionType} from '../types';
 import {mergeDateTime} from '../utils/dates';
 
 import {i18n} from './i18n';
@@ -361,44 +365,43 @@ function doesSectionHaveLeadingZeros(
 function getSectionPlaceholder(
     sectionConfig: Pick<DateFieldSection, 'type' | 'contentType'>,
     currentTokenValue: string,
+    t: TranslateFunction,
 ) {
     switch (sectionConfig.type) {
         case 'year': {
-            return i18n('year_placeholder').repeat(dateTime().format(currentTokenValue).length);
+            return t('year_placeholder').repeat(dateTime().format(currentTokenValue).length);
         }
 
         case 'quarter': {
-            return i18n('quarter_placeholder');
+            return t('quarter_placeholder');
         }
 
         case 'month': {
-            return i18n('month_placeholder').repeat(sectionConfig.contentType === 'letter' ? 4 : 2);
+            return t('month_placeholder').repeat(sectionConfig.contentType === 'letter' ? 4 : 2);
         }
 
         case 'day': {
-            return i18n('day_placeholder').repeat(2);
+            return t('day_placeholder').repeat(2);
         }
 
         case 'weekday': {
-            return i18n('weekday_placeholder').repeat(
-                sectionConfig.contentType === 'letter' ? 4 : 2,
-            );
+            return t('weekday_placeholder').repeat(sectionConfig.contentType === 'letter' ? 4 : 2);
         }
 
         case 'hour': {
-            return i18n('hour_placeholder').repeat(2);
+            return t('hour_placeholder').repeat(2);
         }
 
         case 'minute': {
-            return i18n('minute_placeholder').repeat(2);
+            return t('minute_placeholder').repeat(2);
         }
 
         case 'second': {
-            return i18n('second_placeholder').repeat(2);
+            return t('second_placeholder').repeat(2);
         }
 
         case 'dayPeriod': {
-            return i18n('dayPeriod_placeholder');
+            return t('dayPeriod_placeholder');
         }
 
         default: {
@@ -407,10 +410,12 @@ function getSectionPlaceholder(
     }
 }
 
-export function splitFormatIntoSections(format: string) {
+type TranslateFunction = ExtractFunctionType<typeof i18n>;
+export function splitFormatIntoSections(format: string, t: TranslateFunction = i18n, lang = 'en') {
     const sections: DateFieldSectionWithoutPosition[] = [];
+    const localeFormats = dayjs.Ls[lang].formats as LongDateFormat;
 
-    const expandedFormat = expandFormat(format);
+    const expandedFormat = expandFormat(format, localeFormats);
 
     let currentTokenValue = '';
     let isSeparator = false;
@@ -432,7 +437,7 @@ export function splitFormatIntoSections(format: string) {
             currentTokenValue += char;
         } else {
             if (!isSeparator) {
-                addFormatSection(sections, currentTokenValue);
+                addFormatSection(sections, currentTokenValue, t);
                 currentTokenValue = '';
             }
             isSeparator = true;
@@ -447,14 +452,18 @@ export function splitFormatIntoSections(format: string) {
         if (isSeparator) {
             addLiteralSection(sections, currentTokenValue);
         } else {
-            addFormatSection(sections, currentTokenValue);
+            addFormatSection(sections, currentTokenValue, t);
         }
     }
 
     return sections;
 }
 
-function addFormatSection(sections: DateFieldSectionWithoutPosition[], token: string) {
+function addFormatSection(
+    sections: DateFieldSectionWithoutPosition[],
+    token: string,
+    t: TranslateFunction,
+) {
     if (!token) {
         return;
     }
@@ -470,7 +479,7 @@ function addFormatSection(sections: DateFieldSectionWithoutPosition[], token: st
     sections.push({
         ...sectionConfig,
         format: token,
-        placeholder: getSectionPlaceholder(sectionConfig, token),
+        placeholder: getSectionPlaceholder(sectionConfig, token, t),
         options: getSectionOptions(sectionConfig, token),
         hasLeadingZeros,
     });
@@ -676,13 +685,14 @@ export function isAllSegmentsValid(
 }
 
 export function useFormatSections(format: string) {
-    const usedFormat = format;
-    const [sections, setSections] = React.useState(() => splitFormatIntoSections(usedFormat));
+    const {t} = i18n.useTranslation();
+    const {lang} = useLang();
+    const [sections, setSections] = React.useState(() => splitFormatIntoSections(format, t));
 
-    const [previousFormat, setFormat] = React.useState(usedFormat);
-    if (usedFormat !== previousFormat) {
-        setFormat(usedFormat);
-        setSections(splitFormatIntoSections(usedFormat));
+    const [previous, setFormat] = React.useState({format, lang});
+    if (format !== previous.format || lang !== previous.lang) {
+        setFormat({format, lang});
+        setSections(splitFormatIntoSections(format, t, lang));
     }
 
     return sections;

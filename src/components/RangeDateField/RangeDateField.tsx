@@ -21,7 +21,7 @@ export type RangeDateFieldProps = DateFieldProps<RangeValue<DateTime>> & {
     /**
      * Delimiter separating the start and end parts of the range.
      * @default ' — '
-     * */
+     */
     delimiter?: string;
 };
 

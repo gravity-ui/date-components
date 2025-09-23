@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
+import {useLang} from '@gravity-ui/uikit';
 
 import {formatDateTime} from '../../utils/dates';
 
@@ -8,6 +9,8 @@ import type {CalendarState, RangeCalendarState} from './types';
 
 export function useCalendarCellProps(date: DateTime, state: CalendarState | RangeCalendarState) {
     const ref = React.useRef<HTMLDivElement>(null);
+
+    const {lang} = useLang();
 
     const isFocused = state.isCellFocused(date);
     React.useEffect(() => {
@@ -32,7 +35,7 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
     const isCurrent = state.isCurrent(date);
     const isWeekend = state.isWeekend(date);
 
-    const label = getDateLabel(date, state);
+    const label = getDateLabel(date, state, lang);
 
     const cellProps: React.HTMLAttributes<unknown> = {
         role: 'gridcell',
@@ -66,13 +69,13 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
         },
     };
 
-    let formattedDate = formatDateTime(date, 'D', state.timeZone);
+    let formattedDate = formatDateTime(date, 'D', state.timeZone, lang);
     if (state.mode === 'months') {
-        formattedDate = formatDateTime(date, 'MMM', state.timeZone);
+        formattedDate = formatDateTime(date, 'MMM', state.timeZone, lang);
     } else if (state.mode === 'quarters') {
-        formattedDate = formatDateTime(date, '[Q]Q', state.timeZone);
+        formattedDate = formatDateTime(date, '[Q]Q', state.timeZone, lang);
     } else if (state.mode === 'years') {
-        formattedDate = formatDateTime(date, 'YYYY', state.timeZone);
+        formattedDate = formatDateTime(date, 'YYYY', state.timeZone, lang);
     }
 
     return {
@@ -91,19 +94,19 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
     };
 }
 
-function getDateLabel(date: DateTime, state: CalendarState | RangeCalendarState) {
+function getDateLabel(date: DateTime, state: CalendarState | RangeCalendarState, lang: string) {
     switch (state.mode) {
         case 'days': {
-            return `${formatDateTime(date, 'dddd', state.timeZone)}, ${formatDateTime(date, 'LL', state.timeZone)}`;
+            return `${formatDateTime(date, 'dddd', state.timeZone, lang)}, ${formatDateTime(date, 'LL', state.timeZone, lang)}`;
         }
         case 'months': {
-            return `${formatDateTime(date, 'MMMM YYYY', state.timeZone)}`;
+            return `${formatDateTime(date, 'MMMM YYYY', state.timeZone, lang)}`;
         }
         case 'quarters': {
-            return `${formatDateTime(date, '[Q]Q YYYY', state.timeZone)}`;
+            return `${formatDateTime(date, '[Q]Q YYYY', state.timeZone, lang)}`;
         }
         case 'years': {
-            return `${formatDateTime(date, 'YYYY', state.timeZone)}`;
+            return `${formatDateTime(date, 'YYYY', state.timeZone, lang)}`;
         }
         default:
             return '';

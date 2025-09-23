@@ -88,6 +88,8 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
     const onlyTime = state.formatInfo.hasTime && !state.formatInfo.hasDate;
     const calendarModes = getCalendarModes(state.formatInfo);
 
+    const {t} = i18n.useTranslation();
+
     return {
         groupProps: {
             ref: groupRef,
@@ -118,7 +120,7 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             ref: calendarButtonRef,
             size: getButtonSizeForInput(props.size),
             disabled: state.disabled,
-            'aria-label': i18n('Calendar'),
+            'aria-label': t('Calendar'),
             'aria-haspopup': 'dialog',
             'aria-expanded': state.isOpen,
             view: 'flat-secondary',

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {useFocusWithin} from '@gravity-ui/uikit';
+import {useFocusWithin, useLang} from '@gravity-ui/uikit';
 import type {ButtonButtonProps} from '@gravity-ui/uikit';
 
 import type {CalendarProps} from '../../Calendar/Calendar';
@@ -12,6 +12,7 @@ import type {CalendarLayout, CalendarState, RangeCalendarState} from './types';
 const buttonDisabledClassName = 'yc-button_disabled g-button_disabled';
 
 export function useCalendarProps(props: CalendarProps, state: CalendarState | RangeCalendarState) {
+    const {lang} = useLang();
     const title =
         state.mode === 'years' || state.mode === 'quarters'
             ? `${state.startDate.year()} — ${state.endDate.year()}`
@@ -19,6 +20,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
                   state.focusedDate,
                   state.mode === 'days' ? 'MMMM YYYY' : 'YYYY',
                   state.timeZone,
+                  lang,
               );
 
     const {focusWithinProps} = useFocusWithin({
@@ -57,7 +59,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
                   }
               },
         'aria-disabled': modeDisabled ? 'true' : undefined,
-        'aria-description': getAriaDescriptionForModeButton(state.mode, state.availableModes),
+        'aria-description': useAriaDescriptionForModeButton(state.mode, state.availableModes),
         'aria-live': 'polite',
         children: title,
     };
@@ -71,6 +73,8 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
             state.setFocused(true);
         }
     });
+
+    const {t} = i18n.useTranslation();
 
     const previousButtonProps: ButtonButtonProps = {
         // Always set a tabIndex so that Safari allows focusing native buttons
@@ -93,7 +97,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
             : () => {
                   previousFocused.current = false;
               },
-        'aria-label': i18n('Previous'),
+        'aria-label': t('Previous'),
         'aria-disabled': previousDisabled ? 'true' : undefined,
     };
 
@@ -128,7 +132,7 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
             : () => {
                   nextFocused.current = false;
               },
-        'aria-label': i18n('Next'),
+        'aria-label': t('Next'),
         'aria-disabled': previousDisabled ? 'true' : undefined,
     };
 
@@ -140,7 +144,9 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
     };
 }
 
-function getAriaDescriptionForModeButton(mode: CalendarLayout, availableModes: CalendarLayout[]) {
+function useAriaDescriptionForModeButton(mode: CalendarLayout, availableModes: CalendarLayout[]) {
+    const {t} = i18n.useTranslation();
+
     const nextModeIndex = availableModes.indexOf(mode) + 1;
     const isModeLast = nextModeIndex === availableModes.length;
     if (isModeLast) {
@@ -149,9 +155,9 @@ function getAriaDescriptionForModeButton(mode: CalendarLayout, availableModes: C
 
     const ariaLabelMap: Record<CalendarLayout, string> = {
         days: '',
-        months: i18n('Switch to months view'),
-        quarters: i18n('Switch to quarters view'),
-        years: i18n('Switch to years view'),
+        months: t('Switch to months view'),
+        quarters: t('Switch to quarters view'),
+        years: t('Switch to years view'),
     };
     const nextMode = availableModes[nextModeIndex];
     return ariaLabelMap[nextMode];

@@ -5,7 +5,8 @@ import {useControlledState} from '@gravity-ui/uikit';
 
 import type {Value} from '../../../RelativeDatePicker';
 import type {RangeValue} from '../../../types';
-import {getRangeValidationResult} from '../../hooks/useRelativeRangeDatePickerState';
+import {i18n} from '../../../utils/validation/i18n';
+import {getRangeValidationResult} from '../../../utils/validation/relativeRangeDatePicker';
 
 import type {PickerFormProps} from './PickerForm';
 
@@ -110,6 +111,7 @@ export function useRelativeRangeDatePickerDialogState(props: PickerFormProps) {
         setValue(getRangeValue(start, end, {...props, timeZone, allowNullableValues}), timeZone);
     }
 
+    const {t} = i18n.useTranslation();
     const validation = React.useMemo(
         () =>
             getRangeValidationResult(
@@ -119,6 +121,7 @@ export function useRelativeRangeDatePickerDialogState(props: PickerFormProps) {
                 props.maxValue,
                 props.isDateUnavailable,
                 timeZone,
+                t,
             ),
         [
             allowNullableValues,
@@ -128,6 +131,7 @@ export function useRelativeRangeDatePickerDialogState(props: PickerFormProps) {
             props.minValue,
             start,
             timeZone,
+            t,
         ],
     );
 
