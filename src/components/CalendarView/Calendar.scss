@@ -4,8 +4,8 @@
 $block: '.#{variables.$ns}calendar';
 
 #{$block} {
-    --_--calendar-padding-x: var(--g-date-calendar-padding-x, 16px);
-    --_--calendar-padding-y: var(--g-date-calendar-padding-y, 8px);
+    --_--calendar-padding-x: var(--g-date-calendar-padding-x, var(--g-date-calendar-padding, 16px));
+    --_--calendar-padding-y: var(--g-date-calendar-padding-y, var(--g-date-calendar-padding, 8px));
     --_--calendar-day-size: var(--g-date-calendar-day-size, 28px);
     --_--calendar-days-gap: var(--g-date-calendar-days-gap, 2px);
 
