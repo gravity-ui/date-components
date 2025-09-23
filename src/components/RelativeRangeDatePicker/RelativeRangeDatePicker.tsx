@@ -7,6 +7,7 @@ import {useControlledState, useFocusWithin, useMobile} from '@gravity-ui/uikit';
 import {block} from '../../utils/cn';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {Value} from '../RelativeDatePicker';
+import {filterDOMProps} from '../utils/filterDOMProps';
 
 import {Control} from './components/Control/Control';
 import {PickerDialog} from './components/PickerDialog/PickerDialog';
@@ -43,8 +44,12 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
         },
     });
 
+    const DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
     return (
         <div
+            {...DOMProps}
             ref={setAnchor}
             {...focusWithinProps}
             className={b(null, props.className)}

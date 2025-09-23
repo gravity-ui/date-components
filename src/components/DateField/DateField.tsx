@@ -6,6 +6,7 @@ import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
+import {filterDOMProps} from '../utils/filterDOMProps';
 
 import {useDateFieldProps} from './hooks/useDateFieldProps';
 import type {DateFieldProps} from './hooks/useDateFieldProps';
@@ -27,8 +28,11 @@ export function DateField({className, ...props}: DateFieldProps) {
         },
     });
 
+    const DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
     return (
-        <div className={b(null, className)} style={props.style} {...focusWithinProps}>
+        <div {...DOMProps} className={b(null, className)} style={props.style} {...focusWithinProps}>
             <TextInput
                 {...inputProps}
                 value={state.isEmpty && !isActive && props.placeholder ? '' : inputProps.value}
