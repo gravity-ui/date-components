@@ -5,6 +5,7 @@ import type {ButtonButtonProps} from '@gravity-ui/uikit';
 
 import type {CalendarProps} from '../../Calendar/Calendar';
 import {formatDateTime} from '../../utils/dates';
+import {filterDOMProps} from '../../utils/filterDOMProps';
 import {i18n} from '../i18n';
 
 import type {CalendarLayout, CalendarState, RangeCalendarState} from './types';
@@ -29,12 +30,9 @@ export function useCalendarProps(props: CalendarProps, state: CalendarState | Ra
     });
 
     const calendarProps: React.HTMLAttributes<HTMLElement> = {
+        ...filterDOMProps(props, {labelable: true}),
         role: 'group',
-        id: props.id,
         'aria-label': [props['aria-label'], title].filter(Boolean).join(', '),
-        'aria-labelledby': props['aria-labelledby'] || undefined,
-        'aria-describedby': props['aria-describedby'] || undefined,
-        'aria-details': props['aria-details'] || undefined,
         'aria-disabled': state.disabled || undefined,
         ...focusWithinProps,
     };
