@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.1](https://github.com/gravity-ui/date-components/compare/v3.3.0...v3.3.1) (2025-09-25)
+
+
+### Bug Fixes
+
+* bundler cannot resolve dayjs module ([#224](https://github.com/gravity-ui/date-components/issues/224)) ([7ae1352](https://github.com/gravity-ui/date-components/commit/7ae1352e59b5454b208b187b386074b550625672))
+
 ## [3.3.0](https://github.com/gravity-ui/date-components/compare/v3.2.4...v3.3.0) (2025-09-23)
 
 
