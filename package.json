@@ -112,7 +112,7 @@
   },
   "peerDependencies": {
     "@gravity-ui/uikit": "^7.21.0",
-    "@gravity-ui/date-utils": "^2.5.3",
+    "@gravity-ui/date-utils": "^2.6.0",
     "@types/react": ">=17.0.0",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0"
