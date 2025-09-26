@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.2](https://github.com/gravity-ui/date-components/compare/v3.3.1...v3.3.2) (2025-09-26)
+
+
+### Bug Fixes
+
+* **DateField:** use named import of dayjs ([#228](https://github.com/gravity-ui/date-components/issues/228)) ([b32e472](https://github.com/gravity-ui/date-components/commit/b32e472d05c3a3f8a4941b69f3115e8177aeeb15))
+
 ## [3.3.1](https://github.com/gravity-ui/date-components/compare/v3.3.0...v3.3.1) (2025-09-25)
 
 
