@@ -4,18 +4,17 @@
 $block: '.#{variables.$ns}calendar';
 
 #{$block} {
-    --_--calendar-padding-x: var(--g-date-calendar-padding-x, var(--g-date-calendar-padding, 16px));
-    --_--calendar-padding-y: var(--g-date-calendar-padding-y, var(--g-date-calendar-padding, 8px));
+    --_--calendar-padding: var(--g-date-calendar-padding, 8px);
     --_--calendar-day-size: var(--g-date-calendar-day-size, 28px);
     --_--calendar-days-gap: var(--g-date-calendar-days-gap, 2px);
 
     --_--calendar-width: calc(
         7 * var(--_--calendar-day-size) + 6 * var(--_--calendar-days-gap) + 2 *
-            var(--_--calendar-padding-x)
+            var(--_--calendar-padding)
     );
     --_--calendar-grid-height: calc(
         7 * var(--_--calendar-day-size) + 5 * var(--_--calendar-days-gap) +
-            var(--_--calendar-padding-y)
+            var(--_--calendar-padding)
     );
 
     display: inline-block;
@@ -36,7 +35,7 @@ $block: '.#{variables.$ns}calendar';
         display: flex;
         justify-content: space-between;
 
-        padding: var(--_--calendar-padding-y) var(--_--calendar-padding-x) 0;
+        padding: var(--_--calendar-padding) var(--_--calendar-padding) 0;
     }
 
     &__years-label {
@@ -76,7 +75,7 @@ $block: '.#{variables.$ns}calendar';
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        padding: 0 var(--_--calendar-padding-x) var(--_--calendar-padding-y);
+        padding: 0 var(--_--calendar-padding) var(--_--calendar-padding);
 
         @keyframes calendar-forward {
             from {
