@@ -2,7 +2,7 @@ import React from 'react';
 
 import {dateTime, expandFormat} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
-import dayjs from '@gravity-ui/date-utils/build/dayjs';
+import {dayjs} from '@gravity-ui/date-utils/build/dayjs/index.js';
 import type {LongDateFormat} from '@gravity-ui/date-utils/build/settings/types';
 import {useLang} from '@gravity-ui/uikit';
 

@@ -1,5 +1,32 @@
 # Changelog
 
+## [3.3.2](https://github.com/gravity-ui/date-components/compare/v3.3.1...v3.3.2) (2025-09-26)
+
+
+### Bug Fixes
+
+* **DateField:** use named import of dayjs ([#228](https://github.com/gravity-ui/date-components/issues/228)) ([b32e472](https://github.com/gravity-ui/date-components/commit/b32e472d05c3a3f8a4941b69f3115e8177aeeb15))
+
+## [3.3.1](https://github.com/gravity-ui/date-components/compare/v3.3.0...v3.3.1) (2025-09-25)
+
+
+### Bug Fixes
+
+* bundler cannot resolve dayjs module ([#224](https://github.com/gravity-ui/date-components/issues/224)) ([7ae1352](https://github.com/gravity-ui/date-components/commit/7ae1352e59b5454b208b187b386074b550625672))
+
+## [3.3.0](https://github.com/gravity-ui/date-components/compare/v3.2.4...v3.3.0) (2025-09-23)
+
+
+### Features
+
+* allow to set data-* attributes ([#221](https://github.com/gravity-ui/date-components/issues/221)) ([0fca5eb](https://github.com/gravity-ui/date-components/commit/0fca5eb6a50a665520af45f9401772061ce3f334))
+* use lang from uikit provider ([#217](https://github.com/gravity-ui/date-components/issues/217)) ([9de3fa6](https://github.com/gravity-ui/date-components/commit/9de3fa66e98d6056a0476d56e8973ccf7a5f0b73))
+
+
+### Bug Fixes
+
+* **RangeCalendar:** ensure buttons are focused on click in Safari ([#219](https://github.com/gravity-ui/date-components/issues/219)) ([03f4f33](https://github.com/gravity-ui/date-components/commit/03f4f33bcc4557e684c26fd68d41a8d68a923b37))
+
 ## [3.2.4](https://github.com/gravity-ui/date-components/compare/v3.2.3...v3.2.4) (2025-08-04)
 
 
