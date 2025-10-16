@@ -232,6 +232,7 @@ $block: '.#{variables.$ns}calendar';
     }
 
     &__button {
+        $button: &;
         position: relative;
 
         display: flex;
@@ -263,10 +264,13 @@ $block: '.#{variables.$ns}calendar';
         &_selected[class] {
             background-color: var(--g-color-base-selection);
         }
-
         &_selected#{&}_selection-start,
         &_selected#{&}_selection-end {
             background-color: var(--g-color-base-brand);
+
+            &:not(#{$button}_weekend) {
+                color: var(--g-color-text-brand-contrast);
+            }
         }
 
         &_weekend {
