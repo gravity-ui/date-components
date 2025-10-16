@@ -33,6 +33,7 @@ $block: '.#{variables.$ns}calendar';
 
     &__header {
         display: flex;
+        justify-content: space-between;
 
         padding: var(--_--calendar-padding) var(--_--calendar-padding) 0;
     }
@@ -42,7 +43,10 @@ $block: '.#{variables.$ns}calendar';
     }
 
     &__controls {
-        margin-inline-start: auto;
+        display: flex;
+        flex-shrink: 1;
+        justify-content: flex-end;
+        gap: var(--g-spacing-2);
     }
 
     &__control-icon {
@@ -239,6 +243,7 @@ $block: '.#{variables.$ns}calendar';
 
         font-weight: var(--g-text-subheader-font-weight);
         cursor: pointer;
+        text-transform: capitalize;
 
         border-radius: 4px;
         outline: none;
@@ -305,5 +310,9 @@ $block: '.#{variables.$ns}calendar';
             opacity: 0.5;
             background-color: var(--g-color-base-generic);
         }
+    }
+
+    &__mode-label {
+        text-transform: capitalize;
     }
 }
