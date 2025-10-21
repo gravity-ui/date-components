@@ -687,7 +687,7 @@ export function isAllSegmentsValid(
 export function useFormatSections(format: string) {
     const {t} = i18n.useTranslation();
     const {lang} = useLang();
-    const [sections, setSections] = React.useState(() => splitFormatIntoSections(format, t));
+    const [sections, setSections] = React.useState(() => splitFormatIntoSections(format, t, lang));
 
     const [previous, setFormat] = React.useState({format, lang});
     if (format !== previous.format || lang !== previous.lang) {
