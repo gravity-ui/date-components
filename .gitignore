@@ -9,3 +9,13 @@ node_modules
 dist
 storybook-static
 .cache
+
+# Playwright
+playwright-report
+playwright-report-docker
+playwright/.cache-docker
+playwright/.cache/
+test-results
+
+# System files
+.DS_Store
