@@ -1,0 +1,29 @@
+name: PR Prepare Playwright Version For Visual Tests
+
+on:
+  pull_request:
+
+jobs:
+  visual_tests:
+    name: Prepare Playwright Version For Visual Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js from .nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - name: Install Packages
+        run: npm ci
+      - name: Detect Playwright version
+        id: detect-playwright-version
+        run: |
+          VERSION=$(./scripts/playwright-version.sh)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected Playwright version: $VERSION"
+      - name: Trigger visual tests
+        uses: ./.github/workflows/pr-visual-tests.yml
+        with:
+          playwright-version: ${{ steps.detect-playwright-version.outputs.version }}
+        secrets: inherit
