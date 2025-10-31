@@ -20,7 +20,7 @@ const config = {
     moduleNameMapper: {
         '\\.(css|less|scss|sass)$': 'jest-transform-css',
     },
-    testMatch: ['**/*.test.[jt]s?(x)'],
+    testMatch: ['**/*.test.[jt]s?(x)', '!**/*.visual.test.[jt]s?(x)'],
 };
 
 module.exports = config;
