@@ -1,11 +1,11 @@
-name: PR Prepare Playwright Version For Visual Tests
+name: PR Detect Playwright Version
 
 on:
   pull_request:
 
 jobs:
   visual_tests_prepare:
-    name: Prepare Playwright Version For Visual Tests
+    name: Detect Version
     runs-on: ubuntu-latest
     outputs:
       playwright-version: ${{ steps.detect-playwright-version.outputs.version }}
