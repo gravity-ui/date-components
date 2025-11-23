@@ -89,6 +89,7 @@ interface PresetsListProps {
 }
 function PresetsList({presets, onChoosePreset, size = 'm'}: PresetsListProps) {
     const ref = React.useRef<List<Preset>>(null);
+    const {t} = i18n.useTranslation();
 
     React.useEffect(() => {
         const list = ref.current;
@@ -121,7 +122,7 @@ function PresetsList({presets, onChoosePreset, size = 'm'}: PresetsListProps) {
             items={presets}
             filterable={false}
             virtualized={false}
-            renderItem={(item) => item.title}
+            renderItem={(item) => t(item.title as any)}
             itemHeight={SIZE_TO_ITEM_HEIGHT[size]}
             onItemClick={(item) => {
                 onChoosePreset(item.from, item.to);

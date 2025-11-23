@@ -137,3 +137,24 @@ export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
         );
     },
 };
+
+export const CustomPresets: Story = {
+    ...Default,
+    args: {
+        ...Default.args,
+        withPresets: true,
+        presetTabs: [
+            {
+                id: 'my-presets',
+                title: 'My Presets',
+                presets: [
+                    {to: 'now', from: 'now-5d', title: 'Last five days'},
+                    {to: 'now', from: 'now-5w', title: 'Last five weeks'},
+                    {to: 'now', from: 'now-5M', title: 'Last five months'},
+                    {to: 'now', from: 'now-5Q', title: 'Last five quarters'},
+                    {to: 'now', from: 'now-5y', title: 'Last five years'},
+                ],
+            },
+        ],
+    },
+};
