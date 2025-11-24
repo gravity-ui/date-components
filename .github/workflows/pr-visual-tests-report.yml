@@ -19,13 +19,13 @@ jobs:
           app-id: ${{ secrets.GRAVITY_UI_APP_ID }}
           private-key: ${{ secrets.GRAVITY_UI_APP_PRIVATE_KEY }}
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           run-id: ${{ github.event.workflow_run.id }}
       - name: Extract PR Number
         id: pr
-        run: echo "::set-output name=id::$(<pr/pr-id.txt)"
+        run: echo "id=$(<pr/pr-id.txt)" >> $GITHUB_OUTPUT
         shell: bash
       - name: Install AWS CLI
         uses: unfor19/install-aws-cli-action@v1
