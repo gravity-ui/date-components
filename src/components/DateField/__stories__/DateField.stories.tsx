@@ -1,12 +1,13 @@
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {DateField} from '../DateField';
 
-const meta: Meta<typeof DateField> = {
+const meta = preview.meta({
     title: 'Components/DateField',
     component: DateField,
     tags: ['autodocs'],
@@ -14,13 +15,9 @@ const meta: Meta<typeof DateField> = {
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
     },
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof DateField>;
-
-export const Default: Story = {
+export const Default = meta.story({
     render: (args) => {
         const timeZone = args.timeZone;
         const props = {
@@ -86,18 +83,15 @@ export const Default: Story = {
         },
         timeZone: timeZoneControl,
     },
-};
+});
 
-export const TimeField: Story = {
-    ...Default,
+export const TimeField = Default.extend({
     args: {
-        ...Default.args,
         format: 'LTS',
     },
     argTypes: {
-        ...Default.argTypes,
         format: {
             type: {name: 'enum', value: ['LTS', 'LT', 'HH:mm', 'hh:mm a']},
         },
     },
-};
+});

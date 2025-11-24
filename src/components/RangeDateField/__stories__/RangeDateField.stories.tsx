@@ -1,14 +1,15 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {RangeDateField} from '../RangeDateField';
 
 import './RangeDateField.stories.scss';
 
-const meta: Meta<typeof RangeDateField> = {
+const meta = preview.meta({
     title: 'Components/RangeDateField',
     component: RangeDateField,
     tags: ['autodocs'],
@@ -16,13 +17,9 @@ const meta: Meta<typeof RangeDateField> = {
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
     },
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof RangeDateField>;
-
-export const Default = {
+export const Default = meta.story({
     render: (args) => {
         const timeZone = args.timeZone;
         const props = {
@@ -95,7 +92,7 @@ export const Default = {
         },
         timeZone: timeZoneControl,
     },
-} satisfies Story;
+});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseRangeDateTime(text: any, format?: string, timeZone?: string) {

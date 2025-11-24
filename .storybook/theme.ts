@@ -1,7 +1,7 @@
 import {create} from 'storybook/theming';
 import type {ThemeVarsPartial} from 'storybook/theming';
 
-import pkg from '../package.json';
+import pkg from '../package.json' with {type: 'json'};
 
 function renderBrandTitle(theme: 'light' | 'dark') {
     const titleColor = theme === 'light' ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.85)';

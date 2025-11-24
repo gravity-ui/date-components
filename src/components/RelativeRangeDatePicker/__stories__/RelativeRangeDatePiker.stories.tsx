@@ -3,15 +3,15 @@ import React from 'react';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import {Button, Dialog, Text} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import type {Value} from '../../RelativeDatePicker';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
-import type {RelativeRangeDatePickerProps} from '../types';
 
-const meta: Meta<typeof RelativeRangeDatePicker> = {
+const meta = preview.meta({
     title: 'Components/RelativeRangeDatePicker',
     component: RelativeRangeDatePicker,
     tags: ['autodocs'],
@@ -20,11 +20,7 @@ const meta: Meta<typeof RelativeRangeDatePicker> = {
         onBlur: action('onBlur'),
         onOpenChange: action('onOpenChange'),
     },
-};
-
-export default meta;
-
-type Story = StoryObj<typeof RelativeRangeDatePicker>;
+});
 
 function stringifyValue(value: Value | null): string {
     if (!value) {
@@ -38,7 +34,7 @@ function stringifyValue(value: Value | null): string {
     return JSON.stringify({...value, value: value.value.format()}, null, 2);
 }
 
-export const Default = {
+export const Default = meta.story({
     render: (props) => {
         const timeZone = props.timeZone;
         const minValue = props.minValue ? dateTimeParse(props.minValue, {timeZone}) : undefined;
@@ -90,10 +86,9 @@ export const Default = {
         },
         timeZone: timeZoneControl,
     },
-} satisfies Story;
+});
 
-export const InsideDialog: StoryObj<RelativeRangeDatePickerProps> = {
-    ...Default,
+export const InsideDialog = Default.extend({
     render: function InsideDialog(args) {
         const [isOpen, setOpen] = React.useState(false);
         return (
@@ -108,23 +103,23 @@ export const InsideDialog: StoryObj<RelativeRangeDatePickerProps> = {
                 <Dialog open={isOpen} onClose={() => setOpen(false)}>
                     <Dialog.Header />
                     <Dialog.Body>
-                        <div style={{paddingTop: 16}}>{Default.render(args)}</div>
+                        <div style={{paddingTop: 16}}>
+                            <Default.Component {...args} />
+                        </div>
                     </Dialog.Body>
                 </Dialog>
             </React.Fragment>
         );
     },
-};
+});
 
-export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
-    ...Default,
+export const CustomControl = Default.extend({
     args: {
-        ...Default.args,
         style: undefined,
     },
     render: (props) => {
         return (
-            <RelativeRangeDatePicker
+            <Default.Component
                 {...props}
                 renderControl={({title, triggerProps, ref}) => {
                     return (
@@ -136,12 +131,10 @@ export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
             />
         );
     },
-};
+});
 
-export const CustomPresets: Story = {
-    ...Default,
+export const CustomPresets = Default.extend({
     args: {
-        ...Default.args,
         withPresets: true,
         presetTabs: [
             {
@@ -157,4 +150,4 @@ export const CustomPresets: Story = {
             },
         ],
     },
-};
+});
