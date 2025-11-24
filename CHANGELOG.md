@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/gravity-ui/date-components/compare/v3.4.0...v3.4.1) (2025-11-24)
+
+
+### Bug Fixes
+
+* **RelativeRangeDatePicker:** correctly show chosen preset title ([#241](https://github.com/gravity-ui/date-components/issues/241)) ([b8bae21](https://github.com/gravity-ui/date-components/commit/b8bae21c269070f8b0fa808535532e0d4635a1bf))
+
 ## [3.4.0](https://github.com/gravity-ui/date-components/compare/v3.3.2...v3.4.0) (2025-10-21)
 
 
