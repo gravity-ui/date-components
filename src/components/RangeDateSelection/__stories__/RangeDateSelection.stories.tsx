@@ -3,8 +3,9 @@ import React from 'react';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Button} from '@gravity-ui/uikit';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {RelativeRangeDatePicker} from '../../RelativeRangeDatePicker';
@@ -12,20 +13,16 @@ import type {RelativeRangeDatePickerValue} from '../../RelativeRangeDatePicker';
 import {RangeDateSelection} from '../RangeDateSelection';
 import type {ViewportDimensions, ViewportInterval} from '../components/Ruler/Ruler';
 
-const meta: Meta<typeof RangeDateSelection> = {
+const meta = preview.meta({
     title: 'Components/RangeDateSelection',
     component: RangeDateSelection,
     tags: ['autodocs'],
     args: {
         onUpdate: action('onUpdate'),
     },
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof RangeDateSelection>;
-
-export const Default = {
+export const Default = meta.story({
     render: (args) => {
         const timeZone = args.timeZone;
         const props = {
@@ -66,10 +63,9 @@ export const Default = {
             },
         },
     },
-} satisfies Story;
+});
 
-export const WithControls = {
-    ...Default,
+export const WithControls = Default.extend({
     render: function WithControls(args) {
         const timeZone = args.timeZone;
         const minValue = args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined;
@@ -171,7 +167,7 @@ export const WithControls = {
             </div>
         );
     },
-} satisfies Story;
+});
 
 function getRelativeInterval(start: string, end: string): RelativeRangeDatePickerValue {
     return {

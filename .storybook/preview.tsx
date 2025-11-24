@@ -8,7 +8,9 @@ import React from 'react';
 import {settings} from '@gravity-ui/date-utils';
 import {MobileProvider, ThemeProvider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Decorator, Preview} from '@storybook/react-webpack5';
+import addonDocs from '@storybook/addon-docs';
+import type {Decorator} from '@storybook/react-webpack5';
+import {definePreview} from '@storybook/react-webpack5';
 import {MINIMAL_VIEWPORTS} from 'storybook/viewport';
 
 import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator';
@@ -36,7 +38,8 @@ const WithContextProvider: Decorator = (Story, context) => {
     );
 };
 
-const preview: Preview = {
+export default definePreview({
+    addons: [addonDocs()],
     parameters: {
         docs: {
             theme: themes.light,
@@ -45,7 +48,7 @@ const preview: Preview = {
         },
         jsx: {showFunctions: false}, // Do not show functions in sources
         viewport: {
-            viewports: MINIMAL_VIEWPORTS,
+            options: MINIMAL_VIEWPORTS,
         },
         options: {
             storySort: {
@@ -107,6 +110,4 @@ const preview: Preview = {
         direction: 'ltr',
         platform: 'desktop',
     },
-};
-
-export default preview;
+});
