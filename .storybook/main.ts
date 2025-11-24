@@ -1,12 +1,12 @@
-import type {StorybookConfig} from '@storybook/react-webpack5';
+import {defineMain} from '@storybook/react-webpack5/node';
 import * as sass from 'sass';
 
-const config: StorybookConfig = {
+export default defineMain({
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
     addons: [
         '@storybook/addon-docs',
         '@storybook/addon-a11y',
-        './theme-addon/register.tsx',
+        import.meta.resolve('./theme-addon/theme-preset.ts'),
         '@storybook/addon-webpack5-compiler-babel',
         {
             name: '@storybook/addon-styling-webpack',
@@ -59,6 +59,4 @@ const config: StorybookConfig = {
             ['@babel/preset-react', {runtime: 'automatic'}],
         ],
     },
-};
-
-export default config;
+});

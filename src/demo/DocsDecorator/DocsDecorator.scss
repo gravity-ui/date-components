@@ -23,6 +23,10 @@ $root: '.g-storybook-docs-decorator';
             max-width: 800px;
         }
 
+        .sbdocs-preview {
+            background: var(--g-color-base-background);
+        }
+
         .sbdocs-p,
         .sbdocs-ul,
         .sbdocs-ol {
