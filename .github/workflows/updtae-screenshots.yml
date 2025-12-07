@@ -10,7 +10,7 @@ env:
   COMMIT_MESSAGE: |
     test: update visual regression screenshots
 
-    Co-authored-by: ${{ github.event.sender.name }} <${{ github.event.sender.id }}+${{ github.event.sender.login }}@users.noreply.github.com>
+    Co-authored-by: ${{ github.event.sender.login }} <${{ github.event.sender.id }}+${{ github.event.sender.login }}@users.noreply.github.com>
 
 jobs:
   update-screenshots:
@@ -27,20 +27,22 @@ jobs:
       contents: write # needs to push changes
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "${{ env.AUTHOR_NAME }}"
-          git config --global user.email "${{ env.AUTHOR_EMAIL }}"
-
       - name: Generate token
         id: generate-token
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GRAVITY_UI_APP_ID }}
           private-key: ${{ secrets.GRAVITY_UI_APP_PRIVATE_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ env.AUTHOR_NAME }}"
+          git config --global user.email "${{ env.AUTHOR_EMAIL }}"
 
       - name: Set eyes emoji
         id: start_working
@@ -98,8 +100,6 @@ jobs:
       - name: Push changes
         if: steps.check_changes.outputs.changes == 'true'
         run: git push
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Set done emoji
         run: |
