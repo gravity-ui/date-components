@@ -10,13 +10,13 @@ env:
   COMMIT_MESSAGE: |
     test: update visual regression screenshots
 
-    Co-authored-by: ${{ github.event.sender.name }} <${{ github.event.sender.id }}+${{ github.event.sender.name }}@users.noreply.github.com>
+    Co-authored-by: ${{ github.event.sender.name }} <${{ github.event.sender.id }}+${{ github.event.sender.login }}@users.noreply.github.com>
 
 jobs:
   update-screenshots:
     runs-on: ubuntu-latest
 
-    if: ${{ github.event.issue.pull_request  && !github.event.issue.pull_request.merged_at && contains(github.event.comment.body, '/update-screenshots') }}
+    if: ${{ github.event.issue.pull_request && !github.event.issue.pull_request.merged_at && contains(github.event.comment.body, '/update-screenshots') }}
 
     # one at a time per branch
     concurrency:
@@ -41,6 +41,11 @@ jobs:
         with:
           app-id: ${{ secrets.GRAVITY_UI_APP_ID }}
           private-key: ${{ secrets.GRAVITY_UI_APP_PRIVATE_KEY }}
+
+      - name: Set eyes emoji
+        id: start_working
+        run: |
+          echo "reaction_id=$(gh api repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions -f 'content=eyes' | jq .id)" >> $GITHUB_OUTPUT
 
       - name: Checkout pull request
         run: gh pr checkout ${{ github.event.issue.number }}
@@ -93,6 +98,11 @@ jobs:
         run: git push
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+      - name: Set done emoji
+        run: |
+          gh api --method DELETE repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions/${{ steps.start_working.outputs.reaction_id }}
+          gh api repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions -f 'content=${{ steps.check_changes.outputs.changes == 'true' && '+1' || 'confused' }}'
 
       # pretty summary for humans
       - name: Summary
