@@ -46,6 +46,8 @@ jobs:
         id: start_working
         run: |
           echo "reaction_id=$(gh api repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions -f 'content=eyes' | jq .id)" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Checkout pull request
         run: gh pr checkout ${{ github.event.issue.number }}
@@ -103,6 +105,8 @@ jobs:
         run: |
           gh api --method DELETE repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions/${{ steps.start_working.outputs.reaction_id }}
           gh api repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions -f 'content=${{ steps.check_changes.outputs.changes == 'true' && '+1' || 'confused' }}'
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       # pretty summary for humans
       - name: Summary
