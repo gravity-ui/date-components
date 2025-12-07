@@ -28,13 +28,13 @@ export const Default = meta.story({
             ...args,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
-            value: args.value ? dateTimeParse(args.value, {timeZone}) : undefined,
+            value: args.value ? dateTimeParse(args.value, {timeZone}) : args.value,
             defaultValue: args.defaultValue
                 ? dateTimeParse(args.defaultValue, {timeZone})
-                : undefined,
+                : args.defaultValue,
             focusedValue: args.focusedValue
                 ? dateTimeParse(args.focusedValue, {timeZone})
-                : undefined,
+                : args.focusedValue,
             defaultFocusedValue: args.defaultFocusedValue
                 ? dateTimeParse(args.defaultFocusedValue, {timeZone})
                 : undefined,
@@ -53,7 +53,7 @@ export const Default = meta.story({
                 theme: 'success',
                 content: (
                     <div>
-                        <div>date: {resArray.map((r) => r.format()).join(', ')}</div>
+                        <div>date: {resArray.map((r) => r.format()).join(', ') || `[]`}</div>
                     </div>
                 ),
             });
@@ -105,6 +105,9 @@ export const Default = meta.story({
         timeZone: timeZoneControl,
     },
 });
+
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'Calendar'});
 
 function getIsDateUnavailable(variant: string) {
     if (variant === 'weekend') {
@@ -158,12 +161,35 @@ export const Custom = Default.extend({
                     ))}
                 </TabList>
                 <TabPanel value={mode}>
-                    <Default.Component {...args} modes={{[mode]: true}} />
+                    <DefaultComponent {...args} modes={{[mode]: true}} />
                 </TabPanel>
             </TabProvider>
         );
     },
     parameters: {
         controls: {exclude: ['mode', 'defaultMode', 'modes']},
+    },
+});
+
+export const ClearableCalendar = Default.extend({
+    render: function ClearableCalendar(props) {
+        const [value, setValue] = React.useState<DateTime | null>(null);
+        return (
+            <DefaultComponent
+                {...props}
+                value={value}
+                onUpdate={(v: DateTime) => {
+                    if (v.isSame(value, 'day')) {
+                        setValue(null);
+                    } else {
+                        setValue(v);
+                    }
+                    props.onUpdate?.(v);
+                }}
+            />
+        );
+    },
+    parameters: {
+        controls: {exclude: ['selectionMode', 'value', 'defaultValue']},
     },
 });

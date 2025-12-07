@@ -88,6 +88,9 @@ export const Default = meta.story({
     },
 });
 
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'RelativeRangeDatePicker'});
+
 export const InsideDialog = Default.extend({
     render: function InsideDialog(args) {
         const [isOpen, setOpen] = React.useState(false);
@@ -104,7 +107,7 @@ export const InsideDialog = Default.extend({
                     <Dialog.Header />
                     <Dialog.Body>
                         <div style={{paddingTop: 16}}>
-                            <Default.Component {...args} />
+                            <DefaultComponent {...args} />
                         </div>
                     </Dialog.Body>
                 </Dialog>
@@ -116,20 +119,13 @@ export const InsideDialog = Default.extend({
 export const CustomControl = Default.extend({
     args: {
         style: undefined,
-    },
-    render: (props) => {
-        return (
-            <Default.Component
-                {...props}
-                renderControl={({title, triggerProps, ref}) => {
-                    return (
-                        <Button ref={ref as React.Ref<HTMLButtonElement>} {...triggerProps}>
-                            {title || 'Not selected'}
-                        </Button>
-                    );
-                }}
-            />
-        );
+        renderControl: ({title, triggerProps, ref}) => {
+            return (
+                <Button ref={ref as React.Ref<HTMLButtonElement>} {...triggerProps}>
+                    {title || 'Not selected'}
+                </Button>
+            );
+        },
     },
 });
 

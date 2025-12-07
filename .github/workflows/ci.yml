@@ -5,6 +5,10 @@ on:
     branches: [main, next]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify_files:
     name: Verify Files
@@ -12,8 +16,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -34,8 +36,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -43,5 +43,6 @@ jobs:
           cache: 'npm'
       - name: Install Packages
         run: npm ci
-      - name: Unit Tests
+      - uses: ./.github/actions/setup-playwright
+      - name: Tests
         run: npm run test

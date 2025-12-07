@@ -1,18 +1,9 @@
-import React from 'react';
-
-import {ThemeContext} from '@gravity-ui/uikit';
-import type {ThemeContextProps} from '@gravity-ui/uikit';
-import {render} from '@testing-library/react';
-import type {RenderOptions} from '@testing-library/react';
-
-const themeContextValue: ThemeContextProps = {
-    direction: 'ltr',
-    theme: 'light',
-    themeValue: 'light',
-};
+import {ThemeProvider} from '@gravity-ui/uikit';
+import {render, renderHook} from 'vitest-browser-react';
+import type {ComponentRenderOptions} from 'vitest-browser-react';
 
 function Providers({children}: {children: React.ReactNode}) {
-    return <ThemeContext.Provider value={themeContextValue}>{children}</ThemeContext.Provider>;
+    return <ThemeProvider theme="light">{children}</ThemeProvider>;
 }
 
 function createWrapper(Component: React.JSXElementConstructor<{children: React.ReactNode}>) {
@@ -25,10 +16,9 @@ function createWrapper(Component: React.JSXElementConstructor<{children: React.R
     };
 }
 
-function customRender(ui: React.ReactElement, options?: RenderOptions) {
+function customRender(ui: React.ReactElement, options?: ComponentRenderOptions) {
     const wrapper = options?.wrapper ? createWrapper(options.wrapper) : Providers;
     return render(ui, {...options, wrapper});
 }
 
-export * from '@testing-library/react';
-export {customRender as render};
+export {customRender as render, renderHook};

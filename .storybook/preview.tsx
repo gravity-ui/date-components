@@ -3,17 +3,15 @@ import '@gravity-ui/uikit/styles/fonts.scss';
 // eslint-disable-next-line import/order
 import '@gravity-ui/uikit/styles/styles.css';
 
-import React from 'react';
-
 import {settings} from '@gravity-ui/date-utils';
 import {MobileProvider, ThemeProvider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import addonDocs from '@storybook/addon-docs';
-import type {Decorator} from '@storybook/react-webpack5';
-import {definePreview} from '@storybook/react-webpack5';
+import type {Decorator} from '@storybook/react-vite';
+import {definePreview} from '@storybook/react-vite';
 import {MINIMAL_VIEWPORTS} from 'storybook/viewport';
 
-import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator';
+import {DocsDecorator} from '../src/demo/DocsDecorator/DocsDecorator.js';
 
 import {themes} from './theme';
 
@@ -21,20 +19,18 @@ settings.loadLocale('ru');
 
 const WithContextProvider: Decorator = (Story, context) => {
     return (
-        <React.StrictMode>
-            <ThemeProvider
-                theme={context.globals.theme}
-                direction={context.globals.direction}
-                lang={context.globals.lang}
-            >
-                <MobileProvider mobile={context.globals.platform === 'mobile'}>
-                    <ToasterProvider toaster={toaster}>
-                        <Story {...context} />
-                        <ToasterComponent />
-                    </ToasterProvider>
-                </MobileProvider>
-            </ThemeProvider>
-        </React.StrictMode>
+        <ThemeProvider
+            theme={context.globals.theme}
+            direction={context.globals.direction}
+            lang={context.globals.lang}
+        >
+            <MobileProvider mobile={context.globals.platform === 'mobile'}>
+                <ToasterProvider toaster={toaster}>
+                    <Story {...context} />
+                    <ToasterComponent />
+                </ToasterProvider>
+            </MobileProvider>
+        </ThemeProvider>
     );
 };
 
@@ -45,15 +41,27 @@ export default definePreview({
             theme: themes.light,
             container: DocsDecorator,
             codePanel: true,
+            source: {excludeDecorators: false},
         },
-        jsx: {showFunctions: false}, // Do not show functions in sources
+
+        // Do not show functions in sources
+        jsx: {showFunctions: false},
+
         viewport: {
             options: MINIMAL_VIEWPORTS,
         },
+
         options: {
             storySort: {
                 method: 'alphabetical',
             },
+        },
+
+        a11y: {
+            // 'todo' - show a11y violations in the test UI only
+            // 'error' - fail CI on a11y violations
+            // 'off' - skip a11y checks entirely
+            test: 'todo',
         },
     },
     decorators: [WithContextProvider],
