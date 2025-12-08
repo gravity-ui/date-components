@@ -10,12 +10,10 @@ dist
 storybook-static
 .cache
 
-# Playwright
-playwright-report
-playwright-report-docker
-playwright/.cache-docker
-playwright/.cache/
-test-results
+# Tests
+reports
 
 # System files
 .DS_Store
+
+.vitest-*

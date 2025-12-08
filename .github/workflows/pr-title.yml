@@ -5,11 +5,10 @@ on:
     types:
       - opened
       - synchronize
-      - reopened
       - edited
 
 concurrency:
-  group: ${{github.workflow}}-${{github.ref}}
+  group: title-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:

@@ -21,7 +21,6 @@ const meta = preview.meta({
         onBlur: action('onBlur'),
     },
 });
-
 export const Default = meta.story({
     render: (args) => {
         const timeZone = args.timeZone;
@@ -95,6 +94,9 @@ export const Default = meta.story({
     },
 });
 
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'DatePicker'});
+
 function CustomCalendar(props: CalendarProps) {
     const [mode, setMode] = React.useState('days');
 
@@ -115,12 +117,8 @@ function CustomCalendar(props: CalendarProps) {
 }
 
 export const WithCustomCalendar = Default.extend({
-    render: (args) => {
-        return (
-            <Default.Component {...args}>
-                {(props) => <CustomCalendar {...props} />}
-            </Default.Component>
-        );
+    args: {
+        children: (props) => <CustomCalendar {...props} />,
     },
 });
 
@@ -140,7 +138,7 @@ export const InsideDialog = Default.extend({
                     <Dialog.Header />
                     <Dialog.Body>
                         <div style={{paddingTop: 16}}>
-                            <Default.Component {...args} />
+                            <DefaultComponent {...args} />
                         </div>
                     </Dialog.Body>
                 </Dialog>
@@ -153,7 +151,7 @@ export const ControlledOpenState = Default.extend({
     render: function ControlledOpenState(args) {
         const [open, setOpen] = React.useState(false);
         return (
-            <Default.Component
+            <DefaultComponent
                 {...args}
                 open={open}
                 disableFocusTrap
@@ -172,7 +170,7 @@ export const ControlledOpenState = Default.extend({
                 }}
             >
                 {(calendarProps) => <Calendar {...calendarProps} autoFocus={false} />}
-            </Default.Component>
+            </DefaultComponent>
         );
     },
 });

@@ -1,15 +1,17 @@
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
-import {act, renderHook} from '@testing-library/react';
+import {expect, test, vitest} from 'vitest';
+
+import {renderHook} from '#test-utils/utils';
 
 import {cleanString, isEditableSection} from '../../DateField/utils';
 import type {RangeValue} from '../../types';
 
 import {useRangeDateFieldState} from './useRangeDateFieldState';
 
-test('can display the correct range', () => {
+test('can display the correct range', async () => {
     const timeZone = 'Israel';
-    const {result} = renderHook(() =>
+    const {result} = await renderHook(() =>
         useRangeDateFieldState({
             format: 'DD.MM.YYYY',
             placeholderValue: dateTime({input: '2024-01-12T00:00:00', timeZone}),
@@ -25,9 +27,9 @@ test('can display the correct range', () => {
     expect(cleanString(text)).toBe('20.01.2024 — 24.01.2024');
 });
 
-test('can navigate through the range and change sections', () => {
+test('can navigate through the range and change sections', async () => {
     const timeZone = 'Israel';
-    const {result} = renderHook(() =>
+    const {result, act} = await renderHook(() =>
         useRangeDateFieldState({
             format: 'DD.MM.YYYY',
             placeholderValue: dateTime({input: '2024-01-12T00:00:00', timeZone}),
@@ -51,10 +53,10 @@ test('can navigate through the range and change sections', () => {
     expect(cleanString(result.current.text)).toBe('12.03.YYYY — DD.01.YYYY');
 });
 
-test('call onUpdate only if the entire value is valid', () => {
-    const onUpdateSpy = jest.fn();
+test('call onUpdate only if the entire value is valid', async () => {
+    const onUpdateSpy = vitest.fn();
     const timeZone = 'Israel';
-    const {result} = renderHook(() =>
+    const {result, act} = await renderHook(() =>
         useRangeDateFieldState({
             format: 'DD.MM.YYYY',
             placeholderValue: dateTime({input: '2024-01-12T00:00:00', timeZone}),
@@ -90,8 +92,8 @@ test('call onUpdate only if the entire value is valid', () => {
     });
 });
 
-test('can set a range from the string', () => {
-    const {result} = renderHook(() =>
+test('can set a range from the string', async () => {
+    const {result, act} = await renderHook(() =>
         useRangeDateFieldState({
             format: 'DD.MM.YYYY',
             placeholderValue: dateTime({input: '2024-01-12T00:00:00'}),
@@ -103,7 +105,7 @@ test('can set a range from the string', () => {
     expect(cleanString(result.current.text)).toBe('31.01.2024 — 29.02.2024');
 });
 
-test('can clear the section or the entire range', () => {
+test('can clear the section or the entire range', async () => {
     let value: RangeValue<DateTime> | null = {
         start: dateTime({input: '2024-01-20T12:30:00'}),
         end: dateTime({input: '2024-01-24T12:00:00'}),
@@ -113,7 +115,7 @@ test('can clear the section or the entire range', () => {
         value = newValue;
     };
 
-    const {result} = renderHook(() =>
+    const {result, act} = await renderHook(() =>
         useRangeDateFieldState({
             format: 'DD.MM.YYYY',
             placeholderValue: dateTime({input: '2024-01-12T00:00:00'}),

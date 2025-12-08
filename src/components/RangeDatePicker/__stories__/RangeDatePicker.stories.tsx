@@ -97,6 +97,9 @@ export const Default = meta.story({
     },
 });
 
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'RangeDatePicker'});
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseRangeDateTime(text: any, format?: string, timeZone?: string) {
     const list = text.split('-');
@@ -109,7 +112,7 @@ export const ControlledOpenState = Default.extend({
     render: function ControlledOpenState(args) {
         const [open, onOpenChange] = React.useState(false);
         return (
-            <Default.Component
+            <DefaultComponent
                 {...args}
                 disableFocusTrap
                 open={open}
@@ -128,7 +131,7 @@ export const ControlledOpenState = Default.extend({
                 }}
             >
                 {(props) => <RangeCalendar {...props} autoFocus={false} />}
-            </Default.Component>
+            </DefaultComponent>
         );
     },
 });

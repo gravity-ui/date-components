@@ -109,6 +109,9 @@ export const Default = meta.story({
     },
 });
 
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'RangeCalendar'});
+
 function getIsDateUnavailable(variant: string) {
     if (variant === 'weekend') {
         return (date: DateTime) => {
@@ -161,7 +164,7 @@ export const Custom = Default.extend({
                     ))}
                 </TabList>
                 <TabPanel value={mode}>
-                    <Default.Component {...args} modes={{[mode]: true}} />
+                    <DefaultComponent {...args} modes={{[mode]: true}} />
                 </TabPanel>
             </TabProvider>
         );

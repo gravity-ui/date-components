@@ -2,12 +2,10 @@
 
 set -euo pipefail
 
-SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 IMAGE_NAME="mcr.microsoft.com/playwright"
-IMAGE_TAG="v$($SCRIPTS_DIR/playwright-version.sh)-jammy"
+IMAGE_TAG="v$(cat package-lock.json | jq --raw-output '.packages."node_modules/playwright".version')-noble"
 
-NODE_MODULES_CACHE_DIR="$HOME/.cache/uikit-playwright-docker-node-modules"
+NODE_MODULES_CACHE_DIR="$HOME/.cache/date-components-docker-node-modules"
 
 command_exists() {
   command -v "$*" >/dev/null 2>&1
@@ -17,7 +15,8 @@ run_command() {
   $CONTAINER_TOOL run --rm --network host -it -w /work \
     -v $(pwd):/work \
     -v "$NODE_MODULES_CACHE_DIR:/work/node_modules" \
-    -e IS_DOCKER=1 \
+    -e CI=1 \
+    -p 51204:51204 \
     "$IMAGE_NAME:$IMAGE_TAG" \
     /bin/bash -c "$*"
 }
@@ -33,7 +32,6 @@ fi
 
 if [[ "$*" = "clear-cache" ]]; then
   rm -rf "$NODE_MODULES_CACHE_DIR"
-  rm -rf "./playwright/.cache-docker"
   exit 0
 fi
 

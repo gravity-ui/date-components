@@ -42,6 +42,12 @@ async function compileTs(modules = false) {
         ])
             .pipe(sourcemaps.init())
             .pipe(
+                addVirtualFile({
+                    fileName: 'src/package.json',
+                    text: JSON.stringify({type: modules ? 'module' : 'commonjs'}),
+                }),
+            )
+            .pipe(
                 tsProject({
                     customTransformers: {
                         before: transformers,

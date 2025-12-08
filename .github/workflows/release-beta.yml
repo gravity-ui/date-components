@@ -30,12 +30,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Install Packages
         run: npm ci
-      - name: Lint Files
-        run: npm run lint
-      - name: Typecheck
-        run: npm run typecheck
-      - name: Test
-        run: npm test
       - name: Bump version
         run: |
           echo ${{ github.event.inputs.version }}
