@@ -9,10 +9,16 @@ import {constrainValue, createPlaceholderValue, isWeekend, mergeDateTime} from '
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {calendarLayouts} from '../utils';
 
-import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './types';
+import type {
+    CalendarLayout,
+    CalendarState,
+    CalendarStateOptionsBase,
+    CalendarValueType,
+    SelectionMode,
+} from './types';
 
 export interface CalendarStateOptions<T = DateTime>
-    extends ValueBase<T | null, T>, CalendarStateOptionsBase {}
+    extends ValueBase<T | null, Exclude<T, null>>, CalendarStateOptionsBase {}
 
 export type {CalendarState} from './types';
 
@@ -22,12 +28,14 @@ const defaultModes: Record<CalendarLayout, boolean> = {
     quarters: false,
     years: true,
 };
-export function useCalendarState(props: CalendarStateOptions): CalendarState {
-    const {disabled, readOnly, modes = defaultModes} = props;
-    const [value, setValue] = useControlledState(
+export function useCalendarState<M extends SelectionMode = 'single'>(
+    props: CalendarStateOptions<CalendarValueType<M>> & {selectionMode?: M},
+): CalendarState<M> {
+    const {disabled, readOnly, modes = defaultModes, selectionMode = 'single' as M} = props;
+    const [value, setValue] = useControlledState<DateTime | DateTime[] | null>(
         props.value,
-        props.defaultValue ?? null,
-        props.onUpdate,
+        props.defaultValue ?? (selectionMode === 'single' ? null : []),
+        props.onUpdate as any,
     );
     const availableModes = calendarLayouts.filter((l) => modes[l]);
     const minMode = availableModes[0] || 'days';
@@ -39,9 +47,10 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     );
 
     const currentMode = mode && availableModes.includes(mode) ? mode : minMode;
+    const firstValue = Array.isArray(value) ? (value[0] ?? null) : value;
 
     const inputTimeZone = useDefaultTimeZone(
-        props.value || props.defaultValue || props.focusedValue || props.defaultFocusedValue,
+        firstValue || props.focusedValue || props.defaultFocusedValue,
     );
     const timeZone = props.timeZone || inputTimeZone;
 
@@ -64,10 +73,11 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
     const defaultFocusedValue = React.useMemo(() => {
         const defaultValue =
-            (props.defaultFocusedValue ? props.defaultFocusedValue : value)?.timeZone(timeZone) ||
-            createPlaceholderValue({timeZone}).startOf(minMode);
+            (props.defaultFocusedValue ? props.defaultFocusedValue : firstValue)?.timeZone(
+                timeZone,
+            ) || createPlaceholderValue({timeZone}).startOf(minMode);
         return constrainValue(defaultValue, minValue, maxValue);
-    }, [maxValue, minValue, props.defaultFocusedValue, timeZone, value, minMode]);
+    }, [maxValue, minValue, props.defaultFocusedValue, timeZone, firstValue, minMode]);
     const [focusedDateInner, setFocusedDate] = useControlledState(
         focusedValue,
         defaultFocusedValue,
@@ -94,30 +104,80 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     const startDate = getStartDate(focusedDate, currentMode);
     const endDate = getEndDate(focusedDate, currentMode);
 
+    const finalValue =
+        selectionMode === 'single'
+            ? firstValue
+            : Array.isArray(value)
+              ? value
+              : value
+                ? [value]
+                : [];
+
     return {
         disabled,
         readOnly,
-        value,
-        setValue(date: DateTime) {
+        value: finalValue as CalendarValueType<M>,
+        setValue(date) {
             if (!disabled && !readOnly) {
-                let newValue = constrainValue(date, minValue, maxValue);
-                if (this.isCellUnavailable(newValue)) {
-                    return;
+                if (selectionMode === 'single') {
+                    let newValue = Array.isArray(date) ? (date[0] ?? null) : date;
+                    if (!newValue) {
+                        setValue(null);
+                        return;
+                    }
+                    newValue = constrainValue(newValue, minValue, maxValue);
+                    if (firstValue) {
+                        // If there is a date already selected, then we want to keep its time
+                        newValue = mergeDateTime(newValue, firstValue.timeZone(timeZone));
+                    }
+                    if (this.isCellUnavailable(newValue)) {
+                        return;
+                    }
+                    setValue(newValue.timeZone(inputTimeZone));
+                } else {
+                    let dates: DateTime[] = [];
+                    if (Array.isArray(date)) {
+                        dates = date;
+                    } else if (date !== null) {
+                        dates = [date];
+                    }
+
+                    setValue(dates);
                 }
-                if (value) {
-                    // If there is a date already selected, then we want to keep its time
-                    newValue = mergeDateTime(newValue, value.timeZone(timeZone));
-                }
-                setValue(newValue.timeZone(inputTimeZone));
             }
         },
         timeZone,
         selectDate(date: DateTime, force = false) {
             if (!disabled) {
                 if (!readOnly && (force || this.mode === minMode)) {
-                    this.setValue(date.startOf(minMode));
                     if (force && currentMode !== minMode) {
                         setMode(minMode);
+                    }
+                    const selectedDate = constrainValue(date.startOf(minMode), minValue, maxValue);
+                    if (this.isCellUnavailable(selectedDate)) {
+                        return;
+                    }
+                    if (selectionMode === 'single') {
+                        this.setValue(selectedDate);
+                    } else {
+                        const newValue = Array.isArray(value) ? [...value] : [];
+                        if (value && !Array.isArray(value)) {
+                            newValue.push(value);
+                        }
+                        let found = false;
+                        let index = -1;
+                        while (
+                            (index = newValue.findIndex((d) =>
+                                selectedDate.isSame(d.timeZone(timeZone), currentMode),
+                            )) !== -1
+                        ) {
+                            found = true;
+                            newValue.splice(index, 1);
+                        }
+                        if (!found) {
+                            newValue.push(selectedDate.timeZone(inputTimeZone));
+                        }
+                        this.setValue(newValue);
                     }
                 } else {
                     this.zoomIn();
@@ -210,18 +270,18 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
             return this.isInvalid(next);
         },
         isSelected(date: DateTime) {
-            return Boolean(
-                value &&
-                date.isSame(value.timeZone(timeZone), currentMode) &&
-                !this.isCellDisabled(date),
-            );
-        },
-        isCellUnavailable(date: DateTime) {
-            if (this.mode === minMode) {
-                return Boolean(props.isDateUnavailable && props.isDateUnavailable(date));
-            } else {
+            if (!value || !firstValue || this.isCellDisabled(date)) {
                 return false;
             }
+            if (selectionMode === 'single') {
+                return date.isSame(firstValue.timeZone(timeZone), currentMode);
+            }
+
+            const dates = Array.isArray(value) ? value : [value];
+            return dates.some((d) => date.isSame(d.timeZone(timeZone), currentMode));
+        },
+        isCellUnavailable(date: DateTime) {
+            return props.isDateUnavailable ? props.isDateUnavailable(date) : false;
         },
         isCellFocused(date: DateTime) {
             return this.isFocused && focusedDate && date.isSame(focusedDate, currentMode);
