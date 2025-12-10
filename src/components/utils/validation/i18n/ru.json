@@ -1,12 +1,12 @@
 {
-  "Value must be {minValue} or later.": "{{value}} должно ровняться {{minValue}} или быть позже.",
-  "Value must be {maxValue} or earlier.": "{{value}} должно ровняться {{maxValue}} или быть раньше.",
-  "Selected date unavailable.": "Выбранная дата недоступна.",
-  "Value is required.": "{{value}} обязательно.",
+  "Value must be {minValue} or later.": "{{value}} должно равняться {{minValue}} или быть позже",
+  "Value must be {maxValue} or earlier.": "{{value}} должно равняться {{maxValue}} или быть раньше",
+  "Selected date unavailable.": "Выбранная дата недоступна",
+  "Value is required.": "{{value}} обязательно",
   "\"From\"": "«От»",
   "\"To\"": "«До»",
-  "\"From\" is required.": "«От» обязательно.",
+  "\"From\" is required.": "«От» обязательно",
   "\"To\"": "«До»",
-  "\"To\" is required.": "«До» обязательно.",
-  "\"From\" can't be after \"To\".": "«От» не может быть позже чем «До»."
+  "\"To\" is required.": "«До» обязательно",
+  "\"From\" can't be after \"To\".": "«От» не может быть позже, чем «До»"
 }
