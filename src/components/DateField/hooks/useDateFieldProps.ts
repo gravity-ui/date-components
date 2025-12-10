@@ -19,7 +19,8 @@ import {cleanString} from '../utils';
 import type {DateFieldState} from './useBaseDateFieldState';
 
 export interface DateFieldProps<T = DateTime>
-    extends DateFieldBase<T>,
+    extends
+        DateFieldBase<T>,
         DateFieldTextInputProps,
         TextInputExtendProps,
         DomProps,
@@ -223,8 +224,8 @@ export function useDateFieldProps<T = DateTime>(
 
                         const isValidValue = Boolean(
                             activeSection &&
-                                ((activeSection.contentType === 'digit' && digitsOnly) ||
-                                    (activeSection.contentType === 'letter' && lettersOnly)),
+                            ((activeSection.contentType === 'digit' && digitsOnly) ||
+                                (activeSection.contentType === 'letter' && lettersOnly)),
                         );
                         if (isValidValue) {
                             state.onInput(pastedValue);

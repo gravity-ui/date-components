@@ -13,11 +13,7 @@ import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../typ
 import '../CalendarView/Calendar.scss';
 
 export interface CalendarProps<T = DateTime>
-    extends CalendarStateOptions<T>,
-        DomProps,
-        StyleProps,
-        FocusEvents,
-        AccessibilityProps {
+    extends CalendarStateOptions<T>, DomProps, StyleProps, FocusEvents, AccessibilityProps {
     /**
      * The size of the element.
      * @default m
