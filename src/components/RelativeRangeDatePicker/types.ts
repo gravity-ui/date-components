@@ -50,7 +50,8 @@ export interface RelativeRangeDatePickerRenderControlProps {
 }
 
 export interface RelativeRangeDatePickerProps
-    extends RelativeRangeDatePickerStateOptions,
+    extends
+        RelativeRangeDatePickerStateOptions,
         DomProps,
         AccessibilityProps,
         InputBase,

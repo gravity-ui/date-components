@@ -30,7 +30,8 @@ import './RelativeDateField.scss';
 const b = block('relative-date-field');
 
 export interface RelativeDateFieldProps
-    extends RelativeDateFieldOptions,
+    extends
+        RelativeDateFieldOptions,
         TextInputProps,
         TextInputExtendProps,
         DomProps,

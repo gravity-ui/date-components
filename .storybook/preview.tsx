@@ -6,6 +6,7 @@ import '@gravity-ui/uikit/styles/styles.css';
 import {settings} from '@gravity-ui/date-utils';
 import {MobileProvider, ThemeProvider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
+import addonA11y from '@storybook/addon-a11y';
 import addonDocs from '@storybook/addon-docs';
 import type {Decorator} from '@storybook/react-vite';
 import {definePreview} from '@storybook/react-vite';
@@ -35,7 +36,7 @@ const WithContextProvider: Decorator = (Story, context) => {
 };
 
 export default definePreview({
-    addons: [addonDocs()],
+    addons: [addonDocs(), addonA11y()],
     parameters: {
         docs: {
             theme: themes.light,

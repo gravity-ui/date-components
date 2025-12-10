@@ -12,8 +12,7 @@ import {calendarLayouts} from '../utils';
 import type {CalendarLayout, CalendarState, CalendarStateOptionsBase} from './types';
 
 export interface CalendarStateOptions<T = DateTime>
-    extends ValueBase<T | null, T>,
-        CalendarStateOptionsBase {}
+    extends ValueBase<T | null, T>, CalendarStateOptionsBase {}
 
 export type {CalendarState} from './types';
 
@@ -213,8 +212,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         isSelected(date: DateTime) {
             return Boolean(
                 value &&
-                    date.isSame(value.timeZone(timeZone), currentMode) &&
-                    !this.isCellDisabled(date),
+                date.isSame(value.timeZone(timeZone), currentMode) &&
+                !this.isCellDisabled(date),
             );
         },
         isCellUnavailable(date: DateTime) {

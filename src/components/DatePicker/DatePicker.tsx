@@ -31,7 +31,8 @@ import {b} from './utils';
 import './DatePicker.scss';
 
 export interface DatePickerProps<T = DateTime>
-    extends DatePickerStateOptions<T>,
+    extends
+        DatePickerStateOptions<T>,
         TextInputProps,
         FocusableProps,
         KeyboardEvents,
