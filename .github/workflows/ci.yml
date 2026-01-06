@@ -45,4 +45,17 @@ jobs:
         run: npm ci
       - uses: ./.github/actions/setup-playwright
       - name: Tests
-        run: npm run test
+        run: npm run test:coverage
+      - uses: actions/upload-artifact@v6
+        with:
+          name: reports
+          path: ./reports
+      - name: Save PR ID or ref
+        run: |
+          id="${{ github.event.pull_request.number || github.ref}}"
+          echo $id > ./id.txt
+        shell: bash
+      - uses: actions/upload-artifact@v6
+        with:
+          name: id
+          path: ./id.txt
