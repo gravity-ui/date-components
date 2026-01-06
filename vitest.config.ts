@@ -9,7 +9,13 @@ process.env.VITE_CI = process.env.CI || '';
 
 export default defineConfig({
     test: {
-        coverage: {reportsDirectory: './reports/coverage'},
+        reporters: ['default', ['html', {outputFile: './reports/html/index.html'}]],
+        coverage: {
+            reporter: ['text', 'json', 'json-summary', 'lcov'],
+            reportsDirectory: './reports/coverage',
+            include: ['src/**/*.ts?(x)'],
+            exclude: ['**/__stories__', '**/__tests__', 'src/demo/**'],
+        },
         browser: {
             enabled: true,
             headless: true,
