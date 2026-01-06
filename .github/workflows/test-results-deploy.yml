@@ -1,4 +1,4 @@
-name: PR Preview Deploy
+name: Test Results Deploy
 
 on:
   workflow_run:
@@ -22,7 +22,7 @@ jobs:
           github-token: ${{ secrets.GRAVITY_UI_BOT_GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
       - name: Report Coverage
-        if: github.event.workflow_run.event == 'pull-request'
+        if: github.event.workflow_run.event == 'pull_request'
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           json-summary-path: ./reports/coverage/coverage-summary.json
@@ -42,7 +42,7 @@ jobs:
           s3-secret-key: ${{ secrets.STORYBOOK_S3_SECRET_KEY }}
           region: ru-central1
       - name: Create Comment
-        if: github.event.workflow_run.event == 'pull-request'
+        if: github.event.workflow_run.event == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GRAVITY_UI_BOT_GITHUB_TOKEN }}
