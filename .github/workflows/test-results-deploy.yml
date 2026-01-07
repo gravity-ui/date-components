@@ -41,9 +41,9 @@ jobs:
           s3-key-id: ${{ secrets.STORYBOOK_S3_KEY_ID }}
           s3-secret-key: ${{ secrets.STORYBOOK_S3_SECRET_KEY }}
           region: ru-central1
-      - name: Upload tests meta to S3
+      - name: Update tests meta content type
         run: |
-          aws s3 cp reports/html/html.meta.json.gz s3://playwright-reports/date-components/pulls/${{ steps.id.outputs.id }}/ --content-type="application/gzip" --endpoint-url=https://storage.yandexcloud.net
+          aws s3 cp s3://playwright-reports/date-components/pulls/${{ steps.id.outputs.id }}/reports/html/html.meta.json.gz s3://playwright-reports/date-components/pulls/${{ steps.id.outputs.id }}/reports/html/html.meta.json.gz --content-type="application/gzip" --metadata-directive=REPLACE --endpoint-url=https://storage.yandexcloud.net
         shell: bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.STORYBOOK_S3_KEY_ID }}
