@@ -6,7 +6,7 @@ on:
   pull_request:
 
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
+  group: ci-${{ github.event.pull_request.number || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
           path: ./reports
       - name: Save PR ID or ref
         run: |
-          id="${{ github.event.pull_request.number || github.ref}}"
+          id="${{ github.event.pull_request.number || github.ref_name}}"
           echo $id > ./id.txt
         shell: bash
       - uses: actions/upload-artifact@v6
