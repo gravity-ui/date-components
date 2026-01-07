@@ -41,6 +41,17 @@ jobs:
           s3-key-id: ${{ secrets.STORYBOOK_S3_KEY_ID }}
           s3-secret-key: ${{ secrets.STORYBOOK_S3_SECRET_KEY }}
           region: ru-central1
+      - name: Upload tests meta to S3
+        run: |
+          aws s3 cp reports/html/html.meta.json.gz s3://playwright-reports/date-components/pulls/${{ steps.id.outputs.id }}/ --content-type="application/gzip" --endpoint-url=https://storage.yandexcloud.net
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.STORYBOOK_S3_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.STORYBOOK_S3_SECRET_KEY }}
+          AWS_DEFAULT_REGION: ru-central1
+          AWS_EC2_METADATA_DISABLED: true
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
       - name: Create Comment
         if: github.event.workflow_run.event == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
