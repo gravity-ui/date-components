@@ -117,11 +117,16 @@ interface CalendarStateBase {
     readonly endDate: DateTime;
 }
 
-export interface CalendarState extends CalendarStateBase {
+export type SelectionMode = 'single' | 'multiple';
+export type CalendarValueType<M extends SelectionMode = 'single'> = M extends 'single'
+    ? DateTime | null
+    : DateTime[];
+
+export interface CalendarState<M extends SelectionMode = 'single'> extends CalendarStateBase {
     /** The currently selected date. */
-    readonly value: DateTime | null;
+    readonly value: CalendarValueType<M>;
     /** Sets the currently selected date. */
-    setValue: (value: DateTime) => void;
+    setValue: (value: DateTime | DateTime[] | null) => void;
 }
 
 export interface RangeCalendarState extends CalendarStateBase {
