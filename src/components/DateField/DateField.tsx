@@ -42,7 +42,7 @@ export function DateField({className, ...props}: DateFieldProps) {
                 value={state.value}
                 toStringValue={(value) => value?.toISOString() ?? ''}
                 onReset={(value) => {
-                    state.setDate(value);
+                    state.setValue(value);
                 }}
                 disabled={state.disabled}
                 form={props.form}

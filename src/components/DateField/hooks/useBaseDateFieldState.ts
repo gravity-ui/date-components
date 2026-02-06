@@ -3,27 +3,16 @@ import React from 'react';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {ValidationState} from '../../types';
-import {createPlaceholderValue} from '../../utils/dates';
-import type {DateFieldSection, DateFieldSectionType, FormatInfo} from '../types';
+import type {IncompleteDate} from '../IncompleteDate';
+import type {DateFieldSection, FormatInfo} from '../types';
 import {
-    EDITABLE_SEGMENTS,
+    PAGE_STEP,
     formatSections,
     getCurrentEditableSectionIndex,
-    getDurationUnitFromSectionType,
+    isEditableSectionType,
 } from '../utils';
 
-const PAGE_STEP: Partial<Record<DateFieldSectionType, number>> = {
-    year: 5,
-    quarter: 2,
-    month: 2,
-    weekday: 3,
-    day: 7,
-    hour: 2,
-    minute: 15,
-    second: 15,
-};
-
-export type BaseDateFieldStateOptions<T = DateTime> = {
+export type BaseDateFieldStateOptions<T = DateTime, V = IncompleteDate> = {
     value: T | null;
     displayValue: T;
     placeholderValue?: DateTime;
@@ -36,17 +25,14 @@ export type BaseDateFieldStateOptions<T = DateTime> = {
     selectedSectionIndexes: {startIndex: number; endIndex: number} | null;
     selectedSections: number | 'all';
     isEmpty: boolean;
-    flushAllValidSections: () => void;
-    flushValidSection: (sectionIndex: number) => void;
     setSelectedSections: (position: number | 'all') => void;
-    setValue: (value: T) => void;
-    setDate: (value: T | null) => void;
+    setValue: (value: T | V | null) => void;
     adjustSection: (sectionIndex: number, amount: number) => void;
     setSection: (sectionIndex: number, amount: number) => void;
-    getSectionValue: (sectionIndex: number) => DateTime;
-    setSectionValue: (sectionIndex: number, currentValue: DateTime) => void;
-    createPlaceholder: () => T;
+    getSectionValue: (sectionIndex: number) => IncompleteDate;
+    setSectionValue: (sectionIndex: number, currentValue: IncompleteDate) => void;
     setValueFromString: (str: string) => boolean;
+    confirmPlaceholder: () => void;
 };
 
 export type DateFieldState<T = DateTime> = {
@@ -57,9 +43,9 @@ export type DateFieldState<T = DateTime> = {
     /** The current used value. value or placeholderValue */
     displayValue: T;
     /** Sets the field's value. */
-    setValue: (value: T) => void;
-    /** Sets the date value. */
-    setDate: (value: T | null) => void;
+    setValue: (value: T | null) => void;
+    /** Updates the remaining unfilled segments with the placeholder value. */
+    confirmPlaceholder: () => void;
     /** Formatted value */
     text: string;
     /** Whether the field is read only. */
@@ -70,16 +56,6 @@ export type DateFieldState<T = DateTime> = {
     sections: DateFieldSection[];
     /** Some info about available sections */
     formatInfo: FormatInfo;
-    /**
-     * @deprecated use formatInfo.hasDate instead.
-     * Whether the the format is containing date parts
-     */
-    hasDate: boolean;
-    /**
-     * @deprecated use formatInfo.hasTime instead.
-     * Whether the the format is containing time parts
-     */
-    hasTime: boolean;
     /** Selected sections */
     selectedSectionIndexes: {startIndex: number; endIndex: number} | null;
     /** The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props. */
@@ -124,8 +100,8 @@ export type DateFieldState<T = DateTime> = {
     setValueFromString: (str: string) => boolean;
 };
 
-export function useBaseDateFieldState<T = DateTime>(
-    props: BaseDateFieldStateOptions<T>,
+export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
+    props: BaseDateFieldStateOptions<T, V>,
 ): DateFieldState<T> {
     const {
         value,
@@ -136,17 +112,14 @@ export function useBaseDateFieldState<T = DateTime>(
         selectedSectionIndexes,
         selectedSections,
         isEmpty,
-        flushAllValidSections,
-        flushValidSection,
         setSelectedSections,
         setValue,
-        setDate,
         adjustSection,
         setSection,
         getSectionValue,
         setSectionValue,
-        createPlaceholder,
         setValueFromString,
+        confirmPlaceholder,
     } = props;
 
     const enteredKeys = React.useRef('');
@@ -156,14 +129,12 @@ export function useBaseDateFieldState<T = DateTime>(
         isEmpty,
         displayValue,
         setValue,
-        setDate,
+        confirmPlaceholder,
         text: formatSections(editableSections),
         readOnly: props.readOnly,
         disabled: props.disabled,
         sections: editableSections,
         formatInfo,
-        hasDate: formatInfo.hasDate,
-        hasTime: formatInfo.hasTime,
         selectedSectionIndexes,
         validationState,
         setSelectedSections(position) {
@@ -176,7 +147,9 @@ export function useBaseDateFieldState<T = DateTime>(
             const nextSection = this.sections[index];
             if (nextSection) {
                 this.setSelectedSections(
-                    EDITABLE_SEGMENTS[nextSection.type] ? index : nextSection.nextEditableSection,
+                    isEditableSectionType(nextSection.type)
+                        ? index
+                        : nextSection.nextEditableSection,
                 );
             }
         },
@@ -292,33 +265,12 @@ export function useBaseDateFieldState<T = DateTime>(
                 return;
             }
 
-            flushValidSection(sectionIndex);
-
             const section = this.sections[sectionIndex];
 
-            const placeholder = createPlaceholderValue({
-                placeholderValue: props.placeholderValue,
-                timeZone: props.timeZone,
-            }).timeZone(props.timeZone);
-
             const displayPortion = getSectionValue(sectionIndex);
-            let currentValue = displayPortion;
-
-            // Reset day period to default without changing the hour.
-            if (section.type === 'dayPeriod') {
-                const isPM = displayPortion.hour() >= 12;
-                const shouldBePM = placeholder.hour() >= 12;
-                if (isPM && !shouldBePM) {
-                    currentValue = displayPortion.set('hour', displayPortion.hour() - 12);
-                } else if (!isPM && shouldBePM) {
-                    currentValue = displayPortion.set('hour', displayPortion.hour() + 12);
-                }
-            } else {
-                const type = getDurationUnitFromSectionType(section.type);
-                currentValue = displayPortion.set(type, placeholder[type]());
+            if (isEditableSectionType(section.type)) {
+                setSectionValue(sectionIndex, displayPortion.clear(section.type));
             }
-
-            setSectionValue(sectionIndex, currentValue);
         },
         clearAll() {
             if (this.readOnly || this.disabled) {
@@ -326,14 +278,7 @@ export function useBaseDateFieldState<T = DateTime>(
             }
 
             enteredKeys.current = '';
-            flushAllValidSections();
-            if (value !== null) {
-                setDate(null);
-            }
-
-            const date = createPlaceholder();
-
-            setValue(date);
+            setValue(null);
         },
         onInput(key: string) {
             if (this.readOnly || this.disabled) {
@@ -350,7 +295,7 @@ export function useBaseDateFieldState<T = DateTime>(
             let newValue = enteredKeys.current + key;
 
             const onInputNumber = (numberValue: number) => {
-                let sectionValue = section.type === 'month' ? numberValue - 1 : numberValue;
+                let sectionValue = numberValue;
                 const sectionMaxValue = section.maxValue ?? 0;
                 const allowsZero = section.minValue === 0;
                 let shouldResetUserInput;
@@ -374,7 +319,7 @@ export function useBaseDateFieldState<T = DateTime>(
                     }
                     shouldResetUserInput = Number(newValue + '0') > 12;
                 } else if (sectionValue > sectionMaxValue) {
-                    sectionValue = Number(key) - (section.type === 'month' ? 1 : 0);
+                    sectionValue = Number(key);
                     newValue = key;
                     if (sectionValue > sectionMaxValue) {
                         enteredKeys.current = '';
@@ -420,8 +365,8 @@ export function useBaseDateFieldState<T = DateTime>(
                 const foundValue = foundOptions[0];
                 const index = options.indexOf(foundValue);
 
-                if (section.type === 'dayPeriod') {
-                    setSection(sectionIndex, index === 1 ? 12 : 0);
+                if (section.type === 'month') {
+                    setSection(sectionIndex, index + 1);
                 } else {
                     setSection(sectionIndex, index);
                 }

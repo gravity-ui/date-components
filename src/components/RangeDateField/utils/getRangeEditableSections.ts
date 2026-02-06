@@ -1,18 +1,18 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
+import type {IncompleteDate} from '../../DateField/IncompleteDate.js';
 import type {DateFieldSectionWithoutPosition} from '../../DateField/types';
-import {getEditableSections, isEditableSection, toEditableSection} from '../../DateField/utils';
-import type {EDITABLE_SEGMENTS} from '../../DateField/utils';
+import {getEditableSections, isEditableSectionType, toEditableSection} from '../../DateField/utils';
 import type {RangeValue} from '../../types';
 
 export function getRangeEditableSections(
     sections: DateFieldSectionWithoutPosition[],
-    value: RangeValue<DateTime>,
-    validSegments: RangeValue<typeof EDITABLE_SEGMENTS>,
+    value: RangeValue<IncompleteDate>,
+    placeholder: RangeValue<DateTime>,
     delimiter: string,
 ) {
-    const start = getEditableSections(sections, value.start, validSegments.start);
-    const end = getEditableSections(sections, value.end, validSegments.end);
+    const start = getEditableSections(sections, value.start, placeholder.start);
+    const end = getEditableSections(sections, value.end, placeholder.end);
 
     const last = start[start.length - 1];
     let position = last.end;
@@ -28,7 +28,7 @@ export function getRangeEditableSections(
             hasLeadingZeros: false,
         },
         value.start,
-        validSegments.start,
+        placeholder.start,
         position,
         previousEditableSection,
     );
@@ -50,7 +50,7 @@ export function getRangeEditableSections(
 
         section.nextEditableSection += sectionsCount;
 
-        if (isEditableSection(section) && nextEditableSection === undefined) {
+        if (isEditableSectionType(section.type) && nextEditableSection === undefined) {
             nextEditableSection = index + sectionsCount;
         }
     }

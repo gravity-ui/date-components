@@ -73,7 +73,7 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
                 name={props.name}
                 form={props.form}
                 onReset={(v) => {
-                    state.dateFieldState.setDate(v);
+                    state.dateFieldState.setValue(v);
                 }}
                 value={state.value}
                 toStringValue={(v) => (v ? v.start.toISOString() : '')}

@@ -26,9 +26,9 @@ export const Default = meta.story({
             ...args,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
-            value: args.value ? parseRangeDateTime(args.value, args.format, timeZone) : undefined,
+            value: args.value ? parseRangeDateTime(args.value, timeZone) : undefined,
             defaultValue: args.defaultValue
-                ? parseRangeDateTime(args.defaultValue, args.format, timeZone)
+                ? parseRangeDateTime(args.defaultValue, timeZone)
                 : undefined,
             placeholderValue: args.placeholderValue
                 ? dateTimeParse(args.placeholderValue, {timeZone})
@@ -95,9 +95,9 @@ export const Default = meta.story({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function parseRangeDateTime(text: any, format?: string, timeZone?: string) {
+function parseRangeDateTime(text: any, timeZone?: string) {
     const list = text.split('-');
-    const start = dateTimeParse(list?.[0]?.trim(), {format, timeZone}) ?? dateTime();
-    const end = dateTimeParse(list?.[1]?.trim(), {format, timeZone}) ?? dateTime();
+    const start = dateTimeParse(list?.[0]?.trim(), {timeZone}) ?? dateTime();
+    const end = dateTimeParse(list?.[1]?.trim(), {timeZone}) ?? dateTime();
     return {start, end};
 }

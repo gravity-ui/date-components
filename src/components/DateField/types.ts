@@ -22,7 +22,7 @@ export type DateFormatTokenMap = {
 };
 
 export interface DateFieldSection {
-    value: number | undefined;
+    value: number | null;
     /**
      * Value of the section, as rendered inside the input.
      * For example, in the date `May 25, 1995`, the value of the month section is "May".
