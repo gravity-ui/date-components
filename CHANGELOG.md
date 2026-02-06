@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.2](https://github.com/gravity-ui/date-components/compare/v3.4.1...v3.4.2) (2026-02-06)
+
+
+### Bug Fixes
+
+* **Range/DateField:** use lang from uikit provider to display date parts ([#265](https://github.com/gravity-ui/date-components/issues/265)) ([26c2a38](https://github.com/gravity-ui/date-components/commit/26c2a387a2818040077c94f4dd1325e26cf3cf6f))
+
 ## [3.4.1](https://github.com/gravity-ui/date-components/compare/v3.4.0...v3.4.1) (2025-11-24)
 
 
