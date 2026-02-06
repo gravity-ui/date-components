@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
-import {useControlledState} from '@gravity-ui/uikit';
+import {useControlledState, useLang} from '@gravity-ui/uikit';
 
 import {useBaseDateFieldState} from '../../DateField';
 import type {DateFieldState} from '../../DateField';
@@ -94,16 +94,20 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         );
     }
 
+    const {lang} = useLang();
     const displayValue =
         value &&
         value.start.isValid() &&
         value.end.isValid() &&
         Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
         Object.keys(validSegments.end).length >= Object.keys(allSegments).length
-            ? {start: value.start.timeZone(timeZone), end: value.end.timeZone(timeZone)}
+            ? {
+                  start: value.start.timeZone(timeZone).locale(lang),
+                  end: value.end.timeZone(timeZone).locale(lang),
+              }
             : {
-                  start: placeholderDate.start.timeZone(timeZone),
-                  end: placeholderDate.end.timeZone(timeZone),
+                  start: placeholderDate.start.timeZone(timeZone).locale(lang),
+                  end: placeholderDate.end.timeZone(timeZone).locale(lang),
               };
     const sectionsState = useSectionsState(sections, displayValue, validSegments, delimiter);
 
@@ -290,6 +294,8 @@ function useSectionsState(
         sections !== state.sections ||
         validSegments !== state.validSegments ||
         !(value.start.isSame(state.value.start) && value.end.isSame(state.value.end)) ||
+        value.start.timeZone() !== state.value.start.timeZone() ||
+        value.start.locale() !== state.value.start.locale() ||
         delimiter !== state.delimiter
     ) {
         setState({

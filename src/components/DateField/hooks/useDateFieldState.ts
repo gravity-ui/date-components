@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
-import {useControlledState} from '@gravity-ui/uikit';
+import {useControlledState, useLang} from '@gravity-ui/uikit';
 
 import type {DateFieldBase} from '../../types/datePicker';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
@@ -83,10 +83,11 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         );
     }
 
+    const {lang} = useLang();
     const displayValue =
         value && value.isValid() && isAllSegmentsValid(allSegments, validSegments)
-            ? value.timeZone(timeZone)
-            : placeholderDate.timeZone(timeZone);
+            ? value.timeZone(timeZone).locale(lang)
+            : placeholderDate.timeZone(timeZone).locale(lang);
     const sectionsState = useSectionsState(sections, displayValue, validSegments);
 
     const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
@@ -253,7 +254,8 @@ function useSectionsState(
         sections !== state.sections ||
         validSegments !== state.validSegments ||
         !value.isSame(state.value) ||
-        value.timeZone() !== state.value.timeZone()
+        value.timeZone() !== state.value.timeZone() ||
+        value.locale() !== state.value.locale()
     ) {
         setState({
             value,
