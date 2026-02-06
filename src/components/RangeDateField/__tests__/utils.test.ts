@@ -6,9 +6,8 @@ import {
     formatSections,
     isEditableSection,
     splitFormatIntoSections,
-} from '../DateField/utils';
-
-import {getRangeEditableSections} from './utils';
+} from '../../DateField/utils';
+import {getRangeEditableSections} from '../utils';
 
 test('create a valid sequence of editable sections for range', () => {
     const format = 'DD.MM.YYYY hh:mm:ss';
@@ -28,8 +27,8 @@ test('create a valid sequence of editable sections for range', () => {
     expect(eSections.length).toBe(23);
 
     const indexes = eSections
-        .map((s, i) => (isEditableSection(s) ? i : null!)) // eslint-disable-line @typescript-eslint/no-non-null-assertion
-        .filter((e) => e !== null);
+        .map((section, index) => (isEditableSection(section) ? index : null!)) // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        .filter((entry) => entry !== null);
 
     // eslint-disable-next-line no-nested-ternary
     const fixIndex = (i: number) => (i < 0 ? 0 : i >= indexes.length ? indexes.length - 1 : i);

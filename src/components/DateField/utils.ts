@@ -437,7 +437,7 @@ export function splitFormatIntoSections(format: string, t: TranslateFunction = i
             currentTokenValue += char;
         } else {
             if (!isSeparator) {
-                addFormatSection(sections, currentTokenValue, t);
+                addFormatSection(sections, currentTokenValue, t, lang);
                 currentTokenValue = '';
             }
             isSeparator = true;
@@ -452,7 +452,7 @@ export function splitFormatIntoSections(format: string, t: TranslateFunction = i
         if (isSeparator) {
             addLiteralSection(sections, currentTokenValue);
         } else {
-            addFormatSection(sections, currentTokenValue, t);
+            addFormatSection(sections, currentTokenValue, t, lang);
         }
     }
 
@@ -463,6 +463,7 @@ function addFormatSection(
     sections: DateFieldSectionWithoutPosition[],
     token: string,
     t: TranslateFunction,
+    lang: string,
 ) {
     if (!token) {
         return;
@@ -480,7 +481,7 @@ function addFormatSection(
         ...sectionConfig,
         format: token,
         placeholder: getSectionPlaceholder(sectionConfig, token, t),
-        options: getSectionOptions(sectionConfig, token),
+        options: getSectionOptions(sectionConfig, token, lang),
         hasLeadingZeros,
     });
 }
@@ -502,11 +503,12 @@ function addLiteralSection(sections: DateFieldSectionWithoutPosition[], token: s
 function getSectionOptions(
     section: Pick<DateFieldSectionWithoutPosition, 'type' | 'contentType'>,
     token: string,
+    lang: string,
 ) {
     switch (section.type) {
         case 'month': {
             const format = section.contentType === 'letter' ? token : 'MMMM';
-            let date = dateTime().startOf('year');
+            let date = dateTime({lang}).startOf('year');
             const options: string[] = [];
             for (let i = 0; i < 12; i++) {
                 options.push(date.format(format).toLocaleUpperCase());
@@ -525,7 +527,7 @@ function getSectionOptions(
         }
         case 'weekday': {
             const format = section.contentType === 'letter' ? token : 'dddd';
-            let date = dateTime().day(0);
+            let date = dateTime({lang}).day(0);
             const options: string[] = [];
             for (let i = 0; i < 7; i++) {
                 options.push(date.format(format).toLocaleUpperCase());
