@@ -19,6 +19,7 @@ import {themes} from './theme';
 settings.loadLocale('ru');
 
 const WithContextProvider: Decorator = (Story, context) => {
+    settings.setLocale(context.globals.lang);
     return (
         <ThemeProvider
             theme={context.globals.theme}

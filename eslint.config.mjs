@@ -58,5 +58,5 @@ export default defineConfig([
     },
     {files: ['**/__stories__/**/*.[jt]s?(x)'], rules: {'no-console': 'off'}},
     {files: ['**/*.js', '!src/**/*'], languageOptions: {globals: {...globals.node}}},
-    globalIgnores(['dist', 'storybook-static', '!/.storybook']),
+    globalIgnores(['dist', 'storybook-static', '!/.storybook', 'reports']),
 ]);
