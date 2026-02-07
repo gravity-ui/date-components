@@ -7,7 +7,7 @@ import type {Preset} from './components/Presets/defaultPresets';
 import {i18n} from './components/Presets/i18n';
 import {getPresetTitle} from './components/Presets/utils';
 
-export function resolveTimeZone(timeZone: string) {
+function resolveTimeZone(timeZone: string) {
     if (timeZone === 'default' || timeZone === 'system') {
         return dateTime({timeZone}).timeZone();
     }
