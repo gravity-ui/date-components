@@ -26,7 +26,7 @@ jobs:
       - name: Lint Files
         run: npm run lint
       - name: Knip
-        run: npm run knip
+        run: npm run knip -- --reporter github-actions
       - name: Typecheck
         run: npm run typecheck
       - name: Build
