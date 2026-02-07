@@ -9,7 +9,7 @@ import {block} from '../utils/cn';
 
 import './DocsDecorator.scss';
 
-export interface DocsDecoratorProps extends React.PropsWithChildren<DocsContainerProps> {}
+interface DocsDecoratorProps extends React.PropsWithChildren<DocsContainerProps> {}
 
 const b = block('docs-decorator');
 

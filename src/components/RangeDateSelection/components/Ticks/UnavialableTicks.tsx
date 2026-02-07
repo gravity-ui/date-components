@@ -6,7 +6,7 @@ import {block} from '../../../../utils/cn';
 import {useViewportDimensions, useViewportInterval} from '../Ruler/Ruler';
 
 import type {Geometry} from './utils';
-import {calculatePosition, makeMiddleTicksGeometry, makeSlitTicksGeometry} from './utils';
+import {calculatePosition} from './utils';
 
 import './Ticks.scss';
 
@@ -21,9 +21,6 @@ interface TicksProps {
 }
 
 const b = block('timeline-ticks');
-
-export {makeMiddleTicksGeometry, makeSlitTicksGeometry};
-export type {Geometry};
 
 export function UnavailableTicks({
     theme,

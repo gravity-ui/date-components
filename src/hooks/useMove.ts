@@ -2,7 +2,7 @@ import React from 'react';
 
 import {useEventHandler} from './useEventHandler';
 
-export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard';
+type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard';
 
 interface EventBase {
     shiftKey: boolean;
@@ -29,7 +29,7 @@ export interface MoveEndEvent extends BaseMoveEvent {
     type: 'moveend';
 }
 
-export interface MoveEvents {
+interface MoveEvents {
     onMoveStart?: (e: MoveStartEvent) => void;
     onMove?: (e: MoveMoveEvent) => void;
     onMoveEnd?: (e: MoveEndEvent) => void;
