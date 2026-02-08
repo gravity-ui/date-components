@@ -102,38 +102,6 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 
     const sectionsState = useSectionsState(sections, displayValue, rangeValue, delimiter);
 
-    const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
-
-    const selectedSectionIndexes = React.useMemo<{
-        startIndex: number;
-        endIndex: number;
-    } | null>(() => {
-        if (selectedSections === -1) {
-            return null;
-        }
-
-        if (selectedSections === 'all') {
-            return {
-                startIndex: 0,
-                endIndex: sectionsState.editableSections.length - 1,
-            };
-        }
-
-        if (typeof selectedSections === 'number') {
-            return {startIndex: selectedSections, endIndex: selectedSections};
-        }
-
-        if (typeof selectedSections === 'string') {
-            const selectedSectionIndex = sectionsState.editableSections.findIndex(
-                (section) => section.type === selectedSections,
-            );
-
-            return {startIndex: selectedSectionIndex, endIndex: selectedSectionIndex};
-        }
-
-        return selectedSections;
-    }, [selectedSections, sectionsState.editableSections]);
-
     function setValue(newValue: RangeValue<DateTime> | RangeValue<IncompleteDate> | null) {
         if (props.disabled || props.readOnly) {
             return;
@@ -280,11 +248,8 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         formatInfo,
         readOnly: props.readOnly,
         disabled: props.disabled,
-        selectedSectionIndexes,
-        selectedSections,
         isEmpty:
             displayValue.start.isCleared(allSegments) && displayValue.end.isCleared(allSegments),
-        setSelectedSections,
         setValue,
         adjustSection,
         setSection,

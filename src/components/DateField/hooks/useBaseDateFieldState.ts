@@ -22,10 +22,7 @@ export type BaseDateFieldStateOptions<T = DateTime, V = IncompleteDate> = {
     formatInfo: FormatInfo;
     readOnly?: boolean;
     disabled?: boolean;
-    selectedSectionIndexes: {startIndex: number; endIndex: number} | null;
-    selectedSections: number | 'all';
     isEmpty: boolean;
-    setSelectedSections: (position: number | 'all') => void;
     setValue: (value: T | V | null) => void;
     adjustSection: (sectionIndex: number, amount: number) => void;
     setSection: (sectionIndex: number, amount: number) => void;
@@ -109,10 +106,7 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
         displayValue,
         editableSections,
         formatInfo,
-        selectedSectionIndexes,
-        selectedSections,
         isEmpty,
-        setSelectedSections,
         setValue,
         adjustSection,
         setSection,
@@ -121,6 +115,30 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
         setValueFromString,
         confirmPlaceholder,
     } = props;
+
+    const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
+
+    const selectedSectionIndexes = React.useMemo<{
+        startIndex: number;
+        endIndex: number;
+    } | null>(() => {
+        if (selectedSections === -1) {
+            return null;
+        }
+
+        if (selectedSections === 'all') {
+            return {
+                startIndex: 0,
+                endIndex: editableSections.length - 1,
+            };
+        }
+
+        if (typeof selectedSections === 'number') {
+            return {startIndex: selectedSections, endIndex: selectedSections};
+        }
+
+        return selectedSections;
+    }, [selectedSections, editableSections]);
 
     const enteredKeys = React.useRef('');
 
@@ -170,7 +188,7 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
         focusFirstSection() {
             const newIndex = this.sections[0]?.previousEditableSection ?? -1;
             if (newIndex !== -1) {
-                setSelectedSections(newIndex);
+                this.setSelectedSections(newIndex);
             }
         },
         focusLastSection() {
