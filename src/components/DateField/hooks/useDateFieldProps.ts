@@ -14,9 +14,11 @@ import type {
     StyleProps,
     TextInputExtendProps,
 } from '../../types';
+import {CtrlCmd} from '../../utils/constants.js';
 import {cleanString} from '../utils';
 
 import type {DateFieldState} from './useBaseDateFieldState';
+import {useFocusManager} from './useFocusManager';
 
 export interface DateFieldProps<T = DateTime>
     extends
@@ -38,8 +40,13 @@ export function useDateFieldProps<T = DateTime>(
 
     const [, setInnerState] = React.useState({});
 
+    const enteredKeys = React.useRef('');
+
+    const focusManager = useFocusManager({sections: state.sections});
+
     function setSelectedSections(section: 'all' | number) {
-        state.setSelectedSections(section);
+        enteredKeys.current = '';
+        focusManager.setSelectedSections(section);
         setInnerState({});
     }
 
@@ -49,7 +56,7 @@ export function useDateFieldProps<T = DateTime>(
             return;
         }
 
-        if (state.selectedSectionIndexes === null) {
+        if (focusManager.selectedSectionIndexes === null) {
             if (inputElement.scrollLeft) {
                 // Ensure that input content is not marked as selected.
                 // setting selection range to 0 causes issues in Safari.
@@ -59,8 +66,8 @@ export function useDateFieldProps<T = DateTime>(
             return;
         }
 
-        const firstSelectedSection = state.sections[state.selectedSectionIndexes.startIndex];
-        const lastSelectedSection = state.sections[state.selectedSectionIndexes.endIndex];
+        const firstSelectedSection = state.sections[focusManager.selectedSectionIndexes.startIndex];
+        const lastSelectedSection = state.sections[focusManager.selectedSectionIndexes.endIndex];
         if (firstSelectedSection && lastSelectedSection) {
             const selectionStart = firstSelectedSection.start;
             const selectionEnd = lastSelectedSection.end;
@@ -75,22 +82,167 @@ export function useDateFieldProps<T = DateTime>(
     });
 
     function syncSelectionFromDOM() {
-        state.focusSectionInPosition(inputRef.current?.selectionStart ?? 0);
+        enteredKeys.current = '';
+        focusManager.focusSectionInPosition(inputRef.current?.selectionStart ?? 0);
         setInnerState({});
     }
 
     const inputMode = React.useMemo(() => {
-        if (!state.selectedSectionIndexes) {
+        if (!focusManager.selectedSectionIndexes) {
             return 'text';
         }
 
-        const activeSection = state.sections[state.selectedSectionIndexes.startIndex];
+        const activeSection = state.sections[focusManager.selectedSectionIndexes.startIndex];
         if (!activeSection || activeSection.contentType === 'letter') {
             return 'text';
         }
 
         return 'tel';
-    }, [state.selectedSectionIndexes, state.sections]);
+    }, [focusManager.selectedSectionIndexes, state.sections]);
+
+    function onInput(key: string) {
+        if (state.readOnly || state.disabled) {
+            return;
+        }
+
+        const sectionIndex = focusManager.activeSectionIndex;
+        if (sectionIndex === -1) {
+            return;
+        }
+
+        const section = state.sections[sectionIndex];
+        const isLastSection = section.nextEditableSection === sectionIndex;
+        let newValue = enteredKeys.current + key;
+
+        const onInputNumber = (numberValue: number) => {
+            let sectionValue = numberValue;
+            const sectionMaxValue = section.maxValue ?? 0;
+            const allowsZero = section.minValue === 0;
+            let shouldResetUserInput;
+            if (
+                // 12-hour clock format with AM/PM
+                section.type === 'hour' &&
+                (sectionMaxValue === 11 || section.minValue === 12)
+            ) {
+                if (sectionValue > 12) {
+                    sectionValue = Number(key);
+                    newValue = key;
+                }
+                if (sectionValue === 0) {
+                    sectionValue = -Infinity;
+                }
+                if (sectionValue === 12) {
+                    sectionValue = 0;
+                }
+                if (section.minValue === 12) {
+                    sectionValue += 12;
+                }
+                shouldResetUserInput = Number(newValue + '0') > 12;
+            } else if (sectionValue > sectionMaxValue) {
+                sectionValue = Number(key);
+                newValue = key;
+                if (sectionValue > sectionMaxValue) {
+                    enteredKeys.current = '';
+                    return;
+                }
+            }
+
+            const shouldSetValue = sectionValue > 0 || (sectionValue === 0 && allowsZero);
+            if (shouldSetValue) {
+                state.setSection(sectionIndex, sectionValue);
+            }
+
+            if (shouldResetUserInput === undefined) {
+                shouldResetUserInput = Number(newValue + '0') > sectionMaxValue;
+            }
+            const isMaxLength = newValue.length >= String(sectionMaxValue).length;
+            if (shouldResetUserInput) {
+                enteredKeys.current = '';
+                if (shouldSetValue) {
+                    focusManager.focusNextSection();
+                }
+            } else if (isMaxLength && shouldSetValue && !isLastSection) {
+                focusManager.focusNextSection();
+            } else {
+                enteredKeys.current = newValue;
+            }
+        };
+
+        const onInputString = (stringValue: string) => {
+            const options = section.options ?? [];
+            let sectionValue = stringValue.toLocaleUpperCase();
+            let foundOptions = options.filter((v) => v.startsWith(sectionValue));
+            if (foundOptions.length === 0) {
+                if (stringValue !== key) {
+                    sectionValue = key.toLocaleUpperCase();
+                    foundOptions = options.filter((v) => v.startsWith(sectionValue));
+                }
+                if (foundOptions.length === 0) {
+                    enteredKeys.current = '';
+                    return;
+                }
+            }
+            const foundValue = foundOptions[0];
+            const index = options.indexOf(foundValue);
+
+            if (section.type === 'month') {
+                state.setSection(sectionIndex, index + 1);
+            } else {
+                state.setSection(sectionIndex, index);
+            }
+
+            if (foundOptions.length > 1) {
+                enteredKeys.current = newValue;
+            } else {
+                enteredKeys.current = '';
+                focusManager.focusNextSection();
+            }
+        };
+
+        switch (section.type) {
+            case 'day':
+            case 'hour':
+            case 'minute':
+            case 'second':
+            case 'quarter':
+            case 'year': {
+                if (!Number.isInteger(Number(newValue))) {
+                    return;
+                }
+                const numberValue = Number(newValue);
+                onInputNumber(numberValue);
+                break;
+            }
+            case 'dayPeriod': {
+                onInputString(newValue);
+                break;
+            }
+            case 'weekday':
+            case 'month': {
+                if (Number.isInteger(Number(newValue))) {
+                    const numberValue = Number(newValue);
+                    onInputNumber(numberValue);
+                } else {
+                    onInputString(newValue);
+                }
+                break;
+            }
+        }
+    }
+
+    function backspace() {
+        if (focusManager.selectedSectionIndexes === null) {
+            return;
+        }
+        if (
+            focusManager.selectedSectionIndexes.startIndex ===
+            focusManager.selectedSectionIndexes.endIndex
+        ) {
+            state.clearSection(focusManager.activeSectionIndex);
+        } else {
+            state.clearAll();
+        }
+    }
 
     return {
         inputProps: {
@@ -120,7 +272,7 @@ export function useDateFieldProps<T = DateTime>(
             onFocus(e) {
                 props.onFocus?.(e);
 
-                if (state.selectedSectionIndexes !== null) {
+                if (focusManager.selectedSectionIndexes !== null) {
                     return;
                 }
                 const input = e.target;
@@ -130,7 +282,7 @@ export function useDateFieldProps<T = DateTime>(
                         return;
                     }
                     if (isAutofocus) {
-                        state.focusSectionInPosition(0);
+                        focusManager.focusSectionInPosition(0);
                     } else if (
                         // avoid selecting all sections when focusing empty field without value
                         input.value.length &&
@@ -153,32 +305,41 @@ export function useDateFieldProps<T = DateTime>(
 
                 if (e.key === 'ArrowLeft') {
                     e.preventDefault();
-                    state.focusPreviousSection();
+                    enteredKeys.current = '';
+                    focusManager.focusPreviousSection();
                 } else if (e.key === 'ArrowRight') {
                     e.preventDefault();
-                    state.focusNextSection();
+                    enteredKeys.current = '';
+                    focusManager.focusNextSection();
                 } else if (e.key === 'Home') {
                     e.preventDefault();
-                    state.decrementToMin();
+                    enteredKeys.current = '';
+                    state.decrementToMin(focusManager.activeSectionIndex);
                 } else if (e.key === 'End') {
                     e.preventDefault();
-                    state.incrementToMax();
+                    enteredKeys.current = '';
+                    state.incrementToMax(focusManager.activeSectionIndex);
                 } else if (e.key === 'ArrowUp' && !e.altKey) {
                     e.preventDefault();
-                    state.increment();
+                    enteredKeys.current = '';
+                    state.increment(focusManager.activeSectionIndex);
                 } else if (e.key === 'ArrowDown' && !e.altKey) {
                     e.preventDefault();
-                    state.decrement();
+                    enteredKeys.current = '';
+                    state.decrement(focusManager.activeSectionIndex);
                 } else if (e.key === 'PageUp') {
                     e.preventDefault();
-                    state.incrementPage();
+                    enteredKeys.current = '';
+                    state.incrementPage(focusManager.activeSectionIndex);
                 } else if (e.key === 'PageDown') {
                     e.preventDefault();
-                    state.decrementPage();
+                    enteredKeys.current = '';
+                    state.decrementPage(focusManager.activeSectionIndex);
                 } else if (e.key === 'Backspace' || e.key === 'Delete') {
                     e.preventDefault();
-                    state.clearActiveSection();
-                } else if (e.key === 'a' && (e['ctrlKey'] || e['metaKey'])) {
+                    enteredKeys.current = '';
+                    backspace();
+                } else if (e.key === 'a' && e[CtrlCmd]) {
                     e.preventDefault();
                     setSelectedSections('all');
                 }
@@ -200,9 +361,19 @@ export function useDateFieldProps<T = DateTime>(
                 },
                 onBeforeInput(e) {
                     e.preventDefault();
-                    const key = e.data;
-                    if (key !== undefined && key !== null) {
-                        state.onInput(key);
+                    switch (e.nativeEvent.inputType) {
+                        case 'deleteContentBackward':
+                        case 'deleteContentForward': {
+                            enteredKeys.current = '';
+                            backspace();
+                            break;
+                        }
+                        default: {
+                            const key = e.data;
+                            if (key !== undefined && key !== null) {
+                                onInput(key);
+                            }
+                        }
                     }
                 },
                 onPaste(e: React.ClipboardEvent) {
@@ -211,14 +382,14 @@ export function useDateFieldProps<T = DateTime>(
                         return;
                     }
 
+                    enteredKeys.current = '';
                     const pastedValue = cleanString(e.clipboardData.getData('text'));
                     if (
-                        state.selectedSectionIndexes &&
-                        state.selectedSectionIndexes.startIndex ===
-                            state.selectedSectionIndexes.endIndex
+                        focusManager.selectedSectionIndexes &&
+                        focusManager.selectedSectionIndexes.startIndex ===
+                            focusManager.selectedSectionIndexes.endIndex
                     ) {
-                        const activeSection =
-                            state.sections[state.selectedSectionIndexes.startIndex];
+                        const activeSection = state.sections[focusManager.activeSectionIndex];
 
                         const digitsOnly = /^\d+$/.test(pastedValue);
                         const lettersOnly = /^[a-zA-Z]+$/.test(pastedValue);
@@ -229,7 +400,7 @@ export function useDateFieldProps<T = DateTime>(
                                 (activeSection.contentType === 'letter' && lettersOnly)),
                         );
                         if (isValidValue) {
-                            state.onInput(pastedValue);
+                            onInput(pastedValue);
                             return;
                         }
                         if (digitsOnly || lettersOnly) {

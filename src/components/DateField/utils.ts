@@ -765,7 +765,7 @@ export function getCurrentEditableSectionIndex(
     if (section && !isEditableSectionType(section.type)) {
         return section.nextEditableSection;
     }
-    return section ? currentIndex : -1;
+    return isEditableSectionType(section?.type) ? currentIndex : -1;
 }
 
 export function formatSections(sections: DateFieldSection[]): string {
