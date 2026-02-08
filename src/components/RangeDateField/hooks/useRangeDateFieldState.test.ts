@@ -131,7 +131,7 @@ test('can clear the section or the entire range', async () => {
     const position = result.current.sections.filter((e) => isEditableSectionType(e.type))[4]?.end;
 
     act(() => result.current.focusSectionInPosition(position));
-    act(() => result.current.clearSection());
+    act(() => result.current.clearActiveSection());
 
     expect(cleanString(result.current.text)).toBe('20.01.2024 — 24.MM.2024');
 

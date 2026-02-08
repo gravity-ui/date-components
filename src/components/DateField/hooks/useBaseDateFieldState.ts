@@ -26,8 +26,7 @@ export type BaseDateFieldStateOptions<T = DateTime, V = IncompleteDate> = {
     setValue: (value: T | V | null) => void;
     adjustSection: (sectionIndex: number, amount: number) => void;
     setSection: (sectionIndex: number, amount: number) => void;
-    getSectionValue: (sectionIndex: number) => IncompleteDate;
-    setSectionValue: (sectionIndex: number, currentValue: IncompleteDate) => void;
+    clearSection: (sectionIndex: number) => void;
     setValueFromString: (str: string) => boolean;
     confirmPlaceholder: () => void;
 };
@@ -88,7 +87,7 @@ export type DateFieldState<T = DateTime> = {
     incrementToMax: () => void;
     decrementToMin: () => void;
     /** Clears the value of the currently selected segment, reverting it to the placeholder. */
-    clearSection: () => void;
+    clearActiveSection: () => void;
     /** Clears all segments, reverting them to the placeholder. */
     clearAll: () => void;
     /** Handles input key in the currently selected segment */
@@ -110,8 +109,7 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
         setValue,
         adjustSection,
         setSection,
-        getSectionValue,
-        setSectionValue,
+        clearSection,
         setValueFromString,
         confirmPlaceholder,
     } = props;
@@ -267,7 +265,7 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
                 }
             }
         },
-        clearSection() {
+        clearActiveSection() {
             if (this.readOnly || this.disabled) {
                 return;
             }
@@ -283,12 +281,7 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
                 return;
             }
 
-            const section = this.sections[sectionIndex];
-
-            const displayPortion = getSectionValue(sectionIndex);
-            if (isEditableSectionType(section.type)) {
-                setSectionValue(sectionIndex, displayPortion.clear(section.type));
-            }
+            clearSection(sectionIndex);
         },
         clearAll() {
             if (this.readOnly || this.disabled) {

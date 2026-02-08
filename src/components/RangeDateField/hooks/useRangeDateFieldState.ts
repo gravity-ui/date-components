@@ -11,6 +11,7 @@ import {
     addSegment,
     adjustDateToFormat,
     getFormatInfo,
+    isEditableSectionType,
     parseDateFromString,
     setSegment,
     useFormatSections,
@@ -176,14 +177,15 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         }
     }
 
-    function getSectionValue(sectionIndex: number) {
+    function clearSection(sectionIndex: number) {
+        const section = sectionsState.editableSections[sectionIndex];
         const portion = sectionIndex <= sections.length ? 'start' : 'end';
-        return displayValue[portion];
-    }
-
-    function setSectionValue(sectionIndex: number, currentValue: IncompleteDate) {
-        const portion = sectionIndex <= sections.length ? 'start' : 'end';
-        setValue({...displayValue, [portion]: currentValue});
+        if (section && isEditableSectionType(section.type)) {
+            setValue({
+                ...displayValue,
+                [portion]: displayValue[portion].clear(section.type),
+            });
+        }
     }
 
     function setValueFromString(str: string) {
@@ -253,8 +255,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         setValue,
         adjustSection,
         setSection,
-        getSectionValue,
-        setSectionValue,
+        clearSection,
         setValueFromString,
         confirmPlaceholder,
     });

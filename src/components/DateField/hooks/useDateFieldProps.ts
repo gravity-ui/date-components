@@ -177,7 +177,7 @@ export function useDateFieldProps<T = DateTime>(
                     state.decrementPage();
                 } else if (e.key === 'Backspace' || e.key === 'Delete') {
                     e.preventDefault();
-                    state.clearSection();
+                    state.clearActiveSection();
                 } else if (e.key === 'a' && (e['ctrlKey'] || e['metaKey'])) {
                     e.preventDefault();
                     setSelectedSections('all');
