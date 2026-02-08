@@ -11,6 +11,7 @@ import type {DateFieldSectionWithoutPosition} from '../types';
 import {
     addSegment,
     adjustDateToFormat,
+    connectEditableSections,
     getEditableSections,
     getFormatInfo,
     parseDateFromString,
@@ -214,20 +215,24 @@ function useSectionsState(
     placeholder: DateTime,
 ) {
     const [state, setState] = React.useState(() => {
+        const editableSections = getEditableSections(sections, value, placeholder);
+        connectEditableSections(editableSections);
         return {
             value,
             sections,
             placeholder,
-            editableSections: getEditableSections(sections, value, placeholder),
+            editableSections,
         };
     });
 
     if (sections !== state.sections || placeholder !== state.placeholder || value !== state.value) {
+        const editableSections = getEditableSections(sections, value, placeholder);
+        connectEditableSections(editableSections);
         setState({
             value,
             sections,
             placeholder,
-            editableSections: getEditableSections(sections, value, placeholder),
+            editableSections,
         });
     }
 

@@ -667,28 +667,28 @@ export function getEditableSections(
     value: IncompleteDate,
     placeholder: DateTime,
 ) {
-    let position = 1;
-    const newSections: DateFieldSection[] = [];
+    return sections.map((section) => toEditableSection(section, value, placeholder));
+}
+
+export function connectEditableSections(sections: DateFieldSection[]) {
     let previousEditableSection = -1;
+    let position = 1;
     for (let i = 0; i < sections.length; i++) {
         const section = sections[i];
         if (!section) {
             continue;
         }
 
-        const newSection = toEditableSection(
-            section,
-            value,
-            placeholder,
-            position,
-            previousEditableSection,
-        );
+        section.start = position;
+        position += section.textValue.length;
+        section.end = position;
 
-        newSections.push(newSection);
+        section.previousEditableSection = previousEditableSection;
+        section.nextEditableSection = previousEditableSection;
 
         if (isEditableSectionType(section.type)) {
             for (let j = Math.max(0, previousEditableSection); j <= i; j++) {
-                const prevSection = newSections[j];
+                const prevSection = sections[j];
                 if (prevSection) {
                     prevSection.nextEditableSection = i;
                     if (prevSection.previousEditableSection === -1) {
@@ -698,11 +698,7 @@ export function getEditableSections(
             }
             previousEditableSection = i;
         }
-
-        position += newSection.textValue.length;
     }
-
-    return newSections;
 }
 
 export function isEditableSectionType(
@@ -715,8 +711,6 @@ export function toEditableSection(
     section: DateFieldSectionWithoutPosition,
     value: IncompleteDate,
     placeholder: DateTime,
-    position: number,
-    previousEditableSection: number,
 ): DateFieldSection {
     let renderedValue = section.placeholder;
     let val = isEditableSectionType(section.type) ? value[section.type] : null;
@@ -747,17 +741,14 @@ export function toEditableSection(
     // use bidirectional context to allow the browser autodetect text direction
     renderedValue = '\u2068' + renderedValue + '\u2069';
 
-    const sectionLength = renderedValue.length;
-
     const newSection = {
         ...section,
         value: getSectionValue(section, value),
         textValue: renderedValue,
-        start: position,
-        end: position + sectionLength,
-        modified: false,
-        previousEditableSection,
-        nextEditableSection: previousEditableSection,
+        start: -1,
+        end: -1,
+        previousEditableSection: -1,
+        nextEditableSection: -1,
         ...getSectionLimits(section, value, placeholder),
     };
 
