@@ -3,7 +3,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import type {ValidationState} from '../../types';
 import type {IncompleteDate} from '../IncompleteDate';
 import type {DateFieldSection, FormatInfo} from '../types';
-import {PAGE_STEP, formatSections} from '../utils';
+import {PAGE_STEP} from '../utils';
 
 interface BaseDateFieldStateOptions<T = DateTime, V = IncompleteDate> {
     value: T | null;
@@ -33,8 +33,6 @@ export interface DateFieldState<T = DateTime> {
     setValue: (value: T | null) => void;
     /** Updates the remaining unfilled sections with the placeholder value. */
     confirmPlaceholder: () => void;
-    /** Formatted value */
-    text: string;
     /** Whether the field is read only. */
     readOnly?: boolean;
     /** Whether the field is disabled. */
@@ -97,7 +95,6 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
         displayValue,
         setValue,
         confirmPlaceholder,
-        text: formatSections(editableSections),
         readOnly: props.readOnly,
         disabled: props.disabled,
         sections: editableSections,

@@ -59,24 +59,12 @@ export interface DateFieldSection {
      * For example, the value `1` should be rendered as "01" instead of "1".
      */
     hasLeadingZeros: boolean;
-    /**
-     * Start index of the section in the format
-     */
-    start: number;
-    /**
-     * End index of the section in the format
-     */
-    end: number;
-
-    previousEditableSection: number;
-    nextEditableSection: number;
 }
 
-export type DateFieldSectionWithoutPosition<TSection extends DateFieldSection = DateFieldSection> =
-    Omit<
-        TSection,
-        'start' | 'end' | 'value' | 'textValue' | 'previousEditableSection' | 'nextEditableSection'
-    >;
+export type FormatSection<TSection extends DateFieldSection = DateFieldSection> = Omit<
+    TSection,
+    'value' | 'textValue'
+>;
 
 export type AvailableSections = Partial<Record<DateFieldSectionType, boolean>>;
 

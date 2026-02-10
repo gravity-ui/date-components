@@ -7,11 +7,10 @@ import type {InputBase, Validation, ValueBase} from '../../types';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {IncompleteDate} from '../IncompleteDate';
-import type {DateFieldSectionWithoutPosition} from '../types';
+import type {FormatSection} from '../types';
 import {
     addSegment,
     adjustDateToFormat,
-    connectEditableSections,
     getEditableSections,
     getFormatInfo,
     isEditableSectionType,
@@ -191,8 +190,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     return useBaseDateFieldState({
         value,
         displayValue: dateValue,
-        placeholderValue: props.placeholderValue,
-        timeZone,
         validationState,
         editableSections: sectionsState.editableSections,
         formatInfo,
@@ -208,14 +205,9 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     });
 }
 
-function useSectionsState(
-    sections: DateFieldSectionWithoutPosition[],
-    value: IncompleteDate,
-    placeholder: DateTime,
-) {
+function useSectionsState(sections: FormatSection[], value: IncompleteDate, placeholder: DateTime) {
     const [state, setState] = React.useState(() => {
         const editableSections = getEditableSections(sections, value, placeholder);
-        connectEditableSections(editableSections);
         return {
             value,
             sections,
@@ -226,7 +218,6 @@ function useSectionsState(
 
     if (sections !== state.sections || placeholder !== state.placeholder || value !== state.value) {
         const editableSections = getEditableSections(sections, value, placeholder);
-        connectEditableSections(editableSections);
         setState({
             value,
             sections,

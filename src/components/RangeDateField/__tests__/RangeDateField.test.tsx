@@ -101,6 +101,36 @@ describe('RangeDateField', () => {
         expect(cleanString(input.value)).toBe('31.01.2024 — 29.02.2024');
     });
 
+    it('should call custom parseDateFromString when provided for range dates', async () => {
+        const customParser = vi
+            .fn()
+            .mockReturnValueOnce(dateTime({input: '2024-01-15T00:00:00Z'}))
+            .mockReturnValueOnce(dateTime({input: '2024-01-20T00:00:00Z'}));
+        const screen = await render(
+            <div>
+                <RangeDateField
+                    aria-label="target"
+                    format="DD.MM.YYYY"
+                    parseDateFromString={customParser}
+                />
+                <input type="text" defaultValue="15.01.2024 — 20.01.2024" aria-label="source" />
+            </div>,
+        );
+        const input = screen.getByLabelText('target').element() as HTMLInputElement;
+        const source = screen.getByLabelText('source').element() as HTMLInputElement;
+
+        await userEvent.click(source);
+        await userEvent.keyboard(getSelectAllShortcut());
+        await userEvent.copy();
+        await userEvent.click(input);
+        await userEvent.paste();
+
+        expect(cleanString(input.value)).toBe('15.01.2024 — 20.01.2024');
+        expect(customParser).toHaveBeenCalledTimes(2);
+        expect(customParser).toHaveBeenNthCalledWith(1, '15.01.2024', 'DD.MM.YYYY', 'default');
+        expect(customParser).toHaveBeenNthCalledWith(2, '20.01.2024', 'DD.MM.YYYY', 'default');
+    });
+
     it('should clear the section or the entire range', async () => {
         const screen = await render(
             <RangeDateField

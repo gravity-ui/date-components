@@ -15,6 +15,7 @@ import type {
     TextInputExtendProps,
 } from '../../types';
 import {CtrlCmd} from '../../utils/constants.js';
+import type {DateFieldSection} from '../types';
 import {cleanString} from '../utils';
 
 import type {DateFieldState} from './useBaseDateFieldState';
@@ -44,11 +45,7 @@ export function useDateFieldProps<T = DateTime>(
 
     const focusManager = useFocusManager({sections: state.sections});
 
-    function setSelectedSections(section: 'all' | number) {
-        enteredKeys.current = '';
-        focusManager.setSelectedSections(section);
-        setInnerState({});
-    }
+    const {text, positions} = React.useMemo(() => prepareState(state.sections), [state.sections]);
 
     React.useLayoutEffect(() => {
         const inputElement = inputRef.current;
@@ -66,8 +63,8 @@ export function useDateFieldProps<T = DateTime>(
             return;
         }
 
-        const firstSelectedSection = state.sections[focusManager.selectedSectionIndexes.startIndex];
-        const lastSelectedSection = state.sections[focusManager.selectedSectionIndexes.endIndex];
+        const firstSelectedSection = positions[focusManager.selectedSectionIndexes.startIndex];
+        const lastSelectedSection = positions[focusManager.selectedSectionIndexes.endIndex];
         if (firstSelectedSection && lastSelectedSection) {
             const selectionStart = firstSelectedSection.start;
             const selectionEnd = lastSelectedSection.end;
@@ -83,7 +80,9 @@ export function useDateFieldProps<T = DateTime>(
 
     function syncSelectionFromDOM() {
         enteredKeys.current = '';
-        focusManager.focusSectionInPosition(inputRef.current?.selectionStart ?? 0);
+        const position = inputRef.current?.selectionStart ?? 0;
+        const index = positions.findIndex((s) => s.end >= position);
+        focusManager.focusSection(index === -1 ? 0 : index);
         setInnerState({});
     }
 
@@ -111,7 +110,7 @@ export function useDateFieldProps<T = DateTime>(
         }
 
         const section = state.sections[sectionIndex];
-        const isLastSection = section.nextEditableSection === sectionIndex;
+        const isLastSection = focusManager.isLastSection(sectionIndex);
         let newValue = enteredKeys.current + key;
 
         const onInputNumber = (numberValue: number) => {
@@ -246,7 +245,7 @@ export function useDateFieldProps<T = DateTime>(
 
     return {
         inputProps: {
-            value: state.text,
+            value: text,
             view: props.view,
             size: props.size,
             disabled: state.disabled,
@@ -273,31 +272,21 @@ export function useDateFieldProps<T = DateTime>(
                 props.onFocus?.(e);
 
                 if (focusManager.selectedSectionIndexes !== null) {
+                    setInnerState({});
                     return;
                 }
                 const input = e.target;
-                const isAutofocus = !inputRef.current;
                 setTimeout(() => {
                     if (!input || input !== inputRef.current) {
                         return;
                     }
-                    if (isAutofocus) {
-                        focusManager.focusSectionInPosition(0);
-                    } else if (
-                        // avoid selecting all sections when focusing empty field without value
-                        input.value.length &&
-                        Number(input.selectionEnd) - Number(input.selectionStart) ===
-                            input.value.length
-                    ) {
-                        setSelectedSections('all');
-                    } else {
-                        syncSelectionFromDOM();
-                    }
+                    syncSelectionFromDOM();
                 });
             },
             onBlur(e) {
+                enteredKeys.current = '';
                 props.onBlur?.(e);
-                setSelectedSections(-1);
+                focusManager.focusSection(-1);
                 state.confirmPlaceholder();
             },
             onKeyDown(e) {
@@ -341,7 +330,8 @@ export function useDateFieldProps<T = DateTime>(
                     backspace();
                 } else if (e.key === 'a' && e[CtrlCmd]) {
                     e.preventDefault();
-                    setSelectedSections('all');
+                    enteredKeys.current = '';
+                    focusManager.focusSection('all');
                 }
             },
             onKeyUp: props.onKeyUp,
@@ -413,4 +403,26 @@ export function useDateFieldProps<T = DateTime>(
             },
         },
     };
+}
+
+function prepareState(sections: DateFieldSection[]) {
+    let position = 1;
+    let text = '';
+    const positions: {start: number; end: number}[] = new Array(sections.length);
+    for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        if (!section) {
+            throw new Error('Section must be defined');
+        }
+
+        // use bidirectional context to allow the browser autodetect text direction
+        const textValue = '\u2068' + section.textValue + '\u2069';
+        text += textValue;
+        const pos = {start: position, end: position + textValue.length};
+        position += textValue.length;
+        positions[i] = pos;
+    }
+    // use ltr direction context to get predictable navigation inside input
+    text = '\u2066' + text + '\u2069';
+    return {text, positions};
 }

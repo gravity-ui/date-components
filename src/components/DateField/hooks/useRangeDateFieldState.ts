@@ -3,24 +3,26 @@ import React from 'react';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState, useLang} from '@gravity-ui/uikit';
 
-import {useBaseDateFieldState} from '../../DateField';
-import type {DateFieldState} from '../../DateField';
-import {IncompleteDate} from '../../DateField/IncompleteDate.js';
-import type {DateFieldSectionWithoutPosition} from '../../DateField/types';
+import type {DateFieldBase} from '../../types/datePicker';
+import type {RangeValue} from '../../types/inputs';
+import {createPlaceholderRangeValue, isInvalid} from '../../utils/dates';
+import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
+import {IncompleteDate} from '../IncompleteDate.js';
+import type {FormatSection} from '../types';
 import {
     addSegment,
     adjustDateToFormat,
+    getEditableSections,
     getFormatInfo,
     isEditableSectionType,
     parseDateFromString,
     setSegment,
+    toEditableSection,
     useFormatSections,
-} from '../../DateField/utils';
-import type {DateFieldBase} from '../../types/datePicker';
-import type {RangeValue} from '../../types/inputs';
-import {isInvalid} from '../../utils/dates';
-import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
-import {createPlaceholderRangeValue, getRangeEditableSections, isValidRange} from '../utils';
+} from '../utils';
+
+import type {DateFieldState} from './useBaseDateFieldState';
+import {useBaseDateFieldState} from './useBaseDateFieldState';
 
 export interface RangeDateFieldStateOptions extends DateFieldBase<RangeValue<DateTime>> {
     delimiter?: string;
@@ -243,8 +245,6 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     return useBaseDateFieldState<RangeValue<DateTime>, RangeValue<IncompleteDate>>({
         value,
         displayValue: rangeValue,
-        placeholderValue: props.placeholderValue,
-        timeZone,
         validationState,
         editableSections: sectionsState.editableSections,
         formatInfo,
@@ -262,7 +262,7 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
 }
 
 function useSectionsState(
-    sections: DateFieldSectionWithoutPosition[],
+    sections: FormatSection[],
     value: RangeValue<IncompleteDate>,
     placeholder: RangeValue<DateTime>,
     delimiter: string,
@@ -296,4 +296,34 @@ function useSectionsState(
     }
 
     return state;
+}
+
+function getRangeEditableSections(
+    sections: FormatSection[],
+    value: RangeValue<IncompleteDate>,
+    placeholder: RangeValue<DateTime>,
+    delimiter: string,
+) {
+    const start = getEditableSections(sections, value.start, placeholder.start);
+    const end = getEditableSections(sections, value.end, placeholder.end);
+
+    const delimiterSection = toEditableSection(
+        {
+            type: 'literal',
+            contentType: 'letter',
+            format: delimiter,
+            placeholder: delimiter,
+            hasLeadingZeros: false,
+        },
+        value.start,
+        placeholder.start,
+    );
+
+    const editableSections = [...start, delimiterSection, ...end];
+
+    return editableSections;
+}
+
+function isValidRange({start, end}: RangeValue<DateTime>): boolean {
+    return start.isValid() && end.isValid() && (start.isSame(end) || start.isBefore(end));
 }
