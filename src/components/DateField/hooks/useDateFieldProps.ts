@@ -237,6 +237,18 @@ export function useDateFieldProps<T = DateTime>(
             focusManager.selectedSectionIndexes.startIndex ===
             focusManager.selectedSectionIndexes.endIndex
         ) {
+            const activeSection = state.sections[focusManager.activeSectionIndex];
+            if (activeSection.value === null) {
+                focusManager.focusPreviousSection();
+                return;
+            } else if (activeSection.contentType === 'digit') {
+                const newValue = Math.floor(activeSection.value / 10);
+                if (newValue !== 0) {
+                    state.setSection(focusManager.activeSectionIndex, newValue);
+                    enteredKeys.current = `${newValue}`;
+                    return;
+                }
+            }
             state.clearSection(focusManager.activeSectionIndex);
         } else {
             state.clearAll();
