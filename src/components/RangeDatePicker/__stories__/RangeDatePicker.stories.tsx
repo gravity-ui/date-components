@@ -9,8 +9,6 @@ import preview from '#.storybook/preview';
 import {RangeCalendar} from '../../Calendar';
 import {RangeDatePicker} from '../RangeDatePicker';
 
-import './RangeDatePicker.stories.scss';
-
 const meta = preview.meta({
     title: 'Components/RangeDatePicker',
     component: RangeDatePicker,
@@ -60,6 +58,9 @@ export const Default = meta.story({
                     </div>
                 ),
             });
+        },
+        style: {
+            width: 250,
         },
     },
     argTypes: {
