@@ -1,12 +1,15 @@
 {
   "extends": "@gravity-ui/tsconfig",
   "compilerOptions": {
+    "noEmit": true,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "importHelpers": true
+    "importHelpers": true,
+    "isolatedModules": true,
+    "declaration": true
   },
   "include": ["**/*.ts", "**/*.tsx", ".storybook/**/*.ts", ".storybook/**/*.tsx"]
 }

@@ -14,7 +14,7 @@ import {i18n} from './i18n';
 
 import './Control.scss';
 
-export type ControlProps = {
+type ControlProps = {
     props: RelativeRangeDatePickerProps;
     state: RelativeRangeDatePickerState;
     open: boolean;

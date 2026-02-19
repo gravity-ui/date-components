@@ -34,7 +34,6 @@ interface TicksProps {
 const b = block('timeline-ticks');
 
 export {makeMiddleTicksGeometry, makeSlitTicksGeometry};
-export type {Geometry};
 
 export function Ticks({
     theme,

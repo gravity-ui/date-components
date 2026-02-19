@@ -62,7 +62,8 @@
     "build": "gulp",
     "start": "storybook dev -p 7070",
     "build-storybook": "storybook build -c .storybook -o storybook-static",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "knip": "knip"
   },
   "dependencies": {
     "@bem-react/classname": "^1.6.0",
@@ -98,6 +99,7 @@
     "gulp-sass": "^6.0.1",
     "gulp-sourcemaps": "^3.0.0",
     "husky": "^9.1.7",
+    "knip": "^5.83.1",
     "nano-staged": "^0.9.0",
     "npm-run-all": "^4.1.5",
     "playwright": "^1.57.0",
