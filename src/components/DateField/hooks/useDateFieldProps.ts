@@ -146,6 +146,7 @@ export function useDateFieldProps<T = DateTime>(
             onBlur(e) {
                 props.onBlur?.(e);
                 setSelectedSections(-1);
+                state.confirmPlaceholder();
             },
             onKeyDown(e) {
                 props.onKeyDown?.(e);

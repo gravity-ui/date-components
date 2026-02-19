@@ -4,7 +4,7 @@ import {expect, test, vitest} from 'vitest';
 
 import {renderHook} from '#test-utils/utils';
 
-import {cleanString, isEditableSection} from '../../DateField/utils';
+import {cleanString, isEditableSectionType} from '../../DateField/utils';
 import type {RangeValue} from '../../types';
 
 import {useRangeDateFieldState} from './useRangeDateFieldState';
@@ -45,7 +45,7 @@ test('can navigate through the range and change sections', async () => {
     act(() => result.current.incrementPage());
     act(() => result.current.incrementPage());
 
-    const position = result.current.sections.filter((e) => isEditableSection(e))[4]?.end;
+    const position = result.current.sections.filter((e) => isEditableSectionType(e.type))[4]?.end;
 
     act(() => result.current.focusSectionInPosition(position));
     act(() => result.current.increment());
@@ -79,14 +79,16 @@ test('call onUpdate only if the entire value is valid', async () => {
     act(() => result.current.focusPreviousSection());
     act(() => result.current.incrementToMax());
 
-    expect(onUpdateSpy).not.toHaveBeenCalled();
-
     act(() => result.current.focusLastSection());
     act(() => result.current.increment());
 
-    expect(cleanString(result.current.text)).toBe('31.01.2024 — 29.02.2024');
+    expect(onUpdateSpy).not.toHaveBeenCalled();
 
-    expect(onUpdateSpy).toHaveBeenLastCalledWith({
+    expect(cleanString(result.current.text)).toBe('31.01.2024 — 31.02.2024');
+
+    act(() => result.current.confirmPlaceholder());
+
+    expect(onUpdateSpy).toHaveBeenCalledWith({
         start: dateTime({input: '2024-01-31T00:00:00', timeZone}).startOf('day'),
         end: dateTime({input: '2024-02-29T00:00:00', timeZone}).endOf('day'),
     });
@@ -126,7 +128,7 @@ test('can clear the section or the entire range', async () => {
 
     expect(cleanString(result.current.text)).toBe('20.01.2024 — 24.01.2024');
 
-    const position = result.current.sections.filter((e) => isEditableSection(e))[4]?.end;
+    const position = result.current.sections.filter((e) => isEditableSectionType(e.type))[4]?.end;
 
     act(() => result.current.focusSectionInPosition(position));
     act(() => result.current.clearSection());
