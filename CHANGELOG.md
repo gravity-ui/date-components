@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.0.0](https://github.com/gravity-ui/date-components/compare/v3.4.2...v4.0.0) (2026-02-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* selection end text colors ([#231](https://github.com/gravity-ui/date-components/issues/231))
+* **Range/DateField:** support entering invalid dates ([#268](https://github.com/gravity-ui/date-components/issues/268))
+
+### Features
+
+* **Calendar:** support multi-selection ([#246](https://github.com/gravity-ui/date-components/issues/246)) ([57a0f72](https://github.com/gravity-ui/date-components/commit/57a0f72e8be39cb649afaf4b8f4309e1767c2eac))
+* **Range/DateField:** support entering invalid dates ([#268](https://github.com/gravity-ui/date-components/issues/268)) ([e71f58d](https://github.com/gravity-ui/date-components/commit/e71f58d7c976b10477ed8fb9fa7bd9c5e95da4e3))
+* selection end text colors ([#231](https://github.com/gravity-ui/date-components/issues/231)) ([21e8d1d](https://github.com/gravity-ui/date-components/commit/21e8d1d25267a6fb30fcfde5158e4f3620c63ce5))
+
 ## [3.4.2](https://github.com/gravity-ui/date-components/compare/v3.4.1...v3.4.2) (2026-02-06)
 
 
