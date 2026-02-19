@@ -19,10 +19,13 @@ const b = block('date-field');
 export function DateField({className, ...props}: DateFieldProps) {
     const state = useDateFieldState(props);
 
-    const {inputProps} = useDateFieldProps(state, props);
+    const {
+        inputProps: {onBlur, ...inputProps},
+    } = useDateFieldProps(state, props);
 
     const [isActive, setActive] = React.useState(false);
     const {focusWithinProps} = useFocusWithin({
+        onBlurWithin: onBlur,
         onFocusWithinChange(isFocusWithin) {
             setActive(isFocusWithin);
         },

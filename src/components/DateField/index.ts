@@ -1,5 +1,7 @@
 export * from './DateField';
 
 export * from './hooks/useDateFieldState';
+export * from './hooks/useRangeDateFieldState';
 export * from './hooks/useDateFieldProps';
-export * from './hooks/useBaseDateFieldState';
+
+export type {DateFieldState} from './hooks/useBaseDateFieldState';

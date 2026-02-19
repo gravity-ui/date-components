@@ -5,12 +5,17 @@ export function isWeekend(date: DateTime) {
     return [0, 6].includes(date.day());
 }
 
-export interface PlaceholderValueOptions {
+interface PlaceholderValueOptions {
     placeholderValue?: DateTime;
     timeZone?: string;
 }
 export function createPlaceholderValue({placeholderValue, timeZone}: PlaceholderValueOptions) {
     return placeholderValue ?? dateTime({timeZone}).startOf('day');
+}
+
+export function createPlaceholderRangeValue({placeholderValue, timeZone}: PlaceholderValueOptions) {
+    const date = createPlaceholderValue({placeholderValue, timeZone});
+    return {start: date.startOf('day'), end: date.endOf('day')};
 }
 
 export function isInvalid(
