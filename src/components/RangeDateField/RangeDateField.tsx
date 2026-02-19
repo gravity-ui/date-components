@@ -51,7 +51,7 @@ export function RangeDateField({className, ...props}: RangeDateFieldProps) {
                 name={props.name}
                 form={props.form}
                 onReset={(v) => {
-                    state.setDate(v);
+                    state.setValue(v);
                 }}
                 value={state.value ?? null}
                 toStringValue={(v) => (v ? v.start.toISOString() : '')}

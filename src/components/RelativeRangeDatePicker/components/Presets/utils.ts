@@ -39,13 +39,13 @@ export function getPresetTitle(
     end: string,
     presets: Preset[] = allPresets,
     t: ExtractFunctionType<typeof i18n> = i18n,
-) {
+): string {
     const startText = start.replace(/\s+/g, '');
     const endText = end.replace(/\s+/g, '');
 
     for (const preset of presets) {
         if (preset.from === startText && preset.to === endText) {
-            return preset.title;
+            return t(preset.title as any);
         }
     }
 

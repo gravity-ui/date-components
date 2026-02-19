@@ -1,14 +1,15 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {RangeDateField} from '../RangeDateField';
 
 import './RangeDateField.stories.scss';
 
-const meta: Meta<typeof RangeDateField> = {
+const meta = preview.meta({
     title: 'Components/RangeDateField',
     component: RangeDateField,
     tags: ['autodocs'],
@@ -16,22 +17,18 @@ const meta: Meta<typeof RangeDateField> = {
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
     },
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof RangeDateField>;
-
-export const Default = {
+export const Default = meta.story({
     render: (args) => {
         const timeZone = args.timeZone;
         const props = {
             ...args,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
-            value: args.value ? parseRangeDateTime(args.value, args.format, timeZone) : undefined,
+            value: args.value ? parseRangeDateTime(args.value, timeZone) : undefined,
             defaultValue: args.defaultValue
-                ? parseRangeDateTime(args.defaultValue, args.format, timeZone)
+                ? parseRangeDateTime(args.defaultValue, timeZone)
                 : undefined,
             placeholderValue: args.placeholderValue
                 ? dateTimeParse(args.placeholderValue, {timeZone})
@@ -95,12 +92,12 @@ export const Default = {
         },
         timeZone: timeZoneControl,
     },
-} satisfies Story;
+});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function parseRangeDateTime(text: any, format?: string, timeZone?: string) {
+function parseRangeDateTime(text: any, timeZone?: string) {
     const list = text.split('-');
-    const start = dateTimeParse(list?.[0]?.trim(), {format, timeZone}) ?? dateTime();
-    const end = dateTimeParse(list?.[1]?.trim(), {format, timeZone}) ?? dateTime();
+    const start = dateTimeParse(list?.[0]?.trim(), {timeZone}) ?? dateTime();
+    const end = dateTimeParse(list?.[1]?.trim(), {timeZone}) ?? dateTime();
     return {start, end};
 }

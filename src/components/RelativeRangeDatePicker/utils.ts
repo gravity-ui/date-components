@@ -45,7 +45,7 @@ export function getDefaultTitle({
     presets,
     presetsTranslations = i18n,
     lang = 'en',
-}: GetDefaultTitleArgs) {
+}: GetDefaultTitleArgs): string {
     if (!value) {
         return '';
     }
@@ -74,7 +74,7 @@ export function getDefaultTitle({
         value.start?.type === 'relative' &&
         value.end?.type === 'relative'
     ) {
-        return `${getPresetTitle(value.start.value, value.end.value, presets, presetsTranslations)}`;
+        return getPresetTitle(value.start.value, value.end.value, presets, presetsTranslations);
     }
 
     const delimiter = ' — ';

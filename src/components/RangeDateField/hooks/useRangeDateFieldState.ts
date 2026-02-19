@@ -1,18 +1,16 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
-import {useControlledState} from '@gravity-ui/uikit';
+import {useControlledState, useLang} from '@gravity-ui/uikit';
 
 import {useBaseDateFieldState} from '../../DateField';
 import type {DateFieldState} from '../../DateField';
-import type {DateFieldSectionType, DateFieldSectionWithoutPosition} from '../../DateField/types';
-import type {EDITABLE_SEGMENTS} from '../../DateField/utils';
+import {IncompleteDate} from '../../DateField/IncompleteDate.js';
+import type {DateFieldSectionWithoutPosition} from '../../DateField/types';
 import {
     addSegment,
     adjustDateToFormat,
     getFormatInfo,
-    isAllSegmentsValid,
-    markValidSection,
     parseDateFromString,
     setSegment,
     useFormatSections,
@@ -49,63 +47,60 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         );
     };
 
-    const [placeholderDate, setPlaceholderDate] = React.useState<RangeValue<DateTime>>(() => {
+    const placeholder = React.useMemo(() => {
         return createPlaceholderRangeValue({
             placeholderValue: props.placeholderValue,
             timeZone,
         });
-    });
+    }, [props.placeholderValue, timeZone]);
 
     const format = props.format || 'L';
     const delimiter = props.delimiter ?? RANGE_FORMAT_DELIMITER;
     const sections = useFormatSections(format);
     const formatInfo = React.useMemo(() => getFormatInfo(sections), [sections]);
-
     const allSegments = formatInfo.availableUnits;
 
-    // eslint-disable-next-line prefer-const
-    let [validSegments, setValidSegments] = React.useState<RangeValue<typeof EDITABLE_SEGMENTS>>(
-        () => (value ? {start: {...allSegments}, end: {...allSegments}} : {start: {}, end: {}}),
-    );
+    const [displayValue, setDisplayValue] = React.useState(() => {
+        return {
+            start: new IncompleteDate(value ? value.start.timeZone(timeZone) : null),
+            end: new IncompleteDate(value ? value.end.timeZone(timeZone) : null),
+        };
+    });
 
+    const [lastValue, setLastValue] = React.useState(value);
+    const [lastTimezone, setLastTimezone] = React.useState(timeZone);
     if (
-        value &&
-        (!isAllSegmentsValid(allSegments, validSegments.start) ||
-            !isAllSegmentsValid(allSegments, validSegments.end))
+        (value && !(value.start.isSame(lastValue?.start) && value.end.isSame(lastValue?.end))) ||
+        (value && lastTimezone !== timeZone) ||
+        (value === null && lastValue !== null)
     ) {
-        setValidSegments({start: {...allSegments}, end: {...allSegments}});
+        setLastValue(value);
+        setLastTimezone(timeZone);
+        setDisplayValue({
+            start: new IncompleteDate(value ? value.start.timeZone(timeZone) : null),
+            end: new IncompleteDate(value ? value.end.timeZone(timeZone) : null),
+        });
     }
 
-    if (
-        !value &&
-        Object.keys(allSegments).length > 0 &&
-        isAllSegmentsValid(allSegments, validSegments.start) &&
-        Object.keys(validSegments.start).length === Object.keys(allSegments).length &&
-        isAllSegmentsValid(allSegments, validSegments.end) &&
-        Object.keys(validSegments.end).length === Object.keys(allSegments).length
-    ) {
-        validSegments = {start: {}, end: {}};
-        setValidSegments(validSegments);
-        setPlaceholderDate(
-            createPlaceholderRangeValue({
-                placeholderValue: props.placeholderValue,
-                timeZone,
-            }),
-        );
-    }
+    const {lang} = useLang();
+    const rangeValue = React.useMemo(() => {
+        return {
+            start: displayValue.start
+                .toDateTime(value?.start.timeZone(timeZone) ?? placeholder.start, {
+                    setDate: formatInfo.hasDate,
+                    setTime: formatInfo.hasTime,
+                })
+                .locale(lang),
+            end: displayValue.end
+                .toDateTime(value?.end.timeZone(timeZone) ?? placeholder.end, {
+                    setDate: formatInfo.hasDate,
+                    setTime: formatInfo.hasTime,
+                })
+                .locale(lang),
+        };
+    }, [displayValue, value, placeholder, formatInfo, timeZone, lang]);
 
-    const displayValue =
-        value &&
-        value.start.isValid() &&
-        value.end.isValid() &&
-        Object.keys(validSegments.start).length >= Object.keys(allSegments).length &&
-        Object.keys(validSegments.end).length >= Object.keys(allSegments).length
-            ? {start: value.start.timeZone(timeZone), end: value.end.timeZone(timeZone)}
-            : {
-                  start: placeholderDate.start.timeZone(timeZone),
-                  end: placeholderDate.end.timeZone(timeZone),
-              };
-    const sectionsState = useSectionsState(sections, displayValue, validSegments, delimiter);
+    const sectionsState = useSectionsState(sections, displayValue, rangeValue, delimiter);
 
     const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
 
@@ -139,69 +134,78 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         return selectedSections;
     }, [selectedSections, sectionsState.editableSections]);
 
-    function setValue(newValue: RangeValue<DateTime>) {
+    function setValue(newValue: RangeValue<DateTime> | RangeValue<IncompleteDate> | null) {
         if (props.disabled || props.readOnly) {
             return;
         }
 
         if (
-            isAllSegmentsValid(allSegments, validSegments.start) &&
-            isAllSegmentsValid(allSegments, validSegments.end)
+            newValue === null ||
+            (newValue.start instanceof IncompleteDate &&
+                newValue.start.isCleared(allSegments) &&
+                newValue.end instanceof IncompleteDate &&
+                newValue.end.isCleared(allSegments))
         ) {
-            if (!value || !(newValue.start.isSame(value.start) && newValue.end.isSame(value.end))) {
-                handleUpdateRange({
-                    start: adjustDateToFormat(newValue.start, formatInfo, 'startOf'),
-                    end: adjustDateToFormat(newValue.end, formatInfo, 'endOf'),
-                });
+            setRange(null);
+            setDisplayValue({start: new IncompleteDate(), end: new IncompleteDate()});
+        } else if (
+            newValue.start instanceof IncompleteDate &&
+            newValue.end instanceof IncompleteDate
+        ) {
+            if (newValue.start.isComplete(allSegments) && newValue.end.isComplete(allSegments)) {
+                const newRange = {
+                    start: newValue.start.toDateTime(rangeValue.start, {
+                        setDate: formatInfo.hasDate,
+                        setTime: formatInfo.hasTime,
+                    }),
+                    end: newValue.end.toDateTime(rangeValue.end, {
+                        setDate: formatInfo.hasDate,
+                        setTime: formatInfo.hasTime,
+                    }),
+                };
+                if (
+                    newValue.start.validate(newRange.start, allSegments) &&
+                    newValue.end.validate(newRange.end, allSegments)
+                ) {
+                    if (
+                        !value ||
+                        !(newRange.start.isSame(value.start) && newRange.end.isSame(value.end))
+                    ) {
+                        handleUpdateRange({
+                            start: adjustDateToFormat(newRange.start, formatInfo, 'startOf'),
+                            end: adjustDateToFormat(newRange.end, formatInfo, 'endOf'),
+                        });
+                    }
+                }
             }
-        } else {
-            if (value) {
-                handleUpdateRange(null);
-            }
-            setPlaceholderDate(newValue);
+            setDisplayValue({start: newValue.start, end: newValue.end});
+        } else if (
+            !(newValue.start instanceof IncompleteDate) &&
+            !(newValue.end instanceof IncompleteDate) &&
+            (!value || !(value.start.isSame(newValue.start) && value.end.isSame(newValue.end)))
+        ) {
+            handleUpdateRange({start: newValue.start, end: newValue.end});
         }
-    }
-
-    function markValid(portion: 'start' | 'end', part: DateFieldSectionType) {
-        validSegments[portion] = markValidSection(allSegments, validSegments[portion], part);
-        setValidSegments({...validSegments, [portion]: {...validSegments[portion]}});
     }
 
     function setSection(sectionIndex: number, amount: number) {
         const portion = sectionIndex <= sections.length ? 'start' : 'end';
         const section = sectionsState.editableSections[sectionIndex];
-        markValid(portion, section.type);
         setValue({
             ...displayValue,
-            [portion]: setSegment(section, displayValue[portion], amount),
+            [portion]: setSegment(section, displayValue[portion], amount, rangeValue[portion]),
         });
     }
 
     function adjustSection(sectionIndex: number, amount: number) {
         const section = sectionsState.editableSections[sectionIndex];
         const portion = sectionIndex <= sections.length ? 'start' : 'end';
-        if (validSegments[portion][section.type]) {
+        if (section) {
             setValue({
                 ...displayValue,
-                [portion]: addSegment(section, displayValue[portion], amount),
+                [portion]: addSegment(section, displayValue[portion], amount, rangeValue[portion]),
             });
-        } else {
-            markValid(portion, section.type);
-            if (Object.keys(validSegments[portion]).length >= Object.keys(allSegments).length) {
-                setValue(displayValue);
-            }
         }
-    }
-
-    function flushValidSection(sectionIndex: number) {
-        const portion = sectionIndex <= sections.length ? 'start' : 'end';
-        delete validSegments[portion][sectionsState.editableSections[sectionIndex].type];
-        setValidSegments({...validSegments, [portion]: {...validSegments[portion]}});
-    }
-
-    function flushAllValidSections() {
-        validSegments = {start: {}, end: {}};
-        setValidSegments({start: {}, end: {}});
     }
 
     function getSectionValue(sectionIndex: number) {
@@ -209,16 +213,9 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         return displayValue[portion];
     }
 
-    function setSectionValue(sectionIndex: number, currentValue: DateTime) {
+    function setSectionValue(sectionIndex: number, currentValue: IncompleteDate) {
         const portion = sectionIndex <= sections.length ? 'start' : 'end';
         setValue({...displayValue, [portion]: currentValue});
-    }
-
-    function createPlaceholder() {
-        return createPlaceholderRangeValue({
-            placeholderValue: props.placeholderValue,
-            timeZone,
-        });
     }
 
     function setValueFromString(str: string) {
@@ -233,6 +230,38 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         return false;
     }
 
+    function confirmPlaceholder() {
+        if (props.disabled || props.readOnly) {
+            return;
+        }
+
+        // If the display value is complete but invalid, we need to constrain it and emit onChange on blur.
+        if (
+            displayValue.start.isComplete(allSegments) &&
+            displayValue.end.isComplete(allSegments)
+        ) {
+            const newValue = {
+                start: adjustDateToFormat(
+                    displayValue.start.toDateTime(rangeValue.start, {
+                        setDate: formatInfo.hasDate,
+                        setTime: formatInfo.hasTime,
+                    }),
+                    formatInfo,
+                    'startOf',
+                ),
+                end: adjustDateToFormat(
+                    displayValue.end.toDateTime(rangeValue.end, {
+                        setDate: formatInfo.hasDate,
+                        setTime: formatInfo.hasTime,
+                    }),
+                    formatInfo,
+                    'endOf',
+                ),
+            };
+            setValue(newValue);
+        }
+    }
+
     const validationState =
         props.validationState ||
         (isInvalid(value?.start, props.minValue, props.maxValue) ? 'invalid' : undefined) ||
@@ -241,9 +270,9 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         (value && props.isDateUnavailable?.(value.start) ? 'invalid' : undefined) ||
         (value && props.isDateUnavailable?.(value.end) ? 'invalid' : undefined);
 
-    return useBaseDateFieldState({
+    return useBaseDateFieldState<RangeValue<DateTime>, RangeValue<IncompleteDate>>({
         value,
-        displayValue,
+        displayValue: rangeValue,
         placeholderValue: props.placeholderValue,
         timeZone,
         validationState,
@@ -254,50 +283,49 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
         selectedSectionIndexes,
         selectedSections,
         isEmpty:
-            Object.keys(validSegments.start).length === 0 &&
-            Object.keys(validSegments.end).length === 0,
-        flushAllValidSections,
-        flushValidSection,
+            displayValue.start.isCleared(allSegments) && displayValue.end.isCleared(allSegments),
         setSelectedSections,
         setValue,
-        setDate: handleUpdateRange,
         adjustSection,
         setSection,
         getSectionValue,
         setSectionValue,
-        createPlaceholder,
         setValueFromString,
+        confirmPlaceholder,
     });
 }
 
 function useSectionsState(
     sections: DateFieldSectionWithoutPosition[],
-    value: RangeValue<DateTime>,
-    validSegments: RangeValue<typeof EDITABLE_SEGMENTS>,
+    value: RangeValue<IncompleteDate>,
+    placeholder: RangeValue<DateTime>,
     delimiter: string,
 ) {
     const [state, setState] = React.useState(() => {
         return {
             value,
             sections,
-            validSegments,
+            placeholder,
             delimiter,
-            editableSections: getRangeEditableSections(sections, value, validSegments, delimiter),
+            editableSections: getRangeEditableSections(sections, value, placeholder, delimiter),
         };
     });
 
     if (
         sections !== state.sections ||
-        validSegments !== state.validSegments ||
-        !(value.start.isSame(state.value.start) && value.end.isSame(state.value.end)) ||
+        value !== state.value ||
+        !(
+            placeholder.start.isSame(state.placeholder.start) &&
+            placeholder.end.isSame(state.placeholder.end)
+        ) ||
         delimiter !== state.delimiter
     ) {
         setState({
             value,
             sections,
-            validSegments,
+            placeholder,
             delimiter,
-            editableSections: getRangeEditableSections(sections, value, validSegments, delimiter),
+            editableSections: getRangeEditableSections(sections, value, placeholder, delimiter),
         });
     }
 

@@ -4,13 +4,14 @@ import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {Calendar} from '../Calendar';
 
-const meta: Meta<typeof Calendar> = {
+const meta = preview.meta({
     title: 'Components/Calendar',
     component: Calendar,
     tags: ['autodocs'],
@@ -18,26 +19,22 @@ const meta: Meta<typeof Calendar> = {
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
     },
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof Calendar>;
-
-export const Default = {
+export const Default = meta.story({
     render: (args) => {
         const timeZone = args.timeZone;
         const props = {
             ...args,
             minValue: args.minValue ? dateTimeParse(args.minValue, {timeZone}) : undefined,
             maxValue: args.maxValue ? dateTimeParse(args.maxValue, {timeZone}) : undefined,
-            value: args.value ? dateTimeParse(args.value, {timeZone}) : undefined,
+            value: args.value ? dateTimeParse(args.value, {timeZone}) : args.value,
             defaultValue: args.defaultValue
                 ? dateTimeParse(args.defaultValue, {timeZone})
-                : undefined,
+                : args.defaultValue,
             focusedValue: args.focusedValue
                 ? dateTimeParse(args.focusedValue, {timeZone})
-                : undefined,
+                : args.focusedValue,
             defaultFocusedValue: args.defaultFocusedValue
                 ? dateTimeParse(args.defaultFocusedValue, {timeZone})
                 : undefined,
@@ -49,13 +46,14 @@ export const Default = {
     args: {
         onUpdate: (res) => {
             action('onUpdate')(res);
+            const resArray = Array.isArray(res) ? res : [res];
             toaster.add({
                 name: 'calendar-on-change-cb',
                 title: 'onUpdate callback',
                 theme: 'success',
                 content: (
                     <div>
-                        <div>date: {res.format() || 'null'}</div>
+                        <div>date: {resArray.map((r) => r.format()).join(', ') || `[]`}</div>
                     </div>
                 ),
             });
@@ -106,7 +104,10 @@ export const Default = {
         },
         timeZone: timeZoneControl,
     },
-} satisfies Story;
+});
+
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'Calendar'});
 
 function getIsDateUnavailable(variant: string) {
     if (variant === 'weekend') {
@@ -146,8 +147,7 @@ function getIsWeekend(variant: string) {
     return undefined;
 }
 
-export const Custom: Story = {
-    ...Default,
+export const Custom = Default.extend({
     render: function Custom(args) {
         const [mode, setMode] = React.useState('days');
 
@@ -161,7 +161,7 @@ export const Custom: Story = {
                     ))}
                 </TabList>
                 <TabPanel value={mode}>
-                    {Default.render?.({...args, modes: {[mode]: true}})}
+                    <DefaultComponent {...args} modes={{[mode]: true}} />
                 </TabPanel>
             </TabProvider>
         );
@@ -169,4 +169,28 @@ export const Custom: Story = {
     parameters: {
         controls: {exclude: ['mode', 'defaultMode', 'modes']},
     },
-};
+});
+
+export const ClearableCalendar = Default.extend({
+    render: function ClearableCalendar(props) {
+        const [value, setValue] = React.useState<DateTime | null>(null);
+        return (
+            <DefaultComponent
+                {...props}
+                value={value}
+                // @ts-expect-error
+                onUpdate={(v: DateTime) => {
+                    if (v.isSame(value, 'day')) {
+                        setValue(null);
+                    } else {
+                        setValue(v);
+                    }
+                    props.onUpdate?.(v);
+                }}
+            />
+        );
+    },
+    parameters: {
+        controls: {exclude: ['selectionMode', 'value', 'defaultValue']},
+    },
+});

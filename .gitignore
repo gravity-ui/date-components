@@ -9,3 +9,11 @@ node_modules
 dist
 storybook-static
 .cache
+
+# Tests
+reports
+
+# System files
+.DS_Store
+
+.vitest-*

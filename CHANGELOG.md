@@ -1,5 +1,31 @@
 # Changelog
 
+## [3.4.2](https://github.com/gravity-ui/date-components/compare/v3.4.1...v3.4.2) (2026-02-06)
+
+
+### Bug Fixes
+
+* **Range/DateField:** use lang from uikit provider to display date parts ([#265](https://github.com/gravity-ui/date-components/issues/265)) ([26c2a38](https://github.com/gravity-ui/date-components/commit/26c2a387a2818040077c94f4dd1325e26cf3cf6f))
+
+## [3.4.1](https://github.com/gravity-ui/date-components/compare/v3.4.0...v3.4.1) (2025-11-24)
+
+
+### Bug Fixes
+
+* **RelativeRangeDatePicker:** correctly show chosen preset title ([#241](https://github.com/gravity-ui/date-components/issues/241)) ([b8bae21](https://github.com/gravity-ui/date-components/commit/b8bae21c269070f8b0fa808535532e0d4635a1bf))
+
+## [3.4.0](https://github.com/gravity-ui/date-components/compare/v3.3.2...v3.4.0) (2025-10-21)
+
+
+### Features
+
+* **Calendar:** use outlined buttons view in case of xl size ([#216](https://github.com/gravity-ui/date-components/issues/216)) ([281e02f](https://github.com/gravity-ui/date-components/commit/281e02f8ad63c62d0c5f83236a6aa993821034e1))
+
+
+### Bug Fixes
+
+* **DateField:** use current language for initial state ([#234](https://github.com/gravity-ui/date-components/issues/234)) ([0233c4b](https://github.com/gravity-ui/date-components/commit/0233c4bda43f3cb20d28ad1269ad09fd29fcc93c))
+
 ## [3.3.2](https://github.com/gravity-ui/date-components/compare/v3.3.1...v3.3.2) (2025-09-26)
 
 

@@ -1,23 +1,18 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
-import {useControlledState} from '@gravity-ui/uikit';
+import {useControlledState, useLang} from '@gravity-ui/uikit';
 
-import type {DateFieldBase} from '../../types/datePicker';
+import type {InputBase, Validation, ValueBase} from '../../types';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
-import type {
-    AvailableSections,
-    DateFieldSectionType,
-    DateFieldSectionWithoutPosition,
-} from '../types';
+import {IncompleteDate} from '../IncompleteDate';
+import type {DateFieldSectionWithoutPosition} from '../types';
 import {
     addSegment,
     adjustDateToFormat,
     getEditableSections,
     getFormatInfo,
-    isAllSegmentsValid,
-    markValidSection,
     parseDateFromString,
     setSegment,
     useFormatSections,
@@ -26,7 +21,25 @@ import {
 import {useBaseDateFieldState} from './useBaseDateFieldState';
 import type {DateFieldState} from './useBaseDateFieldState';
 
-export interface DateFieldStateOptions extends DateFieldBase {}
+export interface DateFieldStateOptions extends ValueBase<DateTime | null>, InputBase, Validation {
+    /** The minimum allowed date that a user may select. */
+    minValue?: DateTime;
+    /** The maximum allowed date that a user may select. */
+    maxValue?: DateTime;
+    /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
+    isDateUnavailable?: (date: DateTime) => boolean;
+    /** Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format) */
+    format?: string;
+    /** A placeholder date that controls the default values of each segment when the user first interacts with them. Defaults to today's date at midnight. */
+    placeholderValue?: DateTime;
+    /**
+     * Which timezone use to show values. Example: 'default', 'system', 'Europe/Amsterdam'.
+     * @default The timezone of the `value` or `defaultValue` or `placeholderValue`, 'default' otherwise.
+     */
+    timeZone?: string;
+    /** Custom parser function for parsing pasted date strings. If not provided, the default parser will be used. */
+    parseDateFromString?: (dateStr: string, format: string, timeZone?: string) => DateTime;
+}
 
 export function useDateFieldState(props: DateFieldStateOptions): DateFieldState {
     const [value, setDate] = useControlledState(
@@ -44,50 +57,54 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         setDate(v ? v.timeZone(inputTimeZone) : v);
     };
 
-    const [placeholderDate, setPlaceholderDate] = React.useState(() => {
-        return createPlaceholderValue({
-            placeholderValue: props.placeholderValue,
-            timeZone,
-        });
-    });
+    const [lastPlaceholder, setLastPlaceholder] = React.useState(props.placeholderValue);
+    if (
+        (props.placeholderValue && !props.placeholderValue.isSame(lastPlaceholder)) ||
+        (!props.placeholderValue && lastPlaceholder)
+    ) {
+        setLastPlaceholder(props.placeholderValue);
+    }
+    const placeholder = React.useMemo(
+        () =>
+            createPlaceholderValue({
+                placeholderValue: lastPlaceholder,
+                timeZone,
+            }),
+        [lastPlaceholder, timeZone],
+    );
 
     const format = props.format || 'L';
     const sections = useFormatSections(format);
     const formatInfo = React.useMemo(() => getFormatInfo(sections), [sections]);
     const allSegments = formatInfo.availableUnits;
 
-    const validSegmentsState = React.useState<AvailableSections>(() =>
-        value ? {...allSegments} : {},
-    );
+    const [displayValue, setDisplayValue] = React.useState(() => {
+        return new IncompleteDate(value && value.isValid() ? value.timeZone(timeZone) : null);
+    });
 
-    let validSegments = validSegmentsState[0];
-    const setValidSegments = validSegmentsState[1];
-
-    if (value && !isAllSegmentsValid(allSegments, validSegments)) {
-        setValidSegments({...allSegments});
-    }
-
+    const [lastValue, setLastValue] = React.useState(value);
+    const [lastTimezone, setLastTimezone] = React.useState(timeZone);
     if (
-        !value &&
-        Object.keys(allSegments).length > 0 &&
-        isAllSegmentsValid(allSegments, validSegments) &&
-        Object.keys(validSegments).length === Object.keys(allSegments).length
+        (value && !value.isSame(lastValue)) ||
+        (value && lastTimezone !== timeZone) ||
+        (value === null && lastValue !== null)
     ) {
-        validSegments = {};
-        setValidSegments(validSegments);
-        setPlaceholderDate(
-            createPlaceholderValue({
-                placeholderValue: props.placeholderValue,
-                timeZone,
-            }),
-        );
+        setLastValue(value);
+        setLastTimezone(timeZone);
+        setDisplayValue(new IncompleteDate(value?.timeZone(timeZone)));
     }
 
-    const displayValue =
-        value && value.isValid() && isAllSegmentsValid(allSegments, validSegments)
-            ? value.timeZone(timeZone)
-            : placeholderDate.timeZone(timeZone);
-    const sectionsState = useSectionsState(sections, displayValue, validSegments);
+    const {lang} = useLang();
+    const dateValue = React.useMemo(() => {
+        return displayValue
+            .toDateTime(value?.timeZone(timeZone) ?? placeholder, {
+                setDate: formatInfo.hasDate,
+                setTime: formatInfo.hasTime,
+            })
+            .locale(lang);
+    }, [displayValue, value, placeholder, formatInfo, timeZone, lang]);
+
+    const sectionsState = useSectionsState(sections, displayValue, dateValue);
 
     const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
 
@@ -121,86 +138,80 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         return selectedSections;
     }, [selectedSections, sectionsState.editableSections]);
 
-    function setValue(newValue: DateTime) {
+    function setValue(newValue: DateTime | IncompleteDate | null) {
         if (props.disabled || props.readOnly) {
             return;
         }
 
-        if (isAllSegmentsValid(allSegments, validSegments)) {
-            if (!value || !newValue.isSame(value)) {
-                handleUpdateDate(adjustDateToFormat(newValue, formatInfo));
+        if (
+            newValue === null ||
+            (newValue instanceof IncompleteDate && newValue.isCleared(allSegments))
+        ) {
+            setDate(null);
+            setDisplayValue(new IncompleteDate());
+        } else if (newValue instanceof IncompleteDate) {
+            if (newValue.isComplete(allSegments)) {
+                const newDate = newValue.toDateTime(dateValue, {
+                    setDate: formatInfo.hasDate,
+                    setTime: formatInfo.hasTime,
+                });
+                if (newValue.validate(newDate, allSegments)) {
+                    if (!value || !newDate.isSame(value)) {
+                        handleUpdateDate(adjustDateToFormat(newDate, formatInfo));
+                    }
+                }
             }
-        } else {
-            if (value) {
-                handleUpdateDate(null);
-            }
-            setPlaceholderDate(newValue);
+            setDisplayValue(newValue);
+        } else if (!value || !newValue.isSame(value)) {
+            handleUpdateDate(newValue);
         }
-    }
-
-    function markValid(part: DateFieldSectionType) {
-        validSegments = markValidSection(allSegments, validSegments, part);
-        setValidSegments({...validSegments});
     }
 
     function setSection(sectionIndex: number, amount: number) {
         const section = sectionsState.editableSections[sectionIndex];
         if (section) {
-            markValid(section.type);
-            setValue(setSegment(section, displayValue, amount));
+            setValue(setSegment(section, displayValue, amount, dateValue));
         }
     }
 
     function adjustSection(sectionIndex: number, amount: number) {
         const section = sectionsState.editableSections[sectionIndex];
         if (section) {
-            if (validSegments[section.type]) {
-                setValue(addSegment(section, displayValue, amount));
-            } else {
-                markValid(section.type);
-                if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
-                    setValue(displayValue);
-                }
-            }
+            setValue(addSegment(section, displayValue, amount, dateValue));
         }
-    }
-
-    function flushValidSection(sectionIndex: number) {
-        const section = sectionsState.editableSections[sectionIndex];
-        if (section) {
-            delete validSegments[section.type];
-        }
-        setValidSegments({...validSegments});
-    }
-
-    function flushAllValidSections() {
-        validSegments = {};
-        setValidSegments({});
     }
 
     function getSectionValue(_sectionIndex: number) {
         return displayValue;
     }
 
-    function setSectionValue(_sectionIndex: number, currentValue: DateTime) {
-        setValue(currentValue);
-    }
-
-    function createPlaceholder() {
-        return createPlaceholderValue({
-            placeholderValue: props.placeholderValue,
-            timeZone,
-        }).timeZone(timeZone);
+    function setSectionValue(_sectionIndex: number, newValue: IncompleteDate) {
+        setValue(newValue);
     }
 
     function setValueFromString(str: string) {
         const parseDate = props.parseDateFromString ?? parseDateFromString;
         const date = parseDate(str, format, timeZone);
         if (date.isValid()) {
-            handleUpdateDate(date);
+            setValue(date);
             return true;
         }
         return false;
+    }
+
+    function confirmPlaceholder() {
+        if (props.disabled || props.readOnly) {
+            return;
+        }
+
+        // If the display value is complete but invalid, we need to constrain it and emit onChange on blur.
+        if (displayValue.isComplete(allSegments)) {
+            const newValue = displayValue.toDateTime(dateValue, {
+                setDate: formatInfo.hasDate,
+                setTime: formatInfo.hasTime,
+            });
+            setValue(adjustDateToFormat(newValue, formatInfo, 'startOf'));
+        }
     }
 
     const validationState =
@@ -210,7 +221,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
     return useBaseDateFieldState({
         value,
-        displayValue,
+        displayValue: dateValue,
         placeholderValue: props.placeholderValue,
         timeZone,
         validationState,
@@ -220,46 +231,38 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         disabled: props.disabled,
         selectedSectionIndexes,
         selectedSections,
-        isEmpty: Object.keys(validSegments).length === 0,
-        flushAllValidSections,
-        flushValidSection,
+        isEmpty: displayValue.isCleared(allSegments),
         setSelectedSections,
         setValue,
-        setDate: handleUpdateDate,
         adjustSection,
         setSection,
         getSectionValue,
         setSectionValue,
-        createPlaceholder,
         setValueFromString,
+        confirmPlaceholder,
     });
 }
 
 function useSectionsState(
     sections: DateFieldSectionWithoutPosition[],
-    value: DateTime,
-    validSegments: AvailableSections,
+    value: IncompleteDate,
+    placeholder: DateTime,
 ) {
     const [state, setState] = React.useState(() => {
         return {
             value,
             sections,
-            validSegments,
-            editableSections: getEditableSections(sections, value, validSegments),
+            placeholder,
+            editableSections: getEditableSections(sections, value, placeholder),
         };
     });
 
-    if (
-        sections !== state.sections ||
-        validSegments !== state.validSegments ||
-        !value.isSame(state.value) ||
-        value.timeZone() !== state.value.timeZone()
-    ) {
+    if (sections !== state.sections || placeholder !== state.placeholder || value !== state.value) {
         setState({
             value,
             sections,
-            validSegments,
-            editableSections: getEditableSections(sections, value, validSegments),
+            placeholder,
+            editableSections: getEditableSections(sections, value, placeholder),
         });
     }
 

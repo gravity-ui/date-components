@@ -150,7 +150,7 @@ LANDING_BLOCK-->
 
 ## Focused value
 
-Allows to select the date that `Calendar` view is focused on. If you need it to be controlled you shoud use `focusedValue` prop. You can set the initial focused value for uncontrolled component with optional prop `defaultFocusedValue`.
+Allows to select the date that `Calendar` view is focused on. If you need it to be controlled you should use `focusedValue` prop. You can set the initial focused value for uncontrolled component with optional prop `defaultFocusedValue`.
 
 <!--LANDING_BLOCK
 <ExampleBlock
@@ -166,6 +166,28 @@ LANDING_BLOCK-->
 
 ```tsx
 <Calendar defaultFocusedValue={dateTimeParse('01.01.2020')} />
+```
+
+<!--/GITHUB_BLOCK-->
+
+## Multiple selection
+
+Set the `selectionMode="multiple"` prop to enable the user to select multiple dates. When multiple selection is enabled, the value prop should be an array of dates instead of a single date, and onChange will be called with an array.
+
+<!--LANDING_BLOCK
+<ExampleBlock
+    code={`
+<Calendar selectionMode="multiple" />
+`}
+>
+    <DateComponentsExamples.CalendarExample selectionMode="multiple" />
+</ExampleBlock>
+LANDING_BLOCK-->
+
+<!--GITHUB_BLOCK-->
+
+```tsx
+<Calendar selectionMode="multiple" />
 ```
 
 <!--/GITHUB_BLOCK-->
@@ -194,7 +216,7 @@ LANDING_BLOCK-->
 | isWeekend                             | Callback that is called for each date of the calendar. If it returns true, then the date is weekend.                 |                 `((date: DateTime) => boolean)`                  |                                                             |
 | [maxValue](#min-and-max-value)        | The maximum allowed date that a user may select.                                                                     |                            `DateTime`                            |                                                             |
 | [minValue](#min-and-max-value)        | The minimum allowed date that a user may select.                                                                     |                            `DateTime`                            |                                                             |
-| [mode](#mode)                         | Defines the time interval that `Calendar` should display in colttrolled way.                                         |                `days` `months` `quarters` `years`                |                                                             |
+| [mode](#mode)                         | Defines the time interval that `Calendar` should display in controlled way.                                          |                `days` `months` `quarters` `years`                |                                                             |
 | modes                                 | Modes available to user                                                                                              |            `Partial<Record<CalendarLayout, boolean>>`            | `{days: true, months: true, quarters: false, years: true }` |
 | onBlur                                | Fires when the control lost focus. Provides focus event as a callback's argument                                     |          `((e: FocusEvent<Element, Element>) => void)`           |                                                             |
 | onFocus                               | Fires when the control gets focus. Provides focus event as a callback's argument                                     |          `((e: FocusEvent<Element, Element>) => void)`           |                                                             |
@@ -203,6 +225,7 @@ LANDING_BLOCK-->
 | onUpdateMode                          | Fires when the mode is changed.                                                                                      | `((value: 'days' \| 'months' \| 'quarters' \| 'years' ) => void` |                                                             |
 | [readOnly](#readonly)                 | Whether the calendar value is immutable.                                                                             |                            `boolean`                             |                           `false`                           |
 | [size](#size)                         | The size of the control                                                                                              |                        `"m"` `"l"` `"xl"`                        |                            `"m"`                            |
+| selectionMode                         | Whether single or multiple selection is enabled.                                                                     |                     `'single' \| 'multiple'`                     |                         `'single'`                          |
 | style                                 | Sets inline style for the element.                                                                                   |                         `CSSProperties`                          |                                                             |
 | [timeZone](#time-zone)                | Sets the time zone. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) |                             `string`                             |                                                             |
 | [value](#calendar)                    | The value of the control                                                                                             |                        `DateTime` `null`                         |                                                             |

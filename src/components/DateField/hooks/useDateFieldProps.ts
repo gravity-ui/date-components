@@ -19,7 +19,8 @@ import {cleanString} from '../utils';
 import type {DateFieldState} from './useBaseDateFieldState';
 
 export interface DateFieldProps<T = DateTime>
-    extends DateFieldBase<T>,
+    extends
+        DateFieldBase<T>,
         DateFieldTextInputProps,
         TextInputExtendProps,
         DomProps,
@@ -145,6 +146,7 @@ export function useDateFieldProps<T = DateTime>(
             onBlur(e) {
                 props.onBlur?.(e);
                 setSelectedSections(-1);
+                state.confirmPlaceholder();
             },
             onKeyDown(e) {
                 props.onKeyDown?.(e);
@@ -223,8 +225,8 @@ export function useDateFieldProps<T = DateTime>(
 
                         const isValidValue = Boolean(
                             activeSection &&
-                                ((activeSection.contentType === 'digit' && digitsOnly) ||
-                                    (activeSection.contentType === 'letter' && lettersOnly)),
+                            ((activeSection.contentType === 'digit' && digitsOnly) ||
+                                (activeSection.contentType === 'letter' && lettersOnly)),
                         );
                         if (isValidValue) {
                             state.onInput(pastedValue);

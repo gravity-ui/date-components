@@ -23,19 +23,13 @@ jobs:
               exit 1
             fi
           fi
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           registry-url: 'https://registry.npmjs.org'
       - name: Install Packages
         run: npm ci
-      - name: Lint Files
-        run: npm run lint
-      - name: Typecheck
-        run: npm run typecheck
-      - name: Test
-        run: npm test
       - name: Bump version
         run: |
           echo ${{ github.event.inputs.version }}

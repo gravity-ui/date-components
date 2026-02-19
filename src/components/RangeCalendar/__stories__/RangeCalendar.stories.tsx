@@ -4,14 +4,15 @@ import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import type {RangeValue} from '../../types';
 import {RangeCalendar} from '../RangeCalendar';
 
-const meta: Meta<typeof RangeCalendar> = {
+const meta = preview.meta({
     title: 'Components/RangeCalendar',
     component: RangeCalendar,
     tags: ['autodocs'],
@@ -19,13 +20,9 @@ const meta: Meta<typeof RangeCalendar> = {
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
     },
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof RangeCalendar>;
-
-export const Default = {
+export const Default = meta.story({
     render: function Render(args) {
         const timeZone = args.timeZone;
         const props = {
@@ -110,7 +107,10 @@ export const Default = {
         },
         timeZone: timeZoneControl,
     },
-} satisfies Story;
+});
+
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'RangeCalendar'});
 
 function getIsDateUnavailable(variant: string) {
     if (variant === 'weekend') {
@@ -150,8 +150,7 @@ function getIsWeekend(variant: string) {
     return undefined;
 }
 
-export const Custom: Story = {
-    ...Default,
+export const Custom = Default.extend({
     render: function Custom(args) {
         const [mode, setMode] = React.useState('days');
 
@@ -165,7 +164,7 @@ export const Custom: Story = {
                     ))}
                 </TabList>
                 <TabPanel value={mode}>
-                    {Default.render?.({...args, modes: {[mode]: true}})}
+                    <DefaultComponent {...args} modes={{[mode]: true}} />
                 </TabPanel>
             </TabProvider>
         );
@@ -173,4 +172,4 @@ export const Custom: Story = {
     parameters: {
         controls: {exclude: ['mode', 'defaultMode', 'modes']},
     },
-};
+});

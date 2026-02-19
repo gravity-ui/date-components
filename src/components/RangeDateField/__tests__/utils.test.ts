@@ -1,33 +1,30 @@
 import {dateTime} from '@gravity-ui/date-utils';
+import {expect, test} from 'vitest';
 
+import {IncompleteDate} from '../../DateField/IncompleteDate';
 import {
     cleanString,
     formatSections,
-    isEditableSection,
+    isEditableSectionType,
     splitFormatIntoSections,
-} from '../DateField/utils';
-
-import {getRangeEditableSections} from './utils';
+} from '../../DateField/utils';
+import {getRangeEditableSections} from '../utils';
 
 test('create a valid sequence of editable sections for range', () => {
     const format = 'DD.MM.YYYY hh:mm:ss';
     const sections = splitFormatIntoSections(format);
     const date = dateTime({input: [2024, 1, 14, 12, 30, 0]});
     const range = {start: date, end: date};
-    const eSections = getRangeEditableSections(
-        sections,
-        range,
-        {
-            start: {month: true},
-            end: {year: true},
-        },
-        ' — ',
-    );
+    const incompleteRange = {
+        start: new IncompleteDate().set('month', range.start.month() + 1),
+        end: new IncompleteDate().set('year', range.end.year()),
+    };
+    const eSections = getRangeEditableSections(sections, incompleteRange, range, ' — ');
 
     expect(eSections.length).toBe(23);
 
     const indexes = eSections
-        .map((s, i) => (isEditableSection(s) ? i : null!)) // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        .map((s, i) => (isEditableSectionType(s.type) ? i : null))
         .filter((e) => e !== null);
 
     // eslint-disable-next-line no-nested-ternary
@@ -37,7 +34,7 @@ test('create a valid sequence of editable sections for range', () => {
     let position = 1;
     for (let i = 0; i < eSections.length; i++) {
         const section = eSections[i];
-        if (isEditableSection(section)) {
+        if (isEditableSectionType(section.type)) {
             pointer++;
         }
 

@@ -73,8 +73,7 @@ export interface DatePickerStateFactoryOptions<T, O extends DateFieldBase<T>> {
 }
 
 export interface DatePickerStateOptions<T>
-    extends DateFieldBase<T>,
-        PopupTriggerProps<[OpenChangeReason]> {}
+    extends DateFieldBase<T>, PopupTriggerProps<[OpenChangeReason]> {}
 
 export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
     getPlaceholderTime,
