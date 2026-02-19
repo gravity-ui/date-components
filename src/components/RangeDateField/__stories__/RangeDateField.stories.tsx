@@ -7,8 +7,6 @@ import preview from '#.storybook/preview';
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {RangeDateField} from '../RangeDateField';
 
-import './RangeDateField.stories.scss';
-
 const meta = preview.meta({
     title: 'Components/RangeDateField',
     component: RangeDateField,
@@ -57,6 +55,7 @@ export const Default = meta.story({
                 ),
             });
         },
+        style: {width: 300},
     },
     argTypes: {
         minValue: {
