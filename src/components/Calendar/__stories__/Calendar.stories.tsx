@@ -178,6 +178,7 @@ export const ClearableCalendar = Default.extend({
             <DefaultComponent
                 {...props}
                 value={value}
+                // @ts-expect-error
                 onUpdate={(v: DateTime) => {
                     if (v.isSame(value, 'day')) {
                         setValue(null);

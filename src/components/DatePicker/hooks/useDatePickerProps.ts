@@ -5,7 +5,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {CalendarInstance, CalendarProps} from '../../Calendar';
+import type {CalendarCommonProps, CalendarInstance} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
 import type {RangeValue} from '../../types';
@@ -24,7 +24,7 @@ interface InnerDatePickerProps<T = DateTime> {
     fieldProps: TextInputProps;
     calendarButtonProps: ButtonButtonProps & {ref: React.Ref<HTMLButtonElement>};
     popupProps: PopupProps;
-    calendarProps: CalendarProps<T> & {ref: React.Ref<CalendarInstance>};
+    calendarProps: CalendarCommonProps<T> & {ref: React.Ref<CalendarInstance>};
     timeInputProps: DateFieldProps<T>;
 }
 

@@ -22,7 +22,7 @@ interface InnerRelativeDatePickerProps {
     modeSwitcherProps: ButtonButtonProps;
     calendarButtonProps: ButtonButtonProps;
     popupProps: PopupProps;
-    calendarProps: React.ComponentProps<typeof Calendar>;
+    calendarProps: React.ComponentProps<typeof Calendar<'single'>>;
     timeInputProps: DateFieldProps;
 }
 
