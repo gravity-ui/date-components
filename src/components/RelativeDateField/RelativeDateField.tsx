@@ -49,7 +49,11 @@ export interface RelativeDateFieldProps
 }
 export function RelativeDateField(props: RelativeDateFieldProps) {
     const state = useRelativeDateFieldState(props);
-    const {inputProps, calendarProps, timeInputProps} = useRelativeDateFieldProps(state, props);
+    const {
+        inputProps: {onBlur, ...inputProps},
+        calendarProps,
+        timeInputProps,
+    } = useRelativeDateFieldProps(state, props);
 
     const isMobile = useMobile();
 
@@ -59,12 +63,12 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
     const dialogClosing = React.useRef(false);
 
     const {focusWithinProps} = useFocusWithin({
+        onBlurWithin: onBlur,
         onFocusWithinChange: (isFocusWithin) => {
             if (!dialogClosing.current) {
                 setOpen(isFocusWithin);
             }
         },
-        isDisabled: isMobile,
     });
 
     const DOMProps = filterDOMProps(props);
@@ -82,7 +86,6 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
                 {...inputProps}
                 className={b('field')}
                 ref={setAnchor}
-                onBlur={props.onBlur}
                 onKeyDown={(e) => {
                     inputProps.onKeyDown?.(e);
                     if (
