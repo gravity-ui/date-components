@@ -47,7 +47,7 @@ interface DocContentProps extends Omit<PresetsDocProps, 'docs' | 'className'> {
     docs: Preset[];
 }
 
-function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
+function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: DocContentProps) {
     const isMobile = useMobile();
 
     const {t} = i18n.useTranslation();
@@ -59,7 +59,17 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                     return t('Range');
                 },
                 template: (item) => {
-                    return t(item.title as any);
+                    return (
+                        <Button
+                            view="flat"
+                            size={isMobile ? 'l' : getButtonSizeForInput(size)}
+                            onClick={() => {
+                                onRangeUpdate(item.from, item.to);
+                            }}
+                        >
+                            {t(item.title as any)}
+                        </Button>
+                    );
                 },
             },
             {
@@ -69,8 +79,11 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                 },
                 template: (item) => (
                     <Button
+                        view="flat"
                         size={isMobile ? 'l' : getButtonSizeForInput(size)}
-                        onClick={() => onStartUpdate(item.from)}
+                        onClick={() => {
+                            onStartUpdate(item.from);
+                        }}
                     >
                         {item.from}
                     </Button>
@@ -83,8 +96,11 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                 },
                 template: (item) => (
                     <Button
+                        view="flat"
                         size={isMobile ? 'l' : getButtonSizeForInput(size)}
-                        onClick={() => onEndUpdate(item.to)}
+                        onClick={() => {
+                            onEndUpdate(item.to);
+                        }}
                     >
                         {item.to}
                     </Button>
@@ -151,6 +167,7 @@ interface PresetsDocProps {
     docs?: Preset[];
     onStartUpdate: (start: string) => void;
     onEndUpdate: (end: string) => void;
+    onRangeUpdate: (start: string, end: string) => void;
 }
 
 export function PickerDoc({docs = data, ...props}: PresetsDocProps) {
