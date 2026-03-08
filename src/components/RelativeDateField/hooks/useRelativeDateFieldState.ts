@@ -11,6 +11,8 @@ export interface RelativeDateFieldState {
     value: string | null;
     /** Sets the field value */
     setValue: (v: string | null) => void;
+    /** Commits current text value on blur. */
+    confirmValue: () => void;
     /** Current user input */
     text: string;
     /** Sets text */
@@ -39,55 +41,92 @@ export interface RelativeDateFieldOptions extends ValueBase<string | null>, Inpu
 export function useRelativeDateFieldState(props: RelativeDateFieldOptions): RelativeDateFieldState {
     const [value, setValue] = useControlledState(
         props.value,
-        props.defaultValue ?? null,
+        props.defaultValue ?? '',
         props.onUpdate,
     );
 
     const [text, setText] = React.useState(value ?? '');
-    if (value && value !== text) {
-        setText(value);
+    const [lastValue, setLastValue] = React.useState(value);
+    if (value !== lastValue) {
+        setLastValue(value);
+        setText(value ?? '');
     }
 
-    const handleTextChange = (t: string) => {
-        if (props.disabled || props.readOnly) {
-            return;
-        }
-        setText(t);
-        if (isLikeRelative(t)) {
-            const date = dateTimeParse(t);
-            if (date && date.isValid()) {
-                setValue(t);
-            } else {
-                setValue(null);
+    const parseRelativeDate = React.useCallback(
+        (relativeValue: string | null) => {
+            if (!isLikeRelative(relativeValue)) {
+                return null;
             }
-        } else {
-            setValue(null);
-        }
-    };
 
-    const parsedDate = React.useMemo(() => {
-        if (!value) {
-            return null;
-        }
-        return dateTimeParse(value, {timeZone: props.timeZone, roundUp: props.roundUp}) ?? null;
-    }, [value, props.timeZone, props.roundUp]);
+            const date = dateTimeParse(relativeValue, {
+                timeZone: props.timeZone,
+                roundUp: props.roundUp,
+            });
+
+            return date?.isValid() ? date : null;
+        },
+        [props.roundUp, props.timeZone],
+    );
+
+    const parsedDate = React.useMemo(() => parseRelativeDate(text), [parseRelativeDate, text]);
 
     const [lastCorrectDate, setLastCorrectDate] = React.useState(parsedDate);
-    if (parsedDate && parsedDate !== lastCorrectDate) {
+    if (parsedDate && (!lastCorrectDate || !parsedDate.isSame(lastCorrectDate))) {
         setLastCorrectDate(parsedDate);
     }
 
-    const validationState = props.validationState || (text && !parsedDate) ? 'invalid' : undefined;
-
-    return {
-        value,
-        setValue(v: string | null) {
+    const commitValue = React.useCallback(
+        (nextValue: string | null) => {
             if (props.disabled || props.readOnly) {
                 return;
             }
 
-            setValue(v);
+            setValue(nextValue);
         },
+        [props.disabled, props.readOnly, setValue],
+    );
+
+    const confirmValue = React.useCallback(() => {
+        if (!text) {
+            return;
+        }
+
+        if (parsedDate) {
+            commitValue(text);
+            return;
+        }
+
+        const newValue = parseRelativeDate(value) ? value : null;
+        setText(newValue ?? '');
+        commitValue(newValue);
+    }, [commitValue, parseRelativeDate, parsedDate, text, value]);
+
+    const handleTextChange = React.useCallback(
+        (t: string) => {
+            if (props.disabled || props.readOnly) {
+                return;
+            }
+
+            setText(t);
+
+            if (!t) {
+                setValue(null);
+                return;
+            }
+
+            if (parseRelativeDate(t)) {
+                setValue(t);
+            }
+        },
+        [parseRelativeDate, props.disabled, props.readOnly, setValue],
+    );
+
+    const validationState = props.validationState ?? (text && !parsedDate ? 'invalid' : undefined);
+
+    return {
+        value,
+        setValue: commitValue,
+        confirmValue,
         text,
         setText: handleTextChange,
         parsedDate,

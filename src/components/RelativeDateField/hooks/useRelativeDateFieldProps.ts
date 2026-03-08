@@ -18,12 +18,13 @@ export function useRelativeDateFieldProps(
     state: RelativeDateFieldState,
     props: RelativeDateFieldProps,
 ): RelativeDateProps {
-    const [prevCorrectDate, setPrevCorrectDate] = React.useState(state.lastCorrectDate);
-    const [focusedDate, setFocusedDate] = React.useState(state.lastCorrectDate);
+    const lastCorrectDate = state.lastCorrectDate ? state.lastCorrectDate.startOf('day') : null;
+    const [prevCorrectDate, setPrevCorrectDate] = React.useState(lastCorrectDate);
+    const [focusedDate, setFocusedDate] = React.useState(lastCorrectDate);
 
-    if (prevCorrectDate !== state.lastCorrectDate) {
-        setPrevCorrectDate(state.lastCorrectDate);
-        setFocusedDate(state.lastCorrectDate);
+    if (lastCorrectDate && (!prevCorrectDate || !lastCorrectDate.isSame(prevCorrectDate, 'day'))) {
+        setPrevCorrectDate(lastCorrectDate);
+        setFocusedDate(lastCorrectDate);
     }
 
     return {
@@ -46,7 +47,10 @@ export function useRelativeDateFieldProps(
             placeholder: props.placeholder,
             onKeyDown: props.onKeyDown,
             onKeyUp: props.onKeyUp,
-            onBlur: props.onBlur,
+            onBlur(e) {
+                props.onBlur?.(e);
+                state.confirmValue();
+            },
             onFocus: props.onFocus,
             controlProps: {
                 'aria-label': props['aria-label'] || undefined,
@@ -60,7 +64,7 @@ export function useRelativeDateFieldProps(
         calendarProps: {
             size: props.size === 's' ? 'm' : props.size,
             readOnly: true,
-            value: state.parsedDate,
+            value: state.lastCorrectDate,
             focusedValue: focusedDate,
             onFocusUpdate: setFocusedDate,
         },
