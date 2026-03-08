@@ -73,7 +73,9 @@ export function useRangeDateFieldState(props: RangeDateFieldStateOptions): Range
     const [lastValue, setLastValue] = React.useState(value);
     const [lastTimezone, setLastTimezone] = React.useState(timeZone);
     if (
-        (value && !(value.start.isSame(lastValue?.start) && value.end.isSame(lastValue?.end))) ||
+        (value &&
+            (!lastValue ||
+                !(value.start.isSame(lastValue.start) && value.end.isSame(lastValue.end)))) ||
         (value && lastTimezone !== timeZone) ||
         (value === null && lastValue !== null)
     ) {

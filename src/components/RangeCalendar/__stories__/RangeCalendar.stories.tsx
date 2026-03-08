@@ -130,8 +130,8 @@ function getIsDateUnavailable(variant: string) {
         return (date: DateTime) =>
             disabledRanges.some(
                 (interval) =>
-                    (date.isSame(interval[0], 'date') || date.isAfter(interval[0])) &&
-                    (date.isSame(interval[1], 'date') || date.isBefore(interval[1])),
+                    (date.isSame(interval[0], 'day') || date.isAfter(interval[0])) &&
+                    (date.isSame(interval[1], 'day') || date.isBefore(interval[1])),
             );
     }
 
