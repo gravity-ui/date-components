@@ -1,8 +1,6 @@
 'use client';
 
-import React from 'react';
-
-import {Popup, TextInput, useFocusWithin, useMobile} from '@gravity-ui/uikit';
+import {Popup, TextInput, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
@@ -19,7 +17,6 @@ import type {
     TextInputExtendProps,
     TextInputProps,
 } from '../types';
-import {filterDOMProps} from '../utils/filterDOMProps';
 
 import {useRelativeDateFieldProps} from './hooks/useRelativeDateFieldProps';
 import {useRelativeDateFieldState} from './hooks/useRelativeDateFieldState';
@@ -49,62 +46,14 @@ export interface RelativeDateFieldProps
 }
 export function RelativeDateField(props: RelativeDateFieldProps) {
     const state = useRelativeDateFieldState(props);
-    const {
-        inputProps: {onBlur, ...inputProps},
-        calendarProps,
-        timeInputProps,
-    } = useRelativeDateFieldProps(state, props);
+    const {groupProps, inputProps, popupProps, calendarProps, timeInputProps} =
+        useRelativeDateFieldProps(state, props);
 
     const isMobile = useMobile();
 
-    const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-    const [isOpen, setOpen] = React.useState(false);
-    const dialogClosing = React.useRef(false);
-
-    const {focusWithinProps} = useFocusWithin({
-        onBlurWithin: onBlur,
-        onFocusWithinChange: (isFocusWithin) => {
-            if (!dialogClosing.current) {
-                setOpen(isFocusWithin);
-            }
-        },
-    });
-
-    const DOMProps = filterDOMProps(props);
-    delete DOMProps.id;
-
     return (
-        <div
-            {...DOMProps}
-            role="group"
-            className={b(null, props.className)}
-            style={props.style}
-            {...focusWithinProps}
-        >
-            <TextInput
-                {...inputProps}
-                className={b('field')}
-                ref={setAnchor}
-                onKeyDown={(e) => {
-                    inputProps.onKeyDown?.(e);
-                    if (
-                        !e.defaultPrevented &&
-                        e.altKey &&
-                        (e.key === 'ArrowDown' || e.key === 'ArrowUp')
-                    ) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setOpen(true);
-                    }
-                }}
-                controlProps={{
-                    ...inputProps.controlProps,
-                    onClick: () => {
-                        setOpen(true);
-                    },
-                }}
-            />
+        <div {...groupProps} role="group" className={b(null, props.className)} style={props.style}>
+            <TextInput {...inputProps} className={b('field')} />
             <HiddenInput
                 name={props.name}
                 value={state.value}
@@ -115,25 +64,7 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
                 form={props.form}
             />
             {!isMobile && (
-                <Popup
-                    anchorElement={anchor}
-                    open={isOpen}
-                    onOpenChange={(open) => {
-                        if (!open) {
-                            setOpen(false);
-                        }
-                        dialogClosing.current = !open;
-                    }}
-                    onTransitionOutComplete={() => {
-                        setTimeout(() => {
-                            dialogClosing.current = false;
-                        });
-                    }}
-                    placement={props.popupPlacement}
-                    offset={props.popupOffset}
-                    className={props.popupClassName}
-                    style={props.popupStyle}
-                >
+                <Popup {...popupProps} className={props.popupClassName} style={props.popupStyle}>
                     <div className={b('popup-content')}>
                         <Calendar {...calendarProps} />
                         {props.hasTime ? (

@@ -138,7 +138,7 @@ export function useRelativeDatePickerState(
 
     const selectedDate =
         mode === 'relative'
-            ? relativeDateState.parsedDate
+            ? relativeDateState.lastCorrectDate
             : datePickerState.dateFieldState.displayValue;
 
     const [isActive, setActive] = React.useState(false);
