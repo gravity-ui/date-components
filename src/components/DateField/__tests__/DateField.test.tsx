@@ -8,6 +8,65 @@ import {DateField} from '../DateField';
 import {cleanString} from '../utils';
 
 describe('DateField', () => {
+    it('should focus previous section when backspacing on an empty date section', async () => {
+        const value = dateTime({input: '2024-12-31'});
+        const screen = await render(<DateField defaultValue={value} format="DD.MM.YYYY" />);
+        const input = screen.getByRole('textbox').element() as HTMLInputElement;
+
+        await userEvent.keyboard('{Tab}');
+        await userEvent.keyboard('{ArrowRight}{ArrowRight}{ArrowRight}');
+
+        expect(cleanString(input.value)).toBe('31.12.2024');
+
+        // Press backspace to delete '2024'
+        for (let i = 0; i < 4; i++) {
+            await userEvent.keyboard('{backspace}');
+        }
+        expect(cleanString(input.value)).toBe('31.12.YYYY');
+        expect(input.selectionStart).toBe(15);
+        expect(input.selectionEnd).toBe(21);
+
+        await userEvent.keyboard('{backspace}');
+
+        expect(cleanString(input.value)).toBe('31.12.YYYY');
+        expect(input.selectionStart).toBe(8);
+        expect(input.selectionEnd).toBe(12);
+
+        // Press backspace to delete '12'
+        for (let i = 0; i < 2; i++) {
+            await userEvent.keyboard('{backspace}');
+        }
+        expect(cleanString(input.value)).toBe('31.MM.YYYY');
+        expect(input.selectionStart).toBe(8);
+        expect(input.selectionEnd).toBe(12);
+
+        await userEvent.keyboard('{backspace}');
+        expect(input.selectionStart).toBe(1);
+        expect(input.selectionEnd).toBe(5);
+
+        expect(cleanString(input.value)).toBe('31.MM.YYYY');
+    });
+
+    it('should allow continue entering value after backspacing', async () => {
+        const value = dateTime({input: '2024-12-31'});
+        const screen = await render(<DateField defaultValue={value} format="DD.MM.YYYY" />);
+        const input = screen.getByRole('textbox').element() as HTMLInputElement;
+
+        await userEvent.keyboard('{Tab}');
+        await userEvent.keyboard('{ArrowRight}{ArrowRight}{ArrowRight}');
+
+        expect(cleanString(input.value)).toBe('31.12.2024');
+
+        await userEvent.keyboard('{backspace}');
+        expect(cleanString(input.value)).toBe('31.12.0202');
+
+        await userEvent.keyboard('{backspace}');
+        expect(cleanString(input.value)).toBe('31.12.0020');
+
+        await userEvent.keyboard('25');
+        expect(cleanString(input.value)).toBe('31.12.2025');
+    });
+
     describe('format rendering', () => {
         it('renders two-digit year correctly for YY format', async () => {
             const value = dateTime({input: '2024-01-15T00:00:00'});
