@@ -59,40 +59,12 @@ export interface DateFieldSection {
      * For example, the value `1` should be rendered as "01" instead of "1".
      */
     hasLeadingZeros: boolean;
-    /**
-     * If `true`, the section value has been modified since the last time the sections were generated from a valid date.
-     * When we can generate a valid date from the section, we don't directly pass it to `onChange`,
-     * Otherwise, we would lose all the information contained in the original date, things like:
-     * - time if the format does not contain it
-     * - timezone / UTC
-     *
-     * To avoid losing that information, we transfer the values of the modified sections from the newly generated date to the original date.
-     */
-    modified: boolean;
-    /**
-     * Start index of the section in the format
-     */
-    start: number;
-    /**
-     * End index of the section in the format
-     */
-    end: number;
-
-    previousEditableSection: number;
-    nextEditableSection: number;
 }
 
-export type DateFieldSectionWithoutPosition<TSection extends DateFieldSection = DateFieldSection> =
-    Omit<
-        TSection,
-        | 'start'
-        | 'end'
-        | 'value'
-        | 'textValue'
-        | 'modified'
-        | 'previousEditableSection'
-        | 'nextEditableSection'
-    >;
+export type FormatSection<TSection extends DateFieldSection = DateFieldSection> = Omit<
+    TSection,
+    'value' | 'textValue'
+>;
 
 export type AvailableSections = Partial<Record<DateFieldSectionType, boolean>>;
 

@@ -7,12 +7,13 @@ import type {InputBase, Validation, ValueBase} from '../../types';
 import {createPlaceholderValue, isInvalid} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import {IncompleteDate} from '../IncompleteDate';
-import type {DateFieldSectionWithoutPosition} from '../types';
+import type {FormatSection} from '../types';
 import {
     addSegment,
     adjustDateToFormat,
     getEditableSections,
     getFormatInfo,
+    isEditableSectionType,
     parseDateFromString,
     setSegment,
     useFormatSections,
@@ -106,38 +107,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
     const sectionsState = useSectionsState(sections, displayValue, dateValue);
 
-    const [selectedSections, setSelectedSections] = React.useState<number | 'all'>(-1);
-
-    const selectedSectionIndexes = React.useMemo<{
-        startIndex: number;
-        endIndex: number;
-    } | null>(() => {
-        if (selectedSections === -1) {
-            return null;
-        }
-
-        if (selectedSections === 'all') {
-            return {
-                startIndex: 0,
-                endIndex: sectionsState.editableSections.length - 1,
-            };
-        }
-
-        if (typeof selectedSections === 'number') {
-            return {startIndex: selectedSections, endIndex: selectedSections};
-        }
-
-        if (typeof selectedSections === 'string') {
-            const selectedSectionIndex = sectionsState.editableSections.findIndex(
-                (section) => section.type === selectedSections,
-            );
-
-            return {startIndex: selectedSectionIndex, endIndex: selectedSectionIndex};
-        }
-
-        return selectedSections;
-    }, [selectedSections, sectionsState.editableSections]);
-
     function setValue(newValue: DateTime | IncompleteDate | null) {
         if (props.disabled || props.readOnly) {
             return;
@@ -181,12 +150,11 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         }
     }
 
-    function getSectionValue(_sectionIndex: number) {
-        return displayValue;
-    }
-
-    function setSectionValue(_sectionIndex: number, newValue: IncompleteDate) {
-        setValue(newValue);
+    function clearSection(sectionIndex: number) {
+        const section = sectionsState.editableSections[sectionIndex];
+        if (section && isEditableSectionType(section.type)) {
+            setValue(displayValue.clear(section.type));
+        }
     }
 
     function setValueFromString(str: string) {
@@ -222,47 +190,39 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     return useBaseDateFieldState({
         value,
         displayValue: dateValue,
-        placeholderValue: props.placeholderValue,
-        timeZone,
         validationState,
         editableSections: sectionsState.editableSections,
         formatInfo,
         readOnly: props.readOnly,
         disabled: props.disabled,
-        selectedSectionIndexes,
-        selectedSections,
         isEmpty: displayValue.isCleared(allSegments),
-        setSelectedSections,
         setValue,
         adjustSection,
         setSection,
-        getSectionValue,
-        setSectionValue,
+        clearSection,
         setValueFromString,
         confirmPlaceholder,
     });
 }
 
-function useSectionsState(
-    sections: DateFieldSectionWithoutPosition[],
-    value: IncompleteDate,
-    placeholder: DateTime,
-) {
+function useSectionsState(sections: FormatSection[], value: IncompleteDate, placeholder: DateTime) {
     const [state, setState] = React.useState(() => {
+        const editableSections = getEditableSections(sections, value, placeholder);
         return {
             value,
             sections,
             placeholder,
-            editableSections: getEditableSections(sections, value, placeholder),
+            editableSections,
         };
     });
 
     if (sections !== state.sections || placeholder !== state.placeholder || value !== state.value) {
+        const editableSections = getEditableSections(sections, value, placeholder);
         setState({
             value,
             sections,
             placeholder,
-            editableSections: getEditableSections(sections, value, placeholder),
+            editableSections,
         });
     }
 

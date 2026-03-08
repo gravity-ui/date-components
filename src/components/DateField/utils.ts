@@ -15,9 +15,9 @@ import type {
     AvailableSections,
     DateFieldSection,
     DateFieldSectionType,
-    DateFieldSectionWithoutPosition,
     DateFormatTokenMap,
     FormatInfo,
+    FormatSection,
 } from './types';
 
 export const EDITABLE_SEGMENTS = {
@@ -136,11 +136,7 @@ function isHour12(format: string) {
     return dateTime().set('hour', 15).format(format) !== '15';
 }
 
-function getSectionLimits(
-    section: DateFieldSectionWithoutPosition,
-    date: IncompleteDate,
-    placeholder: DateTime,
-) {
+function getSectionLimits(section: FormatSection, date: IncompleteDate, placeholder: DateTime) {
     const {type, format} = section;
     switch (type) {
         case 'year': {
@@ -195,7 +191,7 @@ function getSectionLimits(
     return {};
 }
 
-function getSectionValue(section: DateFieldSectionWithoutPosition, date: IncompleteDate) {
+function getSectionValue(section: FormatSection, date: IncompleteDate) {
     const type = section.type;
     switch (type) {
         case 'year': {
@@ -335,7 +331,7 @@ export function addSegment(
 }
 
 export function setSegment(
-    section: DateFieldSectionWithoutPosition,
+    section: FormatSection,
     date: IncompleteDate,
     amount: number,
     placeholder: DateTime,
@@ -530,7 +526,7 @@ function getSectionPlaceholder(
 
 type TranslateFunction = ExtractFunctionType<typeof i18n>;
 export function splitFormatIntoSections(format: string, t: TranslateFunction = i18n, lang = 'en') {
-    const sections: DateFieldSectionWithoutPosition[] = [];
+    const sections: FormatSection[] = [];
     const localeFormats = dayjs.Ls[lang].formats as LongDateFormat;
 
     const expandedFormat = expandFormat(format, localeFormats);
@@ -578,7 +574,7 @@ export function splitFormatIntoSections(format: string, t: TranslateFunction = i
 }
 
 function addFormatSection(
-    sections: DateFieldSectionWithoutPosition[],
+    sections: FormatSection[],
     token: string,
     t: TranslateFunction,
     lang: string,
@@ -604,7 +600,7 @@ function addFormatSection(
     });
 }
 
-function addLiteralSection(sections: DateFieldSectionWithoutPosition[], token: string) {
+function addLiteralSection(sections: FormatSection[], token: string) {
     if (!token) {
         return;
     }
@@ -619,7 +615,7 @@ function addLiteralSection(sections: DateFieldSectionWithoutPosition[], token: s
 }
 
 function getSectionOptions(
-    section: Pick<DateFieldSectionWithoutPosition, 'type' | 'contentType'>,
+    section: Pick<FormatSection, 'type' | 'contentType'>,
     token: string,
     lang: string,
 ) {
@@ -663,46 +659,11 @@ export function cleanString(dirtyString: string) {
 }
 
 export function getEditableSections(
-    sections: DateFieldSectionWithoutPosition[],
+    sections: FormatSection[],
     value: IncompleteDate,
     placeholder: DateTime,
 ) {
-    let position = 1;
-    const newSections: DateFieldSection[] = [];
-    let previousEditableSection = -1;
-    for (let i = 0; i < sections.length; i++) {
-        const section = sections[i];
-        if (!section) {
-            continue;
-        }
-
-        const newSection = toEditableSection(
-            section,
-            value,
-            placeholder,
-            position,
-            previousEditableSection,
-        );
-
-        newSections.push(newSection);
-
-        if (isEditableSectionType(section.type)) {
-            for (let j = Math.max(0, previousEditableSection); j <= i; j++) {
-                const prevSection = newSections[j];
-                if (prevSection) {
-                    prevSection.nextEditableSection = i;
-                    if (prevSection.previousEditableSection === -1) {
-                        prevSection.previousEditableSection = i;
-                    }
-                }
-            }
-            previousEditableSection = i;
-        }
-
-        position += newSection.textValue.length;
-    }
-
-    return newSections;
+    return sections.map((section) => toEditableSection(section, value, placeholder));
 }
 
 export function isEditableSectionType(
@@ -712,11 +673,9 @@ export function isEditableSectionType(
 }
 
 export function toEditableSection(
-    section: DateFieldSectionWithoutPosition,
+    section: FormatSection,
     value: IncompleteDate,
     placeholder: DateTime,
-    position: number,
-    previousEditableSection: number,
 ): DateFieldSection {
     let renderedValue = section.placeholder;
     let val = isEditableSectionType(section.type) ? value[section.type] : null;
@@ -744,42 +703,14 @@ export function toEditableSection(
         }
     }
 
-    // use bidirectional context to allow the browser autodetect text direction
-    renderedValue = '\u2068' + renderedValue + '\u2069';
-
-    const sectionLength = renderedValue.length;
-
     const newSection = {
         ...section,
         value: getSectionValue(section, value),
         textValue: renderedValue,
-        start: position,
-        end: position + sectionLength,
-        modified: false,
-        previousEditableSection,
-        nextEditableSection: previousEditableSection,
         ...getSectionLimits(section, value, placeholder),
     };
 
     return newSection;
-}
-
-export function getCurrentEditableSectionIndex(
-    sections: DateFieldSection[],
-    selectedSections: 'all' | number,
-) {
-    const currentIndex =
-        selectedSections === 'all' || selectedSections === -1 ? 0 : selectedSections;
-    const section = sections[currentIndex];
-    if (section && !isEditableSectionType(section.type)) {
-        return section.nextEditableSection;
-    }
-    return section ? currentIndex : -1;
-}
-
-export function formatSections(sections: DateFieldSection[]): string {
-    // use ltr direction context to get predictable navigation inside input
-    return '\u2066' + sections.map((s) => s.textValue).join('') + '\u2069';
 }
 
 function parseDate(options: {input: string; format: string; timeZone?: string}) {
@@ -833,7 +764,7 @@ export function useFormatSections(format: string) {
 const dateUnits = ['day', 'month', 'quarter', 'year'] satisfies DateFieldSectionType[];
 const timeUnits = ['second', 'minute', 'hour'] satisfies DateFieldSectionType[];
 
-export function getFormatInfo(sections: DateFieldSectionWithoutPosition[]): FormatInfo {
+export function getFormatInfo(sections: FormatSection[]): FormatInfo {
     const availableUnits: AvailableSections = {};
     let hasDate = false;
     let hasTime = false;

@@ -8,11 +8,10 @@ import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
 import {block} from '../../utils/cn';
 import {useDateFieldProps} from '../DateField/hooks/useDateFieldProps';
 import type {DateFieldProps} from '../DateField/hooks/useDateFieldProps';
+import {useRangeDateFieldState} from '../DateField/hooks/useRangeDateFieldState';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {RangeValue} from '../types';
 import {filterDOMProps} from '../utils/filterDOMProps';
-
-import {useRangeDateFieldState} from './hooks/useRangeDateFieldState';
 
 import './RangeDateField.scss';
 
