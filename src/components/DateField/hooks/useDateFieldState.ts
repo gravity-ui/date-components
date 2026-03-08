@@ -60,7 +60,8 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
     const [lastPlaceholder, setLastPlaceholder] = React.useState(props.placeholderValue);
     if (
-        (props.placeholderValue && !props.placeholderValue.isSame(lastPlaceholder)) ||
+        (props.placeholderValue &&
+            (!lastPlaceholder || !props.placeholderValue.isSame(lastPlaceholder))) ||
         (!props.placeholderValue && lastPlaceholder)
     ) {
         setLastPlaceholder(props.placeholderValue);
@@ -86,7 +87,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     const [lastValue, setLastValue] = React.useState(value);
     const [lastTimezone, setLastTimezone] = React.useState(timeZone);
     if (
-        (value && !value.isSame(lastValue)) ||
+        (value && (!lastValue || !value.isSame(lastValue))) ||
         (value && lastTimezone !== timeZone) ||
         (value === null && lastValue !== null)
     ) {
