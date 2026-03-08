@@ -8,6 +8,47 @@ import {DateField} from '../DateField';
 import {cleanString} from '../utils';
 
 describe('DateField', () => {
+    it('should display the correct placeholder for empty and focused states', async () => {
+        const screen = await render(<DateField placeholder="Select date" format="DD.MM.YYYY" />);
+        const input = screen.getByRole('textbox').element() as HTMLInputElement;
+
+        expect(input.placeholder).toBe('Select date');
+        expect(input.value).toBe('');
+
+        await userEvent.keyboard('{Tab}');
+
+        expect(cleanString(input.value)).toBe('DD.MM.YYYY');
+
+        await userEvent.click(screen.container);
+        expect(input.value).toBe('');
+    });
+
+    it('should display the correct placeholder for changed states', async () => {
+        const screen = await render(
+            <DateField
+                placeholder="Select date"
+                format="DD.MM.YYYY"
+                placeholderValue={dateTime({input: '2024-12-31'})}
+            />,
+        );
+        const input = screen.getByRole('textbox').element() as HTMLInputElement;
+
+        expect(input.placeholder).toBe('Select date');
+        expect(input.value).toBe('');
+
+        await userEvent.keyboard('{Tab}');
+
+        expect(cleanString(input.value)).toBe('DD.MM.YYYY');
+
+        await userEvent.keyboard('{ArrowUp}');
+
+        expect(cleanString(input.value)).toBe('31.MM.YYYY');
+
+        await userEvent.click(screen.container);
+
+        expect(cleanString(input.value)).toBe('31.MM.YYYY');
+    });
+
     it('should focus previous section when backspacing on an empty date section', async () => {
         const value = dateTime({input: '2024-12-31'});
         const screen = await render(<DateField defaultValue={value} format="DD.MM.YYYY" />);

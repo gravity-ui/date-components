@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {DateTime} from '@gravity-ui/date-utils';
+import {useFocusWithin} from '@gravity-ui/uikit';
 import type {TextInputProps} from '@gravity-ui/uikit';
 
 import type {
@@ -15,6 +16,7 @@ import type {
     TextInputExtendProps,
 } from '../../types';
 import {CtrlCmd} from '../../utils/constants.js';
+import {filterDOMProps} from '../../utils/filterDOMProps.js';
 import type {DateFieldSection} from '../types';
 import {cleanString} from '../utils';
 
@@ -36,7 +38,7 @@ export interface DateFieldProps<T = DateTime>
 export function useDateFieldProps<T = DateTime>(
     state: DateFieldState<T>,
     props: DateFieldProps<T>,
-): {inputProps: TextInputProps} {
+): {groupProps: React.HTMLAttributes<unknown>; inputProps: TextInputProps} {
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const [, setInnerState] = React.useState({});
@@ -255,9 +257,25 @@ export function useDateFieldProps<T = DateTime>(
         }
     }
 
+    const {focusWithinProps} = useFocusWithin({
+        onBlurWithin: () => {
+            state.confirmPlaceholder();
+        },
+        onFocusWithinChange(isFocusWithin) {
+            state.setActive(isFocusWithin);
+        },
+    });
+
+    const DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
     return {
+        groupProps: {
+            ...DOMProps,
+            ...focusWithinProps,
+        },
         inputProps: {
-            value: text,
+            value: state.isEmpty && !state.isActive && props.placeholder ? '' : text,
             view: props.view,
             size: props.size,
             disabled: state.disabled,
@@ -299,7 +317,6 @@ export function useDateFieldProps<T = DateTime>(
                 enteredKeys.current = '';
                 props.onBlur?.(e);
                 focusManager.focusSection(-1);
-                state.confirmPlaceholder();
             },
             onKeyDown(e) {
                 props.onKeyDown?.(e);

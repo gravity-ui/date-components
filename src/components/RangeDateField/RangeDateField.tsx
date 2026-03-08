@@ -1,9 +1,7 @@
 'use client';
 
-import React from 'react';
-
 import type {DateTime} from '@gravity-ui/date-utils';
-import {TextInput, useFocusWithin} from '@gravity-ui/uikit';
+import {TextInput} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {useDateFieldProps} from '../DateField/hooks/useDateFieldProps';
@@ -11,7 +9,6 @@ import type {DateFieldProps} from '../DateField/hooks/useDateFieldProps';
 import {useRangeDateFieldState} from '../DateField/hooks/useRangeDateFieldState';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
 import type {RangeValue} from '../types';
-import {filterDOMProps} from '../utils/filterDOMProps';
 
 import './RangeDateField.scss';
 
@@ -28,24 +25,11 @@ export type RangeDateFieldProps = DateFieldProps<RangeValue<DateTime>> & {
 export function RangeDateField({className, ...props}: RangeDateFieldProps) {
     const state = useRangeDateFieldState(props);
 
-    const {inputProps} = useDateFieldProps(state, props);
-
-    const [isActive, setActive] = React.useState(false);
-    const {focusWithinProps} = useFocusWithin({
-        onFocusWithinChange(isFocusWithin) {
-            setActive(isFocusWithin);
-        },
-    });
-
-    const DOMProps = filterDOMProps(props);
-    delete DOMProps.id;
+    const {groupProps, inputProps} = useDateFieldProps(state, props);
 
     return (
-        <div {...DOMProps} className={b(null, className)} style={props.style} {...focusWithinProps}>
-            <TextInput
-                {...inputProps}
-                value={state.isEmpty && !isActive && props.placeholder ? '' : inputProps.value}
-            />
+        <div {...groupProps} className={b(null, className)} style={props.style}>
+            <TextInput {...inputProps} />
             <HiddenInput
                 name={props.name}
                 form={props.form}

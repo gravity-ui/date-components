@@ -13,6 +13,49 @@ describe('RangeDateField', () => {
         return isMac ? '{Meta>}a{/Meta}' : '{Control>}a{/Control}';
     }
 
+    it('should display the correct placeholder for empty and focused states', async () => {
+        const screen = await render(
+            <RangeDateField placeholder="Select date range" format="DD.MM.YYYY" />,
+        );
+        const input = screen.getByRole('textbox').first().element() as HTMLInputElement;
+
+        expect(input.placeholder).toBe('Select date range');
+        expect(input.value).toBe('');
+
+        await userEvent.keyboard('{Tab}');
+
+        expect(cleanString(input.value)).toBe('DD.MM.YYYY — DD.MM.YYYY');
+
+        await userEvent.click(screen.container);
+        expect(input.value).toBe('');
+    });
+
+    it('should display the correct placeholder for changed states', async () => {
+        const screen = await render(
+            <RangeDateField
+                placeholder="Select date range"
+                format="DD.MM.YYYY"
+                placeholderValue={dateTime({input: '2024-12-31'})}
+            />,
+        );
+        const input = screen.getByRole('textbox').first().element() as HTMLInputElement;
+
+        expect(input.placeholder).toBe('Select date range');
+        expect(input.value).toBe('');
+
+        await userEvent.keyboard('{Tab}');
+
+        expect(cleanString(input.value)).toBe('DD.MM.YYYY — DD.MM.YYYY');
+
+        await userEvent.keyboard('{ArrowUp}');
+
+        expect(cleanString(input.value)).toBe('31.MM.YYYY — DD.MM.YYYY');
+
+        await userEvent.click(screen.container);
+
+        expect(cleanString(input.value)).toBe('31.MM.YYYY — DD.MM.YYYY');
+    });
+
     it('should display the correct range', async () => {
         const timeZone = 'Israel';
         const screen = await render(

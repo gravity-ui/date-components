@@ -1,3 +1,5 @@
+import React from 'react';
+
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {ValidationState} from '../../types';
@@ -67,8 +69,12 @@ export interface DateFieldState<T = DateTime> {
     clearAll: () => void;
     /** Sets the value of the given section. */
     setSection: (sectionIndex: number, amount: number) => void;
-    //** Tries to set value from str. Supports date in input format or ISO */
+    /** Tries to set value from str. Supports date in input format or ISO */
     setValueFromString: (str: string) => boolean;
+    /** Is date filed active now */
+    isActive: boolean;
+    /** Sets active state of the date field */
+    setActive: (isActive: boolean) => void;
 }
 
 export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
@@ -88,6 +94,8 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
         setValueFromString,
         confirmPlaceholder,
     } = props;
+
+    const [isActive, setActive] = React.useState(false);
 
     return {
         value,
@@ -178,5 +186,7 @@ export function useBaseDateFieldState<T = DateTime, V = IncompleteDate>(
             setValue(null);
         },
         setValueFromString,
+        isActive,
+        setActive,
     };
 }
