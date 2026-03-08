@@ -5,7 +5,13 @@ import type {RelativeRangeDatePickerValue} from '../../RelativeRangeDatePicker';
 import type {ExtractFunctionType} from '../../types';
 
 import {getValidationResult} from './datePicker';
+import type {ValidationResult} from './datePicker';
 import {i18n} from './i18n';
+
+interface RangeValidationResult extends ValidationResult {
+    startValidationResult: ValidationResult;
+    endValidationResult: ValidationResult;
+}
 
 export function getRangeValidationResult(
     value: RelativeRangeDatePickerValue | null,
@@ -15,9 +21,14 @@ export function getRangeValidationResult(
     isDateUnavailable: ((v: DateTime, endpoint: 'start' | 'end') => boolean) | undefined,
     timeZone: string,
     t: ExtractFunctionType<typeof i18n> = i18n,
-) {
+): RangeValidationResult {
     if (!value) {
-        return {isInvalid: false, errors: []};
+        return {
+            isInvalid: false,
+            errors: [],
+            startValidationResult: {isInvalid: false, errors: []},
+            endValidationResult: {isInvalid: false, errors: []},
+        };
     }
 
     const startDate = value.start ? dateTimeParse(value.start.value, {timeZone}) : null;

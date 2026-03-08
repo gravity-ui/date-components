@@ -63,7 +63,7 @@ export interface DatePickerState<T = DateTime> {
     dateFieldState: DateFieldState<T>;
 }
 
-export interface DatePickerStateFactoryOptions<T, O extends DateFieldBase<T>> {
+interface DatePickerStateFactoryOptions<T, O extends DateFieldBase<T>> {
     getPlaceholderTime: (placeholderValue: DateTime | undefined, timeZone?: string) => T;
     mergeDateTime: (date: T, time: T) => T;
     setTimezone: (date: T, timeZone: string) => T;

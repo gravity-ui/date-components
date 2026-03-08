@@ -16,7 +16,7 @@ import './Presets.scss';
 
 const b = block('relative-range-date-picker-presets');
 
-export interface PresetProps {
+interface PresetProps {
     className?: string;
     onChoosePreset: (start: string, end: string) => void;
     withTime?: boolean;
@@ -75,7 +75,7 @@ export function Presets({
         </div>
     );
 }
-export const SIZE_TO_ITEM_HEIGHT = {
+const SIZE_TO_ITEM_HEIGHT = {
     s: 28,
     m: 28,
     l: 32,

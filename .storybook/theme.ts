@@ -29,13 +29,13 @@ const common: Omit<ThemeVarsPartial, 'base'> = {
     brandUrl: 'https://gravity-ui.com/',
 };
 
-export const CloudThemeLight = create({
+const CloudThemeLight = create({
     base: 'light',
     ...common,
     brandTitle: renderBrandTitle('light'),
 });
 
-export const CloudThemeDark = create({
+const CloudThemeDark = create({
     base: 'dark',
     ...common,
     brandTitle: renderBrandTitle('dark'),

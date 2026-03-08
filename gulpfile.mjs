@@ -19,6 +19,7 @@ task('clean', () => {
 async function compileTs(modules = false) {
     const tsProject = await createTypescriptProject({
         compilerOptions: {
+            noEmit: false,
             declaration: true,
             ...(modules ? undefined : {verbatimModuleSyntax: false}),
             module: modules ? 'esnext' : 'NodeNext',

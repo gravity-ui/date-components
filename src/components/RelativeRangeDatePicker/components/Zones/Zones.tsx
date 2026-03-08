@@ -42,7 +42,7 @@ zones.unshift({
 
 const b = block('relative-range-date-picker-zones');
 
-export interface ZonesProps {
+interface ZonesProps {
     value: string;
     onUpdate: (timeZone: string) => void;
     size?: 's' | 'm' | 'l' | 'xl';
