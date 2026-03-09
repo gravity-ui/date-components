@@ -48,10 +48,23 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
     delete DOMProps.id;
 
     return (
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <div
             {...DOMProps}
             ref={setAnchor}
             {...focusWithinProps}
+            onKeyDown={(e) => {
+                if (
+                    open &&
+                    e.key === 'Escape' &&
+                    (e.currentTarget as HTMLElement).contains(e.target as Node)
+                ) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(false);
+                    dialogClosing.current = true;
+                }
+            }}
             className={b(null, props.className)}
             style={props.style}
         >

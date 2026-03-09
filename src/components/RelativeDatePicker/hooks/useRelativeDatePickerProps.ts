@@ -155,7 +155,23 @@ export function useRelativeDatePickerProps(
             role: 'group',
             ...focusWithinProps,
             onKeyDown: (e) => {
-                if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                const isTargetInsideGroup = (e.currentTarget as HTMLElement).contains(
+                    e.target as Node,
+                );
+
+                if (isOpen && e.key === 'Escape' && isTargetInsideGroup) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(false);
+                    focusInput();
+                    return;
+                }
+
+                if (
+                    e.altKey &&
+                    (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+                    isTargetInsideGroup
+                ) {
                     e.preventDefault();
                     e.stopPropagation();
                     setOpen(true);

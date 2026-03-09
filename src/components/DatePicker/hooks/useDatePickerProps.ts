@@ -103,7 +103,23 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             style: props.style,
             'aria-disabled': state.disabled || undefined,
             onKeyDown: (e) => {
-                if (!onlyTime && e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                const isTargetInsideGroup = (e.currentTarget as HTMLElement).contains(
+                    e.target as Node,
+                );
+
+                if (state.isOpen && e.key === 'Escape' && isTargetInsideGroup) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    state.setOpen(false, 'EscapeKeyDown');
+                    return;
+                }
+
+                if (
+                    !onlyTime &&
+                    e.altKey &&
+                    (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+                    isTargetInsideGroup
+                ) {
                     e.preventDefault();
                     e.stopPropagation();
                     state.setOpen(true, 'ShortcutKeyDown');
