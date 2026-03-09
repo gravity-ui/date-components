@@ -57,6 +57,17 @@ export function useRelativeDateFieldProps(
             ...DOMProps,
             ...focusWithinProps,
             role: 'group',
+            onKeyDown: (e) => {
+                if (
+                    isOpen &&
+                    e.key === 'Escape' &&
+                    (e.currentTarget as HTMLElement).contains(e.target as Node)
+                ) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(false);
+                }
+            },
         },
         inputProps: {
             ref: setAnchor,
