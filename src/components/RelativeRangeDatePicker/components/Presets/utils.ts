@@ -73,16 +73,15 @@ function isDateUnit(value: string): value is 's' | 'm' | 'h' | 'd' | 'w' | 'M' |
     return ['s', 'm', 'h', 'd', 'w', 'M', 'y'].includes(value);
 }
 
-export function filterPresets(
-    presets: Preset[],
-    minValue?: DateTime,
-    allowNullableValues?: boolean,
-) {
+function filterPresets(presets: Preset[], minValue?: DateTime, allowNullableValues?: boolean) {
     return presets.filter((preset) => {
-        const from = dateTimeParse(preset.from);
-        const to = dateTimeParse(preset.to, {roundUp: true});
+        const from = preset.from ? dateTimeParse(preset.from) : undefined;
+        const to = preset.to ? dateTimeParse(preset.to, {roundUp: true}) : undefined;
 
-        if (!allowNullableValues && (!from || !to)) {
+        const hasNullableFrom = allowNullableValues && preset.from === null;
+        const hasNullableTo = allowNullableValues && preset.to === null;
+
+        if ((!from && !hasNullableFrom) || (!to && !hasNullableTo)) {
             return false;
         }
 

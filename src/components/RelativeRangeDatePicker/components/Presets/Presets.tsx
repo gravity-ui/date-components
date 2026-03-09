@@ -40,7 +40,7 @@ export function Presets({
             presetTabs ?? getDefaultPresetTabs({withTime, allowNullableValues, t}),
             {minValue, allowNullableValues},
         );
-    }, [withTime, minValue, presetTabs, t]);
+    }, [presetTabs, withTime, allowNullableValues, t, minValue]);
 
     const [activeTabId, setActiveTab] = React.useState(tabs[0]?.id);
 

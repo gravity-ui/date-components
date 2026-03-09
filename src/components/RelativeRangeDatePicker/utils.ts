@@ -95,6 +95,15 @@ export function getDefaultTitle({
         return getPresetTitle(presetSearch.start, presetSearch.end, presets, presetsTranslations);
     }
 
+    if (allowNullableValues) {
+        if (!from) {
+            return `${presetsTranslations('To')}: ${to}${tz}`;
+        }
+        if (!to) {
+            return `${presetsTranslations('From')}: ${from}${tz}`;
+        }
+    }
+
     const delimiter = ' — ';
 
     return `${from}${delimiter}${to}${tz}`;

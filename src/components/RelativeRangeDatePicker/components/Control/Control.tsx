@@ -67,6 +67,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                           lang,
                       }),
             [
+                allowNullableValues,
                 alwaysShowAsAbsolute,
                 format,
                 getRangeTitle,

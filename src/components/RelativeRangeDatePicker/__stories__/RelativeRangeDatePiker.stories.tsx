@@ -10,26 +10,6 @@ import preview from '#.storybook/preview';
 import {timeZoneControl} from '../../../demo/utils/zones';
 import type {Value} from '../../RelativeDatePicker';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
-import type {RelativeRangeDatePickerProps} from '../types';
-
-const DEFAULT_RANGE_DATE_PICKER_PRESET: RelativeRangeDatePickerProps['presetTabs'] = [
-    {
-        id: 'main',
-        title: 'Presets',
-        presets: [
-            {
-                from: 'now',
-                to: 'now+30d',
-                title: '30 days',
-            },
-            {
-                from: 'now',
-                to: null,
-                title: 'Unlimited',
-            },
-        ],
-    },
-];
 
 const meta = preview.meta({
     title: 'Components/RelativeRangeDatePicker',
@@ -59,19 +39,8 @@ export const Default = meta.story({
         const timeZone = props.timeZone;
         const minValue = props.minValue ? dateTimeParse(props.minValue, {timeZone}) : undefined;
         const maxValue = props.maxValue ? dateTimeParse(props.maxValue, {timeZone}) : undefined;
-        let presetTabs;
-        if (props.withPresets) {
-            presetTabs = DEFAULT_RANGE_DATE_PICKER_PRESET;
-        }
 
-        return (
-            <RelativeRangeDatePicker
-                {...props}
-                minValue={minValue}
-                maxValue={maxValue}
-                presetTabs={presetTabs}
-            />
-        );
+        return <RelativeRangeDatePicker {...props} minValue={minValue} maxValue={maxValue} />;
     },
     args: {
         onUpdate: (res, timeZone) => {
@@ -183,6 +152,22 @@ export const CustomPresets = Default.extend({
                     {to: 'now', from: 'now-5M', title: 'Last five months'},
                     {to: 'now', from: 'now-5Q', title: 'Last five quarters'},
                     {to: 'now', from: 'now-5y', title: 'Last five years'},
+                ],
+            },
+            {
+                id: 'unlimited',
+                title: 'Unlimited',
+                presets: [
+                    {
+                        from: null,
+                        to: 'now',
+                        title: 'Past',
+                    },
+                    {
+                        from: 'now',
+                        to: null,
+                        title: 'Future',
+                    },
                 ],
             },
         ],
