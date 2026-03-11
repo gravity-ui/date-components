@@ -2,16 +2,20 @@ import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
+import {action} from 'storybook/actions';
 
 import {TimeSelection} from '../TimeSelection';
-import type {TimeSelectionView} from '../TimeSelection.types';
+import type {TimeSelectionProps, TimeSelectionView} from '../TimeSelection.types';
 
-const meta: Meta<typeof TimeSelection> = {
+import preview from '#.storybook/preview';
+
+const meta = preview.meta({
     title: 'Components/TimeSelection',
     component: TimeSelection,
-    parameters: {
-        layout: 'centered',
+    tags: ['autodocs'],
+    args: {
+        onUpdate: action('onUpdate'),
+        onFocusViewUpdate: action('onFocusViewUpdate'),
     },
     argTypes: {
         ampm: {
@@ -53,16 +57,14 @@ const meta: Meta<typeof TimeSelection> = {
             description: 'Часовой пояс (например, "America/New_York")',
         },
     },
-    tags: ['autodocs'],
-};
+});
 
 export default meta;
-type Story = StoryObj<typeof TimeSelection>;
 
-const Template = (args: any) => {
+const TimeSelectionWrapper = (props: TimeSelectionProps) => {
     const [value, setValue] = React.useState<DateTime>(dateTime());
     const [focusedView, setFocusedView] = React.useState<TimeSelectionView>(
-        args.defaultFocusView || 'hours',
+        props.defaultFocusView || 'hours',
     );
 
     return (
@@ -76,7 +78,7 @@ const Template = (args: any) => {
             }}
         >
             <TimeSelection
-                {...args}
+                {...props}
                 value={value}
                 onUpdate={setValue}
                 focusedView={focusedView}
@@ -89,92 +91,23 @@ const Template = (args: any) => {
                     fontFamily: 'var(--g-text-body-font-family)',
                 }}
             >
-                Выбрано: <strong>{value.format(args.ampm ? 'hh:mm:ss A' : 'HH:mm:ss')}</strong>
+                Выбрано: <strong>{value.format(props.ampm ? 'hh:mm:ss A' : 'HH:mm:ss')}</strong>
             </div>
         </div>
     );
 };
 
-const ControlledTemplate = (args: any) => {
-    const [value, setValue] = React.useState<DateTime>(dateTime().hour(14).minute(30).second(0));
+export const Default = meta.story({
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
+    args: {
+        views: ['hours', 'minutes'],
+        timeSteps: {hours: 1, minutes: 1, seconds: 1},
+    },
+});
 
-    return (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 16,
-                padding: 20,
-            }}
-        >
-            <TimeSelection {...args} value={value} onUpdate={setValue} />
-            <div
-                style={{
-                    fontSize: 14,
-                    color: 'var(--g-color-text-secondary)',
-                    fontFamily: 'var(--g-text-body-font-family)',
-                }}
-            >
-                <div>
-                    Выбрано: <strong>{value.format('HH:mm:ss')}</strong>
-                </div>
-                <div style={{marginTop: 8}}>
-                    <button
-                        onClick={() => setValue(dateTime())}
-                        style={{
-                            padding: '6px 12px',
-                            cursor: 'pointer',
-                            borderRadius: 4,
-                            border: '1px solid var(--g-color-line-generic)',
-                            background: 'var(--g-color-base-background)',
-                        }}
-                    >
-                        Сбросить на текущее время
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const UncontrolledTemplate = (args: any) => {
-    const [lastValue, setLastValue] = React.useState<DateTime | null>(null);
-
-    return (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 16,
-                padding: 20,
-            }}
-        >
-            <TimeSelection
-                {...args}
-                defaultValue={dateTime().hour(10).minute(30)}
-                onUpdate={setLastValue}
-            />
-            <div
-                style={{
-                    fontSize: 14,
-                    color: 'var(--g-color-text-secondary)',
-                    fontFamily: 'var(--g-text-body-font-family)',
-                }}
-            >
-                {lastValue ? (
-                    <div>
-                        Последнее обновление: <strong>{lastValue.format('HH:mm:ss')}</strong>
-                    </div>
-                ) : (
-                    <div>Выберите время</div>
-                )}
-            </div>
-        </div>
-    );
-};
-
-export const WithDefaultValue: Story = {
-    render: (args: any) => {
+export const WithDefaultValue = meta.story({
+    name: 'With Default Value (13:37:12)',
+    render: (args: TimeSelectionProps) => {
         const [value, setValue] = React.useState<DateTime>(
             dateTime().hour(13).minute(37).second(12),
         );
@@ -201,6 +134,7 @@ export const WithDefaultValue: Story = {
                     </div>
                     <div style={{marginTop: 8}}>
                         <button
+                            type="button"
                             onClick={() => setValue(dateTime().hour(13).minute(37).second(12))}
                             style={{
                                 padding: '6px 12px',
@@ -221,89 +155,77 @@ export const WithDefaultValue: Story = {
         views: ['hours', 'minutes', 'seconds'],
         timeSteps: {hours: 1, minutes: 1, seconds: 1},
     },
-    parameters: {
-        docs: {
-            description: {
-                story: 'Компонент с установленным начальным значением 13:37:12',
-            },
-        },
-    },
-};
+    description: 'Компонент с установленным начальным значением 13:37:12 🎯',
+});
 
-export const Default: Story = {
-    render: Template,
-    args: {
-        views: ['hours', 'minutes'],
-        timeSteps: {hours: 1, minutes: 1, seconds: 1},
-    },
-};
-
-export const WithAMPM: Story = {
-    render: Template,
+export const WithAMPM = meta.story({
+    name: 'With AM/PM',
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
     args: {
         ampm: true,
         views: ['hours', 'minutes'],
         timeSteps: {hours: 1, minutes: 5, seconds: 1},
     },
-};
+});
 
-export const WithSeconds: Story = {
-    render: Template,
+export const WithSeconds = meta.story({
+    name: 'With Seconds',
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
     args: {
         views: ['hours', 'minutes', 'seconds'],
         timeSteps: {hours: 1, minutes: 1, seconds: 1},
     },
-};
+});
 
-export const CustomSteps: Story = {
-    render: Template,
+export const CustomSteps = meta.story({
+    name: 'Custom Steps',
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
     args: {
         views: ['hours', 'minutes', 'seconds'],
         timeSteps: {hours: 2, minutes: 15, seconds: 30},
     },
-    parameters: {
-        docs: {
-            description: {
-                story: 'Компонент с кастомными шагами: часы - каждые 2 часа, минуты - каждые 15 минут, секунды - каждые 30 секунд',
-            },
-        },
-    },
-};
+    description:
+        'Компонент с кастомными шагами: часы - каждые 2 часа, минуты - каждые 15 минут, секунды - каждые 30 секунд',
+});
 
-export const OnlyHours: Story = {
-    render: Template,
+export const OnlyHours = meta.story({
+    name: 'Only Hours',
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
     args: {
         views: ['hours'],
         ampm: true,
     },
-};
+});
 
-export const OnlyMinutes: Story = {
-    render: Template,
+export const OnlyMinutes = meta.story({
+    name: 'Only Minutes',
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
     args: {
         views: ['minutes'],
         timeSteps: {hours: 1, minutes: 5, seconds: 1},
     },
-};
+});
 
-export const ReadOnly: Story = {
-    render: Template,
+export const ReadOnly = meta.story({
+    name: 'Read Only',
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
     args: {
         readOnly: true,
         views: ['hours', 'minutes', 'seconds'],
     },
-};
+});
 
-export const Disabled: Story = {
-    render: Template,
+export const Disabled = meta.story({
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
     args: {
         disabled: true,
         views: ['hours', 'minutes'],
     },
-};
+});
 
-export const WithMinMaxValues: Story = {
-    render: (args: any) => {
+export const WithMinMaxValues = meta.story({
+    name: 'With Min/Max Values',
+    render: (args: TimeSelectionProps) => {
         const [value, setValue] = React.useState<DateTime>(dateTime().hour(12).minute(0).second(0));
         const minValue = dateTime().hour(9).minute(0).second(0);
         const maxValue = dateTime().hour(18).minute(0).second(0);
@@ -345,10 +267,11 @@ export const WithMinMaxValues: Story = {
         views: ['hours', 'minutes'],
         timeSteps: {hours: 1, minutes: 30, seconds: 1},
     },
-};
+});
 
-export const WithCustomValidation: Story = {
-    render: (args: any) => {
+export const WithCustomValidation = meta.story({
+    name: 'With Custom Validation',
+    render: (args: TimeSelectionProps) => {
         const [value, setValue] = React.useState<DateTime>(dateTime().hour(10).minute(0));
 
         const isTimeDisabled = (val: DateTime, view: TimeSelectionView) => {
@@ -397,38 +320,106 @@ export const WithCustomValidation: Story = {
     args: {
         views: ['hours', 'minutes'],
     },
-};
+});
 
-export const ControlledComponent: Story = {
-    render: ControlledTemplate,
+export const ControlledComponent = meta.story({
+    name: 'Controlled Component',
+    render: (args: TimeSelectionProps) => {
+        const [value, setValue] = React.useState<DateTime>(
+            dateTime().hour(14).minute(30).second(0),
+        );
+
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 16,
+                    padding: 20,
+                }}
+            >
+                <TimeSelection {...args} value={value} onUpdate={setValue} />
+                <div
+                    style={{
+                        fontSize: 14,
+                        color: 'var(--g-color-text-secondary)',
+                        fontFamily: 'var(--g-text-body-font-family)',
+                    }}
+                >
+                    <div>
+                        Выбрано: <strong>{value.format('HH:mm:ss')}</strong>
+                    </div>
+                    <div style={{marginTop: 8}}>
+                        <button
+                            type="button"
+                            onClick={() => setValue(dateTime())}
+                            style={{
+                                padding: '6px 12px',
+                                cursor: 'pointer',
+                                borderRadius: 4,
+                                border: '1px solid var(--g-color-line-generic)',
+                                background: 'var(--g-color-base-background)',
+                            }}
+                        >
+                            Сбросить на текущее время
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    },
     args: {
         views: ['hours', 'minutes', 'seconds'],
     },
-    parameters: {
-        docs: {
-            description: {
-                story: 'Пример полностью контролируемого компонента с внешним управлением состоянием',
-            },
-        },
-    },
-};
+    description: 'Пример полностью контролируемого компонента с внешним управлением состоянием',
+});
 
-export const UncontrolledComponent: Story = {
-    render: UncontrolledTemplate,
+export const UncontrolledComponent = meta.story({
+    name: 'Uncontrolled Component',
+    render: (args: TimeSelectionProps) => {
+        const [lastValue, setLastValue] = React.useState<DateTime | null>(null);
+
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 16,
+                    padding: 20,
+                }}
+            >
+                <TimeSelection
+                    {...args}
+                    defaultValue={dateTime().hour(10).minute(30)}
+                    onUpdate={setLastValue}
+                />
+                <div
+                    style={{
+                        fontSize: 14,
+                        color: 'var(--g-color-text-secondary)',
+                        fontFamily: 'var(--g-text-body-font-family)',
+                    }}
+                >
+                    {lastValue ? (
+                        <div>
+                            Последнее обновление: <strong>{lastValue.format('HH:mm:ss')}</strong>
+                        </div>
+                    ) : (
+                        <div>Выберите время</div>
+                    )}
+                </div>
+            </div>
+        );
+    },
     args: {
         views: ['hours', 'minutes'],
     },
-    parameters: {
-        docs: {
-            description: {
-                story: 'Пример неконтролируемого компонента с defaultValue',
-            },
-        },
-    },
-};
+    description: 'Пример неконтролируемого компонента с defaultValue',
+});
 
-export const WithTimeZone: Story = {
-    render: (args: any) => {
+export const WithTimeZone = meta.story({
+    name: 'With TimeZone',
+    render: (args: TimeSelectionProps) => {
         const [value, setValue] = React.useState<DateTime>(dateTime());
         const [timeZone, setTimeZone] = React.useState('America/New_York');
 
@@ -481,10 +472,11 @@ export const WithTimeZone: Story = {
     args: {
         views: ['hours', 'minutes'],
     },
-};
+});
 
-export const AllViews: Story = {
-    render: (args: any) => {
+export const AllViews = meta.story({
+    name: 'All Views',
+    render: (args: TimeSelectionProps) => {
         const [value, setValue] = React.useState<DateTime>(dateTime());
 
         return (
@@ -520,10 +512,10 @@ export const AllViews: Story = {
         views: ['hours', 'minutes', 'seconds'],
         timeSteps: {hours: 1, minutes: 1, seconds: 1},
     },
-};
+});
 
-export const Playground: Story = {
-    render: Template,
+export const Playground = meta.story({
+    render: (args: TimeSelectionProps) => <TimeSelectionWrapper {...args} />,
     args: {
         ampm: false,
         disabled: false,
@@ -532,11 +524,5 @@ export const Playground: Story = {
         timeSteps: {hours: 1, minutes: 5, seconds: 1},
         defaultFocusView: 'hours',
     },
-    parameters: {
-        docs: {
-            description: {
-                story: 'Интерактивная площадка для экспериментов с различными настройками компонента',
-            },
-        },
-    },
-};
+    description: 'Интерактивная площадка для экспериментов с различными настройками компонента',
+});
