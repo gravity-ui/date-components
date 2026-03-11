@@ -4,10 +4,10 @@ import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {action} from 'storybook/actions';
 
+import preview from '#.storybook/preview';
+
 import {TimeSelection} from '../TimeSelection';
 import type {TimeSelectionProps, TimeSelectionView} from '../TimeSelection.types';
-
-import preview from '#.storybook/preview';
 
 const meta = preview.meta({
     title: 'Components/TimeSelection',
