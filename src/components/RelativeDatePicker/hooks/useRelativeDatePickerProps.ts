@@ -22,7 +22,7 @@ interface InnerRelativeDatePickerProps {
     modeSwitcherProps: ButtonButtonProps;
     calendarButtonProps: ButtonButtonProps;
     popupProps: PopupProps;
-    calendarProps: React.ComponentProps<typeof Calendar>;
+    calendarProps: React.ComponentProps<typeof Calendar<'single'>>;
     timeInputProps: DateFieldProps;
 }
 
@@ -32,16 +32,17 @@ export function useRelativeDatePickerProps(
 ): InnerRelativeDatePickerProps {
     const {mode, setMode, datePickerState, relativeDateState} = state;
 
+    const lastCorrectDate = relativeDateState.lastCorrectDate
+        ? relativeDateState.lastCorrectDate.startOf('day')
+        : null;
     const [focusedDate, setFocusedDate] = React.useState(
-        mode === 'relative'
-            ? relativeDateState.lastCorrectDate
-            : datePickerState.dateFieldState.displayValue,
+        mode === 'relative' ? lastCorrectDate : datePickerState.dateFieldState.displayValue,
     );
 
-    const [prevCorrectDate, setPrevCorrectDate] = React.useState(relativeDateState.lastCorrectDate);
-    if (prevCorrectDate !== relativeDateState.lastCorrectDate) {
-        setPrevCorrectDate(relativeDateState.lastCorrectDate);
-        setFocusedDate(relativeDateState.lastCorrectDate);
+    const [prevCorrectDate, setPrevCorrectDate] = React.useState(lastCorrectDate);
+    if (lastCorrectDate && (!prevCorrectDate || !lastCorrectDate.isSame(prevCorrectDate, 'day'))) {
+        setPrevCorrectDate(lastCorrectDate);
+        setFocusedDate(lastCorrectDate);
     }
 
     const [prevDateValue, setPrevDateValue] = React.useState(
@@ -55,8 +56,14 @@ export function useRelativeDatePickerProps(
         onFocusWithin: onFocus,
         onBlurWithin: onBlur,
         onFocusWithinChange(isFocusWithin) {
+            state.datePickerState.dateFieldState.setActive(isFocusWithin);
             if (!isFocusWithin) {
                 state.setActive(false);
+                if (mode === 'relative') {
+                    state.relativeDateState.confirmValue();
+                } else {
+                    state.datePickerState.dateFieldState.confirmPlaceholder();
+                }
             }
         },
     });
@@ -148,7 +155,23 @@ export function useRelativeDatePickerProps(
             role: 'group',
             ...focusWithinProps,
             onKeyDown: (e) => {
-                if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                const isTargetInsideGroup = (e.currentTarget as HTMLElement).contains(
+                    e.target as Node,
+                );
+
+                if (isOpen && e.key === 'Escape' && isTargetInsideGroup) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(false);
+                    focusInput();
+                    return;
+                }
+
+                if (
+                    e.altKey &&
+                    (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+                    isTargetInsideGroup
+                ) {
                     e.preventDefault();
                     e.stopPropagation();
                     setOpen(true);
@@ -216,7 +239,7 @@ export function useRelativeDatePickerProps(
             onTransitionOutComplete: () => {
                 setFocusedDate(
                     mode === 'relative'
-                        ? relativeDateState.lastCorrectDate
+                        ? lastCorrectDate
                         : datePickerState.dateFieldState.displayValue,
                 );
             },

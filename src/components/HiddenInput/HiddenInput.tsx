@@ -26,7 +26,7 @@ export function HiddenInput<T>({
     return <input ref={ref} type="hidden" name={name} value={v} disabled={disabled} form={form} />;
 }
 
-export function useFormResetHandler<T>({
+function useFormResetHandler<T>({
     initialValue,
     onReset,
 }: {

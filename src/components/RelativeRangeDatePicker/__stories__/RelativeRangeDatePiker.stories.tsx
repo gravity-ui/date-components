@@ -3,15 +3,15 @@ import React from 'react';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import {Button, Dialog, Text} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import type {Value} from '../../RelativeDatePicker';
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
-import type {RelativeRangeDatePickerProps} from '../types';
 
-const meta: Meta<typeof RelativeRangeDatePicker> = {
+const meta = preview.meta({
     title: 'Components/RelativeRangeDatePicker',
     component: RelativeRangeDatePicker,
     tags: ['autodocs'],
@@ -20,11 +20,7 @@ const meta: Meta<typeof RelativeRangeDatePicker> = {
         onBlur: action('onBlur'),
         onOpenChange: action('onOpenChange'),
     },
-};
-
-export default meta;
-
-type Story = StoryObj<typeof RelativeRangeDatePicker>;
+});
 
 function stringifyValue(value: Value | null): string {
     if (!value) {
@@ -38,7 +34,7 @@ function stringifyValue(value: Value | null): string {
     return JSON.stringify({...value, value: value.value.format()}, null, 2);
 }
 
-export const Default = {
+export const Default = meta.story({
     render: (props) => {
         const timeZone = props.timeZone;
         const minValue = props.minValue ? dateTimeParse(props.minValue, {timeZone}) : undefined;
@@ -90,10 +86,12 @@ export const Default = {
         },
         timeZone: timeZoneControl,
     },
-} satisfies Story;
+});
 
-export const InsideDialog: StoryObj<RelativeRangeDatePickerProps> = {
-    ...Default,
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'RelativeRangeDatePicker'});
+
+export const InsideDialog = Default.extend({
     render: function InsideDialog(args) {
         const [isOpen, setOpen] = React.useState(false);
         return (
@@ -108,32 +106,44 @@ export const InsideDialog: StoryObj<RelativeRangeDatePickerProps> = {
                 <Dialog open={isOpen} onClose={() => setOpen(false)}>
                     <Dialog.Header />
                     <Dialog.Body>
-                        <div style={{paddingTop: 16}}>{Default.render(args)}</div>
+                        <div style={{paddingTop: 16}}>
+                            <DefaultComponent {...args} />
+                        </div>
                     </Dialog.Body>
                 </Dialog>
             </React.Fragment>
         );
     },
-};
+});
 
-export const CustomControl: StoryObj<RelativeRangeDatePickerProps> = {
-    ...Default,
+export const CustomControl = Default.extend({
     args: {
-        ...Default.args,
         style: undefined,
+        renderControl: ({title, triggerProps, ref}) => {
+            return (
+                <Button ref={ref as React.Ref<HTMLButtonElement>} {...triggerProps}>
+                    {title || 'Not selected'}
+                </Button>
+            );
+        },
     },
-    render: (props) => {
-        return (
-            <RelativeRangeDatePicker
-                {...props}
-                renderControl={({title, triggerProps, ref}) => {
-                    return (
-                        <Button ref={ref as React.Ref<HTMLButtonElement>} {...triggerProps}>
-                            {title || 'Not selected'}
-                        </Button>
-                    );
-                }}
-            />
-        );
+});
+
+export const CustomPresets = Default.extend({
+    args: {
+        withPresets: true,
+        presetTabs: [
+            {
+                id: 'my-presets',
+                title: 'My Presets',
+                presets: [
+                    {to: 'now', from: 'now-5d', title: 'Last five days'},
+                    {to: 'now', from: 'now-5w', title: 'Last five weeks'},
+                    {to: 'now', from: 'now-5M', title: 'Last five months'},
+                    {to: 'now', from: 'now-5Q', title: 'Last five quarters'},
+                    {to: 'now', from: 'now-5y', title: 'Last five years'},
+                ],
+            },
+        ],
     },
-};
+});

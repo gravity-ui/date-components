@@ -1,15 +1,19 @@
 import React from 'react';
 
-import type {TextInputProps} from '@gravity-ui/uikit';
+import {useFocusWithin} from '@gravity-ui/uikit';
+import type {PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
 import type {CalendarProps} from '../../Calendar';
 import type {DateFieldProps} from '../../DateField';
+import {filterDOMProps} from '../../utils/filterDOMProps.js';
 import type {RelativeDateFieldProps} from '../RelativeDateField';
 
 import type {RelativeDateFieldState} from './useRelativeDateFieldState';
 
 interface RelativeDateProps {
-    inputProps: TextInputProps;
+    groupProps: React.HTMLAttributes<unknown>;
+    inputProps: TextInputProps & {ref: React.Ref<HTMLElement>};
+    popupProps: PopupProps;
     calendarProps: CalendarProps;
     timeInputProps: DateFieldProps;
 }
@@ -18,16 +22,55 @@ export function useRelativeDateFieldProps(
     state: RelativeDateFieldState,
     props: RelativeDateFieldProps,
 ): RelativeDateProps {
-    const [prevCorrectDate, setPrevCorrectDate] = React.useState(state.lastCorrectDate);
-    const [focusedDate, setFocusedDate] = React.useState(state.lastCorrectDate);
+    const lastCorrectDate = state.lastCorrectDate ? state.lastCorrectDate.startOf('day') : null;
+    const [prevCorrectDate, setPrevCorrectDate] = React.useState(lastCorrectDate);
+    const [focusedDate, setFocusedDate] = React.useState(lastCorrectDate);
 
-    if (prevCorrectDate !== state.lastCorrectDate) {
-        setPrevCorrectDate(state.lastCorrectDate);
-        setFocusedDate(state.lastCorrectDate);
+    if (lastCorrectDate && (!prevCorrectDate || !lastCorrectDate.isSame(prevCorrectDate, 'day'))) {
+        setPrevCorrectDate(lastCorrectDate);
+        setFocusedDate(lastCorrectDate);
     }
 
+    const [isOpen, setOpen] = React.useState(false);
+    const dialogClosing = React.useRef(false);
+
+    const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+
+    const {focusWithinProps} = useFocusWithin({
+        onFocusWithin: props.onFocus,
+        onBlurWithin: (e) => {
+            props.onBlur?.(e);
+            state.confirmValue();
+        },
+        onFocusWithinChange: (isFocusWithin) => {
+            if (!dialogClosing.current) {
+                setOpen(isFocusWithin);
+            }
+        },
+    });
+
+    const DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
     return {
+        groupProps: {
+            ...DOMProps,
+            ...focusWithinProps,
+            role: 'group',
+            onKeyDown: (e) => {
+                if (
+                    isOpen &&
+                    e.key === 'Escape' &&
+                    (e.currentTarget as HTMLElement).contains(e.target as Node)
+                ) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(false);
+                }
+            },
+        },
         inputProps: {
+            ref: setAnchor,
             size: props.size,
             autoFocus: props.autoFocus,
             value: state.text,
@@ -44,10 +87,19 @@ export function useRelativeDateFieldProps(
             pin: props.pin,
             view: props.view,
             placeholder: props.placeholder,
-            onKeyDown: props.onKeyDown,
+            onKeyDown: (e) => {
+                props.onKeyDown?.(e);
+                if (
+                    !e.defaultPrevented &&
+                    e.altKey &&
+                    (e.key === 'ArrowDown' || e.key === 'ArrowUp')
+                ) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(true);
+                }
+            },
             onKeyUp: props.onKeyUp,
-            onBlur: props.onBlur,
-            onFocus: props.onFocus,
             controlProps: {
                 'aria-label': props['aria-label'] || undefined,
                 'aria-labelledby': props['aria-labelledby'] || undefined,
@@ -55,12 +107,32 @@ export function useRelativeDateFieldProps(
                 'aria-details': props['aria-details'] || undefined,
                 'aria-disabled': state.disabled || undefined,
                 readOnly: state.readOnly,
+                onClick: () => {
+                    setOpen(true);
+                },
             },
+        },
+        popupProps: {
+            anchorElement: anchor,
+            open: isOpen,
+            onOpenChange: (open) => {
+                if (!open) {
+                    setOpen(false);
+                }
+                dialogClosing.current = !open;
+            },
+            onTransitionOutComplete: () => {
+                setTimeout(() => {
+                    dialogClosing.current = false;
+                });
+            },
+            placement: props.popupPlacement,
+            offset: props.popupOffset,
         },
         calendarProps: {
             size: props.size === 's' ? 'm' : props.size,
             readOnly: true,
-            value: state.parsedDate,
+            value: state.lastCorrectDate,
             focusedValue: focusedDate,
             onFocusUpdate: setFocusedDate,
         },

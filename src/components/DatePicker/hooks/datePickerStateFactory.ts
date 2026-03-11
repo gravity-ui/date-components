@@ -63,7 +63,7 @@ export interface DatePickerState<T = DateTime> {
     dateFieldState: DateFieldState<T>;
 }
 
-export interface DatePickerStateFactoryOptions<T, O extends DateFieldBase<T>> {
+interface DatePickerStateFactoryOptions<T, O extends DateFieldBase<T>> {
     getPlaceholderTime: (placeholderValue: DateTime | undefined, timeZone?: string) => T;
     mergeDateTime: (date: T, time: T) => T;
     setTimezone: (date: T, timeZone: string) => T;
@@ -73,8 +73,7 @@ export interface DatePickerStateFactoryOptions<T, O extends DateFieldBase<T>> {
 }
 
 export interface DatePickerStateOptions<T>
-    extends DateFieldBase<T>,
-        PopupTriggerProps<[OpenChangeReason]> {}
+    extends DateFieldBase<T>, PopupTriggerProps<[OpenChangeReason]> {}
 
 export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
     getPlaceholderTime,

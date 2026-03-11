@@ -2,15 +2,14 @@ import React from 'react';
 
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {RangeCalendar} from '../../Calendar';
 import {RangeDatePicker} from '../RangeDatePicker';
 
-import './RangeDatePicker.stories.scss';
-
-const meta: Meta<typeof RangeDatePicker> = {
+const meta = preview.meta({
     title: 'Components/RangeDatePicker',
     component: RangeDatePicker,
     tags: ['autodocs'],
@@ -18,13 +17,9 @@ const meta: Meta<typeof RangeDatePicker> = {
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
     },
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof RangeDatePicker>;
-
-export const Default = {
+export const Default = meta.story({
     render: (args) => {
         const timeZone = args.timeZone;
         const props = {
@@ -64,6 +59,9 @@ export const Default = {
                 ),
             });
         },
+        style: {
+            width: 250,
+        },
     },
     argTypes: {
         minValue: {
@@ -98,7 +96,10 @@ export const Default = {
             },
         },
     },
-} satisfies Story;
+});
+
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'RangeDatePicker'});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseRangeDateTime(text: any, format?: string, timeZone?: string) {
@@ -108,32 +109,30 @@ function parseRangeDateTime(text: any, format?: string, timeZone?: string) {
     return {start, end};
 }
 
-export const ControlledOpenState = {
-    ...Default,
+export const ControlledOpenState = Default.extend({
     render: function ControlledOpenState(args) {
         const [open, onOpenChange] = React.useState(false);
         return (
-            <div>
-                {Default.render({
-                    ...args,
-                    disableFocusTrap: true,
-                    open,
-                    onOpenChange: (newOpen, reason) => {
-                        if (reason !== 'ClickOutside') {
-                            onOpenChange(newOpen);
-                        }
-                    },
-                    onFocus: (e) => {
-                        if (e.target.nodeName !== 'BUTTON') {
-                            onOpenChange(true);
-                        }
-                    },
-                    onBlur: () => {
-                        onOpenChange(false);
-                    },
-                    children: (props) => <RangeCalendar {...props} autoFocus={false} />,
-                })}
-            </div>
+            <DefaultComponent
+                {...args}
+                disableFocusTrap
+                open={open}
+                onOpenChange={(newOpen, reason) => {
+                    if (reason !== 'ClickOutside') {
+                        onOpenChange(newOpen);
+                    }
+                }}
+                onFocus={(e) => {
+                    if (e.target.nodeName !== 'BUTTON') {
+                        onOpenChange(true);
+                    }
+                }}
+                onBlur={() => {
+                    onOpenChange(false);
+                }}
+            >
+                {(props) => <RangeCalendar {...props} autoFocus={false} />}
+            </DefaultComponent>
         );
     },
-} satisfies Story;
+});

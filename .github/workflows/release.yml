@@ -8,8 +8,22 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: gravity-ui/release-action@v1
+      - uses: googleapis/release-please-action@v4
+        id: release
         with:
-          github-token: ${{ secrets.GRAVITY_UI_BOT_GITHUB_TOKEN }}
-          npm-token: ${{ secrets.GRAVITY_UI_BOT_NPM_TOKEN }}
-          node-version: 20
+          release-type: node
+          token: ${{ secrets.GRAVITY_UI_BOT_GITHUB_TOKEN }}
+          target-branch: ${{ github.ref_name }}
+      - uses: actions/checkout@v6
+        if: ${{ steps.release.outputs.release_created }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          registry-url: 'https://registry.npmjs.org'
+        if: ${{ steps.release.outputs.release_created }}
+      - run: npm ci
+        if: ${{ steps.release.outputs.release_created }}
+      - run: npm publish --tag latest --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GRAVITY_UI_BOT_NPM_TOKEN}}
+        if: ${{ steps.release.outputs.release_created }}

@@ -5,7 +5,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import {useFocusWithin, useForkRef} from '@gravity-ui/uikit';
 import type {ButtonButtonProps, PopupProps, TextInputProps} from '@gravity-ui/uikit';
 
-import type {CalendarInstance, CalendarProps} from '../../Calendar';
+import type {CalendarCommonProps, CalendarInstance} from '../../Calendar';
 import {useDateFieldProps} from '../../DateField';
 import type {DateFieldProps} from '../../DateField';
 import type {RangeValue} from '../../types';
@@ -24,7 +24,7 @@ interface InnerDatePickerProps<T = DateTime> {
     fieldProps: TextInputProps;
     calendarButtonProps: ButtonButtonProps & {ref: React.Ref<HTMLButtonElement>};
     popupProps: PopupProps;
-    calendarProps: CalendarProps<T> & {ref: React.Ref<CalendarInstance>};
+    calendarProps: CalendarCommonProps<T> & {ref: React.Ref<CalendarInstance>};
     timeInputProps: DateFieldProps<T>;
 }
 
@@ -32,8 +32,6 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
     state: DatePickerState<T>,
     {onFocus, onBlur, ...props}: DatePickerProps<T>,
 ): InnerDatePickerProps<T> {
-    const [isActive, setActive] = React.useState(false);
-
     const [focusedDate, setFocusedDate] = React.useState(
         isDateTime(state.dateFieldState.displayValue)
             ? state.dateFieldState.displayValue
@@ -59,18 +57,19 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
         }
     }
 
+    const {inputProps} = useDateFieldProps(state.dateFieldState, props);
+
     const {focusWithinProps} = useFocusWithin({
         onFocusWithin: onFocus,
         onBlurWithin: onBlur,
         onFocusWithinChange(isFocusWithin) {
-            setActive(isFocusWithin);
+            state.dateFieldState.setActive(isFocusWithin);
             if (!isFocusWithin) {
                 state.setOpen(false, 'FocusOut');
+                state.dateFieldState.confirmPlaceholder();
             }
         },
     });
-
-    const {inputProps} = useDateFieldProps(state.dateFieldState, props);
 
     const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -104,23 +103,33 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             style: props.style,
             'aria-disabled': state.disabled || undefined,
             onKeyDown: (e) => {
-                if (!onlyTime && e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                const isTargetInsideGroup = (e.currentTarget as HTMLElement).contains(
+                    e.target as Node,
+                );
+
+                if (state.isOpen && e.key === 'Escape' && isTargetInsideGroup) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    state.setOpen(false, 'EscapeKeyDown');
+                    return;
+                }
+
+                if (
+                    !onlyTime &&
+                    e.altKey &&
+                    (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+                    isTargetInsideGroup
+                ) {
                     e.preventDefault();
                     e.stopPropagation();
                     state.setOpen(true, 'ShortcutKeyDown');
                 }
             },
         },
-        fieldProps: mergeProps(
-            inputProps,
-            state.dateFieldState.isEmpty && !isActive && props.placeholder
-                ? {value: ''}
-                : undefined,
-            {
-                controlRef: handleRef,
-                controlProps: {role: 'combobox', 'aria-expanded': state.isOpen},
-            },
-        ),
+        fieldProps: mergeProps(inputProps, {
+            controlRef: handleRef,
+            controlProps: {role: 'combobox', 'aria-expanded': state.isOpen},
+        }),
         calendarButtonProps: {
             ref: calendarButtonRef,
             size: getButtonSizeForInput(props.size),
@@ -130,7 +139,6 @@ export function useDatePickerProps<T extends DateTime | RangeValue<DateTime>>(
             'aria-expanded': state.isOpen,
             view: 'flat-secondary',
             onClick: () => {
-                setActive(true);
                 state.setOpen(!state.isOpen, 'TriggerButtonClick');
             },
         },

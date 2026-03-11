@@ -1,34 +1,50 @@
-import React from 'react';
+import {MobileProvider, ThemeProvider} from '@gravity-ui/uikit';
+import {render, renderHook} from 'vitest-browser-react';
+import type {ComponentRenderOptions} from 'vitest-browser-react';
 
-import {ThemeContext} from '@gravity-ui/uikit';
-import type {ThemeContextProps} from '@gravity-ui/uikit';
-import {render} from '@testing-library/react';
-import type {RenderOptions} from '@testing-library/react';
-
-const themeContextValue: ThemeContextProps = {
-    direction: 'ltr',
-    theme: 'light',
-    themeValue: 'light',
-};
-
-function Providers({children}: {children: React.ReactNode}) {
-    return <ThemeContext.Provider value={themeContextValue}>{children}</ThemeContext.Provider>;
+interface ProvidersProps {
+    theme?: string;
+    lang?: string;
+    mobile?: boolean;
 }
 
-function createWrapper(Component: React.JSXElementConstructor<{children: React.ReactNode}>) {
+function Providers({
+    children,
+    theme = 'light',
+    lang,
+    mobile,
+}: {children: React.ReactNode} & ProvidersProps) {
+    return (
+        <ThemeProvider theme={theme} lang={lang}>
+            <MobileProvider mobile={mobile}>{children}</MobileProvider>
+        </ThemeProvider>
+    );
+}
+
+function createWrapper(
+    providers?: ProvidersProps,
+    Component?: React.JSXElementConstructor<{children: React.ReactNode}>,
+) {
     return function Wrapper({children}: {children: React.ReactNode}) {
         return (
-            <Providers>
-                <Component>{children}</Component>
+            <Providers {...providers}>
+                {Component ? <Component>{children}</Component> : children}
             </Providers>
         );
     };
 }
 
-function customRender(ui: React.ReactElement, options?: RenderOptions) {
-    const wrapper = options?.wrapper ? createWrapper(options.wrapper) : Providers;
+function customRender(
+    ui: React.ReactElement,
+    {
+        providers,
+        ...options
+    }: ComponentRenderOptions & {
+        providers?: {theme?: string; lang?: string; mobile?: boolean};
+    } = {},
+) {
+    const wrapper = createWrapper(providers, options.wrapper);
     return render(ui, {...options, wrapper});
 }
 
-export * from '@testing-library/react';
-export {customRender as render};
+export {customRender as render, renderHook};

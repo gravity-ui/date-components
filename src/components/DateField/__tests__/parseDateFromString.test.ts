@@ -1,30 +1,31 @@
 import {dateTime} from '@gravity-ui/date-utils';
-import {act, renderHook} from '@testing-library/react';
+import {beforeEach, describe, expect, it, vitest} from 'vitest';
+import type {MockedFunction} from 'vitest';
+
+import {renderHook} from '#test-utils/utils';
 
 import {useDateFieldState} from '../hooks/useDateFieldState';
 import {parseDateFromString} from '../utils';
 
-jest.mock('../utils', () => ({
-    ...jest.requireActual('../utils'),
-    parseDateFromString: jest.fn(),
+vitest.mock('../utils', async () => ({
+    ...(await vitest.importActual('../utils')),
+    parseDateFromString: vitest.fn(),
 }));
 
-const mockedParseDateFromString = parseDateFromString as jest.MockedFunction<
-    typeof parseDateFromString
->;
+const mockedParseDateFromString = parseDateFromString as MockedFunction<typeof parseDateFromString>;
 
 describe('DateField: parseDateFromString', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vitest.clearAllMocks();
         mockedParseDateFromString.mockImplementation((str, format, timeZone) => {
             return dateTime({input: str, format, timeZone});
         });
     });
 
-    it('should call custom parseDateFromString when provided', () => {
-        const customParser = jest.fn().mockReturnValue(dateTime({input: '2024-01-15T00:00:00Z'}));
+    it('should call custom parseDateFromString when provided', async () => {
+        const customParser = vitest.fn().mockReturnValue(dateTime({input: '2024-01-15T00:00:00Z'}));
 
-        const {result} = renderHook(() =>
+        const {result, act} = await renderHook(() =>
             useDateFieldState({
                 format: 'DD.MM.YYYY',
                 parseDateFromString: customParser,
@@ -39,11 +40,11 @@ describe('DateField: parseDateFromString', () => {
         expect(mockedParseDateFromString).not.toHaveBeenCalled();
     });
 
-    it('should use default parseDateFromString when parseDateFromString is not provided', () => {
+    it('should use default parseDateFromString when parseDateFromString is not provided', async () => {
         const validDate = dateTime({input: '2024-01-15T00:00:00Z'});
         mockedParseDateFromString.mockReturnValue(validDate);
 
-        const {result} = renderHook(() => useDateFieldState({format: 'DD.MM.YYYY'}));
+        const {result, act} = await renderHook(() => useDateFieldState({format: 'DD.MM.YYYY'}));
 
         act(() => {
             result.current.setValueFromString('15.01.2024');

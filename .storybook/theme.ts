@@ -1,7 +1,7 @@
 import {create} from 'storybook/theming';
 import type {ThemeVarsPartial} from 'storybook/theming';
 
-import pkg from '../package.json';
+import pkg from '../package.json' with {type: 'json'};
 
 function renderBrandTitle(theme: 'light' | 'dark') {
     const titleColor = theme === 'light' ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.85)';
@@ -29,13 +29,13 @@ const common: Omit<ThemeVarsPartial, 'base'> = {
     brandUrl: 'https://gravity-ui.com/',
 };
 
-export const CloudThemeLight = create({
+const CloudThemeLight = create({
     base: 'light',
     ...common,
     brandTitle: renderBrandTitle('light'),
 });
 
-export const CloudThemeDark = create({
+const CloudThemeDark = create({
     base: 'dark',
     ...common,
     brandTitle: renderBrandTitle('dark'),

@@ -22,10 +22,7 @@ import './RangeDateSelection.scss';
 const b = block('range-date-selection');
 
 export interface RangeDateSelectionProps
-    extends RangeDateSelectionOptions,
-        DomProps,
-        StyleProps,
-        AccessibilityProps {
+    extends RangeDateSelectionOptions, DomProps, StyleProps, AccessibilityProps {
     /** Formats time ticks */
     formatTime?: (time: DateTime) => string;
     /** Displays now line */

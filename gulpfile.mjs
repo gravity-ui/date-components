@@ -1,10 +1,10 @@
+import {rm} from 'node:fs/promises';
 import path from 'node:path';
 
 import {addVirtualFile, createTypescriptProject} from '@gravity-ui/gulp-utils';
 import {dest, parallel, series, src, task} from 'gulp';
 import gulpSass from 'gulp-sass';
 import sourcemaps from 'gulp-sourcemaps';
-import * as rimraf from 'rimraf';
 import * as sass from 'sass';
 
 import packageJson from './package.json' with {type: 'json'};
@@ -12,14 +12,14 @@ import packageJson from './package.json' with {type: 'json'};
 const BUILD_DIR = path.resolve('dist');
 const sassLoader = gulpSass(sass);
 
-task('clean', (done) => {
-    rimraf.sync(BUILD_DIR);
-    done();
+task('clean', () => {
+    return rm(BUILD_DIR, {recursive: true, force: true});
 });
 
 async function compileTs(modules = false) {
     const tsProject = await createTypescriptProject({
         compilerOptions: {
+            noEmit: false,
             declaration: true,
             ...(modules ? undefined : {verbatimModuleSyntax: false}),
             module: modules ? 'esnext' : 'NodeNext',
@@ -42,6 +42,12 @@ async function compileTs(modules = false) {
             '!src/**/*.test.{ts,tsx}',
         ])
             .pipe(sourcemaps.init())
+            .pipe(
+                addVirtualFile({
+                    fileName: 'src/package.json',
+                    text: JSON.stringify({type: modules ? 'module' : 'commonjs'}),
+                }),
+            )
             .pipe(
                 tsProject({
                     customTransformers: {

@@ -36,7 +36,8 @@ import './RelativeDatePicker.scss';
 const b = block('relative-date-picker');
 
 export interface RelativeDatePickerProps
-    extends RelativeDatePickerStateOptions,
+    extends
+        RelativeDatePickerStateOptions,
         TextInputProps,
         FocusableProps,
         KeyboardEvents,

@@ -39,13 +39,13 @@ export function getPresetTitle(
     end: string,
     presets: Preset[] = allPresets,
     t: ExtractFunctionType<typeof i18n> = i18n,
-) {
+): string {
     const startText = start.replace(/\s+/g, '');
     const endText = end.replace(/\s+/g, '');
 
     for (const preset of presets) {
         if (preset.from === startText && preset.to === endText) {
-            return preset.title;
+            return t(preset.title as any);
         }
     }
 
@@ -67,7 +67,7 @@ function isDateUnit(value: string): value is 's' | 'm' | 'h' | 'd' | 'w' | 'M' |
     return ['s', 'm', 'h', 'd', 'w', 'M', 'y'].includes(value);
 }
 
-export function filterPresets(presets: Preset[], minValue?: DateTime) {
+function filterPresets(presets: Preset[], minValue?: DateTime) {
     return presets.filter((preset) => {
         const from = dateTimeParse(preset.from);
         const to = dateTimeParse(preset.to, {roundUp: true});

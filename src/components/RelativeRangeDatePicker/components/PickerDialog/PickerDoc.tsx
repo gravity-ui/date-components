@@ -8,37 +8,36 @@ import type {TableColumnConfig} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 import {getButtonSizeForInput} from '../../../utils/getButtonSizeForInput';
-import {PresetTitle} from '../Presets/defaultPresets';
-import type {Preset} from '../Presets/defaultPresets';
+import type {DefaultPreset, Preset} from '../Presets/defaultPresets';
 import {i18n} from '../Presets/i18n';
 
 import './PickerDoc.scss';
 
 const b = block('relative-range-date-picker-doc');
 
-const data: Preset[] = [
+const data: DefaultPreset[] = [
     {
-        title: <PresetTitle title="Last 5 minutes" />,
+        title: 'Last 5 minutes',
         from: 'now - 5m',
         to: 'now',
     },
     {
-        title: <PresetTitle title="From start of day" />,
+        title: 'From start of day',
         from: 'now/d',
         to: 'now',
     },
     {
-        title: <PresetTitle title="This week" />,
+        title: 'This week',
         from: 'now/w',
         to: 'now/w',
     },
     {
-        title: <PresetTitle title="From start of week" />,
+        title: 'From start of week',
         from: 'now/w',
         to: 'now',
     },
     {
-        title: <PresetTitle title="Previous month" />,
+        title: 'Previous month',
         from: 'now - 1M/M',
         to: 'now - 1M/M',
     },
@@ -48,7 +47,7 @@ interface DocContentProps extends Omit<PresetsDocProps, 'docs' | 'className'> {
     docs: Preset[];
 }
 
-function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
+function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: DocContentProps) {
     const isMobile = useMobile();
 
     const {t} = i18n.useTranslation();
@@ -59,6 +58,19 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                 name: () => {
                     return t('Range');
                 },
+                template: (item) => {
+                    return (
+                        <Button
+                            view="flat"
+                            size={isMobile ? 'l' : getButtonSizeForInput(size)}
+                            onClick={() => {
+                                onRangeUpdate(item.from, item.to);
+                            }}
+                        >
+                            {t(item.title as any)}
+                        </Button>
+                    );
+                },
             },
             {
                 id: 'from',
@@ -67,8 +79,11 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                 },
                 template: (item) => (
                     <Button
+                        view="flat"
                         size={isMobile ? 'l' : getButtonSizeForInput(size)}
-                        onClick={() => onStartUpdate(item.from)}
+                        onClick={() => {
+                            onStartUpdate(item.from);
+                        }}
                     >
                         {item.from}
                     </Button>
@@ -81,8 +96,11 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate}: DocContentProps) {
                 },
                 template: (item) => (
                     <Button
+                        view="flat"
                         size={isMobile ? 'l' : getButtonSizeForInput(size)}
-                        onClick={() => onEndUpdate(item.to)}
+                        onClick={() => {
+                            onEndUpdate(item.to);
+                        }}
                     >
                         {item.to}
                     </Button>
@@ -149,6 +167,7 @@ interface PresetsDocProps {
     docs?: Preset[];
     onStartUpdate: (start: string) => void;
     onEndUpdate: (end: string) => void;
+    onRangeUpdate: (start: string, end: string) => void;
 }
 
 export function PickerDoc({docs = data, ...props}: PresetsDocProps) {

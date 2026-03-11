@@ -85,6 +85,12 @@ export function PickerForm(
                         onEndUpdate={(end) => {
                             state.setEnd({type: 'relative', value: end});
                         }}
+                        onRangeUpdate={(start, end) => {
+                            state.setRange(
+                                {type: 'relative', value: start},
+                                {type: 'relative', value: end},
+                            );
+                        }}
                     />
                 </div>
             )}

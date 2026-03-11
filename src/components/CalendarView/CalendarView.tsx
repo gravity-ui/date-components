@@ -27,7 +27,7 @@ export interface CalendarInstance {
     focus: () => void;
 }
 
-export interface CalendarViewProps extends DomProps, StyleProps, FocusEvents, AccessibilityProps {
+interface CalendarViewProps extends DomProps, StyleProps, FocusEvents, AccessibilityProps {
     state: CalendarState | RangeCalendarState;
     /**
      * The size of the element.

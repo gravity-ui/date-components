@@ -27,8 +27,10 @@ export interface ValueBase<T, C = T> {
     onUpdate?: (value: C) => void;
 }
 
-export interface Validation
-    extends Pick<TextInputBaseProps, 'validationState' | 'errorMessage' | 'errorPlacement'> {}
+export interface Validation extends Pick<
+    TextInputBaseProps,
+    'validationState' | 'errorMessage' | 'errorPlacement'
+> {}
 
 export interface DomProps {
     /** The element's unique identifier. */

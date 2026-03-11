@@ -1,64 +1,18 @@
-import type {StorybookConfig} from '@storybook/react-webpack5';
-import * as sass from 'sass';
+import {defineMain} from '@storybook/react-vite/node';
 
-const config: StorybookConfig = {
+export default defineMain({
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
     addons: [
         '@storybook/addon-docs',
         '@storybook/addon-a11y',
-        './theme-addon/register.tsx',
-        '@storybook/addon-webpack5-compiler-babel',
-        {
-            name: '@storybook/addon-styling-webpack',
-            options: {
-                rules: [
-                    {
-                        test: /\.css$/,
-                        sideEffects: true,
-                        use: ['style-loader', 'css-loader'],
-                    },
-                    {
-                        test: /\.scss$/,
-                        sideEffects: true,
-                        use: [
-                            'style-loader',
-                            {
-                                loader: 'css-loader',
-                                options: {importLoaders: 1},
-                            },
-                            {
-                                loader: 'sass-loader',
-                                options: {implementation: sass},
-                            },
-                        ],
-                    },
-                ],
-            },
-        },
+        import.meta.resolve('./theme-addon/theme-preset.ts'),
+        '@storybook/addon-vitest',
     ],
-    framework: '@storybook/react-webpack5',
+    framework: {name: '@storybook/react-vite', options: {strictMode: true}},
     typescript: {
-        check: false,
-        checkOptions: {},
         reactDocgen: 'react-docgen-typescript',
     },
     core: {
         disableTelemetry: true,
     },
-    babel: {
-        presets: [
-            [
-                '@babel/preset-env',
-                {
-                    targets: {
-                        chrome: 100,
-                    },
-                },
-            ],
-            '@babel/preset-typescript',
-            ['@babel/preset-react', {runtime: 'automatic'}],
-        ],
-    },
-};
-
-export default config;
+});

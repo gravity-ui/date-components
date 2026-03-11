@@ -3,10 +3,10 @@ import a11yConfig from '@gravity-ui/eslint-config/a11y';
 import clientConfig from '@gravity-ui/eslint-config/client';
 import importOrderConfig from '@gravity-ui/eslint-config/import-order';
 import prettierConfig from '@gravity-ui/eslint-config/prettier';
+import vitestConfig from '@vitest/eslint-plugin';
 import {defineConfig, globalIgnores} from 'eslint/config';
 import reactCompiler from 'eslint-plugin-react-compiler';
 import storybookPlugin from 'eslint-plugin-storybook';
-import testingLibraryPlugin from 'eslint-plugin-testing-library';
 import globals from 'globals';
 
 export default defineConfig([
@@ -53,11 +53,10 @@ export default defineConfig([
     },
     {
         files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
-        ignores: ['**/__tests__/**/*.visual.test.*'],
-        extends: [testingLibraryPlugin.configs['flat/react']],
-        languageOptions: {globals: {...globals.node, ...globals.jest}},
+        extends: [vitestConfig.configs.recommended],
+        languageOptions: {globals: {...globals.browser}},
     },
     {files: ['**/__stories__/**/*.[jt]s?(x)'], rules: {'no-console': 'off'}},
     {files: ['**/*.js', '!src/**/*'], languageOptions: {globals: {...globals.node}}},
-    globalIgnores(['dist', 'storybook-static', '!/.storybook']),
+    globalIgnores(['dist', 'storybook-static', '!/.storybook', 'reports']),
 ]);

@@ -1,11 +1,12 @@
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {RelativeDateField} from '../RelativeDateField';
 
-const meta: Meta<typeof RelativeDateField> = {
+const meta = preview.meta({
     title: 'Components/RelativeDateField',
     component: RelativeDateField,
     tags: ['autodocs'],
@@ -13,16 +14,9 @@ const meta: Meta<typeof RelativeDateField> = {
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
     },
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof RelativeDateField>;
-
-export const Default: Story = {
-    render: (props) => {
-        return <RelativeDateField {...props} />;
-    },
+export const Default = meta.story({
     args: {
         onUpdate: (res) => {
             action('onUpdate')(res);
@@ -47,4 +41,4 @@ export const Default: Story = {
         },
         timeZone: timeZoneControl,
     },
-};
+});

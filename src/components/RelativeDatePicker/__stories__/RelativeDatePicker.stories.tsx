@@ -11,17 +11,18 @@ import {
     useControlledState,
 } from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
-import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {action} from 'storybook/actions';
+
+import preview from '#.storybook/preview';
 
 import {timeZoneControl} from '../../../demo/utils/zones';
 import {Calendar} from '../../Calendar';
+import type {CalendarProps} from '../../Calendar';
 import {constrainValue} from '../../utils/dates';
 import {RelativeDatePicker} from '../RelativeDatePicker';
-import type {RelativeDatePickerProps} from '../RelativeDatePicker';
 import type {Value} from '../hooks/useRelativeDatePickerState';
 
-const meta: Meta<typeof RelativeDatePicker> = {
+const meta = preview.meta({
     title: 'Components/RelativeDatePicker',
     component: RelativeDatePicker,
     tags: ['autodocs'],
@@ -30,11 +31,7 @@ const meta: Meta<typeof RelativeDatePicker> = {
         onBlur: action('onBlur'),
         onOpenChange: action('onOpenChange'),
     },
-};
-
-export default meta;
-
-type Story = StoryObj<typeof RelativeDatePicker>;
+});
 
 function stringifyValue(value: Value): string {
     if (value.type === 'relative') {
@@ -44,7 +41,7 @@ function stringifyValue(value: Value): string {
     return JSON.stringify({...value, value: value.value.format()}, null, 2);
 }
 
-export const Default = {
+export const Default = meta.story({
     render: (props) => {
         const timeZone = props.timeZone;
         const minValue = props.minValue ? dateTimeParse(props.minValue, {timeZone}) : undefined;
@@ -85,9 +82,9 @@ export const Default = {
         },
         timeZone: timeZoneControl,
     },
-} satisfies Story;
+});
 
-export const SimpleDatePicker: Story = {
+export const SimpleDatePicker = meta.story({
     render: function SimpleDatePicker({value, defaultValue, onUpdate, ...props}) {
         const timeZone = props.timeZone;
         const minValue = props.minValue ? dateTimeParse(props.minValue, {timeZone}) : undefined;
@@ -144,10 +141,10 @@ export const SimpleDatePicker: Story = {
         );
     },
     args: {
-        ...Default.args,
+        ...Default.composed.args,
     },
     argTypes: {
-        ...Default.argTypes,
+        ...Default.composed.argTypes,
         minValue: {
             control: {
                 type: 'text',
@@ -159,37 +156,36 @@ export const SimpleDatePicker: Story = {
             },
         },
     },
-};
+});
 
-export const WithCustomCalendar = {
-    ...Default,
-    render: (args) => {
-        return Default.render({
-            ...args,
-            children: function CustomCalendar(props) {
-                const [mode, setMode] = React.useState('days');
+const DefaultComponent = Default.input.render;
+Object.assign(DefaultComponent, {displayName: 'RelativeDatePicker'});
 
-                return (
-                    <TabProvider value={mode} onUpdate={setMode}>
-                        <TabList style={{paddingInline: 5}}>
-                            {['days', 'months', 'quarters', 'years'].map((item) => (
-                                <Tab key={item} value={item}>
-                                    {item[0].toUpperCase() + item.slice(1)}
-                                </Tab>
-                            ))}
-                        </TabList>
-                        <TabPanel value={mode}>
-                            <Calendar {...props} modes={{[mode]: true}} />
-                        </TabPanel>
-                    </TabProvider>
-                );
-            },
-        });
+function CustomCalendar(props: CalendarProps) {
+    const [mode, setMode] = React.useState('days');
+
+    return (
+        <TabProvider value={mode} onUpdate={setMode}>
+            <TabList style={{paddingInline: 5}}>
+                {['days', 'months', 'quarters', 'years'].map((item) => (
+                    <Tab key={item} value={item}>
+                        {item[0].toUpperCase() + item.slice(1)}
+                    </Tab>
+                ))}
+            </TabList>
+            <TabPanel value={mode}>
+                <Calendar {...props} modes={{[mode]: true}} />
+            </TabPanel>
+        </TabProvider>
+    );
+}
+export const WithCustomCalendar = Default.extend({
+    args: {
+        children: (props) => <CustomCalendar {...props} />,
     },
-} satisfies Story;
+});
 
-export const InsideDialog: StoryObj<RelativeDatePickerProps> = {
-    ...Default,
+export const InsideDialog = Default.extend({
     render: function InsideDialog(args) {
         const [isOpen, setOpen] = React.useState(false);
         return (
@@ -204,10 +200,12 @@ export const InsideDialog: StoryObj<RelativeDatePickerProps> = {
                 <Dialog open={isOpen} onClose={() => setOpen(false)}>
                     <Dialog.Header />
                     <Dialog.Body>
-                        <div style={{paddingTop: 16}}>{Default.render(args)}</div>
+                        <div style={{paddingTop: 16}}>
+                            <DefaultComponent {...args} />
+                        </div>
                     </Dialog.Body>
                 </Dialog>
             </React.Fragment>
         );
     },
-};
+});
