@@ -46,20 +46,18 @@ interface ZonesProps {
     value: string;
     onUpdate: (timeZone: string) => void;
     size?: 's' | 'm' | 'l' | 'xl';
-    isMobile?: boolean;
     disabled?: boolean;
 }
 
 export function Zones(props: ZonesProps) {
     const timeZone = normalizeTimeZone(props.value);
-    const size = props.isMobile ? 'xl' : props.size;
     const {t} = i18n.useTranslation();
     return (
         <Select
             disabled={props.disabled}
             value={[timeZone]}
             options={zones}
-            size={size}
+            size={props.size}
             onUpdate={(v) => {
                 const tz = v[0];
                 if (tz) {
@@ -77,7 +75,7 @@ export function Zones(props: ZonesProps) {
                         view="flat-secondary"
                         width="max"
                         pin="clear-clear"
-                        size={size}
+                        size={props.size}
                         disabled={props.disabled}
                         aria-haspopup="listbox"
                         aria-expanded={controlProps.open}
@@ -88,7 +86,7 @@ export function Zones(props: ZonesProps) {
                         <Icon
                             className={b('control-icon')}
                             data={ChevronRight}
-                            size={props.isMobile ? 20 : 16}
+                            size={props.size === 'xl' ? 20 : 16}
                         />
                     </Button>
                 );
