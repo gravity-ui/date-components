@@ -6,9 +6,10 @@ import {userEvent} from 'vitest/browser';
 import {render} from '#test-utils/utils';
 
 import {RelativeRangeDatePicker} from '../RelativeRangeDatePicker';
-import type {RelativeRangeDatePickerProps} from '../types';
+import type {Preset} from '../components/Presets/defaultPresets';
+import type {PresetTab} from '../components/Presets/utils';
 
-const presetTabs: NonNullable<RelativeRangeDatePickerProps['presetTabs']> = [
+const presetTabs: PresetTab[] = [
     {
         id: 'main',
         title: 'Presets',
@@ -25,6 +26,12 @@ const presetTabs: NonNullable<RelativeRangeDatePickerProps['presetTabs']> = [
             {from: 'now', to: null, title: 'Future'},
         ],
     },
+];
+
+const docsWithNullableRows: Preset[] = [
+    {title: 'Past', from: null, to: 'now'},
+    {title: 'Future', from: 'now', to: null},
+    {title: 'Last 5 minutes', from: 'now - 5m', to: 'now'},
 ];
 
 async function openPicker(screen: Awaited<ReturnType<typeof render>>) {
@@ -148,5 +155,24 @@ describe('RelativeRangeDatePicker: nullable presets', () => {
         expect(screen.getByRole('tab', {name: 'Unlimited'})).not.toBeInTheDocument();
         expect(screen.getByText('Future')).not.toBeInTheDocument();
         expect(screen.getByText('Last five days')).toBeInTheDocument();
+    });
+
+    it('hides nullable docs rows when nullable values are disabled', async () => {
+        const screen = await render(
+            <RelativeRangeDatePicker
+                withHeader
+                allowNullableValues={false}
+                docs={docsWithNullableRows}
+                label="picker"
+            />,
+        );
+
+        await userEvent.tab();
+        await userEvent.tab();
+        await userEvent.keyboard('{Enter}');
+
+        expect(screen.getByText('Last 5 minutes')).toBeInTheDocument();
+        expect(screen.getByText('Past')).not.toBeInTheDocument();
+        expect(screen.getByText('Future')).not.toBeInTheDocument();
     });
 });

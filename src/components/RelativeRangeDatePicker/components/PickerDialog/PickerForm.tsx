@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import type {DateTime} from '@gravity-ui/date-utils';
 import {Button, Text} from '@gravity-ui/uikit';
 import type {TextInputSize} from '@gravity-ui/uikit';
@@ -11,6 +13,7 @@ import type {DomProps, StyleProps} from '../../../types';
 import type {RelativeRangeDatePickerStateOptions} from '../../hooks/useRelativeRangeDatePickerState';
 import {Presets} from '../Presets/Presets';
 import type {Preset} from '../Presets/defaultPresets';
+import {filterPresetList} from '../Presets/utils';
 import type {PresetTab} from '../Presets/utils';
 import {Zones} from '../Zones/Zones';
 
@@ -56,6 +59,24 @@ export function PickerForm(
     },
 ) {
     const state = useRelativeRangeDatePickerDialogState(props);
+    const docs = React.useMemo(
+        () =>
+            props.docs
+                ? filterPresetList(props.docs, {
+                      minValue: props.minValue,
+                      allowNullableValues: props.allowNullableValues,
+                  })
+                : props.docs,
+        [props.allowNullableValues, props.docs, props.minValue],
+    );
+
+    const toRelativeValue = (value: string | null) => {
+        if (value === null && !props.allowNullableValues) {
+            return undefined;
+        }
+
+        return value === null ? null : {type: 'relative' as const, value};
+    };
 
     const fieldProps: RelativeDatePickerProps = {
         timeZone: state.timeZone,
@@ -78,20 +99,25 @@ export function PickerForm(
                     </Text>
                     <PickerDoc
                         size={props.size}
-                        docs={props.docs}
+                        docs={docs}
                         onStartUpdate={(start) => {
-                            state.setStart(
-                                start === null ? null : {type: 'relative', value: start},
-                            );
+                            const nextStart = toRelativeValue(start);
+                            if (nextStart !== undefined) {
+                                state.setStart(nextStart);
+                            }
                         }}
                         onEndUpdate={(end) => {
-                            state.setEnd(end === null ? null : {type: 'relative', value: end});
+                            const nextEnd = toRelativeValue(end);
+                            if (nextEnd !== undefined) {
+                                state.setEnd(nextEnd);
+                            }
                         }}
                         onRangeUpdate={(start, end) => {
-                            state.setRange(
-                                start === null ? null : {type: 'relative', value: start},
-                                end === null ? null : {type: 'relative', value: end},
-                            );
+                            const nextStart = toRelativeValue(start);
+                            const nextEnd = toRelativeValue(end);
+                            if (nextStart !== undefined && nextEnd !== undefined) {
+                                state.setRange(nextStart, nextEnd);
+                            }
                         }}
                     />
                 </div>
