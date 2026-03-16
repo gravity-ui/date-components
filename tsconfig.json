@@ -9,7 +9,8 @@
     "jsx": "react-jsx",
     "importHelpers": true,
     "isolatedModules": true,
-    "declaration": true
+    "declaration": true,
+    "noUncheckedSideEffectImports": true
   },
   "include": ["**/*.ts", "**/*.tsx", ".storybook/**/*.ts", ".storybook/**/*.tsx"]
 }
