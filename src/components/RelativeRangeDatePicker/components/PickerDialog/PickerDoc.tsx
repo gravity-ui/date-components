@@ -48,8 +48,6 @@ interface DocContentProps extends Omit<PresetsDocProps, 'docs' | 'className'> {
 }
 
 function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: DocContentProps) {
-    const isMobile = useMobile();
-
     const {t} = i18n.useTranslation();
     const columns: TableColumnConfig<Preset>[] = React.useMemo(
         () => [
@@ -62,7 +60,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: Doc
                     return (
                         <Button
                             view="flat"
-                            size={isMobile ? 'l' : getButtonSizeForInput(size)}
+                            size={getButtonSizeForInput(size)}
                             onClick={() => {
                                 onRangeUpdate(item.from, item.to);
                             }}
@@ -80,7 +78,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: Doc
                 template: (item) => (
                     <Button
                         view="flat"
-                        size={isMobile ? 'l' : getButtonSizeForInput(size)}
+                        size={getButtonSizeForInput(size)}
                         onClick={() => {
                             onStartUpdate(item.from);
                         }}
@@ -97,7 +95,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: Doc
                 template: (item) => (
                     <Button
                         view="flat"
-                        size={isMobile ? 'l' : getButtonSizeForInput(size)}
+                        size={getButtonSizeForInput(size)}
                         onClick={() => {
                             onEndUpdate(item.to);
                         }}
@@ -107,7 +105,7 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: Doc
                 ),
             },
         ],
-        [isMobile, onEndUpdate, onStartUpdate, size, t],
+        [onEndUpdate, onRangeUpdate, onStartUpdate, size, t],
     );
 
     return <Table columns={columns} data={docs} className={b('table', {size})} wordWrap />;
@@ -120,7 +118,7 @@ interface DesktopDocProps extends Omit<PresetsDocProps, 'docs'> {
 function DesktopDoc({className, size, ...props}: DesktopDocProps) {
     return (
         <Popover
-            className={b(null)}
+            className={b()}
             hasArrow={false}
             placement={['right-start', 'left-start']}
             content={<DocContent size={size} {...props} />}

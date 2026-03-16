@@ -154,6 +154,7 @@ export const Control = React.forwardRef<HTMLInputElement, ControlProps>(
                             size: props.size,
                         })}
                         onClick={onClick}
+                        aria-label={props.label}
                     />
                 ) : null}
             </React.Fragment>

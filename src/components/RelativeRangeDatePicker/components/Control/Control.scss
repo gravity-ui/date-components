@@ -19,7 +19,7 @@ $block: '.#{variables.$ns}relative-range-date-picker-control';
         position: absolute;
         inset: 0;
         inset-inline-end: calc(
-            var(--g-spacing-2) + var(--_--g-date-mobile-trigger-button-width) +
+            var(--_--g-date-mobile-trigger-button-width) +
                 var(--_--g-date-mobile-trigger-clear-width) +
                 var(--_--g-date-mobile-trigger-errors-width)
         );
