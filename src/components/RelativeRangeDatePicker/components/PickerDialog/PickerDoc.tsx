@@ -163,9 +163,9 @@ interface PresetsDocProps {
     className?: string;
     size?: 's' | 'm' | 'l' | 'xl';
     docs?: Preset[];
-    onStartUpdate: (start: string) => void;
-    onEndUpdate: (end: string) => void;
-    onRangeUpdate: (start: string, end: string) => void;
+    onStartUpdate: (start: string | null) => void;
+    onEndUpdate: (end: string | null) => void;
+    onRangeUpdate: (start: string | null, end: string | null) => void;
 }
 
 export function PickerDoc({docs = data, ...props}: PresetsDocProps) {

@@ -92,7 +92,7 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
                     disabled: isMobile && state.mode === 'absolute',
                     className: b('input', {mobile: isMobile && state.mode === 'absolute'}),
                 }}
-                hasClear={props.hasClear && !(isMobile && state.mode === 'absolute')}
+                hasClear={fieldProps.hasClear && !(isMobile && state.mode === 'absolute')}
                 startContent={
                     <Button {...modeSwitcherProps}>
                         <Icon data={FunctionIcon} />

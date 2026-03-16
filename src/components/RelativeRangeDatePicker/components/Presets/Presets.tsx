@@ -18,11 +18,12 @@ const b = block('relative-range-date-picker-presets');
 
 interface PresetProps {
     className?: string;
-    onChoosePreset: (start: string, end: string) => void;
+    onChoosePreset: (start: string | null, end: string | null) => void;
     withTime?: boolean;
     minValue?: DateTime;
     size?: 's' | 'm' | 'l' | 'xl';
     presetTabs?: PresetTab[];
+    allowNullableValues?: boolean;
 }
 export function Presets({
     className,
@@ -31,11 +32,15 @@ export function Presets({
     withTime,
     onChoosePreset,
     presetTabs,
+    allowNullableValues,
 }: PresetProps) {
     const {t} = i18n.useTranslation();
     const tabs = React.useMemo(() => {
-        return filterPresetTabs(presetTabs ?? getDefaultPresetTabs({withTime, t}), {minValue});
-    }, [withTime, minValue, presetTabs, t]);
+        return filterPresetTabs(
+            presetTabs ?? getDefaultPresetTabs({withTime, allowNullableValues, t}),
+            {minValue, allowNullableValues},
+        );
+    }, [presetTabs, withTime, allowNullableValues, t, minValue]);
 
     const [activeTabId, setActiveTab] = React.useState(tabs[0]?.id);
 
@@ -85,7 +90,7 @@ const SIZE_TO_ITEM_HEIGHT = {
 interface PresetsListProps {
     size?: 's' | 'm' | 'l' | 'xl';
     presets: Preset[];
-    onChoosePreset: (start: string, end: string) => void;
+    onChoosePreset: (start: string | null, end: string | null) => void;
 }
 function PresetsList({presets, onChoosePreset, size = 'm'}: PresetsListProps) {
     const ref = React.useRef<List<Preset>>(null);

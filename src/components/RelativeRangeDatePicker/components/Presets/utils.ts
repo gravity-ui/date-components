@@ -35,21 +35,27 @@ const countUnit = {
 } as const;
 
 export function getPresetTitle(
-    start: string,
-    end: string,
+    start: string | null,
+    end: string | null,
     presets: Preset[] = allPresets,
     t: ExtractFunctionType<typeof i18n> = i18n,
 ): string {
-    const startText = start.replace(/\s+/g, '');
-    const endText = end.replace(/\s+/g, '');
+    const startText = start?.replace(/\s+/g, '') ?? start;
+    const endText = end?.replace(/\s+/g, '') ?? end;
 
     for (const preset of presets) {
         if (preset.from === startText && preset.to === endText) {
             return t(preset.title as any);
         }
     }
+    if (!startText) {
+        return `${t('To')}: ${endText}`;
+    }
+    if (!endText) {
+        return `${t('From')}: ${startText}`;
+    }
 
-    if (end === 'now') {
+    if (endText === 'now') {
         const match = lastRe.exec(startText);
         if (match) {
             const [, count, unit] = match;
@@ -67,20 +73,26 @@ function isDateUnit(value: string): value is 's' | 'm' | 'h' | 'd' | 'w' | 'M' |
     return ['s', 'm', 'h', 'd', 'w', 'M', 'y'].includes(value);
 }
 
-function filterPresets(presets: Preset[], minValue?: DateTime) {
+export function filterPresetList(
+    presets: Preset[],
+    {minValue, allowNullableValues}: {minValue?: DateTime; allowNullableValues?: boolean} = {},
+) {
     return presets.filter((preset) => {
-        const from = dateTimeParse(preset.from);
-        const to = dateTimeParse(preset.to, {roundUp: true});
+        const from = preset.from ? dateTimeParse(preset.from) : undefined;
+        const to = preset.to ? dateTimeParse(preset.to, {roundUp: true}) : undefined;
 
-        if (!from || !to) {
+        const hasNullableFrom = allowNullableValues && preset.from === null;
+        const hasNullableTo = allowNullableValues && preset.to === null;
+
+        if ((!from && !hasNullableFrom) || (!to && !hasNullableTo)) {
             return false;
         }
 
-        if (to.isBefore(from)) {
+        if (to?.isBefore(from)) {
             return false;
         }
 
-        if (minValue && from.isBefore(minValue)) {
+        if (minValue && from?.isBefore(minValue)) {
             return false;
         }
 
@@ -97,10 +109,12 @@ export interface PresetTab {
 export function getDefaultPresetTabs({
     withTime,
     minValue,
+    allowNullableValues,
     t = i18n,
 }: {
     minValue?: DateTime;
     withTime?: boolean;
+    allowNullableValues?: boolean;
     t?: (key: 'Main' | 'Other') => string;
 }) {
     const tabs: PresetTab[] = [];
@@ -114,7 +128,7 @@ export function getDefaultPresetTabs({
     if (withTime) {
         mainPresets.unshift(...DEFAULT_TIME_PRESETS);
     }
-    mainTab.presets = filterPresets(mainPresets, minValue);
+    mainTab.presets = filterPresetList(mainPresets, {minValue, allowNullableValues});
 
     if (mainTab.presets.length > 0) {
         tabs.push(mainTab);
@@ -123,7 +137,7 @@ export function getDefaultPresetTabs({
     const otherTab: PresetTab = {
         id: 'other',
         title: t('Other'),
-        presets: filterPresets(DEFAULT_OTHERS_PRESETS, minValue),
+        presets: filterPresetList(DEFAULT_OTHERS_PRESETS, {minValue, allowNullableValues}),
     };
 
     if (otherTab.presets.length > 0) {
@@ -133,9 +147,12 @@ export function getDefaultPresetTabs({
     return tabs;
 }
 
-export function filterPresetTabs(tabs: PresetTab[], {minValue}: {minValue?: DateTime} = {}) {
+export function filterPresetTabs(
+    tabs: PresetTab[],
+    {minValue, allowNullableValues}: {minValue?: DateTime; allowNullableValues?: boolean} = {},
+) {
     return tabs.reduce<PresetTab[]>((acc, tab) => {
-        const presets = filterPresets(tab.presets, minValue);
+        const presets = filterPresetList(tab.presets, {minValue, allowNullableValues});
         if (presets.length) {
             acc.push({
                 ...tab,

@@ -85,6 +85,16 @@ export const Default = meta.story({
             },
         },
         timeZone: timeZoneControl,
+        allowNullableValues: {
+            control: {
+                type: 'boolean',
+            },
+        },
+        withPresets: {
+            control: {
+                type: 'boolean',
+            },
+        },
     },
 });
 
@@ -142,6 +152,22 @@ export const CustomPresets = Default.extend({
                     {to: 'now', from: 'now-5M', title: 'Last five months'},
                     {to: 'now', from: 'now-5Q', title: 'Last five quarters'},
                     {to: 'now', from: 'now-5y', title: 'Last five years'},
+                ],
+            },
+            {
+                id: 'unlimited',
+                title: 'Unlimited',
+                presets: [
+                    {
+                        from: null,
+                        to: 'now',
+                        title: 'Past',
+                    },
+                    {
+                        from: 'now',
+                        to: null,
+                        title: 'Future',
+                    },
                 ],
             },
         ],

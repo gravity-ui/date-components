@@ -32,15 +32,36 @@ interface GetDefaultTitleArgs {
     value: RangeValue<Value | null> | null;
     timeZone: string;
     alwaysShowAsAbsolute?: boolean;
+    allowNullableValues?: boolean;
     format?: string;
     presets?: Preset[];
     presetsTranslations?: ExtractFunctionType<typeof i18n>;
     lang?: string;
 }
+
+const isPresetValue = (value: RangeValue<Value | null> | null, allowNullableValues?: boolean) => {
+    if (!value || value.start?.type === 'absolute' || value.end?.type === 'absolute') {
+        return null;
+    }
+    if (!allowNullableValues && (value.start === null || value.end === null)) {
+        // we can't get here with no nullable values allowed but just in case...
+        return null;
+    }
+    let start = null;
+    let end = null;
+    if (value.start?.type === 'relative') {
+        start = value.start.value;
+    }
+    if (value.end?.type === 'relative') {
+        end = value.end.value;
+    }
+    return {start, end};
+};
 export function getDefaultTitle({
     value,
     timeZone,
     alwaysShowAsAbsolute,
+    allowNullableValues,
     format = 'L',
     presets,
     presetsTranslations = i18n,
@@ -69,12 +90,18 @@ export function getDefaultTitle({
                   ) ?? '');
     }
 
-    if (
-        !alwaysShowAsAbsolute &&
-        value.start?.type === 'relative' &&
-        value.end?.type === 'relative'
-    ) {
-        return getPresetTitle(value.start.value, value.end.value, presets, presetsTranslations);
+    const presetSearch = isPresetValue(value, allowNullableValues);
+    if (!alwaysShowAsAbsolute && presetSearch) {
+        return getPresetTitle(presetSearch.start, presetSearch.end, presets, presetsTranslations);
+    }
+
+    if (allowNullableValues) {
+        if (!from) {
+            return `${presetsTranslations('To')}: ${to}${tz}`;
+        }
+        if (!to) {
+            return `${presetsTranslations('From')}: ${from}${tz}`;
+        }
     }
 
     const delimiter = ' — ';
