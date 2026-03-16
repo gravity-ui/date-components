@@ -29,12 +29,14 @@ describe('DatePicker', () => {
         const calendarButton = screen.getByRole('button', {name: 'Calendar'});
         combobox.element().focus();
         await userEvent.keyboard('{Alt>}{ArrowDown}{/Alt}');
-        await expect(combobox).toHaveAttribute('aria-expanded', 'true');
+        expect(combobox).toHaveAttribute('aria-expanded', 'true');
+        expect(screen.getByRole('grid')).toBeInTheDocument();
 
         calendarButton.element().focus();
         await userEvent.keyboard('{Escape}');
 
-        await expect(combobox).toHaveAttribute('aria-expanded', 'false');
-        await expect(screen.getByText('Dialog content')).toBeInTheDocument();
+        await expect.poll(() => screen.getByRole('grid')).not.toBeInTheDocument();
+        expect(combobox).toHaveAttribute('aria-expanded', 'false');
+        expect(screen.getByText('Dialog content')).toBeInTheDocument();
     });
 });

@@ -146,6 +146,6 @@ describe('RelativeDateField', () => {
         await userEvent.keyboard('{Escape}');
 
         await expect.poll(() => screen.getByRole('grid')).not.toBeInTheDocument();
-        await expect(screen.getByText('Dialog content')).toBeInTheDocument();
+        expect(screen.getByText('Dialog content')).toBeInTheDocument();
     });
 });
