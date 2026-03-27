@@ -1,5 +1,30 @@
 # Changelog
 
+## [4.0.0](https://github.com/gravity-ui/date-components/compare/v3.4.2...v4.0.0) (2026-03-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* **RelativeDateField:** call onUpdate only on valid input ([#274](https://github.com/gravity-ui/date-components/issues/274))
+* selection end text colors ([#231](https://github.com/gravity-ui/date-components/issues/231))
+* **Range/DateField:** support entering invalid dates ([#268](https://github.com/gravity-ui/date-components/issues/268))
+
+### Features
+
+* **Calendar:** support multi-selection ([#246](https://github.com/gravity-ui/date-components/issues/246)) ([57a0f72](https://github.com/gravity-ui/date-components/commit/57a0f72e8be39cb649afaf4b8f4309e1767c2eac))
+* **DateField:** delete section behaviour ([#276](https://github.com/gravity-ui/date-components/issues/276)) ([bcbd252](https://github.com/gravity-ui/date-components/commit/bcbd252133527e48d6bee223b3b7903ff9a25cb2))
+* **Range/DateField:** support entering invalid dates ([#268](https://github.com/gravity-ui/date-components/issues/268)) ([e71f58d](https://github.com/gravity-ui/date-components/commit/e71f58d7c976b10477ed8fb9fa7bd9c5e95da4e3))
+* **RelativeDateField:** call onUpdate only on valid input ([#274](https://github.com/gravity-ui/date-components/issues/274)) ([60aac46](https://github.com/gravity-ui/date-components/commit/60aac46bae59e896a092192f32ae853efdc4737f))
+* **RelativeRangeDatePicker:** allow null values in relative range presets ([#188](https://github.com/gravity-ui/date-components/issues/188)) ([405da9e](https://github.com/gravity-ui/date-components/commit/405da9e79110f84ebaad309e6baefbd75eeea610))
+* **RelativeRangeDatePicker:** allow select range in docs popover ([#275](https://github.com/gravity-ui/date-components/issues/275)) ([25b289d](https://github.com/gravity-ui/date-components/commit/25b289df466ce04c923fb6cda2311e4056a47792))
+* selection end text colors ([#231](https://github.com/gravity-ui/date-components/issues/231)) ([21e8d1d](https://github.com/gravity-ui/date-components/commit/21e8d1d25267a6fb30fcfde5158e4f3620c63ce5))
+
+
+### Bug Fixes
+
+* **pickers:** close picker popup on Escape key press ([#279](https://github.com/gravity-ui/date-components/issues/279)) ([cc274ed](https://github.com/gravity-ui/date-components/commit/cc274ed190373327467617590e4397e92b13d663))
+* **RelativeRangeDatePicker:** remove redundant mobile checks ([#281](https://github.com/gravity-ui/date-components/issues/281)) ([449f07d](https://github.com/gravity-ui/date-components/commit/449f07db1c713326eeb5b2c28bc8b318cc9d0680))
+
 ## [3.4.2](https://github.com/gravity-ui/date-components/compare/v3.4.1...v3.4.2) (2026-02-06)
 
 
