@@ -20,7 +20,7 @@ import type {
     FormatSection,
 } from './types';
 
-export const EDITABLE_SEGMENTS = {
+const EDITABLE_SEGMENTS = {
     year: true,
     quarter: true,
     month: true,
