@@ -1,0 +1,61 @@
+@use '../../variables';
+
+$block: '.#{variables.$ns}time-selection-wheel';
+
+#{$block} {
+    position: relative;
+
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+
+    max-height: 198px;
+
+    user-select: none;
+
+    border-radius: var(--g-border-radius-m);
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &_disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+
+        opacity: 0.6;
+    }
+
+    &__cell {
+        flex-shrink: 0;
+
+        width: 48px;
+        height: 24px;
+
+        cursor: pointer;
+
+        border-radius: var(--g-border-radius-s);
+
+        transition: background-color 0.1s ease;
+
+        &:hover:not(&_disabled):not(&_selected) {
+            background-color: var(--g-color-base-generic-hover);
+        }
+
+        &_selected {
+            color: var(--g-color-text-link);
+            background-color: var(--g-color-base-selection);
+        }
+
+        &_disabled {
+            cursor: not-allowed;
+
+            opacity: 0.4;
+            color: var(--g-color-text-hint);
+            background-color: var(--g-color-base-generic);
+        }
+    }
+}
