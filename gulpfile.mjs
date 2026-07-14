@@ -1,7 +1,7 @@
 import {rm} from 'node:fs/promises';
 import path from 'node:path';
 
-import {addVirtualFile, buildDocs, createTypescriptProject} from '@gravity-ui/gulp-utils';
+import {addVirtualFile, buildDocs, createDefaultDocsConfig, createTypescriptProject} from '@gravity-ui/gulp-utils';
 import {dest, parallel, series, src, task} from 'gulp';
 import gulpSass from 'gulp-sass';
 import sourcemaps from 'gulp-sourcemaps';
@@ -96,7 +96,7 @@ task('styles', () => {
 });
 
 task('copy-docs', (done) => {
-    buildDocs();
+    buildDocs({...createDefaultDocsConfig(), outDir: path.resolve(BUILD_DIR, 'docs')});
     done();
 });
 
