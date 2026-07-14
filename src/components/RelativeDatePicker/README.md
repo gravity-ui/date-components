@@ -4,11 +4,11 @@
 
 <!--/GITHUB_BLOCK-->
 
+`RelativeDatePicker` is almost the same component as `DatePicker` but it has ability to use relative dates.
+
 ```tsx
 import {RelativeDatePicker} from '@gravity-ui/date-components';
 ```
-
-`RelativeDatePicker` is almost the same component as `DatePicker` but it has ability to use relative dates.
 
 ## Difference from `DatePicker`
 

@@ -4,11 +4,11 @@
 
 <!--/GITHUB_BLOCK-->
 
+`RelativeDateField` component is used only for entering relative dates. It can't be used as "normal" `DateField`.
+
 ```tsx
 import {RelativeDateField} from '@gravity-ui/date-components';
 ```
-
-`RelativeDateField` component is used only for entering relative dates. It can't be used as "normal" `DateField`.
 
 ## Relative input
 
