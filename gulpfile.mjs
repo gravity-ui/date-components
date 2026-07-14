@@ -1,7 +1,7 @@
 import {rm} from 'node:fs/promises';
 import path from 'node:path';
 
-import {addVirtualFile, createTypescriptProject} from '@gravity-ui/gulp-utils';
+import {addVirtualFile, buildDocs, createTypescriptProject} from '@gravity-ui/gulp-utils';
 import {dest, parallel, series, src, task} from 'gulp';
 import gulpSass from 'gulp-sass';
 import sourcemaps from 'gulp-sourcemaps';
@@ -95,9 +95,20 @@ task('styles', () => {
         .pipe(dest(path.resolve(BUILD_DIR, 'cjs')));
 });
 
+task('copy-docs', (done) => {
+    buildDocs();
+    done();
+});
+
 task(
     'build',
-    series(['clean', parallel(['compile-to-esm', 'compile-to-cjs']), 'copy-i18n', 'styles']),
+    series([
+        'clean',
+        parallel(['compile-to-esm', 'compile-to-cjs']),
+        'copy-i18n',
+        'styles',
+        'copy-docs',
+    ]),
 );
 
 task('default', series(['build']));
