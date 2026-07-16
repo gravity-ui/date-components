@@ -1,12 +1,8 @@
 import {rm} from 'node:fs/promises';
 import path from 'node:path';
 
-import {
-    addVirtualFile,
-    buildDocs,
-    createDefaultDocsConfig,
-    createTypescriptProject,
-} from '@gravity-ui/gulp-utils';
+import {addVirtualFile, createTypescriptProject} from '@gravity-ui/gulp-utils';
+import {buildDocs, createDefaultDocsConfig} from '@gravity-ui/readme-validator';
 import {dest, parallel, series, src, task} from 'gulp';
 import gulpSass from 'gulp-sass';
 import sourcemaps from 'gulp-sourcemaps';
