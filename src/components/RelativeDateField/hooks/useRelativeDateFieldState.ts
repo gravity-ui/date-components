@@ -86,20 +86,28 @@ export function useRelativeDateFieldState(props: RelativeDateFieldOptions): Rela
         [props.disabled, props.readOnly, setValue],
     );
 
+    // Keep the latest state in a ref so `confirmValue` (invoked from a blur that
+    // may fire after an external value update) always reads current values
+    // instead of a stale render closure.
+    const latest = React.useRef({text, value, parsedDate});
+    latest.current = {text, value, parsedDate};
+
     const confirmValue = React.useCallback(() => {
-        if (!text) {
+        const {text: currentText, value: currentValue, parsedDate: currentParsed} = latest.current;
+
+        if (!currentText) {
             return;
         }
 
-        if (parsedDate) {
-            commitValue(text);
+        if (currentParsed) {
+            commitValue(currentText);
             return;
         }
 
-        const newValue = parseRelativeDate(value) ? value : null;
+        const newValue = parseRelativeDate(currentValue) ? currentValue : null;
         setText(newValue ?? '');
         commitValue(newValue);
-    }, [commitValue, parseRelativeDate, parsedDate, text, value]);
+    }, [commitValue, parseRelativeDate]);
 
     const handleTextChange = React.useCallback(
         (t: string) => {
