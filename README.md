@@ -109,6 +109,10 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for details.
 
 React date and time controls for Gravity UI apps — date/time pickers, calendars, and absolute/relative range selectors built on `@gravity-ui/date-utils`.
 
+### Migration notes
+
+For migration guidance from 3.x to 4.x, see [docs/migration-3-to-4.md](docs/migration-3-to-4.md).
+
 ### When to use
 
 - A single date or date-time input: `DatePicker`, `DateField`.
