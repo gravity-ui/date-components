@@ -1,6 +1,7 @@
 {
   "extends": "@gravity-ui/tsconfig",
   "compilerOptions": {
+    "target": "es2022",
     "noEmit": true,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
