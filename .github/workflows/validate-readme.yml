@@ -15,7 +15,7 @@ jobs:
   validate-package:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: gravity-ui/readme-validator@v1
         with:
           type: package
@@ -23,7 +23,7 @@ jobs:
   validate-components:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: gravity-ui/readme-validator@v1
         with:
           type: component
