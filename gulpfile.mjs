@@ -25,6 +25,7 @@ async function compileTs(modules = false) {
             ...(modules ? undefined : {verbatimModuleSyntax: false}),
             module: modules ? 'esnext' : 'NodeNext',
             moduleResolution: modules ? 'bundler' : 'NodeNext',
+            rootDir: '.',
         },
     });
 

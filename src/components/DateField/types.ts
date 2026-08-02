@@ -17,8 +17,7 @@ export type DateFieldSectionType =
 
 export type DateFormatTokenMap = {
     [formatToken: string]:
-        | DateFieldSectionType
-        | {sectionType: DateFieldSectionType; contentType: 'digit' | 'letter'};
+        DateFieldSectionType | {sectionType: DateFieldSectionType; contentType: 'digit' | 'letter'};
 };
 
 export interface DateFieldSection {

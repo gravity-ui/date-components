@@ -56,8 +56,7 @@ export default defineConfig({
                     }),
                 ],
                 optimizeDeps: {
-                    // https://github.com/storybookjs/storybook/issues/32049
-                    include: ['react/jsx-dev-runtime'],
+                    include: ['@testing-library/dom'],
                 },
                 test: {
                     name: 'storybook',
