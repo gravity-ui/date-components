@@ -1,0 +1,17 @@
+@use '../../variables';
+
+$tabs: '.#{variables.$ns}range-date-picker-with-preset__tabs';
+$range: '.#{variables.$ns}range-date-picker-with-preset__range';
+
+#{$tabs} {
+    padding: 0 12px;
+}
+
+#{$range} {
+    padding: 8px 0 8px 8px;
+
+    cursor: pointer;
+
+    border: none;
+    background: none;
+}
