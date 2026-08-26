@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/gravity-ui/date-components/compare/v4.0.0...v4.1.0) (2026-08-26)
+
+
+### Features
+
+* add calendar popup placement to relative range picker ([#290](https://github.com/gravity-ui/date-components/issues/290)) ([74bde29](https://github.com/gravity-ui/date-components/commit/74bde292fbcd7073144b2baf1cef8eb560deb268))
+
 ## [4.0.0](https://github.com/gravity-ui/date-components/compare/v3.4.2...v4.0.0) (2026-08-02)
 
 
