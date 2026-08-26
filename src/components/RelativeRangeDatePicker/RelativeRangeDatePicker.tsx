@@ -157,6 +157,7 @@ export function RelativeRangeDatePicker(props: RelativeRangeDatePickerProps) {
                 popupClassName={props.popupClassName}
                 popupStyle={props.popupStyle}
                 popupPlacement={props.popupPlacement}
+                calendarPopupPlacement={props.calendarPopupPlacement}
                 popupOffset={props.popupOffset}
                 isMobile={isMobile}
                 size={props.size}

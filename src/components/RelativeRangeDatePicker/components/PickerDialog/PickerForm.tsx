@@ -35,6 +35,8 @@ export interface PickerFormProps extends RelativeRangeDatePickerStateOptions, Do
     readOnly?: boolean;
     /** Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format) */
     format?: string;
+    /** Placement of calendar popups inside the range picker dialog. */
+    calendarPopupPlacement?: RelativeDatePickerProps['popupPlacement'];
     /** A placeholder date that controls the default values of each segment when the user first interacts with them. Defaults to today's date at midnight. */
     placeholderValue?: DateTime;
     /** Apply changes with button */
@@ -87,6 +89,7 @@ export function PickerForm(
         readOnly: props.readOnly,
         size: props.size,
         errorPlacement: 'inside',
+        popupPlacement: props.calendarPopupPlacement,
     };
     const {isDateUnavailable, withHeader = false} = props;
     const {t} = i18n.useTranslation();

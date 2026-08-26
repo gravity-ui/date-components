@@ -1,6 +1,6 @@
 import type {DateTime} from '@gravity-ui/date-utils';
 
-import type {Value} from '../RelativeDatePicker';
+import type {RelativeDatePickerProps, Value} from '../RelativeDatePicker';
 import type {
     AccessibilityProps,
     DomProps,
@@ -63,6 +63,8 @@ export interface RelativeRangeDatePickerProps
         PopupStyleProps {
     /** Format of the date when rendered in the input. [Available formats](https://day.js.org/docs/en/display/format) */
     format?: string;
+    /** Placement of calendar popups inside the range picker dialog. */
+    calendarPopupPlacement?: RelativeDatePickerProps['popupPlacement'];
     /** A placeholder date that controls the default values of each segment when the user first interacts with them. Defaults to today's date at midnight. */
     placeholderValue?: DateTime;
     /** Apply changes with button */
