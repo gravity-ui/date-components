@@ -127,7 +127,9 @@ describe('RelativeDateField', () => {
 
         await userEvent.click(screen.container);
 
-        expect(input).toHaveValue('now - 1d');
+        // Blur is dispatched asynchronously (useFocusWithin defers it), so wait
+        // for the committed value to be restored before asserting.
+        await expect.poll(() => input.value).toBe('now - 1d');
         expect(hiddenInput).toHaveValue('now - 1d');
         expect(onUpdate).not.toHaveBeenCalled();
     });
