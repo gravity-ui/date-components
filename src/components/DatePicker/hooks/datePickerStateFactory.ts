@@ -43,16 +43,6 @@ export interface DatePickerState<T = DateTime> {
     format: string;
     /** Format info */
     formatInfo: FormatInfo;
-    /**
-     * @deprecated use formatInfo.hasDate instead
-     * Whether the date picker supports selecting a date.
-     */
-    hasDate: boolean;
-    /**
-     * @deprecated use formatInfo.hasTime instead
-     * Whether the date picker supports selecting a time.
-     */
-    hasTime: boolean;
     /** Format of the time when rendered in the input. */
     timeFormat?: string;
     timeZone: string;
@@ -235,8 +225,6 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
             readOnly,
             format,
             formatInfo: dateFieldState.formatInfo,
-            hasDate: dateFieldState.formatInfo.hasDate,
-            hasTime: dateFieldState.formatInfo.hasTime,
             timeFormat,
             timeZone,
             isOpen,

@@ -47,13 +47,13 @@ export function PickerDialog({
     if (isMobile) {
         return (
             <Sheet
-                visible={open}
-                onClose={() => {
-                    onClose('outside-press');
-                    setTimeout(() => {
-                        onRemove?.();
-                    });
+                open={open}
+                onOpenChange={(isOpen) => {
+                    if (!isOpen) {
+                        onClose('outside-press');
+                    }
                 }}
+                onTransitionOutComplete={onRemove}
                 contentClassName={b('content', {mobile: true, size: 'xl'}, popupClassName)}
             >
                 <PickerForm

@@ -12,7 +12,7 @@ function TestRangeDatePicker() {
     const [open, setOpen] = React.useState(true);
 
     return (
-        <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog open={open} onOpenChange={setOpen}>
             <Dialog.Body>
                 <div>Dialog content</div>
                 <RangeDatePicker disableFocusTrap />
@@ -24,6 +24,8 @@ function TestRangeDatePicker() {
 describe('RangeDatePicker', () => {
     it('closes its popup on Escape from the group inside Dialog when focus trap is disabled', async () => {
         const screen = await render(<TestRangeDatePicker />);
+        // Dialog moves focus to its content once the opening transition ends
+        await expect.element(screen.getByRole('dialog')).toHaveFocus();
 
         const combobox = screen.getByRole('combobox');
         const calendarButton = screen.getByRole('button', {name: 'Calendar'});

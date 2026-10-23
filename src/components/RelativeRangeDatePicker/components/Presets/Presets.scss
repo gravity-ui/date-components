@@ -4,8 +4,6 @@
 $block: '.#{variables.$ns}relative-range-date-picker-presets';
 
 #{$block} {
-    --g-list-item-padding: 0 var(--_--g-date-picker-presets-padding, 0);
-
     &__tabs {
         --g-tabs-border-width: 0;
 
@@ -18,14 +16,18 @@ $block: '.#{variables.$ns}relative-range-date-picker-presets';
         box-shadow: inset 0 -1px var(--g-color-line-generic);
     }
 
-    &__list-container {
-        outline: none;
+    &__content {
+        height: 128px;
     }
 
-    &__content {
+    &__list {
+        --g-list-item-view-min-height: 28px;
+        --g-list-item-view-border-radius: 0;
+        --g-list-item-view-padding-inline: var(--_--g-date-picker-presets-padding, 0);
+
         overflow: auto;
 
-        height: 128px;
+        height: 100%;
     }
 
     &_size {
@@ -33,11 +35,19 @@ $block: '.#{variables.$ns}relative-range-date-picker-presets';
             #{$block}__content {
                 height: 144px;
             }
+
+            #{$block}__list {
+                --g-list-item-view-min-height: 32px;
+            }
         }
         &_xl {
             #{$block}__content {
                 height: 162px;
                 @include mixins.text-body-2();
+            }
+
+            #{$block}__list {
+                --g-list-item-view-min-height: 36px;
             }
         }
     }

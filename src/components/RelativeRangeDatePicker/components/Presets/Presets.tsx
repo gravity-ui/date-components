@@ -71,6 +71,7 @@ export function Presets({
                 </div>
                 <TabPanel className={b('content')} value={activeTabId}>
                     <PresetsList
+                        aria-label={activeTab.title}
                         presets={activeTab.presets}
                         onChoosePreset={onChoosePreset}
                         size={size}
@@ -80,57 +81,29 @@ export function Presets({
         </div>
     );
 }
-const SIZE_TO_ITEM_HEIGHT = {
-    s: 28,
-    m: 28,
-    l: 32,
-    xl: 36,
-};
-
 interface PresetsListProps {
     size?: 's' | 'm' | 'l' | 'xl';
     presets: Preset[];
     onChoosePreset: (start: string | null, end: string | null) => void;
+    'aria-label': string;
 }
-function PresetsList({presets, onChoosePreset, size = 'm'}: PresetsListProps) {
-    const ref = React.useRef<List<Preset>>(null);
+function PresetsList({presets, onChoosePreset, size = 'm', ...props}: PresetsListProps) {
     const {t} = i18n.useTranslation();
-
-    React.useEffect(() => {
-        const list = ref.current;
-        const container = ref.current?.refContainer.current?.node as HTMLDivElement | undefined;
-        if (list && container) {
-            try {
-                container.setAttribute('tabindex', '0');
-                container.setAttribute('class', b('list-container'));
-                const handleFocus = () => {
-                    if (list.getActiveItem() === null) {
-                        list.activateItem(0, true);
-                    }
-                };
-                container.addEventListener('focus', handleFocus);
-                return () => {
-                    container.removeEventListener('focus', handleFocus);
-                };
-            } catch {
-                // Oooops
-            }
-        }
-        return undefined;
-    }, []);
+    // Presets have no ids of their own, and titles are not guaranteed to be unique
+    const items = React.useMemo(
+        () => presets.map((preset, index) => ({id: String(index), preset})),
+        [presets],
+    );
 
     return (
         <List
-            ref={ref}
+            aria-label={props['aria-label']}
             className={b('list')}
-            itemClassName={b('item')}
-            items={presets}
-            filterable={false}
-            virtualized={false}
-            renderItem={(item) => t(item.title as any)}
-            itemHeight={SIZE_TO_ITEM_HEIGHT[size]}
-            onItemClick={(item) => {
-                onChoosePreset(item.from, item.to);
+            items={items}
+            size={size}
+            getItemContent={({preset}) => t(preset.title as any)}
+            onItemAction={(_id, {preset}) => {
+                onChoosePreset(preset.from, preset.to);
             }}
         />
     );

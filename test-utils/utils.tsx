@@ -1,4 +1,4 @@
-import {MobileProvider, ThemeProvider} from '@gravity-ui/uikit';
+import {Provider} from '@gravity-ui/uikit';
 import {render, renderHook} from 'vitest-browser-react';
 import type {ComponentRenderOptions} from 'vitest-browser-react';
 
@@ -15,9 +15,9 @@ function Providers({
     mobile,
 }: {children: React.ReactNode} & ProvidersProps) {
     return (
-        <ThemeProvider theme={theme} lang={lang}>
-            <MobileProvider mobile={mobile}>{children}</MobileProvider>
-        </ThemeProvider>
+        <Provider theme={theme} lang={lang} mobile={mobile}>
+            {children}
+        </Provider>
     );
 }
 

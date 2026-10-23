@@ -197,7 +197,7 @@ export const InsideDialog = Default.extend({
                 >
                     Open dialog
                 </Button>
-                <Dialog open={isOpen} onClose={() => setOpen(false)}>
+                <Dialog open={isOpen} onOpenChange={setOpen}>
                     <Dialog.Header />
                     <Dialog.Body>
                         <div style={{paddingTop: 16}}>

@@ -227,13 +227,16 @@ export function useRelativeDatePickerProps(
         },
         popupProps: {
             open: isOpen,
-            onEscapeKeyDown: () => {
-                setOpen(false);
-                focusInput();
-            },
-            onOutsideClick: (e) => {
-                if (e.target && !groupRef.current?.contains(e.target as Node)) {
-                    setOpen(false);
+            onOpenChange: (open, e, reason) => {
+                if (!open) {
+                    if (reason === 'escape-key') {
+                        setOpen(false);
+                        focusInput();
+                    } else if (reason === 'outside-press') {
+                        if (e?.target && !groupRef.current?.contains(e.target as Node)) {
+                            setOpen(false);
+                        }
+                    }
                 }
             },
             onTransitionOutComplete: () => {

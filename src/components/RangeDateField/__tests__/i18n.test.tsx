@@ -1,6 +1,6 @@
 import {dateTime, settings} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
-import {ThemeProvider} from '@gravity-ui/uikit';
+import {Provider} from '@gravity-ui/uikit';
 import {beforeAll, describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-react';
 
@@ -17,9 +17,9 @@ const delimiter = ` ${String.fromCharCode(0x2014)} `;
 
 function Test({lang, value, format}: TestProps) {
     return (
-        <ThemeProvider theme="light" lang={lang}>
+        <Provider theme="light" lang={lang}>
             <RangeDateField value={value} format={format} />
-        </ThemeProvider>
+        </Provider>
     );
 }
 
