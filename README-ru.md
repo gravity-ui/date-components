@@ -3,7 +3,7 @@
 ## Установка
 
 ```shell
-npm install react react-dom @gravity-ui/uikit @gravity-ui/date-components @gravity-ui/date-utils @tanstack/react-virtual
+npm install react react-dom @gravity-ui/uikit @gravity-ui/date-components @gravity-ui/date-utils
 ```
 
 ## Разработка

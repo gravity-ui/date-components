@@ -9,16 +9,14 @@ Version 5 moves `@gravity-ui/date-components` to `@gravity-ui/uikit` v8. Most of
 | `@gravity-ui/uikit`       | `^7.21.0`  | `^8.0.0`               |
 | `react`, `react-dom`      | `>=17.0.0` | `^18.0.0 \|\| ^19.0.0` |
 | `@types/react` (optional) | `>=17.0.0` | `^18.0.0 \|\| ^19.0.0` |
-| `@tanstack/react-virtual` | —          | `^3.13.0`              |
 
 - **uikit v7 is not supported.** Date components and uikit have to be upgraded together.
 - **React 17 is not supported**, as in uikit v8.
-- **`@tanstack/react-virtual` is a new required peer dependency.** The timezone list of `RelativeRangeDatePicker` is virtualized with `ListVirtualizer` from `@gravity-ui/uikit/virtualizer`, which needs this package. The import is part of the package entry point, so without the package any import of `@gravity-ui/date-components` fails, even if you do not render `RelativeRangeDatePicker`: the bundler cannot resolve it, and in Node (Jest, server-side rendering) `require` throws `MODULE_NOT_FOUND`. npm 7+ and pnpm install peer dependencies automatically; with Yarn, add it yourself.
 - **`@types/react` is optional now.** In 4.x it was meant to be optional, but a typo in `peerDependenciesMeta` made it required.
-- **No other optional peers of uikit are needed.** Date components do not import `@gravity-ui/uikit/legacy`, so `@hello-pangea/dnd`, `react-window` and `react-virtualized-auto-sizer` are not required.
+- **No optional peers of uikit are needed.** Date components import neither `@gravity-ui/uikit/legacy` nor `@gravity-ui/uikit/virtualizer`, so `@hello-pangea/dnd`, `react-window`, `react-virtualized-auto-sizer` and `@tanstack/react-virtual` are not required. To keep the timezone list virtualized, see [Timezone list](#timezone-list).
 
 ```shell
-npm install @gravity-ui/date-components@5 @gravity-ui/uikit@8 @tanstack/react-virtual
+npm install @gravity-ui/date-components@5 @gravity-ui/uikit@8
 ```
 
 ## 2. Language is set on `Provider`
@@ -88,7 +86,24 @@ The list of presets uses the new uikit [`List`](https://github.com/gravity-ui/ui
 
 ### Timezone list
 
-The options of the timezone list (`withZonesList`) look like the options of the uikit v8 `Select`. The list stays virtualized, which needs the `@tanstack/react-virtual` peer dependency, see [Peer dependencies](#1-peer-dependencies).
+The options of the timezone list (`withZonesList`) look like the options of the uikit v8 `Select`.
+
+The list is no longer virtualized. In uikit v8 virtualization is turned on by the application, and date components do not depend on `@tanstack/react-virtual`. Without it, all ~420 timezones are rendered as DOM rows when the list opens, and in development uikit reports this with a `console.error` from `[Select]`.
+
+To virtualize the list, as in 4.x, install `@tanstack/react-virtual` and wrap the application in `ListVirtualizer` next to `Provider`:
+
+```tsx
+import {Provider} from '@gravity-ui/uikit';
+import {ListVirtualizer} from '@gravity-ui/uikit/virtualizer';
+
+<Provider theme="light">
+  <ListVirtualizer minItemsCount={50}>
+    <App />
+  </ListVirtualizer>
+</Provider>;
+```
+
+The wrapper virtualizes every uikit `List` and `Select` below it that has 50 items or more, the timezone list included, as uikit v7 did by default. See [Which Selects to virtualize](https://github.com/gravity-ui/uikit/blob/main/docs/migration-select-v8.md#which-selects-to-virtualize) in the uikit guide.
 
 ### Mobile
 
@@ -128,7 +143,7 @@ Update your screenshot baselines after the upgrade, and check custom CSS that ov
 ## Migration checklist
 
 - Upgrade `@gravity-ui/uikit` to v8 with its migration guide, and React to 18 or 19.
-- Install `@tanstack/react-virtual`.
+- To keep the timezone list virtualized, install `@tanstack/react-virtual` and wrap the application in `<ListVirtualizer minItemsCount={50}>`.
 - Move `lang` from `ThemeProvider` to `Provider` or `LangProvider`.
 - Replace `state.hasDate` and `state.hasTime` with `state.formatInfo.hasDate` and `state.formatInfo.hasTime`.
 - Move code that reads `onEscapeKeyDown` or `onOutsideClick` of `popupProps` from the props hooks to `onOpenChange`.

@@ -3,7 +3,7 @@
 ## Install
 
 ```shell
-npm install react react-dom @gravity-ui/uikit @gravity-ui/date-components @gravity-ui/date-utils @tanstack/react-virtual
+npm install react react-dom @gravity-ui/uikit @gravity-ui/date-components @gravity-ui/date-utils
 ```
 
 ## Usage
@@ -128,7 +128,7 @@ React date and time controls for Gravity UI apps — date/time pickers, calendar
 ### Common pitfalls
 
 - **Values are `DateTime` objects, not JS `Date`.** Components work with `dateTime()` from [`@gravity-ui/date-utils`](https://github.com/gravity-ui/date-utils); pass and read `DateTime`, not native `Date` or ISO strings.
-- **Requires uikit setup.** Render inside `Provider` from `@gravity-ui/uikit` and import `@gravity-ui/uikit/styles/styles.css`; `@gravity-ui/uikit` v8, `@gravity-ui/date-utils` and `@tanstack/react-virtual` are required peer dependencies.
+- **Requires uikit setup.** Render inside `Provider` from `@gravity-ui/uikit` and import `@gravity-ui/uikit/styles/styles.css`; `@gravity-ui/uikit` v8 and `@gravity-ui/date-utils` are required peer dependencies.
 - **Locale is loaded, not just set.** Set language via `Provider` `lang`, but load the locale data first with `settings.loadLocale('ru')` from `@gravity-ui/date-utils`, or dates render in the default locale.
 - **Component-specific translations use `addLanguageKeysets`.** For languages beyond `en`/`ru`, register keysets via `addLanguageKeysets` from `@gravity-ui/uikit/i18n` using the `Keysets`/`PartialKeysets` types exported here.
 
