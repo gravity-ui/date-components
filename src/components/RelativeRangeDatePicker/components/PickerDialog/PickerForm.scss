@@ -38,5 +38,14 @@ $block: '.#{variables.$ns}relative-range-date-picker-form';
 
     &__presets {
         margin-inline: calc(-1 * var(--_--popup-content-padding));
+
+        // The list scrolls up to the edge of the popup, or up to the divider of the zone
+        &:last-child {
+            margin-block-end: calc(-1 * var(--_--popup-content-padding));
+        }
+    }
+
+    &__presets + &__zone {
+        margin-block-start: 0;
     }
 }

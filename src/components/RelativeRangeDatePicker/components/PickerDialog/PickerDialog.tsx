@@ -1,7 +1,7 @@
 'use client';
 
 import {Popup, Sheet} from '@gravity-ui/uikit';
-import type {PopupProps, SheetOpenChangeReason} from '@gravity-ui/uikit';
+import type {OpenChangeReason, PopupProps, SheetOpenChangeReason} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 import type {PopupStyleProps} from '../../../types';
@@ -18,13 +18,8 @@ export interface PickerDialogProps extends PickerFormProps, PopupStyleProps {
     anchor: HTMLElement | null;
     /** Manages `Popup` visibility */
     open: boolean;
-    /** Handles popup close event */
-    onClose: (
-        reason?:
-            | Parameters<NonNullable<PopupProps['onOpenChange']>>[2]
-            | SheetOpenChangeReason
-            | 'apply',
-    ) => void;
+    /** Handles popup close event. `Sheet` on mobile reports its own reasons, such as `swipe` */
+    onClose: (reason?: OpenChangeReason | SheetOpenChangeReason | 'apply') => void;
     /** Handles popup remove from DOM event */
     onRemove?: () => void;
     /** If true `Popup` act like a modal dialog */

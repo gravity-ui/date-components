@@ -84,28 +84,11 @@ If you spread these props onto your own uikit components, nothing changes. If yo
 
 ### Presets list
 
-The list of presets is built on the new uikit `List`.
-
-- **Roles.** The list is a `listbox` and its rows are `option`s, named by the preset title. Tests that look for presets by text keep working. Tests that look for them by role should use `getByRole('option', {name: 'Last week'})`.
-- **Keyboard.** The list is one tab stop. The arrows move between presets, `Enter` applies the active one, and typing the first letters of a title jumps to it. Switching the tab starts the next list from its first preset.
-- **CSS.** `.g-list` is now the root of the new `List`, and the classes of the legacy list (`.g-list__item`, `.g-list__item_active`, …) are no longer rendered. Neither are `.g-date-relative-range-date-picker-presets__item` and `.g-date-relative-range-date-picker-presets__list-container`. The rows are uikit `ListItemView`s: restyle them with the [`ListItemView` CSS API](https://github.com/gravity-ui/uikit/blob/main/src/components/ListItemView/README.md#css-api) on `.g-date-relative-range-date-picker-presets__list`. `--g-list-item-padding` is replaced with `--g-list-item-view-padding-inline` and `--g-list-item-view-padding-block`.
-- **Look.** The rows look like the rows of the other uikit v8 lists: they are as tall as the controls of the same size (24px for `s`, 28px for `m`, 36px for `l` and 44px for `xl` and on mobile, instead of 28, 28, 32 and 36px), rounded, and 4px away from the edges of the popup. The height of the presets block follows the rows to keep about four and a half of them in view: 108px for `s` instead of 128px, 128px for `m` as before, 162px for `l` instead of 144px, and 198px for `xl` and on mobile instead of 162px.
-
-### Docs table
-
-The table of examples in the docs popover (`withHeader`) is a plain `<table>` instead of the uikit `Table`, which moved to `@gravity-ui/uikit/legacy`. It looks the same, but the `.g-table*` classes are gone. Use `.g-date-relative-range-date-picker-doc__table-wrapper` (the horizontal scroll container), `__table`, `__row` and `__cell` instead.
+The list of presets uses the new uikit [`List`](https://github.com/gravity-ui/uikit/blob/main/src/components/List/README.md) and looks different, see [Visual changes](#7-visual-changes).
 
 ### Timezone list
 
-The timezone `Select` (`withZonesList`) follows the uikit v8 `Select`:
-
-- Its options are virtualized, as in 4.x, so only the visible rows are in the DOM.
-- The rows are as tall as the controls of the same size: 24px for `s`, 28px for `m`, 36px for `l` and 44px for `xl` instead of 28, 28, 32 and 36px. On mobile every row is 44px instead of 32px. Fewer rows fit into the popup.
-- The rows look like the rows of the new `List`: they are rounded and 4px away from the edges of the popup.
-- The popup opens 4px away from the control instead of 1px.
-- The control that opens the list is a `combobox` that names the list.
-- The filter input is a `combobox` too: in tests, find it with `getByRole('combobox')` inside the popup instead of `getByRole('textbox')`.
-- Group headers (`Africa`, `America`, …) are no longer `option`s.
+The options of the timezone list (`withZonesList`) look like the options of the uikit v8 `Select`, see [Visual changes](#7-visual-changes). The list stays virtualized, which needs the `@tanstack/react-virtual` peer dependency, see [Peer dependencies](#1-peer-dependencies).
 
 ### Mobile
 
@@ -139,7 +122,7 @@ The components look slightly different because uikit v8 changes them:
 
 - colors come from Themer v2 and shift slightly in every theme;
 - the `:hover` styles of uikit components inside date components, such as buttons and list rows, apply only on devices that can hover. The hover styles of the calendar cells and of `RangeDateSelection` do not change;
-- the rows of the presets and timezone lists of `RelativeRangeDatePicker` change their height and look, and the presets block changes its height, see [section 5](#5-relativerangedatepicker).
+- the rows of the presets and timezone lists of `RelativeRangeDatePicker` look like the rows of the uikit v8 lists: they are as tall as the controls of the same size (24, 28, 36 and 44px for `s`, `m`, `l` and `xl`, and 44px on mobile, instead of 28, 28, 32 and 36px), rounded, and inset from the edges of the popup. The presets block changes its height to keep about four and a half rows in view.
 
 Update your screenshot baselines after the upgrade, and check custom CSS that overrides uikit classes inside date components.
 
@@ -151,6 +134,6 @@ Update your screenshot baselines after the upgrade, and check custom CSS that ov
 - Replace `state.hasDate` and `state.hasTime` with `state.formatInfo.hasDate` and `state.formatInfo.hasTime`.
 - Move code that reads `onEscapeKeyDown` or `onOutsideClick` of `popupProps` from the props hooks to `onOpenChange`.
 - If you render `RelativeRangeDatePickerDialog` yourself, check its `onClose` and `onRemove` handlers on mobile.
-- Update CSS overrides of the presets list, the docs table and the timezone list of `RelativeRangeDatePicker`.
-- Update tests that query presets or the timezone filter by role, and tests that open pickers inside a `Dialog`.
+- Update CSS overrides of the presets list and the timezone list of `RelativeRangeDatePicker`.
+- Update tests that open pickers inside a `Dialog`.
 - Update screenshot baselines.
