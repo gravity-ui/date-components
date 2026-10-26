@@ -71,6 +71,7 @@ export function Presets({
                 </div>
                 <TabPanel className={b('content')} value={activeTabId}>
                     <PresetsList
+                        key={activeTab.id}
                         aria-label={activeTab.title}
                         presets={activeTab.presets}
                         onChoosePreset={onChoosePreset}

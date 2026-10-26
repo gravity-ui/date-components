@@ -51,54 +51,56 @@ function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: Doc
     const buttonSize = getButtonSizeForInput(size);
 
     return (
-        <table className={b('table', {size})}>
-            <thead>
-                <tr>
-                    <th className={b('cell')}>{t('Range')}</th>
-                    <th className={b('cell')}>{t('From')}</th>
-                    <th className={b('cell')}>{t('To')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {docs.map((item, index) => (
-                    <tr key={index} className={b('row')}>
-                        <td className={b('cell')}>
-                            <Button
-                                view="flat"
-                                size={buttonSize}
-                                onClick={() => {
-                                    onRangeUpdate(item.from, item.to);
-                                }}
-                            >
-                                {t(item.title as any)}
-                            </Button>
-                        </td>
-                        <td className={b('cell')}>
-                            <Button
-                                view="flat"
-                                size={buttonSize}
-                                onClick={() => {
-                                    onStartUpdate(item.from);
-                                }}
-                            >
-                                {item.from}
-                            </Button>
-                        </td>
-                        <td className={b('cell')}>
-                            <Button
-                                view="flat"
-                                size={buttonSize}
-                                onClick={() => {
-                                    onEndUpdate(item.to);
-                                }}
-                            >
-                                {item.to}
-                            </Button>
-                        </td>
+        <div className={b('table-wrapper')}>
+            <table className={b('table', {size})}>
+                <thead>
+                    <tr>
+                        <th className={b('cell')}>{t('Range')}</th>
+                        <th className={b('cell')}>{t('From')}</th>
+                        <th className={b('cell')}>{t('To')}</th>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {docs.map((item, index) => (
+                        <tr key={index} className={b('row')}>
+                            <td className={b('cell')}>
+                                <Button
+                                    view="flat"
+                                    size={buttonSize}
+                                    onClick={() => {
+                                        onRangeUpdate(item.from, item.to);
+                                    }}
+                                >
+                                    {t(item.title as any)}
+                                </Button>
+                            </td>
+                            <td className={b('cell')}>
+                                <Button
+                                    view="flat"
+                                    size={buttonSize}
+                                    onClick={() => {
+                                        onStartUpdate(item.from);
+                                    }}
+                                >
+                                    {item.from}
+                                </Button>
+                            </td>
+                            <td className={b('cell')}>
+                                <Button
+                                    view="flat"
+                                    size={buttonSize}
+                                    onClick={() => {
+                                        onEndUpdate(item.to);
+                                    }}
+                                >
+                                    {item.to}
+                                </Button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     );
 }
 

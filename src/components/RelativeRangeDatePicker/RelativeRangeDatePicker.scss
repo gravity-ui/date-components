@@ -21,10 +21,6 @@ $block: '.#{variables.$ns}relative-range-date-picker';
             flex-direction: column;
         }
 
-        &-tooltip {
-            --g-popover-max-width: 'none';
-        }
-
         &-item,
         &-to,
         &-tz {

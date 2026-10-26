@@ -16,38 +16,39 @@ $block: '.#{variables.$ns}relative-range-date-picker-presets';
         box-shadow: inset 0 -1px var(--g-color-line-generic);
     }
 
+    // About four and a half rows, so that the cut row shows the list scrolls
     &__content {
         height: 128px;
     }
 
     &__list {
-        --g-list-item-view-min-height: 28px;
-        --g-list-item-view-border-radius: 0;
-        --g-list-item-view-padding-inline: var(--_--g-date-picker-presets-padding, 0);
+        // Rows are inset from the edges, as in uikit Select, and their text stays aligned with the tabs
+        --_--inset: min(var(--g-spacing-1), var(--_--g-date-picker-presets-padding, 0px));
+        --g-list-item-view-padding-inline: calc(
+            var(--_--g-date-picker-presets-padding, 0px) - var(--_--inset)
+        );
 
         overflow: auto;
 
         height: 100%;
+        padding-inline: var(--_--inset);
     }
 
     &_size {
+        &_s {
+            #{$block}__content {
+                height: 108px;
+            }
+        }
         &_l {
             #{$block}__content {
-                height: 144px;
-            }
-
-            #{$block}__list {
-                --g-list-item-view-min-height: 32px;
+                height: 162px;
             }
         }
         &_xl {
             #{$block}__content {
-                height: 162px;
+                height: 198px;
                 @include mixins.text-body-2();
-            }
-
-            #{$block}__list {
-                --g-list-item-view-min-height: 36px;
             }
         }
     }

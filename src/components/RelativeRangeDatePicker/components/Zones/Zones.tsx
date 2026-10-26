@@ -18,7 +18,8 @@ const groups: Record<string, {label: string; options: SelectOptionProps[]}> = {}
 const zones = getTimeZonesList().reduce<(SelectOptionProps | SelectOptionGroupProps)[]>(
     (opts, value) => {
         const [groupName] = value.split('/');
-        if (groupName) {
+        // UTC is added at the top of the list, and option values have to be unique
+        if (groupName && value !== 'UTC') {
             let group = groups[groupName];
             if (!group) {
                 group = {label: groupName, options: []};
@@ -75,16 +76,12 @@ export function Zones(props: ZonesProps) {
                         timeZone === 'system' || timeZone === 'default' ? t(timeZone) : timeZone;
                     return (
                         <Button
+                            {...controlProps.triggerProps}
                             ref={controlProps.ref as React.Ref<HTMLButtonElement>}
-                            onClick={controlProps.triggerProps.onClick}
                             view="flat-secondary"
                             width="max"
                             pin="clear-clear"
                             size={props.size}
-                            disabled={props.disabled}
-                            aria-haspopup="listbox"
-                            aria-expanded={controlProps.open}
-                            onKeyDown={controlProps.triggerProps.onKeyDown}
                             className={b('control')}
                         >
                             {`${value} (${getTimeZoneOffset(timeZone)})`}

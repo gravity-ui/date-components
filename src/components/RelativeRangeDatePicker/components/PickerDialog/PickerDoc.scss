@@ -8,6 +8,10 @@ $block: '.#{variables.$ns}relative-range-date-picker-doc';
         --g-button-background-color-hover: transparent;
     }
 
+    &__table-wrapper {
+        overflow-x: auto;
+    }
+
     &__table {
         width: 100%;
 
