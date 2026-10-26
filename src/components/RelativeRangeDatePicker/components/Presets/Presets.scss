@@ -2,21 +2,7 @@
 
 $block: '.#{variables.$ns}relative-range-date-picker-presets';
 
-// The heights of uikit List rows by the size of the list
-$row-heights: (
-    's': 24px,
-    'm': 28px,
-    'l': 36px,
-    'xl': 44px,
-);
-
 #{$block} {
-    // About four and a half rows, so that the cut row shows the list scrolls
-    @each $size, $row-height in $row-heights {
-        &_size_#{$size} #{$block}__content {
-            height: calc(#{$row-height} * 4.5 + 2 * var(--g-spacing-1));
-        }
-    }
     &__tabs {
         --g-tabs-border-width: 0;
 
@@ -29,17 +15,28 @@ $row-heights: (
         box-shadow: inset 0 -1px var(--g-color-line-generic);
     }
 
-    &__list {
-        // Rows are inset from the edges, as in uikit Select, and their text stays aligned with the tabs
-        --_--inset: min(var(--g-spacing-1), var(--_--g-date-picker-presets-padding, 0px));
-        --g-list-item-view-padding-inline: calc(
-            var(--_--g-date-picker-presets-padding, 0px) - var(--_--inset)
-        );
+    &__content {
+        height: 128px;
+    }
 
+    &__list {
         overflow: auto;
 
         box-sizing: border-box;
         height: 100%;
-        padding: var(--g-spacing-1) var(--_--inset);
+        padding: var(--g-spacing-1);
+    }
+
+    &_size {
+        &_l {
+            #{$block}__content {
+                height: 144px;
+            }
+        }
+        &_xl {
+            #{$block}__content {
+                height: 162px;
+            }
+        }
     }
 }

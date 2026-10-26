@@ -84,11 +84,11 @@ If you spread these props onto your own uikit components, nothing changes. If yo
 
 ### Presets list
 
-The list of presets uses the new uikit [`List`](https://github.com/gravity-ui/uikit/blob/main/src/components/List/README.md) and looks different, see [Visual changes](#7-visual-changes).
+The list of presets uses the new uikit [`List`](https://github.com/gravity-ui/uikit/blob/main/src/components/List/README.md) and looks different.
 
 ### Timezone list
 
-The options of the timezone list (`withZonesList`) look like the options of the uikit v8 `Select`, see [Visual changes](#7-visual-changes). The list stays virtualized, which needs the `@tanstack/react-virtual` peer dependency, see [Peer dependencies](#1-peer-dependencies).
+The options of the timezone list (`withZonesList`) look like the options of the uikit v8 `Select`. The list stays virtualized, which needs the `@tanstack/react-virtual` peer dependency, see [Peer dependencies](#1-peer-dependencies).
 
 ### Mobile
 
@@ -122,7 +122,6 @@ The components look slightly different because uikit v8 changes them:
 
 - colors come from Themer v2 and shift slightly in every theme;
 - the `:hover` styles of uikit components inside date components, such as buttons and list rows, apply only on devices that can hover. The hover styles of the calendar cells and of `RangeDateSelection` do not change;
-- the rows of the presets and timezone lists of `RelativeRangeDatePicker` look like the rows of the uikit v8 lists: they are as tall as the controls of the same size (24, 28, 36 and 44px for `s`, `m`, `l` and `xl`, and 44px on mobile, instead of 28, 28, 32 and 36px), rounded, and inset from the edges of the popup. The presets block changes its height to keep about four and a half rows in view.
 
 Update your screenshot baselines after the upgrade, and check custom CSS that overrides uikit classes inside date components.
 
