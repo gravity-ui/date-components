@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/gravity-ui/date-components/compare/v4.1.0...v5.0.0) (2026-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* update to uikit 8 ([#292](https://github.com/gravity-ui/date-components/issues/292))
+
+### Features
+
+* update to uikit 8 ([#292](https://github.com/gravity-ui/date-components/issues/292)) ([c66ad34](https://github.com/gravity-ui/date-components/commit/c66ad34b7a3f48c553f377f95d6433820f3a1e13))
+
 ## [4.1.0](https://github.com/gravity-ui/date-components/compare/v4.0.0...v4.1.0) (2026-08-26)
 
 
