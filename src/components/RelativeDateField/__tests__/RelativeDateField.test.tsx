@@ -12,7 +12,7 @@ function TestRelativeDateField() {
     const [open, setOpen] = React.useState(true);
 
     return (
-        <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog open={open} onOpenChange={setOpen}>
             <Dialog.Body>
                 <div>Dialog content</div>
                 <RelativeDateField />
@@ -134,6 +134,8 @@ describe('RelativeDateField', () => {
 
     it('closes popup on Escape from an element inside the group inside Dialog', async () => {
         const screen = await render(<TestRelativeDateField />);
+        // Dialog moves focus to its content once the opening transition ends
+        await expect.element(screen.getByRole('dialog')).toHaveFocus();
 
         const input = screen.getByRole('textbox').element();
 

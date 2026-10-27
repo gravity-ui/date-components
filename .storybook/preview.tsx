@@ -4,7 +4,7 @@ import '@gravity-ui/uikit/styles/fonts.scss';
 import '@gravity-ui/uikit/styles/styles.css';
 
 import {settings} from '@gravity-ui/date-utils';
-import {MobileProvider, ThemeProvider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
+import {Provider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import addonA11y from '@storybook/addon-a11y';
 import addonDocs from '@storybook/addon-docs';
@@ -21,18 +21,17 @@ settings.loadLocale('ru');
 const WithContextProvider: Decorator = (Story, context) => {
     settings.setLocale(context.globals.lang);
     return (
-        <ThemeProvider
+        <Provider
             theme={context.globals.theme}
             direction={context.globals.direction}
             lang={context.globals.lang}
+            mobile={context.globals.platform === 'mobile'}
         >
-            <MobileProvider mobile={context.globals.platform === 'mobile'}>
-                <ToasterProvider toaster={toaster}>
-                    <Story {...context} />
-                    <ToasterComponent />
-                </ToasterProvider>
-            </MobileProvider>
-        </ThemeProvider>
+            <ToasterProvider toaster={toaster}>
+                <Story {...context} />
+                <ToasterComponent />
+            </ToasterProvider>
+        </Provider>
     );
 };
 

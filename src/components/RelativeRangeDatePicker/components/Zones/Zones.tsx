@@ -3,7 +3,7 @@
 import {getTimeZonesList} from '@gravity-ui/date-utils';
 import {ChevronRight} from '@gravity-ui/icons';
 import {Button, Icon, Select, Text} from '@gravity-ui/uikit';
-import type {SelectOption, SelectOptionGroup} from '@gravity-ui/uikit';
+import type {SelectOptionGroupProps, SelectOptionProps} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 import {getTimeZoneOffset, normalizeTimeZone} from '../../utils';
@@ -12,21 +12,25 @@ import {i18n} from './i18n';
 
 import './Zones.scss';
 
-const groups: Record<string, {label: string; options: SelectOption[]}> = {};
+const groups: Record<string, {label: string; options: SelectOptionProps[]}> = {};
 
-const zones = getTimeZonesList().reduce<(SelectOption | SelectOptionGroup)[]>((opts, value) => {
-    const [groupName] = value.split('/');
-    if (groupName) {
-        let group = groups[groupName];
-        if (!group) {
-            group = {label: groupName, options: []};
-            groups[groupName] = group;
-            opts.push(group);
+const zones = getTimeZonesList().reduce<(SelectOptionProps | SelectOptionGroupProps)[]>(
+    (opts, value) => {
+        const [groupName] = value.split('/');
+        // UTC is added at the top of the list, and option values have to be unique
+        if (groupName && value !== 'UTC') {
+            let group = groups[groupName];
+            if (!group) {
+                group = {label: groupName, options: []};
+                groups[groupName] = group;
+                opts.push(group);
+            }
+            group.options.push({value});
         }
-        group.options.push({value});
-    }
-    return opts;
-}, []);
+        return opts;
+    },
+    [],
+);
 
 zones.unshift({
     value: 'UTC',
@@ -70,16 +74,12 @@ export function Zones(props: ZonesProps) {
                     timeZone === 'system' || timeZone === 'default' ? t(timeZone) : timeZone;
                 return (
                     <Button
+                        {...controlProps.triggerProps}
                         ref={controlProps.ref as React.Ref<HTMLButtonElement>}
-                        onClick={controlProps.triggerProps.onClick}
                         view="flat-secondary"
                         width="max"
                         pin="clear-clear"
                         size={props.size}
-                        disabled={props.disabled}
-                        aria-haspopup="listbox"
-                        aria-expanded={controlProps.open}
-                        onKeyDown={controlProps.triggerProps.onKeyDown}
                         className={b('control')}
                     >
                         {`${value} (${getTimeZoneOffset(timeZone)})`}

@@ -1,11 +1,8 @@
-@use '@gravity-ui/uikit/styles/mixins';
 @use '../../../variables';
 
 $block: '.#{variables.$ns}relative-range-date-picker-presets';
 
 #{$block} {
-    --g-list-item-padding: 0 var(--_--g-date-picker-presets-padding, 0);
-
     &__tabs {
         --g-tabs-border-width: 0;
 
@@ -18,14 +15,16 @@ $block: '.#{variables.$ns}relative-range-date-picker-presets';
         box-shadow: inset 0 -1px var(--g-color-line-generic);
     }
 
-    &__list-container {
-        outline: none;
+    &__content {
+        height: 128px;
     }
 
-    &__content {
+    &__list {
         overflow: auto;
 
-        height: 128px;
+        box-sizing: border-box;
+        height: 100%;
+        padding: var(--g-spacing-1);
     }
 
     &_size {
@@ -37,7 +36,6 @@ $block: '.#{variables.$ns}relative-range-date-picker-presets';
         &_xl {
             #{$block}__content {
                 height: 162px;
-                @include mixins.text-body-2();
             }
         }
     }

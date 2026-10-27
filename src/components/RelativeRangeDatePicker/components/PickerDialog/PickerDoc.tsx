@@ -3,8 +3,7 @@
 import React from 'react';
 
 import {CircleQuestion} from '@gravity-ui/icons';
-import {Button, Icon, Popover, Sheet, Table, useMobile} from '@gravity-ui/uikit';
-import type {TableColumnConfig} from '@gravity-ui/uikit';
+import {Button, Icon, Popover, Sheet, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../../../utils/cn';
 import {getButtonSizeForInput} from '../../../utils/getButtonSizeForInput';
@@ -49,66 +48,60 @@ interface DocContentProps extends Omit<PresetsDocProps, 'docs' | 'className'> {
 
 function DocContent({size, docs, onStartUpdate, onEndUpdate, onRangeUpdate}: DocContentProps) {
     const {t} = i18n.useTranslation();
-    const columns: TableColumnConfig<Preset>[] = React.useMemo(
-        () => [
-            {
-                id: 'title',
-                name: () => {
-                    return t('Range');
-                },
-                template: (item) => {
-                    return (
-                        <Button
-                            view="flat"
-                            size={getButtonSizeForInput(size)}
-                            onClick={() => {
-                                onRangeUpdate(item.from, item.to);
-                            }}
-                        >
-                            {t(item.title as any)}
-                        </Button>
-                    );
-                },
-            },
-            {
-                id: 'from',
-                name: () => {
-                    return t('From');
-                },
-                template: (item) => (
-                    <Button
-                        view="flat"
-                        size={getButtonSizeForInput(size)}
-                        onClick={() => {
-                            onStartUpdate(item.from);
-                        }}
-                    >
-                        {item.from}
-                    </Button>
-                ),
-            },
-            {
-                id: 'to',
-                name: () => {
-                    return t('To');
-                },
-                template: (item) => (
-                    <Button
-                        view="flat"
-                        size={getButtonSizeForInput(size)}
-                        onClick={() => {
-                            onEndUpdate(item.to);
-                        }}
-                    >
-                        {item.to}
-                    </Button>
-                ),
-            },
-        ],
-        [onEndUpdate, onRangeUpdate, onStartUpdate, size, t],
-    );
+    const buttonSize = getButtonSizeForInput(size);
 
-    return <Table columns={columns} data={docs} className={b('table', {size})} wordWrap />;
+    return (
+        <div className={b('table-wrapper')}>
+            <table className={b('table', {size})}>
+                <thead>
+                    <tr>
+                        <th className={b('cell')}>{t('Range')}</th>
+                        <th className={b('cell')}>{t('From')}</th>
+                        <th className={b('cell')}>{t('To')}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {docs.map((item, index) => (
+                        <tr key={index} className={b('row')}>
+                            <td className={b('cell')}>
+                                <Button
+                                    view="flat"
+                                    size={buttonSize}
+                                    onClick={() => {
+                                        onRangeUpdate(item.from, item.to);
+                                    }}
+                                >
+                                    {t(item.title as any)}
+                                </Button>
+                            </td>
+                            <td className={b('cell')}>
+                                <Button
+                                    view="flat"
+                                    size={buttonSize}
+                                    onClick={() => {
+                                        onStartUpdate(item.from);
+                                    }}
+                                >
+                                    {item.from}
+                                </Button>
+                            </td>
+                            <td className={b('cell')}>
+                                <Button
+                                    view="flat"
+                                    size={buttonSize}
+                                    onClick={() => {
+                                        onEndUpdate(item.to);
+                                    }}
+                                >
+                                    {item.to}
+                                </Button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
 }
 
 interface DesktopDocProps extends Omit<PresetsDocProps, 'docs'> {
@@ -152,7 +145,7 @@ function MobileDoc({className, ...props}: MobileDocProps) {
             >
                 <Icon data={CircleQuestion} />
             </Button>
-            <Sheet visible={open} onClose={() => setOpen(false)}>
+            <Sheet open={open} onOpenChange={setOpen}>
                 <DocContent {...props} />
             </Sheet>
         </div>

@@ -12,7 +12,7 @@ function TestRelativeRangeDatePicker() {
     const [open, setOpen] = React.useState(true);
 
     return (
-        <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog open={open} onOpenChange={setOpen}>
             <Dialog.Body>
                 <div>Dialog content</div>
                 <RelativeRangeDatePicker label="Range" />
@@ -24,6 +24,8 @@ function TestRelativeRangeDatePicker() {
 describe('RelativeRangeDatePicker', () => {
     it('closes its popup on Escape from the group inside Dialog', async () => {
         const screen = await render(<TestRelativeRangeDatePicker />);
+        // Dialog moves focus to its content once the opening transition ends
+        await expect.element(screen.getByRole('dialog')).toHaveFocus();
 
         const combobox = screen.getByLabelText('Range', {exact: true});
         const calendarButton = screen.getByLabelText('Range date picker');
