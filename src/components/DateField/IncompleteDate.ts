@@ -12,6 +12,7 @@ const dateFields = [
     'hour',
     'minute',
     'second',
+    'millisecond',
     'dayPeriod',
 ] as const;
 
@@ -26,6 +27,7 @@ export class IncompleteDate {
     hour: number | null;
     minute: number | null;
     second: number | null;
+    millisecond: number | null;
 
     constructor(date?: DateTime | null) {
         this.year = date?.year() ?? null;
@@ -35,6 +37,7 @@ export class IncompleteDate {
         this.hour = date?.hour() ?? null;
         this.minute = date?.minute() ?? null;
         this.second = date?.second() ?? null;
+        this.millisecond = date?.millisecond() ?? null;
         if (date) {
             this.dayPeriod = date.hour() >= 12 ? 1 : 0;
         } else {
@@ -126,6 +129,7 @@ export class IncompleteDate {
                     hour: this.hour ?? baseValue.hour(),
                     minute: this.minute ?? baseValue.minute(),
                     second: this.second ?? baseValue.second(),
+                    millisecond: this.millisecond ?? baseValue.millisecond(),
                 })
                 .timeZone(nextValue.timeZone());
         }
