@@ -1,0 +1,28 @@
+@use '../variables';
+
+$block: '.#{variables.$ns}time-selection';
+
+#{$block} {
+    &_disabled {
+        pointer-events: none;
+
+        opacity: 0.6;
+    }
+
+    &_read-only {
+        pointer-events: none;
+    }
+
+    &__divider {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+
+        width: 1px;
+
+        font-weight: 500;
+        user-select: none;
+
+        background-color: var(--g-color-line-generic);
+    }
+}
