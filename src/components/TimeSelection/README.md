@@ -95,7 +95,7 @@ With `ampm` the hours column shows `12, 01 … 11`, and the AM/PM column is adde
 
 ## Size
 
-To control the size of the rows use the `size` property. It is the size of the uikit `List` the columns are built on. Default size is `m`.
+To control the size of the rows use the `size` property. The columns are built on the uikit `List`, and `size` is passed to it as is: see [the sizes of the List](https://preview.gravity-ui.com/uikit/?path=/docs/components-data-display-list--docs#sizes). Default size is `m`.
 
 ```tsx
 <TimeSelection size="s" />
@@ -142,21 +142,12 @@ The state of the `TimeSelection` where you don't want the user to be able to int
 
 ## Keyboard
 
-Moving through the options does not change the value: an option is picked with `Enter`, `Space` or a click.
+Inside a column the keys are those of the uikit `List`: see [the keyboard of the List](https://preview.gravity-ui.com/uikit/?path=/docs/components-data-display-list--docs#keyboard). They only move through the options and do not change the value. `TimeSelection` adds:
 
-| Key                      | Action                                                                    |
-| :----------------------- | :------------------------------------------------------------------------ |
-| `ArrowUp` `ArrowDown`    | Moves to the previous or the next available option; wraps at the edges    |
-| `Home` `End`             | Moves to the first or the last available option of the column             |
-| `PageUp` `PageDown`      | Moves through the options of the column by a page                         |
-| Digits and letters       | Moves to the option that starts with the typed text, for example `1` `7`  |
-| `ArrowLeft` `ArrowRight` | Moves focus to the neighboring column; does not wrap at the edges         |
-| `Enter` `Space`          | Picks the option and moves focus to the next column                       |
-| `Tab` `Shift+Tab`        | Moves focus to the next or the previous column, then out of the component |
-
-## Accessibility
-
-The root is a `group`; label it with `aria-label` or `aria-labelledby`. Each column is a `listbox` with a localized label (Hours, Minutes, Seconds, Milliseconds, AM/PM), its options are `option` elements with `aria-selected`.
+| Key                      | Action                                                            |
+| :----------------------- | :---------------------------------------------------------------- |
+| `ArrowLeft` `ArrowRight` | Moves focus to the neighboring column; does not wrap at the edges |
+| `Enter` `Space`          | Picks the option and moves focus to the next column               |
 
 ## Properties
 
