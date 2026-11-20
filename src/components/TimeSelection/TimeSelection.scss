@@ -11,7 +11,7 @@ $block: '.#{variables.$ns}time-selection';
     gap: var(--g-spacing-1);
 
     box-sizing: border-box;
-    height: var(--g-date-time-selection-height, calc(var(--_--row-height) * 7));
+    height: calc(var(--_--row-height) * 7);
 
     &_size_s {
         --_--row-height: var(--g-list-item-view-min-height, 24px);

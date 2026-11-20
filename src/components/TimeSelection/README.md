@@ -104,7 +104,7 @@ To control the size of the rows use the `size` property. The columns are built o
 <TimeSelection size="xl" />
 ```
 
-A column shows seven rows by default and scrolls the rest. Set the height from the outside with the `--g-date-time-selection-height` CSS variable, `style` or `className`.
+A column shows seven rows by default and scrolls the rest. Set the height from the outside with `style` or `className`.
 
 The selected option is scrolled to the middle of its column when the component mounts and when the selection changes. Next to the edges of the list the option stays as close to the middle as the list allows.
 
@@ -179,9 +179,3 @@ Inside a column the keys are those of the uikit `List`: see [the keyboard of the
 | [timeZone](#time-zone)                 | Sets the time zone. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) |                         `string`                          |                        |
 | [value](#value)                        | The value of the control                                                                                             |                     `DateTime` `null`                     |                        |
 | [views](#views)                        | Units to show columns for                                                                                            |                   `TimeSelectionView[]`                   | `['hours', 'minutes']` |
-
-## CSS API
-
-| Name                             | Description                                      |
-| :------------------------------- | :----------------------------------------------- |
-| `--g-date-time-selection-height` | The height of the columns. Seven rows by default |
