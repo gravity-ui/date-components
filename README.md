@@ -93,6 +93,16 @@ addLanguageKeysets<PartialKeysets>(lang, {...});
 addLanguageKeysets<Pick<Keysets, 'g-date-calendar' | 'g-date-date-field' | 'g-date-date-picker'>>(lang, {...});
 ```
 
+## Unstable components
+
+Components that are still being worked on are exported from a separate entry point, `@gravity-ui/date-components/unstable`. Their API may change in a minor release, so pin the version of the package if you depend on them.
+
+```tsx
+import {TimeSelection} from '@gravity-ui/date-components/unstable';
+```
+
+- [`TimeSelection`](src/components/TimeSelection/README.md) — columns of options to pick a time from.
+
 ## Migration
 
 - From 4.x to 5.x (`@gravity-ui/uikit` v8): [docs/migration-4-to-5.md](docs/migration-4-to-5.md)
