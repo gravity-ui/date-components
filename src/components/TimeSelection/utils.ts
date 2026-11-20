@@ -136,9 +136,11 @@ export function getColumnItems({
         let itemDisabled = Boolean(disabled);
         if (!itemDisabled) {
             const candidate = setUnitValue(base, column, ampm, value);
+            // A half of the day changes the hour, so its option answers for the hour it gives
+            const view = column === 'meridiem' ? 'hours' : column;
             itemDisabled =
                 isIntervalOutOfRange(candidate, column, minValue, maxValue) ||
-                (column !== 'meridiem' && Boolean(isTimeUnavailable?.(candidate, column)));
+                Boolean(isTimeUnavailable?.(candidate, view));
         }
         return {id: label, label, value, disabled: itemDisabled};
     });

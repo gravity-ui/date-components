@@ -50,7 +50,9 @@ The `minValue` property allows you to specify the earliest date and time that ca
 
 ### Unavailable time
 
-`isTimeUnavailable` is called for each option with the value the option would set and the view of its column. If it returns `true`, the option is unavailable.
+`isTimeUnavailable` is called for each option with the value the option would set and the view of its column. If it returns `true`, the option is unavailable. An AM/PM option changes the hour, so it is checked with the `hours` view.
+
+The callback is called for every option on each render where its reference changes, so keep the reference stable (`React.useCallback` or a function outside the component).
 
 ```tsx
 <TimeSelection isTimeUnavailable={(date, view) => view === 'hours' && date.hour() === 13} />
@@ -97,7 +99,7 @@ The selected option is scrolled to the middle of its column when the component m
 
 ## Focus
 
-The component does not take focus on its own. Pass `defaultFocusView` to move focus into a column when the component mounts, or `focusedView` to move it whenever the property changes. `onFocusViewUpdate` is called when focus goes to another column: by the keyboard, by a click, or after a pick. A column is always entered at its selected option.
+The component does not take focus on its own. Pass `defaultFocusView` to move focus into a column when the component mounts, or `focusedView` to move it whenever the property changes. `focusedView` is a request, not a lock: the user can still move focus to another column, and `onFocusViewUpdate` is called when that happens — by the keyboard, by a click, or after a pick. A column is entered at its selected option, or at the first available one when nothing is selected.
 
 After an option is picked, focus goes to the next column; in the last column it stays.
 
@@ -133,7 +135,7 @@ Moving through the options does not change the value: an option is picked with `
 
 | Key                      | Action                                                                    |
 | :----------------------- | :------------------------------------------------------------------------ |
-| `ArrowUp` `ArrowDown`    | Moves to the previous or the next available option of the column          |
+| `ArrowUp` `ArrowDown`    | Moves to the previous or the next available option; wraps at the edges    |
 | `Home` `End`             | Moves to the first or the last available option of the column             |
 | `PageUp` `PageDown`      | Moves through the options of the column by a page                         |
 | Digits and letters       | Moves to the option that starts with the typed text, for example `1` `7`  |
@@ -158,7 +160,7 @@ The root is a `group`; label it with `aria-label` or `aria-labelledby`. Each col
 | [defaultFocusView](#focus)             | The column that takes focus when the component mounts (uncontrolled)                                                 |             `'hours'` `'minutes'` `'seconds'`             |                        |
 | [defaultValue](#value)                 | Sets the initial value for uncontrolled component.                                                                   |                     `DateTime` `null`                     |                        |
 | [disabled](#disabled)                  | Indicates that the user cannot interact with the control                                                             |                         `boolean`                         |        `false`         |
-| [focusedView](#focus)                  | The column that holds focus (controlled). Focus moves into the column when the property changes                      |             `'hours'` `'minutes'` `'seconds'`             |                        |
+| [focusedView](#focus)                  | The column to move focus into on mount and whenever the property changes                                             |             `'hours'` `'minutes'` `'seconds'`             |                        |
 | id                                     | The control's `id` attribute                                                                                         |                         `string`                          |                        |
 | [isTimeUnavailable](#unavailable-time) | Callback that is called for each option of a column. If it returns true, then the option is unavailable.             | `((value: DateTime, view: TimeSelectionView) => boolean)` |                        |
 | [maxValue](#min-and-max-value)         | The maximum allowed date and time that a user may select.                                                            |                        `DateTime`                         |                        |

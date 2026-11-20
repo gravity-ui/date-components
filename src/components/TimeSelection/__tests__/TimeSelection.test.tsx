@@ -2,6 +2,7 @@ import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
+import {ThemeProvider} from '@gravity-ui/uikit';
 import {afterEach, describe, expect, it, test, vi} from 'vitest';
 import {userEvent} from 'vitest/browser';
 import type {Locator} from 'vitest/browser';
@@ -360,8 +361,14 @@ describe('TimeSelection', () => {
             await expect.element(option(hours, '23')).toHaveFocus();
             await userEvent.keyboard('{Home}');
             await expect.element(option(hours, '00')).toHaveFocus();
+            // A page of the List is ten options
             await userEvent.keyboard('{PageDown}');
-            await expect.element(option(hours, '00')).not.toHaveFocus();
+            await expect.element(option(hours, '10')).toHaveFocus();
+            await userEvent.keyboard('{PageDown}{PageUp}{PageUp}');
+            await expect.element(option(hours, '00')).toHaveFocus();
+            // Up and down wrap around, as the List does
+            await userEvent.keyboard('{Home}{ArrowUp}');
+            await expect.element(option(hours, '23')).toHaveFocus();
 
             expect(onUpdate).not.toHaveBeenCalled();
             await expect.element(option(hours, '10')).toHaveAttribute('aria-selected', 'true');
@@ -669,6 +676,8 @@ describe('TimeSelection', () => {
             const hours = column(screen, 'Hours');
             await expect.element(option(hours, '10')).toHaveFocus();
 
+            await userEvent.keyboard('{ArrowDown}{ArrowDown}');
+            await expect.element(option(hours, '12')).toHaveFocus();
             await userEvent.keyboard('{Home}');
             await expect.element(option(hours, '10')).toHaveFocus();
 
@@ -764,6 +773,154 @@ describe('TimeSelection', () => {
         });
     });
 
+    describe('edge cases', () => {
+        it('renders no columns for empty views and only AM/PM with ampm', async () => {
+            const screen = await render(
+                <TimeSelection aria-label="Time" value={value} views={[]} />,
+            );
+            await expect.element(screen.getByRole('group', {name: 'Time'})).toBeInTheDocument();
+            expect(screen.getByRole('listbox').elements()).toHaveLength(0);
+
+            await screen.rerender(
+                <TimeSelection aria-label="Time" value={value} views={[]} ampm />,
+            );
+            const labels = screen
+                .getByRole('listbox')
+                .elements()
+                .map((element) => element.getAttribute('aria-label'));
+            expect(labels).toEqual(['AM/PM']);
+        });
+
+        it('falls back to the step of 1 for invalid steps', async () => {
+            const screen = await render(
+                <TimeSelection value={value} timeSteps={{hours: -2, minutes: 0}} />,
+            );
+
+            expect(optionLabels(column(screen, 'Hours'))).toHaveLength(24);
+            expect(optionLabels(column(screen, 'Minutes'))).toHaveLength(60);
+        });
+
+        it('focuses the option the pick has selected in the next column', async () => {
+            const screen = await render(
+                <Controlled
+                    value={time('2024-01-15T12:10:00')}
+                    minValue={time('2024-01-15T10:20:00')}
+                />,
+            );
+
+            // 10:10 is out of range, so the value becomes 10:20
+            await option(column(screen, 'Hours'), '10').click();
+            const minutes = column(screen, 'Minutes');
+            await expect.element(option(minutes, '20')).toHaveAttribute('aria-selected', 'true');
+            await expect.element(option(minutes, '20')).toHaveFocus();
+        });
+
+        it('focuses the unit of the placeholder in the next column after the first pick', async () => {
+            const screen = await render(
+                <Controlled value={null} placeholderValue={time('2024-03-10T08:15:20')} />,
+            );
+
+            await option(column(screen, 'Hours'), '09').click();
+            await expect.element(option(column(screen, 'Minutes'), '15')).toHaveFocus();
+        });
+
+        it('checks an AM/PM option as the hour it gives', async () => {
+            const onUpdate = vi.fn();
+            const isTimeUnavailable = (date: DateTime, view: TimeSelectionView) =>
+                view === 'hours' && date.hour() === 13;
+            const screen = await render(
+                <TimeSelection
+                    value={time('2024-01-15T01:30:00')}
+                    ampm
+                    isTimeUnavailable={isTimeUnavailable}
+                    onUpdate={onUpdate}
+                />,
+            );
+            const meridiem = column(screen, 'AM/PM');
+
+            await expect.element(option(meridiem, 'PM')).toHaveAttribute('aria-disabled', 'true');
+            await option(meridiem, 'PM').click({force: true});
+            expect(onUpdate).not.toHaveBeenCalled();
+        });
+
+        it('keeps a picked half of the day within minValue and maxValue', async () => {
+            const onUpdate = vi.fn();
+            const screen = await render(
+                <Controlled
+                    value={time('2024-01-15T09:30:00')}
+                    ampm
+                    maxValue={time('2024-01-15T21:10:00')}
+                    onUpdate={onUpdate}
+                />,
+            );
+
+            await option(column(screen, 'AM/PM'), 'PM').click();
+            expect(lastValue(onUpdate)).toBe('2024-01-15T21:10:00');
+        });
+
+        it('compares minValue and maxValue in the shown time zone', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={value}
+                    timeZone="Asia/Tokyo"
+                    minValue={time('2024-01-15T09:00:00')}
+                />,
+            );
+            const hours = column(screen, 'Hours');
+
+            // 09:00 UTC is 18:00 in Tokyo
+            await expect.element(option(hours, '17')).toHaveAttribute('aria-disabled', 'true');
+            await expect.element(option(hours, '18')).not.toHaveAttribute('aria-disabled');
+        });
+
+        it('moves between the columns with Tab', async () => {
+            const screen = await render(
+                <div>
+                    <TimeSelection value={value} defaultFocusView="hours" />
+                    <button type="button">After</button>
+                </div>,
+            );
+            await expect.element(option(column(screen, 'Hours'), '10')).toHaveFocus();
+
+            await userEvent.keyboard('{ArrowDown}{Tab}');
+            await expect.element(option(column(screen, 'Minutes'), '30')).toHaveFocus();
+            await userEvent.keyboard('{Tab}');
+            await expect.element(screen.getByRole('button', {name: 'After'})).toHaveFocus();
+            await userEvent.keyboard('{Shift>}{Tab}{Tab}{/Shift}');
+            await expect.element(option(column(screen, 'Hours'), '10')).toHaveFocus();
+        });
+
+        it('enters a column at its selected option after the pointer has been over it', async () => {
+            const screen = await render(<TimeSelection value={value} defaultFocusView="hours" />);
+            const hours = column(screen, 'Hours');
+            const minutes = column(screen, 'Minutes');
+            await expect.element(option(hours, '10')).toHaveFocus();
+
+            await userEvent.hover(option(minutes, '33'));
+            await userEvent.hover(option(hours, '10'));
+            await userEvent.keyboard('{Tab}');
+            await expect.element(option(minutes, '30')).toHaveFocus();
+        });
+
+        it('swaps left and right arrows in RTL', async () => {
+            const screen = await render(<TimeSelection value={value} defaultFocusView="hours" />, {
+                wrapper: ({children}) => <ThemeProvider direction="rtl">{children}</ThemeProvider>,
+            });
+            await expect.element(option(column(screen, 'Hours'), '10')).toHaveFocus();
+
+            await userEvent.keyboard('{ArrowRight}');
+            await expect.element(option(column(screen, 'Hours'), '10')).toHaveFocus();
+            await userEvent.keyboard('{ArrowLeft}');
+            await expect.element(option(column(screen, 'Minutes'), '30')).toHaveFocus();
+        });
+
+        it('marks the columns as read-only', async () => {
+            const screen = await render(<TimeSelection value={value} readOnly />);
+
+            await expect.element(column(screen, 'Hours')).toHaveAttribute('aria-readonly', 'true');
+        });
+    });
+
     describe('scroll', () => {
         afterEach(() => {
             vi.restoreAllMocks();
@@ -850,6 +1007,51 @@ describe('TimeSelection', () => {
                 .toHaveAttribute('aria-selected', 'true');
 
             expect(hours.element().scrollTop).toBe(0);
+
+            // A resize is not a reason to scroll back either
+            await screen.rerender(
+                <TimeSelection
+                    value={time('2024-01-15T10:45:00')}
+                    aria-label="Time"
+                    style={{height: 120}}
+                />,
+            );
+            await expect.poll(() => hours.element().clientHeight).toBe(120);
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+            expect(hours.element().scrollTop).toBe(0);
+        });
+
+        it('centers the selected option once a column mounted hidden gets its size', async () => {
+            const selected = time('2024-01-15T10:30:00');
+            const screen = await render(
+                <div style={{display: 'none'}}>
+                    <TimeSelection value={selected} />
+                </div>,
+            );
+            await screen.rerender(
+                <div>
+                    <TimeSelection value={selected} />
+                </div>,
+            );
+            const hours = column(screen, 'Hours');
+
+            await expect
+                .poll(() => {
+                    const gaps = getRowGaps(hours, option(hours, '10'));
+                    return gaps.scrollTop > 0 && Math.abs(gaps.top - gaps.bottom) <= 1;
+                })
+                .toBe(true);
+        });
+
+        it('takes the height of the columns from the outside', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={time('2024-01-15T10:30:00')}
+                    style={{'--g-date-time-selection-height': '100px'} as React.CSSProperties}
+                />,
+            );
+
+            expect(column(screen, 'Hours').element().clientHeight).toBe(100);
         });
 
         it('keeps the keyboard navigation of the list from fighting the centering', async () => {
@@ -879,10 +1081,12 @@ describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
     (theme) => {
         const options = {providers: {theme}};
         const selected = time('2024-01-15T10:30:45');
+        // The pointer rests where an earlier test left it: without this a row under it gets hovered
+        const still = {pointerEvents: 'none'} as const;
 
         test('default view', async () => {
             const screen = await render(
-                <TimeSelection data-qa="time-selection" value={selected} />,
+                <TimeSelection data-qa="time-selection" style={still} value={selected} />,
                 options,
             );
             await expect(screen.getByTestId('time-selection')).toMatchScreenshot();
@@ -892,6 +1096,7 @@ describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
             const screen = await render(
                 <TimeSelection
                     data-qa="time-selection"
+                    style={still}
                     value={selected}
                     views={['hours', 'minutes', 'seconds']}
                 />,
@@ -904,6 +1109,7 @@ describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
             const screen = await render(
                 <TimeSelection
                     data-qa="time-selection"
+                    style={still}
                     value={time('2024-01-15T15:30:45')}
                     views={['hours', 'minutes', 'seconds']}
                     ampm
@@ -917,6 +1123,7 @@ describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
             const screen = await render(
                 <TimeSelection
                     data-qa="time-selection"
+                    style={still}
                     value={selected}
                     minValue={time('2024-01-15T09:28:00')}
                     maxValue={time('2024-01-15T11:31:00')}
@@ -928,7 +1135,7 @@ describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
 
         test('sizes', async () => {
             const screen = await render(
-                <div data-qa="time-selection" style={{display: 'flex', gap: 16}}>
+                <div data-qa="time-selection" style={{...still, display: 'inline-flex', gap: 16}}>
                     <TimeSelection size="s" value={selected} ampm />
                     <TimeSelection size="m" value={selected} ampm />
                     <TimeSelection size="l" value={selected} ampm />

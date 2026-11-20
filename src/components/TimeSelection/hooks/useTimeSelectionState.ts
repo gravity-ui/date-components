@@ -93,25 +93,25 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
 
     const columns = React.useMemo(() => {
         const steps = {hours: hoursStep, minutes: minutesStep, seconds: secondsStep};
-        return (columnsKey.split(',') as TimeSelectionColumn[]).map(
-            (column): TimeSelectionColumnState => {
-                const items = getColumnItems({
-                    column,
-                    base,
-                    ampm,
-                    step: column === 'meridiem' ? undefined : steps[column],
-                    minValue,
-                    maxValue,
-                    isTimeUnavailable,
-                    disabled,
-                });
-                return {
-                    column,
-                    items,
-                    selectedId: getSelectedItemId(displayValue, column, ampm, items),
-                };
-            },
-        );
+        // ''.split(',') is [''], not an empty list
+        const columnKeys = (columnsKey ? columnsKey.split(',') : []) as TimeSelectionColumn[];
+        return columnKeys.map((column): TimeSelectionColumnState => {
+            const items = getColumnItems({
+                column,
+                base,
+                ampm,
+                step: column === 'meridiem' ? undefined : steps[column],
+                minValue,
+                maxValue,
+                isTimeUnavailable,
+                disabled,
+            });
+            return {
+                column,
+                items,
+                selectedId: getSelectedItemId(displayValue, column, ampm, items),
+            };
+        });
     }, [
         columnsKey,
         hoursStep,

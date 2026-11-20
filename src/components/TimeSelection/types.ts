@@ -34,10 +34,14 @@ export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityP
     maxValue?: DateTime;
     /**
      * Callback that is called for each option of a column with the value the option would set.
-     * If it returns true, then the option is unavailable.
+     * If it returns true, then the option is unavailable. An AM/PM option is checked as the hour
+     * it gives, with the `hours` view.
      */
     isTimeUnavailable?: (value: DateTime, view: TimeSelectionView) => boolean;
-    /** The column that holds focus (controlled). Moves DOM focus into the column when it changes. */
+    /**
+     * The column to move DOM focus into: on mount and whenever the property changes.
+     * The user can still move focus elsewhere; `onFocusViewUpdate` reports it.
+     */
     focusedView?: TimeSelectionView;
     /** The column that takes DOM focus when the component mounts (uncontrolled). */
     defaultFocusView?: TimeSelectionView;

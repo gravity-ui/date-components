@@ -81,6 +81,7 @@ interface TimeSelectionColumnViewProps {
     selectedId: string | undefined;
     label: string;
     size: NonNullable<TimeSelectionProps['size']>;
+    readOnly: boolean;
     registerColumn: (column: TimeSelectionColumn, element: HTMLElement | null) => void;
     onSelect: (column: TimeSelectionColumn, item: TimeSelectionItem) => void;
     onMove: (column: TimeSelectionColumn, offset: -1 | 1) => void;
@@ -93,6 +94,7 @@ function TimeSelectionColumnView({
     selectedId,
     label,
     size,
+    readOnly,
     registerColumn,
     onSelect,
     onMove,
@@ -118,10 +120,7 @@ function TimeSelectionColumnView({
 
     // The option the column was last scrolled to: scrolling to it again would undo a manual scroll
     const scrolledIdRef = React.useRef<string | undefined>(undefined);
-    const mountedRef = React.useRef(false);
-    useLayoutEffect(() => {
-        const smooth = mountedRef.current;
-        mountedRef.current = true;
+    const centerSelected = (smooth: boolean) => {
         const container = containerRef.current;
         if (selectedId === undefined) {
             scrolledIdRef.current = undefined;
@@ -131,12 +130,34 @@ function TimeSelectionColumnView({
             return;
         }
         const element = container.querySelector<HTMLElement>(SELECTED_OPTION_SELECTOR);
+        // A column that is not laid out yet (a hidden parent) is centered once it gets its size
         if (!element || container.clientHeight === 0) {
             return;
         }
         scrolledIdRef.current = selectedId;
         scrollToCenter(container, element, smooth);
+    };
+    const centerSelectedRef = React.useRef(centerSelected);
+    useLayoutEffect(() => {
+        centerSelectedRef.current = centerSelected;
+    });
+
+    const mountedRef = React.useRef(false);
+    useLayoutEffect(() => {
+        const smooth = mountedRef.current;
+        mountedRef.current = true;
+        centerSelectedRef.current(smooth);
     }, [selectedId]);
+
+    React.useEffect(() => {
+        const container = containerRef.current;
+        if (!container || typeof ResizeObserver === 'undefined') {
+            return undefined;
+        }
+        const observer = new ResizeObserver(() => centerSelectedRef.current(false));
+        observer.observe(container);
+        return () => observer.disconnect();
+    }, []);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
         if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
@@ -165,6 +186,7 @@ function TimeSelectionColumnView({
             onActiveItemUpdate={setActiveId}
             onItemAction={(_id, item) => onSelect(column, item)}
             containerProps={{
+                'aria-readonly': readOnly || undefined,
                 onKeyDown: handleKeyDown,
                 onFocus: (event) => {
                     if (!event.currentTarget.contains(event.relatedTarget)) {
@@ -173,6 +195,12 @@ function TimeSelectionColumnView({
                 },
                 onBlur: (event) => {
                     if (!event.currentTarget.contains(event.relatedTarget)) {
+                        setActiveId(null);
+                    }
+                },
+                // Hover makes a row active too; without focus in the column it must not stay so
+                onPointerLeave: (event) => {
+                    if (!event.currentTarget.contains(document.activeElement)) {
                         setActiveId(null);
                     }
                 },
@@ -232,9 +260,25 @@ export function TimeSelection(props: TimeSelectionProps) {
         }
     };
 
+    // Focus goes on after the new value is rendered: the pick may change what is selected in
+    // the next column (the value is kept within the range, the first pick fills every unit)
+    const [focusRequest, setFocusRequest] = React.useState<{column: TimeSelectionColumn} | null>(
+        null,
+    );
+    useLayoutEffect(() => {
+        if (focusRequest) {
+            focusColumn(focusRequest.column);
+        }
+    }, [focusRequest, focusColumn]);
+
     const handleSelect = (column: TimeSelectionColumn, item: TimeSelectionItem) => {
-        if (state.selectItem(column, item)) {
-            moveFocus(column, 1);
+        if (!state.selectItem(column, item)) {
+            return;
+        }
+        const index = state.columns.findIndex((entry) => entry.column === column);
+        const next = state.columns[index + 1];
+        if (next) {
+            setFocusRequest({column: next.column});
         }
     };
 
@@ -260,6 +304,7 @@ export function TimeSelection(props: TimeSelectionProps) {
                     selectedId={selectedId}
                     label={t(COLUMN_LABELS[column])}
                     size={size}
+                    readOnly={state.readOnly}
                     registerColumn={registerColumn}
                     onSelect={handleSelect}
                     onMove={moveFocus}
