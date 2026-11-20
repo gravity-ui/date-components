@@ -1178,6 +1178,45 @@ describe('TimeSelection', () => {
                 .toBe(true);
         });
 
+        it('does not animate the first centering of a column that was hidden', async () => {
+            const scrollTo = vi.spyOn(Element.prototype, 'scrollTo');
+            const screen = await render(
+                <div style={{display: 'none'}}>
+                    <TimeSelection value={time('2024-01-15T10:30:00')} />
+                </div>,
+            );
+            expect(scrollTo).not.toHaveBeenCalled();
+
+            // The column appears and its selection changes in the same render
+            await screen.rerender(
+                <div>
+                    <TimeSelection value={time('2024-01-15T13:30:00')} />
+                </div>,
+            );
+            const hours = column(screen, 'Hours');
+            await expect
+                .poll(() => {
+                    const gaps = getRowGaps(hours, option(hours, '13'));
+                    return gaps.scrollTop > 0 && Math.abs(gaps.top - gaps.bottom) <= 1;
+                })
+                .toBe(true);
+            expect(
+                scrollTo.mock.calls.map(([options]) => (options as ScrollToOptions).behavior),
+            ).toEqual(['instant', 'instant']);
+        });
+
+        it('animates the first selection in a column that was already visible', async () => {
+            const scrollTo = vi.spyOn(Element.prototype, 'scrollTo');
+            const screen = await render(<Controlled value={null} />);
+            const hours = column(screen, 'Hours');
+
+            await option(hours, '05').click();
+            await expect.element(option(hours, '05')).toHaveAttribute('aria-selected', 'true');
+            expect(
+                scrollTo.mock.calls.map(([options]) => (options as ScrollToOptions).behavior),
+            ).toEqual(['smooth', 'smooth']);
+        });
+
         it('takes the height of the columns from the outside', async () => {
             const screen = await render(
                 <TimeSelection

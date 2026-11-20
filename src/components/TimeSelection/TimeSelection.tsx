@@ -121,18 +121,25 @@ function TimeSelectionColumnView({
 
     // The option the column was last scrolled to: scrolling to it again would undo a manual scroll
     const scrolledIdRef = React.useRef<string | undefined>(undefined);
-    const centerSelected = (smooth: boolean) => {
+    // Whether the column has been laid out with a size yet. The first centering of a visible
+    // column is instant; a column that mounts hidden (a parent with `display: none`, a tree
+    // suspended by React) has nothing to animate from when it appears, so it waits for its size
+    const shownRef = React.useRef(false);
+    const centerSelected = () => {
         const container = containerRef.current;
         if (selectedId === undefined) {
             scrolledIdRef.current = undefined;
+        }
+        if (!container || container.clientHeight === 0) {
             return;
         }
-        if (!container || scrolledIdRef.current === selectedId) {
+        const smooth = shownRef.current;
+        shownRef.current = true;
+        if (selectedId === undefined || scrolledIdRef.current === selectedId) {
             return;
         }
         const element = container.querySelector<HTMLElement>(SELECTED_OPTION_SELECTOR);
-        // A column that is not laid out yet (a hidden parent) is centered once it gets its size
-        if (!element || container.clientHeight === 0) {
+        if (!element) {
             return;
         }
         scrolledIdRef.current = selectedId;
@@ -143,11 +150,8 @@ function TimeSelectionColumnView({
         centerSelectedRef.current = centerSelected;
     });
 
-    const mountedRef = React.useRef(false);
     useLayoutEffect(() => {
-        const smooth = mountedRef.current;
-        mountedRef.current = true;
-        centerSelectedRef.current(smooth);
+        centerSelectedRef.current();
     }, [selectedId]);
 
     React.useEffect(() => {
@@ -155,7 +159,7 @@ function TimeSelectionColumnView({
         if (!container || typeof ResizeObserver === 'undefined') {
             return undefined;
         }
-        const observer = new ResizeObserver(() => centerSelectedRef.current(false));
+        const observer = new ResizeObserver(() => centerSelectedRef.current());
         observer.observe(container);
         return () => observer.disconnect();
     }, []);
