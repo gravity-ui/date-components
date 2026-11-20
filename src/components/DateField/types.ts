@@ -13,7 +13,8 @@ export type DateFieldSectionType =
           | 'year'
           | 'unknown'
       >
-    | 'quarter';
+    | 'quarter'
+    | 'millisecond';
 
 export type DateFormatTokenMap = {
     [formatToken: string]:
@@ -72,5 +73,5 @@ export interface FormatInfo {
     hasDate: boolean;
     availableUnits: AvailableSections;
     minDateUnit: 'day' | 'month' | 'quarter' | 'year';
-    minTimeUnit: 'second' | 'minute' | 'hour';
+    minTimeUnit: 'millisecond' | 'second' | 'minute' | 'hour';
 }

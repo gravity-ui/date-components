@@ -150,7 +150,12 @@ export function datePickerStateFactory<T, O extends DatePickerStateOptions<T>>({
                 timeFormatParts.push(seconds.format);
             }
             const dayPeriod = dateFieldState.sections.find((s) => s.type === 'dayPeriod');
-            return timeFormatParts.join(':') + (dayPeriod ? ` ${dayPeriod.format}` : '');
+            const milliseconds = dateFieldState.sections.find((s) => s.type === 'millisecond');
+            return (
+                timeFormatParts.join(':') +
+                (milliseconds ? `${timeFormatParts.length ? '.' : ''}${milliseconds.format}` : '') +
+                (dayPeriod ? ` ${dayPeriod.format}` : '')
+            );
         }, [dateFieldState.formatInfo.hasTime, dateFieldState.sections]);
 
         if (value) {

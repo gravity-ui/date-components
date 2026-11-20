@@ -7,5 +7,6 @@
   "hour_placeholder": "ч",
   "minute_placeholder": "м",
   "second_placeholder": "с",
+  "millisecond_placeholder": "С",
   "dayPeriod_placeholder": "(д|п)п"
 }

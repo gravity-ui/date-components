@@ -4,6 +4,7 @@ import {dateTime} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
 
 import {block} from '../../utils/cn';
+import type {FormatInfo} from '../DateField/types';
 import {createPlaceholderValue, mergeDateTime} from '../utils/dates';
 
 import type {DatePickerProps} from './DatePicker';
@@ -27,15 +28,24 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
         type = 'time';
     }
 
+    const precision = state.formatInfo.minTimeUnit;
+    let step;
+    if (state.formatInfo.hasTime && precision === 'millisecond') {
+        step = 0.001;
+    } else if (state.formatInfo.hasTime && precision === 'second') {
+        step = 1;
+    }
+
     return (
         <input
             className={b()}
             disabled={props.disabled}
             type={type}
-            value={formatNative(state.dateFieldState.value, type)}
+            step={step}
+            value={formatNative(state.dateFieldState.value, type, precision)}
             id={props.id}
-            min={formatNative(props.minValue?.timeZone(state.timeZone), type)}
-            max={formatNative(props.maxValue?.timeZone(state.timeZone), type)}
+            min={formatNative(props.minValue?.timeZone(state.timeZone), type, precision)}
+            max={formatNative(props.maxValue?.timeZone(state.timeZone), type, precision)}
             tabIndex={-1}
             onChange={(e) => {
                 if (props.readOnly) {
@@ -44,8 +54,7 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
                 const newValue = e.target.value;
                 if (newValue) {
                     const localDate = dateTime({
-                        input: newValue,
-                        format: getDateFormat(type),
+                        input: type === 'time' ? `1970-01-01T${newValue}` : newValue,
                         timeZone: 'system',
                     }).timeZone(state.timeZone, true);
                     let newDate = state.formatInfo.hasDate
@@ -76,24 +85,34 @@ export function MobileCalendar({props, state}: MobileCalendarProps) {
     );
 }
 
-function getDateFormat(type: InputDateType) {
+function getDateFormat(type: InputDateType, precision: FormatInfo['minTimeUnit']) {
+    let timeFormat = 'HH:mm';
+    if (precision === 'millisecond') {
+        timeFormat = 'HH:mm:ss.SSS';
+    } else if (precision === 'second') {
+        timeFormat = 'HH:mm:ss';
+    }
     switch (type) {
         case 'time': {
-            return 'HH:mm';
+            return timeFormat;
         }
         case 'datetime-local': {
-            return 'YYYY-MM-DDTHH:mm';
+            return `YYYY-MM-DD[T]${timeFormat}`;
         }
         default: {
             return 'YYYY-MM-DD';
         }
     }
 }
-function formatNative(date: DateTime | null | undefined, type: InputDateType) {
+function formatNative(
+    date: DateTime | null | undefined,
+    type: InputDateType,
+    precision: FormatInfo['minTimeUnit'],
+) {
     if (!date) {
         return '';
     }
 
-    const format = getDateFormat(type);
+    const format = getDateFormat(type, precision);
     return date.format(format);
 }

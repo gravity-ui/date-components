@@ -7,5 +7,6 @@
   "hour_placeholder": "h",
   "minute_placeholder": "m",
   "second_placeholder": "s",
+  "millisecond_placeholder": "S",
   "dayPeriod_placeholder": "aa"
 }

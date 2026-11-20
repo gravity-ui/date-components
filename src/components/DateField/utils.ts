@@ -29,6 +29,7 @@ const EDITABLE_SEGMENTS = {
     hour: true,
     minute: true,
     second: true,
+    millisecond: true,
     dayPeriod: true,
 } satisfies AvailableSections;
 
@@ -78,6 +79,9 @@ const formatTokenMap: DateFormatTokenMap = {
     s: 'second',
     ss: 'second',
 
+    // Milliseconds
+    SSS: 'millisecond',
+
     // Timezone
     z: {sectionType: 'timeZoneName', contentType: 'letter'},
     zzz: {sectionType: 'timeZoneName', contentType: 'letter'},
@@ -94,6 +98,7 @@ export const PAGE_STEP: Partial<Record<DateFieldSectionType, number>> = {
     hour: 2,
     minute: 15,
     second: 15,
+    millisecond: 100,
 };
 
 function getDateSectionConfigFromFormatToken(formatToken: string): {
@@ -180,6 +185,9 @@ function getSectionLimits(section: FormatSection, date: IncompleteDate, placehol
                 maxValue: 23,
             };
         }
+        case 'millisecond': {
+            return {minValue: 0, maxValue: 999};
+        }
         case 'minute':
         case 'second': {
             return {
@@ -208,6 +216,7 @@ function getSectionValue(section: FormatSection, date: IncompleteDate) {
         case 'hour':
         case 'minute':
         case 'second':
+        case 'millisecond':
         case 'day':
         case 'dayPeriod': {
             return date[type];
@@ -386,7 +395,8 @@ export function setSegment(
             break;
         }
         case 'minute':
-        case 'second': {
+        case 'second':
+        case 'millisecond': {
             newDate = date.set(type, amount);
             break;
         }
@@ -468,6 +478,10 @@ function doesSectionHaveLeadingZeros(
             return dateTime().set('second', 1).format(format).length > 1;
         }
 
+        case 'millisecond': {
+            return true;
+        }
+
         default: {
             throw new Error('Invalid section type');
         }
@@ -512,6 +526,10 @@ function getSectionPlaceholder(
 
         case 'second': {
             return t('second_placeholder').repeat(2);
+        }
+
+        case 'millisecond': {
+            return t('millisecond_placeholder').repeat(3);
         }
 
         case 'dayPeriod': {
@@ -762,7 +780,7 @@ export function useFormatSections(format: string) {
 }
 
 const dateUnits = ['day', 'month', 'quarter', 'year'] satisfies DateFieldSectionType[];
-const timeUnits = ['second', 'minute', 'hour'] satisfies DateFieldSectionType[];
+const timeUnits = ['millisecond', 'second', 'minute', 'hour'] satisfies DateFieldSectionType[];
 
 export function getFormatInfo(sections: FormatSection[]): FormatInfo {
     const availableUnits: AvailableSections = {};

@@ -205,6 +205,7 @@ export function useDateFieldProps<T = DateTime>(
             case 'hour':
             case 'minute':
             case 'second':
+            case 'millisecond':
             case 'quarter':
             case 'year': {
                 if (!Number.isInteger(Number(newValue))) {
