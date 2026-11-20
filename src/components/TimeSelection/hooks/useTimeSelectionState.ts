@@ -90,9 +90,15 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
     const hoursStep = timeSteps?.hours;
     const minutesStep = timeSteps?.minutes;
     const secondsStep = timeSteps?.seconds;
+    const millisecondsStep = timeSteps?.milliseconds;
 
     const columns = React.useMemo(() => {
-        const steps = {hours: hoursStep, minutes: minutesStep, seconds: secondsStep};
+        const steps = {
+            hours: hoursStep,
+            minutes: minutesStep,
+            seconds: secondsStep,
+            milliseconds: millisecondsStep,
+        };
         // ''.split(',') is [''], not an empty list
         const columnKeys = (columnsKey ? columnsKey.split(',') : []) as TimeSelectionColumn[];
         return columnKeys.map((column): TimeSelectionColumnState => {
@@ -117,6 +123,7 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
         hoursStep,
         minutesStep,
         secondsStep,
+        millisecondsStep,
         ampm,
         base,
         displayValue,

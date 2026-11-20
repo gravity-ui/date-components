@@ -2,5 +2,6 @@
   "Hours": "Часы",
   "Minutes": "Минуты",
   "Seconds": "Секунды",
+  "Milliseconds": "Миллисекунды",
   "AM/PM": "AM/PM"
 }

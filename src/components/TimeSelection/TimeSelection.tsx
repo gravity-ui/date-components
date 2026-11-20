@@ -20,6 +20,7 @@ const COLUMN_LABELS = {
     hours: 'Hours',
     minutes: 'Minutes',
     seconds: 'Seconds',
+    milliseconds: 'Milliseconds',
     meridiem: 'AM/PM',
 } as const;
 

@@ -12,14 +12,19 @@ export interface TimeSelectionItem {
     label: string;
     /**
      * The unit value of the option: hours 0–23 (0–11 on the 12-hour clock), minutes and
-     * seconds 0–59, 0 for AM and 1 for PM
+     * seconds 0–59, milliseconds 0–999, 0 for AM and 1 for PM
      */
     value: number;
     disabled: boolean;
 }
 
-const VIEWS_ORDER: TimeSelectionView[] = ['hours', 'minutes', 'seconds'];
-const UNIT_COUNT: Record<TimeSelectionView, number> = {hours: 24, minutes: 60, seconds: 60};
+const VIEWS_ORDER: TimeSelectionView[] = ['hours', 'minutes', 'seconds', 'milliseconds'];
+const UNIT_COUNT: Record<TimeSelectionView, number> = {
+    hours: 24,
+    minutes: 60,
+    seconds: 60,
+    milliseconds: 1000,
+};
 const UNIT_OF_VIEW = {hours: 'hour', minutes: 'minute', seconds: 'second'} as const;
 
 export function getColumns(views: TimeSelectionView[], ampm: boolean): TimeSelectionColumn[] {
@@ -52,7 +57,7 @@ function getItemLabel(column: TimeSelectionColumn, ampm: boolean, value: number)
         return value === 0 ? 'AM' : 'PM';
     }
     const shown = column === 'hours' && ampm && value === 0 ? 12 : value;
-    return String(shown).padStart(2, '0');
+    return String(shown).padStart(column === 'milliseconds' ? 3 : 2, '0');
 }
 
 /** The unit value of the date in terms of the options of the column */
@@ -64,6 +69,8 @@ function getUnitValue(date: DateTime, column: TimeSelectionColumn, ampm: boolean
             return date.minute();
         case 'seconds':
             return date.second();
+        case 'milliseconds':
+            return date.millisecond();
         default:
             return date.hour() < 12 ? 0 : 1;
     }
@@ -78,6 +85,8 @@ function setUnitValue(date: DateTime, column: TimeSelectionColumn, ampm: boolean
             return date.set('minutes', value);
         case 'seconds':
             return date.set('seconds', value);
+        case 'milliseconds':
+            return date.set('milliseconds', value);
         default:
             return date.set('hours', (date.hour() % 12) + value * 12);
     }
@@ -102,6 +111,10 @@ function isIntervalOutOfRange(
         const firstHour = candidate.hour() < 12 ? 0 : 12;
         start = candidate.set('hours', firstHour).startOf('hour');
         end = candidate.set('hours', firstHour + 11).endOf('hour');
+    } else if (column === 'milliseconds') {
+        // A millisecond is the smallest unit: its interval is the instant itself
+        start = candidate;
+        end = candidate;
     } else {
         start = candidate.startOf(UNIT_OF_VIEW[column]);
         end = candidate.endOf(UNIT_OF_VIEW[column]);

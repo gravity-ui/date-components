@@ -4,7 +4,7 @@
 
 <!--/GITHUB_BLOCK-->
 
-`TimeSelection` lets a user pick a time from columns of options: hours, minutes, seconds and, on the 12-hour clock, AM/PM. It has no input of its own, so it fits into a popup next to a calendar or a time field. It can be controlled if you set the `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with the optional property `defaultValue`. The component is uncontrolled by default.
+`TimeSelection` lets a user pick a time from columns of options: hours, minutes, seconds, milliseconds and, on the 12-hour clock, AM/PM. It has no input of its own, so it fits into a popup next to a calendar or a time field. It can be controlled if you set the `value` property. Or it can be uncontrolled if you don't set any value, but in this case you can manage the initial state with the optional property `defaultValue`. The component is uncontrolled by default.
 
 > [!WARNING]
 > `TimeSelection` is unstable: its API may change in a minor release. It is exported from the `unstable` entry point, not from the package root.
@@ -39,7 +39,7 @@ const [value, setValue] = React.useState<DateTime | null>(null);
 
 ### Min and max value
 
-The `minValue` property allows you to specify the earliest date and time that can be picked by the user. Conversely, the `maxValue` property specifies the latest date and time that can be picked. An option is unavailable when its whole interval — the hour, the minute or the second — is out of the range. A picked value that lands out of the range is moved to the nearest bound: with `minValue` at 10:20, picking the hour `10` at 12:10 gives 10:20.
+The `minValue` property allows you to specify the earliest date and time that can be picked by the user. Conversely, the `maxValue` property specifies the latest date and time that can be picked. An option is unavailable when its whole interval — the hour, the minute, the second or the millisecond — is out of the range. A picked value that lands out of the range is moved to the nearest bound: with `minValue` at 10:20, picking the hour `10` at 12:10 gives 10:20.
 
 ```tsx
 <TimeSelection
@@ -60,10 +60,21 @@ The callback is called for every option on each render where its reference chang
 
 ## Views
 
-`views` sets the units to show columns for; any subset is allowed. The columns always go in the same order: hours, minutes, seconds. The default is `['hours', 'minutes']`.
+`views` sets the units to show columns for; any subset is allowed. The columns always go in the same order: hours, minutes, seconds, milliseconds. The default is `['hours', 'minutes']`.
 
 ```tsx
 <TimeSelection views={['hours', 'minutes', 'seconds']} />
+```
+
+### Milliseconds
+
+The `milliseconds` view adds a column of three-digit options, `000 … 999`. With the default step that is a thousand options, so consider a step for it.
+
+```tsx
+<TimeSelection
+  views={['hours', 'minutes', 'seconds', 'milliseconds']}
+  timeSteps={{milliseconds: 100}}
+/>
 ```
 
 ### 12-hour clock
@@ -145,7 +156,7 @@ Moving through the options does not change the value: an option is picked with `
 
 ## Accessibility
 
-The root is a `group`; label it with `aria-label` or `aria-labelledby`. Each column is a `listbox` with a localized label (Hours, Minutes, Seconds, AM/PM), its options are `option` elements with `aria-selected`.
+The root is a `group`; label it with `aria-label` or `aria-labelledby`. Each column is a `listbox` with a localized label (Hours, Minutes, Seconds, Milliseconds, AM/PM), its options are `option` elements with `aria-selected`.
 
 ## Properties
 
@@ -157,10 +168,10 @@ The root is a `group`; label it with `aria-label` or `aria-labelledby`. Each col
 | aria-label                             | The control's `aria-label` attribute                                                                                 |                         `string`                          |                        |
 | aria-labelledby                        | The control's `aria-labelledby` attribute                                                                            |                         `string`                          |                        |
 | className                              | The control's wrapper class name                                                                                     |                         `string`                          |                        |
-| [defaultFocusView](#focus)             | The column that takes focus when the component mounts (uncontrolled)                                                 |             `'hours'` `'minutes'` `'seconds'`             |                        |
+| [defaultFocusView](#focus)             | The column that takes focus when the component mounts (uncontrolled)                                                 |                    `TimeSelectionView`                    |                        |
 | [defaultValue](#value)                 | Sets the initial value for uncontrolled component.                                                                   |                     `DateTime` `null`                     |                        |
 | [disabled](#disabled)                  | Indicates that the user cannot interact with the control                                                             |                         `boolean`                         |        `false`         |
-| [focusedView](#focus)                  | The column to move focus into on mount and whenever the property changes                                             |             `'hours'` `'minutes'` `'seconds'`             |                        |
+| [focusedView](#focus)                  | The column to move focus into on mount and whenever the property changes                                             |                    `TimeSelectionView`                    |                        |
 | id                                     | The control's `id` attribute                                                                                         |                         `string`                          |                        |
 | [isTimeUnavailable](#unavailable-time) | Callback that is called for each option of a column. If it returns true, then the option is unavailable.             | `((value: DateTime, view: TimeSelectionView) => boolean)` |                        |
 | [maxValue](#min-and-max-value)         | The maximum allowed date and time that a user may select.                                                            |                        `DateTime`                         |                        |

@@ -2,7 +2,7 @@ import type {DateTime} from '@gravity-ui/date-utils';
 
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
 
-export type TimeSelectionView = 'hours' | 'minutes' | 'seconds';
+export type TimeSelectionView = 'hours' | 'minutes' | 'seconds' | 'milliseconds';
 
 export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityProps, FocusEvents {
     /** The current value (controlled). */
@@ -17,7 +17,8 @@ export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityP
      */
     placeholderValue?: DateTime;
     /**
-     * Units to show columns for. The order of the columns is always hours, minutes, seconds.
+     * Units to show columns for. The order of the columns is always hours, minutes, seconds,
+     * milliseconds.
      * @default ['hours', 'minutes']
      */
     views?: TimeSelectionView[];

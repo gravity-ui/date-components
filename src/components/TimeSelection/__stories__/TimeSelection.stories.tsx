@@ -27,6 +27,7 @@ const VIEWS_PRESETS: Record<string, TimeSelectionView[]> = {
     hours: ['hours'],
     'hours, minutes': ['hours', 'minutes'],
     'hours, minutes, seconds': ['hours', 'minutes', 'seconds'],
+    'hours, minutes, seconds, milliseconds': ['hours', 'minutes', 'seconds', 'milliseconds'],
     'minutes, seconds': ['minutes', 'seconds'],
 };
 
@@ -80,8 +81,8 @@ const sampleValue = dateTime({input: '2024-01-15T10:30:45'});
 
 export const Steps = Default.extend({
     args: {
-        views: viewsPreset('hours, minutes, seconds'),
-        timeSteps: {hours: 2, minutes: 5, seconds: 15},
+        views: viewsPreset('hours, minutes, seconds, milliseconds'),
+        timeSteps: {hours: 2, minutes: 5, seconds: 15, milliseconds: 100},
     },
     render: (args) => <TimeSelection {...args} defaultValue={sampleValue} />,
     parameters: {

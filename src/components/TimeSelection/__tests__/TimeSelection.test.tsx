@@ -773,6 +773,141 @@ describe('TimeSelection', () => {
         });
     });
 
+    describe('milliseconds', () => {
+        const withMs = dateTime({input: '2024-01-15T10:30:45.250Z', timeZone: 'UTC'});
+        const MS_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS';
+        const allViews: TimeSelectionView[] = ['hours', 'minutes', 'seconds', 'milliseconds'];
+
+        it('renders the fourth column after seconds and before AM/PM', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={withMs}
+                    views={['milliseconds', 'seconds', 'hours', 'minutes']}
+                    timeSteps={{milliseconds: 50}}
+                    ampm
+                />,
+            );
+
+            const labels = screen
+                .getByRole('listbox')
+                .elements()
+                .map((element) => element.getAttribute('aria-label'));
+            expect(labels).toEqual(['Hours', 'Minutes', 'Seconds', 'Milliseconds', 'AM/PM']);
+
+            const milliseconds = optionLabels(column(screen, 'Milliseconds'));
+            expect(milliseconds).toHaveLength(20);
+            expect(milliseconds.slice(0, 3)).toEqual(['000', '050', '100']);
+            expect(milliseconds[19]).toBe('950');
+            await expect
+                .element(option(column(screen, 'Milliseconds'), '250'))
+                .toHaveAttribute('aria-selected', 'true');
+        });
+
+        it('renders a thousand options with the default step', async () => {
+            const screen = await render(<TimeSelection value={withMs} views={['milliseconds']} />);
+
+            const milliseconds = optionLabels(column(screen, 'Milliseconds'));
+            expect(milliseconds).toHaveLength(1000);
+            expect(milliseconds[999]).toBe('999');
+        });
+
+        it('changes only milliseconds and keeps them when another unit is picked', async () => {
+            const onUpdate = vi.fn();
+            const screen = await render(
+                <Controlled
+                    value={withMs}
+                    views={allViews}
+                    timeSteps={{milliseconds: 50}}
+                    onUpdate={onUpdate}
+                />,
+            );
+            const last = () => (onUpdate.mock.lastCall?.[0] as DateTime).format(MS_FORMAT);
+
+            await option(column(screen, 'Milliseconds'), '700').click();
+            expect(last()).toBe('2024-01-15T10:30:45.700');
+
+            await option(column(screen, 'Hours'), '08').click();
+            expect(last()).toBe('2024-01-15T08:30:45.700');
+        });
+
+        it('moves focus from seconds to milliseconds and reports the view', async () => {
+            const onFocusViewUpdate = vi.fn();
+            const screen = await render(
+                <Controlled
+                    value={withMs}
+                    views={allViews}
+                    timeSteps={{milliseconds: 50}}
+                    defaultFocusView="seconds"
+                    onFocusViewUpdate={onFocusViewUpdate}
+                />,
+            );
+            await expect.element(option(column(screen, 'Seconds'), '45')).toHaveFocus();
+
+            await userEvent.keyboard('{Enter}');
+            await expect.element(option(column(screen, 'Milliseconds'), '250')).toHaveFocus();
+            expect(onFocusViewUpdate).toHaveBeenLastCalledWith('milliseconds');
+        });
+
+        it('disables the milliseconds out of minValue and maxValue', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={withMs}
+                    views={allViews}
+                    timeSteps={{milliseconds: 50}}
+                    minValue={dateTime({input: '2024-01-15T10:30:45.200Z', timeZone: 'UTC'})}
+                    maxValue={dateTime({input: '2024-01-15T10:30:45.300Z', timeZone: 'UTC'})}
+                />,
+            );
+            const milliseconds = column(screen, 'Milliseconds');
+
+            await expect
+                .element(option(milliseconds, '150'))
+                .toHaveAttribute('aria-disabled', 'true');
+            await expect.element(option(milliseconds, '200')).not.toHaveAttribute('aria-disabled');
+            await expect.element(option(milliseconds, '300')).not.toHaveAttribute('aria-disabled');
+            await expect
+                .element(option(milliseconds, '350'))
+                .toHaveAttribute('aria-disabled', 'true');
+            // The second still has a moment in range
+            await expect
+                .element(option(column(screen, 'Seconds'), '45'))
+                .not.toHaveAttribute('aria-disabled');
+            await expect
+                .element(option(column(screen, 'Seconds'), '46'))
+                .toHaveAttribute('aria-disabled', 'true');
+        });
+
+        it('selects nothing when milliseconds do not fit the step', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={withMs}
+                    views={['milliseconds']}
+                    timeSteps={{milliseconds: 100}}
+                />,
+            );
+
+            expect(
+                screen
+                    .getByRole('option')
+                    .elements()
+                    .filter((element) => element.getAttribute('aria-selected') === 'true'),
+            ).toHaveLength(0);
+        });
+
+        it('labels the column in Russian', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={withMs}
+                    views={['milliseconds']}
+                    timeSteps={{milliseconds: 100}}
+                />,
+                {providers: {lang: 'ru'}},
+            );
+
+            await expect.element(column(screen, 'Миллисекунды')).toBeInTheDocument();
+        });
+    });
+
     describe('edge cases', () => {
         it('renders no columns for empty views and only AM/PM with ampm', async () => {
             const screen = await render(
@@ -1113,6 +1248,20 @@ describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
                     value={time('2024-01-15T15:30:45')}
                     views={['hours', 'minutes', 'seconds']}
                     ampm
+                />,
+                options,
+            );
+            await expect(screen.getByTestId('time-selection')).toMatchScreenshot();
+        });
+
+        test('with milliseconds', async () => {
+            const screen = await render(
+                <TimeSelection
+                    data-qa="time-selection"
+                    style={still}
+                    value={dateTime({input: '2024-01-15T10:30:45.250Z', timeZone: 'UTC'})}
+                    views={['hours', 'minutes', 'seconds', 'milliseconds']}
+                    timeSteps={{milliseconds: 50}}
                 />,
                 options,
             );
