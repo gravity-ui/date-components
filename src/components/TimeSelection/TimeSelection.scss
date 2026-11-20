@@ -1,0 +1,46 @@
+@use '../variables';
+
+$block: '.#{variables.$ns}time-selection';
+
+#{$block} {
+    // The height of a row belongs to the List; it is repeated here only to count the default
+    // height of a column
+    --_--row-height: var(--g-list-item-view-min-height, 28px);
+
+    display: inline-flex;
+    gap: var(--g-spacing-1);
+
+    box-sizing: border-box;
+    height: var(--g-date-time-selection-height, calc(var(--_--row-height) * 7));
+
+    &_size_s {
+        --_--row-height: var(--g-list-item-view-min-height, 24px);
+    }
+
+    &_size_l {
+        --_--row-height: var(--g-list-item-view-min-height, 36px);
+    }
+
+    &_size_xl {
+        --_--row-height: var(--g-list-item-view-min-height, 44px);
+    }
+
+    &__column {
+        // Makes the column the offset parent of its rows
+        position: relative;
+
+        overflow: hidden auto;
+        overscroll-behavior: contain;
+        flex: 0 0 auto;
+
+        scrollbar-width: thin;
+    }
+
+    &__item-text {
+        flex: 1 1 auto;
+
+        font-variant-numeric: tabular-nums;
+
+        text-align: center;
+    }
+}
