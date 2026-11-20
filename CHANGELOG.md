@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0](https://github.com/gravity-ui/date-components/compare/v5.0.0...v5.1.0) (2026-11-20)
+
+
+### Features
+
+* support milliseconds in date components ([#294](https://github.com/gravity-ui/date-components/issues/294)) ([5581204](https://github.com/gravity-ui/date-components/commit/55812041656bda7b91c37b2137f974a357cf4e7b))
+
 ## [5.0.0](https://github.com/gravity-ui/date-components/compare/v4.1.0...v5.0.0) (2026-10-27)
 
 
