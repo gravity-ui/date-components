@@ -3,6 +3,7 @@
 import React from 'react';
 
 import {List, useDirection, useFocusWithin, useLayoutEffect} from '@gravity-ui/uikit';
+import type {ListSize} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {filterDOMProps} from '../utils/filterDOMProps';
@@ -16,43 +17,47 @@ import './TimeSelection.scss';
 
 const b = block('time-selection');
 
-const COLUMN_LABELS = {
+const COLUMN_LABEL_KEYS = {
     hours: 'Hours',
+    meridiem: 'AM/PM',
+    milliseconds: 'Milliseconds',
     minutes: 'Minutes',
     seconds: 'Seconds',
-    milliseconds: 'Milliseconds',
-    meridiem: 'AM/PM',
 } as const;
 
 const SELECTED_OPTION_SELECTOR = '[role="option"][aria-selected="true"]';
 
-function prefersReducedMotion() {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-/** Puts the option in the middle of the column; next to the edges of the list — as close as it gets */
 function scrollToCenter(container: HTMLElement, element: HTMLElement, smooth: boolean) {
-    const maxScrollTop = container.scrollHeight - container.clientHeight;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const top = Math.min(
         Math.max(element.offsetTop - (container.clientHeight - element.offsetHeight) / 2, 0),
-        maxScrollTop,
+        container.scrollHeight - container.clientHeight,
     );
-    container.scrollTo({top, behavior: smooth && !prefersReducedMotion() ? 'smooth' : 'instant'});
+    container.scrollTo({behavior: smooth && !reducedMotion ? 'smooth' : 'instant', top});
 }
 
-function isFullyVisible(container: HTMLElement, element: HTMLElement) {
-    return (
-        element.offsetTop >= container.scrollTop &&
-        element.offsetTop + element.offsetHeight <= container.scrollTop + container.clientHeight
-    );
+interface ScrollState {
+    /** The option the column was last scrolled to: scrolling to it again would undo a manual scroll */
+    scrolledId?: string;
+    /** A column that has not been laid out yet (a hidden parent) has nothing to animate from */
+    shown: boolean;
 }
 
-/**
- * Moves DOM focus into the column: to the selected option, otherwise to the tab stop of the list.
- * The root of the `List` is not focusable itself, its rows are.
- */
-function focusColumnElement(container: HTMLElement) {
-    if (container.contains(document.activeElement)) {
+function centerSelectedOption(container: HTMLElement | null, state: ScrollState): ScrollState {
+    if (!container || container.clientHeight === 0) {
+        return state;
+    }
+    const element = container.querySelector<HTMLElement>(SELECTED_OPTION_SELECTOR);
+    if (element && element.id !== state.scrolledId) {
+        scrollToCenter(container, element, state.shown);
+    }
+    return {scrolledId: element?.id, shown: true};
+}
+
+/** The root of the List is not focusable, its rows are: the selected one, or the tab stop */
+function focusColumn(root: HTMLElement | null, column: TimeSelectionColumn) {
+    const container = root?.querySelector<HTMLElement>(`[data-column="${column}"]`);
+    if (!container || container.contains(document.activeElement)) {
         return;
     }
     const target =
@@ -63,7 +68,10 @@ function focusColumnElement(container: HTMLElement) {
         return;
     }
     target.focus({preventScroll: true});
-    if (!isFullyVisible(container, target)) {
+    const visible =
+        target.offsetTop >= container.scrollTop &&
+        target.offsetTop + target.offsetHeight <= container.scrollTop + container.clientHeight;
+    if (!visible) {
         scrollToCenter(container, target, false);
     }
 }
@@ -79,87 +87,46 @@ function getItemTextValue(item: TimeSelectionItem) {
 interface TimeSelectionColumnViewProps {
     column: TimeSelectionColumn;
     items: TimeSelectionItem[];
-    selectedId: string | undefined;
     label: string;
-    size: NonNullable<TimeSelectionProps['size']>;
-    readOnly: boolean;
-    registerColumn: (column: TimeSelectionColumn, element: HTMLElement | null) => void;
-    onSelect: (column: TimeSelectionColumn, item: TimeSelectionItem) => void;
-    onMove: (column: TimeSelectionColumn, offset: -1 | 1) => void;
     onFocusColumn: (column: TimeSelectionColumn) => void;
+    onMove: (column: TimeSelectionColumn, offset: -1 | 1) => void;
+    onSelect: (column: TimeSelectionColumn, item: TimeSelectionItem) => void;
+    readOnly: boolean;
+    selectedId: string | undefined;
+    size: ListSize;
 }
 
 function TimeSelectionColumnView({
     column,
     items,
-    selectedId,
     label,
-    size,
-    readOnly,
-    registerColumn,
-    onSelect,
-    onMove,
     onFocusColumn,
+    onMove,
+    onSelect,
+    readOnly,
+    selectedId,
+    size,
 }: TimeSelectionColumnViewProps) {
     const direction = useDirection();
-    const containerRef = React.useRef<HTMLDivElement | null>(null);
-    // The active row is dropped when focus leaves the column, so that the column is always
-    // entered at the selected option
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const scrollStateRef = React.useRef<ScrollState>({shown: false});
+    // Only a column with focus has an active row (hover alone does not set one), so the column
+    // is always entered at the selected option
     const [activeId, setActiveId] = React.useState<string | null>(null);
-    const selectedIds = React.useMemo(
-        () => (selectedId === undefined ? [] : [selectedId]),
-        [selectedId],
-    );
-
-    const setContainer = React.useCallback(
-        (element: HTMLDivElement | null) => {
-            containerRef.current = element;
-            registerColumn(column, element);
-        },
-        [column, registerColumn],
-    );
-
-    // The option the column was last scrolled to: scrolling to it again would undo a manual scroll
-    const scrolledIdRef = React.useRef<string | undefined>(undefined);
-    // Whether the column has been laid out with a size yet. The first centering of a visible
-    // column is instant; a column that mounts hidden (a parent with `display: none`, a tree
-    // suspended by React) has nothing to animate from when it appears, so it waits for its size
-    const shownRef = React.useRef(false);
-    const centerSelected = () => {
-        const container = containerRef.current;
-        if (selectedId === undefined) {
-            scrolledIdRef.current = undefined;
-        }
-        if (!container || container.clientHeight === 0) {
-            return;
-        }
-        const smooth = shownRef.current;
-        shownRef.current = true;
-        if (selectedId === undefined || scrolledIdRef.current === selectedId) {
-            return;
-        }
-        const element = container.querySelector<HTMLElement>(SELECTED_OPTION_SELECTOR);
-        if (!element) {
-            return;
-        }
-        scrolledIdRef.current = selectedId;
-        scrollToCenter(container, element, smooth);
-    };
-    const centerSelectedRef = React.useRef(centerSelected);
-    useLayoutEffect(() => {
-        centerSelectedRef.current = centerSelected;
-    });
 
     useLayoutEffect(() => {
-        centerSelectedRef.current();
+        scrollStateRef.current = centerSelectedOption(containerRef.current, scrollStateRef.current);
     }, [selectedId]);
 
+    // A column that mounted hidden is centered when it gets its size
     React.useEffect(() => {
         const container = containerRef.current;
         if (!container || typeof ResizeObserver === 'undefined') {
             return undefined;
         }
-        const observer = new ResizeObserver(() => centerSelectedRef.current());
+        const observer = new ResizeObserver(() => {
+            scrollStateRef.current = centerSelectedOption(container, scrollStateRef.current);
+        });
         observer.observe(container);
         return () => observer.disconnect();
     }, []);
@@ -177,7 +144,7 @@ function TimeSelectionColumnView({
 
     return (
         <List
-            ref={setContainer}
+            ref={containerRef}
             role="listbox"
             aria-label={label}
             className={b('column')}
@@ -186,69 +153,64 @@ function TimeSelectionColumnView({
             getItemContent={getItemContent}
             getItemTextValue={getItemTextValue}
             selectionMode="single"
-            selectedIds={selectedIds}
+            selectedIds={selectedId === undefined ? [] : [selectedId]}
             activeItemId={activeId}
-            onActiveItemUpdate={setActiveId}
+            onActiveItemUpdate={(id) => {
+                if (containerRef.current?.contains(document.activeElement)) {
+                    setActiveId(id);
+                }
+            }}
             onItemAction={(_id, item) => onSelect(column, item)}
             containerProps={{
                 'aria-readonly': readOnly || undefined,
-                onKeyDown: handleKeyDown,
-                onFocus: (event) => {
-                    if (!event.currentTarget.contains(event.relatedTarget)) {
-                        onFocusColumn(column);
-                    }
-                },
+                'data-column': column,
                 onBlur: (event) => {
                     if (!event.currentTarget.contains(event.relatedTarget)) {
                         setActiveId(null);
                     }
                 },
-                // Hover makes a row active too; without focus in the column it must not stay so
-                onPointerLeave: (event) => {
-                    if (!event.currentTarget.contains(document.activeElement)) {
-                        setActiveId(null);
+                onFocus: (event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                        onFocusColumn(column);
                     }
                 },
+                onKeyDown: handleKeyDown,
             }}
         />
     );
 }
 
 export function TimeSelection(props: TimeSelectionProps) {
-    const {size = 'm', focusedView, defaultFocusView, onFocusViewUpdate} = props;
+    const {defaultFocusView, focusedView, onFocusViewUpdate, size = 'm'} = props;
     const state = useTimeSelectionState(props);
     const {t} = i18n.useTranslation();
-
-    const columnElementsRef = React.useRef(new Map<TimeSelectionColumn, HTMLElement>());
-    const registerColumn = React.useCallback(
-        (column: TimeSelectionColumn, element: HTMLElement | null) => {
-            if (element) {
-                columnElementsRef.current.set(column, element);
-            } else {
-                columnElementsRef.current.delete(column);
-            }
-        },
-        [],
-    );
-    const focusColumn = React.useCallback((column: TimeSelectionColumn) => {
-        const element = columnElementsRef.current.get(column);
-        if (element) {
-            focusColumnElement(element);
-        }
-    }, []);
+    const rootRef = React.useRef<HTMLDivElement>(null);
 
     // The view the consumer already knows about: `onFocusViewUpdate` reports changes only
-    const [initialView] = React.useState(focusedView ?? defaultFocusView);
-    const knownViewRef = React.useRef(initialView);
-    const mountedRef = React.useRef(false);
+    const knownViewRef = React.useRef(focusedView ?? defaultFocusView);
+    const defaultFocusViewRef = React.useRef(defaultFocusView);
     React.useEffect(() => {
-        const view = mountedRef.current ? focusedView : initialView;
-        mountedRef.current = true;
+        const view = focusedView ?? defaultFocusViewRef.current;
+        defaultFocusViewRef.current = undefined;
         if (view) {
             knownViewRef.current = view;
-            focusColumn(view);
+            focusColumn(rootRef.current, view);
         }
-    }, [focusedView, initialView, focusColumn]);
+    }, [focusedView]);
+
+    // Focus moves after the picked value is rendered: the pick may change what is selected in
+    // the next column (the value is kept within the range, the first pick fills every unit)
+    const [focusRequest, setFocusRequest] = React.useState<{column: TimeSelectionColumn}>();
+    useLayoutEffect(() => {
+        if (focusRequest) {
+            focusColumn(rootRef.current, focusRequest.column);
+        }
+    }, [focusRequest]);
+
+    const getNeighbor = (column: TimeSelectionColumn, offset: -1 | 1) => {
+        const index = state.columns.findIndex((entry) => entry.column === column);
+        return index === -1 ? undefined : state.columns[index + offset]?.column;
+    };
 
     const handleFocusColumn = (column: TimeSelectionColumn) => {
         if (column !== 'meridiem' && knownViewRef.current !== column) {
@@ -257,47 +219,32 @@ export function TimeSelection(props: TimeSelectionProps) {
         }
     };
 
-    const moveFocus = (column: TimeSelectionColumn, offset: -1 | 1) => {
-        const index = state.columns.findIndex((item) => item.column === column);
-        const next = state.columns[index + offset];
-        if (index !== -1 && next) {
-            focusColumn(next.column);
+    const handleMove = (column: TimeSelectionColumn, offset: -1 | 1) => {
+        const neighbor = getNeighbor(column, offset);
+        if (neighbor) {
+            focusColumn(rootRef.current, neighbor);
         }
     };
 
-    // Focus goes on after the new value is rendered: the pick may change what is selected in
-    // the next column (the value is kept within the range, the first pick fills every unit)
-    const [focusRequest, setFocusRequest] = React.useState<{column: TimeSelectionColumn} | null>(
-        null,
-    );
-    useLayoutEffect(() => {
-        if (focusRequest) {
-            focusColumn(focusRequest.column);
-        }
-    }, [focusRequest, focusColumn]);
-
     const handleSelect = (column: TimeSelectionColumn, item: TimeSelectionItem) => {
-        if (!state.selectItem(column, item)) {
-            return;
-        }
-        const index = state.columns.findIndex((entry) => entry.column === column);
-        const next = state.columns[index + 1];
-        if (next) {
-            setFocusRequest({column: next.column});
+        const next = getNeighbor(column, 1);
+        if (state.selectItem(column, item) && next) {
+            setFocusRequest({column: next});
         }
     };
 
     const {focusWithinProps} = useFocusWithin({
-        onFocusWithin: props.onFocus,
         onBlurWithin: props.onBlur,
+        onFocusWithin: props.onFocus,
     });
 
     return (
         <div
             {...filterDOMProps(props, {labelable: true})}
+            ref={rootRef}
             role="group"
             aria-disabled={state.disabled || undefined}
-            className={b({size, disabled: state.disabled}, props.className)}
+            className={b({disabled: state.disabled, size}, props.className)}
             style={props.style}
             {...focusWithinProps}
         >
@@ -306,14 +253,13 @@ export function TimeSelection(props: TimeSelectionProps) {
                     key={column}
                     column={column}
                     items={items}
-                    selectedId={selectedId}
-                    label={t(COLUMN_LABELS[column])}
-                    size={size}
-                    readOnly={state.readOnly}
-                    registerColumn={registerColumn}
-                    onSelect={handleSelect}
-                    onMove={moveFocus}
+                    label={t(COLUMN_LABEL_KEYS[column])}
                     onFocusColumn={handleFocusColumn}
+                    onMove={handleMove}
+                    onSelect={handleSelect}
+                    readOnly={state.readOnly}
+                    selectedId={selectedId}
+                    size={size}
                 />
             ))}
         </div>

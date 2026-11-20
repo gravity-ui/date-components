@@ -18,38 +18,41 @@ interface TimeSelectionColumnState {
 }
 
 interface TimeSelectionState {
+    columns: TimeSelectionColumnState[];
     disabled: boolean;
     readOnly: boolean;
-    columns: TimeSelectionColumnState[];
-    /** Picks the option. Returns false when the option cannot be picked */
+    /** Returns false when the option cannot be picked */
     selectItem: (column: TimeSelectionColumn, item: TimeSelectionItem) => boolean;
 }
 
 type TimeSelectionStateOptions = Pick<
     TimeSelectionProps,
-    | 'value'
+    | 'ampm'
     | 'defaultValue'
+    | 'disabled'
+    | 'isTimeUnavailable'
+    | 'maxValue'
+    | 'minValue'
     | 'onUpdate'
     | 'placeholderValue'
-    | 'views'
-    | 'ampm'
-    | 'timeSteps'
-    | 'minValue'
-    | 'maxValue'
-    | 'isTimeUnavailable'
-    | 'timeZone'
-    | 'disabled'
     | 'readOnly'
+    | 'timeSteps'
+    | 'timeZone'
+    | 'value'
+    | 'views'
 >;
 
 export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSelectionState {
     const {
-        views = DEFAULT_VIEWS,
         ampm = false,
-        timeSteps,
-        isTimeUnavailable,
         disabled = false,
+        isTimeUnavailable,
+        maxValue: maxValueProp,
+        minValue: minValueProp,
+        placeholderValue,
         readOnly = false,
+        timeSteps,
+        views = DEFAULT_VIEWS,
     } = props;
 
     const [value, setValue] = useControlledState<DateTime | null>(
@@ -58,79 +61,61 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
         props.onUpdate as (value: DateTime | null) => void,
     );
 
-    const inputTimeZone = useDefaultTimeZone(
-        props.value || props.defaultValue || props.placeholderValue,
-    );
+    const inputTimeZone = useDefaultTimeZone(props.value || props.defaultValue || placeholderValue);
     const timeZone = props.timeZone || inputTimeZone;
 
-    const minValue = React.useMemo(
-        () => (props.minValue ? props.minValue.timeZone(timeZone) : undefined),
-        [timeZone, props.minValue],
-    );
-    const maxValue = React.useMemo(
-        () => (props.maxValue ? props.maxValue.timeZone(timeZone) : undefined),
-        [timeZone, props.maxValue],
-    );
-
-    const displayValue = React.useMemo(
-        () => (value ? value.timeZone(timeZone) : null),
-        [value, timeZone],
-    );
-    const placeholderValue = React.useMemo(
-        () =>
-            createPlaceholderValue({placeholderValue: props.placeholderValue, timeZone}).timeZone(
-                timeZone,
-            ),
-        [props.placeholderValue, timeZone],
-    );
-    // What an option is applied to: the value, or the placeholder while there is none
-    const base = displayValue ?? placeholderValue;
-
     const columnsKey = getColumns(views, ampm).join(',');
-    const hoursStep = timeSteps?.hours;
-    const minutesStep = timeSteps?.minutes;
-    const secondsStep = timeSteps?.seconds;
-    const millisecondsStep = timeSteps?.milliseconds;
+    const {hours, milliseconds, minutes, seconds} = timeSteps ?? {};
 
-    const columns = React.useMemo(() => {
-        const steps = {
-            hours: hoursStep,
-            minutes: minutesStep,
-            seconds: secondsStep,
-            milliseconds: millisecondsStep,
+    // The only memo here: it keeps the items of the columns the same objects between renders,
+    // so the List does not re-render every row (a thousand of them for milliseconds). Its inputs
+    // are compared as primitives because `views` and `timeSteps` are usually passed inline
+    const {base, columns, displayValue, maxValue, minValue} = React.useMemo(() => {
+        const steps = {hours, milliseconds, minutes, seconds};
+        const currentValue = value ? value.timeZone(timeZone) : null;
+        const range = {
+            maxValue: maxValueProp?.timeZone(timeZone),
+            minValue: minValueProp?.timeZone(timeZone),
         };
-        // ''.split(',') is [''], not an empty list
-        const columnKeys = (columnsKey ? columnsKey.split(',') : []) as TimeSelectionColumn[];
-        return columnKeys.map((column): TimeSelectionColumnState => {
-            const items = getColumnItems({
-                column,
-                base,
-                ampm,
-                step: column === 'meridiem' ? undefined : steps[column],
-                minValue,
-                maxValue,
-                isTimeUnavailable,
-                disabled,
-            });
-            return {
-                column,
-                items,
-                selectedId: getSelectedItemId(displayValue, column, ampm, items),
-            };
-        });
+        const currentBase =
+            currentValue ?? createPlaceholderValue({placeholderValue, timeZone}).timeZone(timeZone);
+        const columnKeys = columnsKey.split(',').filter(Boolean) as TimeSelectionColumn[];
+
+        return {
+            ...range,
+            base: currentBase,
+            columns: columnKeys.map((column): TimeSelectionColumnState => {
+                const items = getColumnItems({
+                    ...range,
+                    ampm,
+                    base: currentBase,
+                    column,
+                    disabled,
+                    isTimeUnavailable,
+                    step: column === 'meridiem' ? undefined : steps[column],
+                });
+                return {
+                    column,
+                    items,
+                    selectedId: getSelectedItemId(currentValue, column, ampm, items),
+                };
+            }),
+            displayValue: currentValue,
+        };
     }, [
-        columnsKey,
-        hoursStep,
-        minutesStep,
-        secondsStep,
-        millisecondsStep,
         ampm,
-        base,
-        displayValue,
-        minValue,
-        maxValue,
-        isTimeUnavailable,
+        columnsKey,
         disabled,
+        hours,
+        isTimeUnavailable,
+        maxValueProp,
+        milliseconds,
+        minValueProp,
+        minutes,
+        placeholderValue,
+        seconds,
+        timeZone,
+        value,
     ]);
 
     const selectItem = (column: TimeSelectionColumn, item: TimeSelectionItem) => {
@@ -144,5 +129,5 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
         return true;
     };
 
-    return {disabled, readOnly, columns, selectItem};
+    return {columns, disabled, readOnly, selectItem};
 }

@@ -4,26 +4,23 @@ import {constrainValue} from '../utils/dates';
 
 import type {TimeSelectionView} from './types';
 
-/** A column of the component; the AM/PM column is internal and is not a view */
+/** The AM/PM column is internal: it is not a view */
 export type TimeSelectionColumn = TimeSelectionView | 'meridiem';
 
 export interface TimeSelectionItem {
+    disabled: boolean;
     id: string;
     label: string;
-    /**
-     * The unit value of the option: hours 0–23 (0–11 on the 12-hour clock), minutes and
-     * seconds 0–59, milliseconds 0–999, 0 for AM and 1 for PM
-     */
+    /** Hours 0–23 (0–11 on the 12-hour clock), other units from 0, 0 for AM and 1 for PM */
     value: number;
-    disabled: boolean;
 }
 
 const VIEWS_ORDER: TimeSelectionView[] = ['hours', 'minutes', 'seconds', 'milliseconds'];
 const UNIT_COUNT: Record<TimeSelectionView, number> = {
     hours: 24,
+    milliseconds: 1000,
     minutes: 60,
     seconds: 60,
-    milliseconds: 1000,
 };
 const UNIT_OF_VIEW = {hours: 'hour', minutes: 'minute', seconds: 'second'} as const;
 
@@ -60,7 +57,6 @@ function getItemLabel(column: TimeSelectionColumn, ampm: boolean, value: number)
     return String(shown).padStart(column === 'milliseconds' ? 3 : 2, '0');
 }
 
-/** The unit value of the date in terms of the options of the column */
 function getUnitValue(date: DateTime, column: TimeSelectionColumn, ampm: boolean) {
     switch (column) {
         case 'hours':
@@ -76,7 +72,6 @@ function getUnitValue(date: DateTime, column: TimeSelectionColumn, ampm: boolean
     }
 }
 
-/** The date with the unit of the column replaced; nothing else changes */
 function setUnitValue(date: DateTime, column: TimeSelectionColumn, ampm: boolean, value: number) {
     switch (column) {
         case 'hours':
@@ -92,10 +87,7 @@ function setUnitValue(date: DateTime, column: TimeSelectionColumn, ampm: boolean
     }
 }
 
-/**
- * Whether the whole interval of the option (an hour, a minute, a second, a half of the day)
- * is out of range
- */
+/** An option is out of range only when its whole interval is: the hour, the minute, the half of the day */
 function isIntervalOutOfRange(
     candidate: DateTime,
     column: TimeSelectionColumn,
@@ -105,17 +97,13 @@ function isIntervalOutOfRange(
     if (!minValue && !maxValue) {
         return false;
     }
-    let start: DateTime;
-    let end: DateTime;
+    let start = candidate;
+    let end = candidate;
     if (column === 'meridiem') {
         const firstHour = candidate.hour() < 12 ? 0 : 12;
         start = candidate.set('hours', firstHour).startOf('hour');
         end = candidate.set('hours', firstHour + 11).endOf('hour');
-    } else if (column === 'milliseconds') {
-        // A millisecond is the smallest unit: its interval is the instant itself
-        start = candidate;
-        end = candidate;
-    } else {
+    } else if (column !== 'milliseconds') {
         start = candidate.startOf(UNIT_OF_VIEW[column]);
         end = candidate.endOf(UNIT_OF_VIEW[column]);
     }
@@ -123,26 +111,26 @@ function isIntervalOutOfRange(
 }
 
 interface ColumnItemsOptions {
-    column: TimeSelectionColumn;
+    ampm: boolean;
     /** The value the options are applied to: the current value or the placeholder */
     base: DateTime;
-    ampm: boolean;
-    step?: number;
-    minValue?: DateTime;
-    maxValue?: DateTime;
-    isTimeUnavailable?: (value: DateTime, view: TimeSelectionView) => boolean;
+    column: TimeSelectionColumn;
     disabled?: boolean;
+    isTimeUnavailable?: (value: DateTime, view: TimeSelectionView) => boolean;
+    maxValue?: DateTime;
+    minValue?: DateTime;
+    step?: number;
 }
 
 export function getColumnItems({
-    column,
-    base,
     ampm,
-    step,
-    minValue,
-    maxValue,
-    isTimeUnavailable,
+    base,
+    column,
     disabled,
+    isTimeUnavailable,
+    maxValue,
+    minValue,
+    step,
 }: ColumnItemsOptions): TimeSelectionItem[] {
     return getUnitValues(column, ampm, step).map((value) => {
         const label = getItemLabel(column, ampm, value);
@@ -155,11 +143,11 @@ export function getColumnItems({
                 isIntervalOutOfRange(candidate, column, minValue, maxValue) ||
                 Boolean(isTimeUnavailable?.(candidate, view));
         }
-        return {id: label, label, value, disabled: itemDisabled};
+        return {disabled: itemDisabled, id: label, label, value};
     });
 }
 
-/** The id of the option that shows the value; nothing when the value does not fit the step */
+/** Nothing is selected when the value does not fit the step of the column */
 export function getSelectedItemId(
     value: DateTime | null,
     column: TimeSelectionColumn,
@@ -173,7 +161,6 @@ export function getSelectedItemId(
     return items.find((item) => item.value === unitValue)?.id;
 }
 
-/** The value after picking the option: only its unit changes, the result is kept within the range */
 export function applyUnitValue(
     base: DateTime,
     column: TimeSelectionColumn,
