@@ -1,5 +1,6 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import {Flex, Text} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {action} from 'storybook/actions';
 
 import preview from '#.storybook/preview';
@@ -14,7 +15,6 @@ const meta = preview.meta({
     tags: ['autodocs'],
     args: {
         'aria-label': 'Time',
-        onUpdate: action('onUpdate'),
         onFocusViewUpdate: action('onFocusViewUpdate'),
         onFocus: action('onFocus'),
         onBlur: action('onBlur'),
@@ -57,6 +57,19 @@ export const Default = meta.story({
     },
     args: {
         views: viewsPreset('hours, minutes'),
+        onUpdate: (res) => {
+            action('onUpdate')(res);
+            toaster.add({
+                name: 'time-selection-on-change-cb',
+                title: 'onUpdate callback',
+                theme: 'success',
+                content: (
+                    <div>
+                        <div>date: {res.format('YYYY-MM-DDTHH:mm:ss.SSSZ')}</div>
+                    </div>
+                ),
+            });
+        },
     },
     argTypes: {
         value: {control: {type: 'text'}},
