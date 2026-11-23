@@ -1,4 +1,5 @@
 import {dateTime} from '@gravity-ui/date-utils';
+import {flushSync} from 'react-dom';
 import {describe, expect, it, vi} from 'vitest';
 import {userEvent} from 'vitest/browser';
 
@@ -47,6 +48,41 @@ describe('DateField', () => {
         await userEvent.click(screen.container);
 
         expect(cleanString(input.value)).toBe('31.MM.YYYY');
+    });
+
+    it('moves to the next segment when ArrowRight follows focus immediately', async () => {
+        const value = dateTime({input: '2024-12-31'});
+        const screen = await render(<DateField defaultValue={value} format="DD.MM.YYYY" />);
+        const input = screen.getByRole('textbox').element();
+        if (!(input instanceof HTMLInputElement)) {
+            throw new Error('Expected a date input');
+        }
+
+        flushSync(() => input.focus());
+        input.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true}));
+
+        await expect
+            .poll(() =>
+                cleanString(input.value.slice(input.selectionStart ?? 0, input.selectionEnd ?? 0)),
+            )
+            .toBe('12');
+    });
+
+    it('selects the clicked segment when the input gains focus', async () => {
+        const value = dateTime({input: '2024-12-31'});
+        const screen = await render(<DateField defaultValue={value} format="DD.MM.YYYY" />);
+        const textbox = screen.getByRole('textbox');
+        const input = textbox.element();
+        if (!(input instanceof HTMLInputElement)) {
+            throw new Error('Expected a date input');
+        }
+
+        input.style.font = '20px monospace';
+        input.style.paddingInlineStart = '0';
+        await textbox.click({position: {x: 12 * 8, y: input.clientHeight / 2}});
+        await userEvent.keyboard('{ArrowUp}');
+
+        expect(cleanString(input.value)).toBe('31.12.2025');
     });
 
     it('should focus previous section when backspacing on an empty date section', async () => {
