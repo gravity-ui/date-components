@@ -282,6 +282,7 @@ $block: '.#{variables.$ns}calendar';
         font-weight: var(--g-text-subheader-font-weight);
         cursor: pointer;
         text-transform: capitalize;
+        -webkit-tap-highlight-color: transparent;
 
         border-radius: 4px;
         outline: none;
@@ -295,7 +296,9 @@ $block: '.#{variables.$ns}calendar';
         }
 
         &:hover {
-            background-color: var(--g-color-base-generic);
+            @media (hover: hover) {
+                background-color: var(--g-color-base-generic);
+            }
         }
 
         &_selected[class] {

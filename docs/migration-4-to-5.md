@@ -136,7 +136,7 @@ Alternatively, render the dialog with `disableTransition`: it then opens without
 The components look slightly different because uikit v8 changes them:
 
 - colors come from Themer v2 and shift slightly in every theme;
-- the `:hover` styles of uikit components inside date components, such as buttons and list rows, apply only on devices that can hover. The hover styles of the calendar cells and of `RangeDateSelection` do not change;
+- uikit controls and calendar cells apply `:hover` styles only when the primary input can hover. Hover styles in `RangeDateSelection` are unchanged.
 
 Update your screenshot baselines after the upgrade, and check custom CSS that overrides uikit classes inside date components.
 
