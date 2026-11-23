@@ -1,3 +1,5 @@
+import type React from 'react';
+
 import {useFocusWithin, useLang} from '@gravity-ui/uikit';
 
 import {formatDateTime} from '../../utils/dates';
@@ -12,7 +14,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
     });
 
     const {lang} = useLang();
-    const gridProps: React.HTMLAttributes<HTMLElement> = {
+    const gridProps: React.HTMLAttributes<HTMLDivElement> = {
         role: 'grid',
         'aria-label':
             state.mode === 'years' || state.mode === 'quarters'
@@ -64,7 +66,5 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
         },
     };
 
-    return {
-        gridProps,
-    };
+    return {gridProps};
 }

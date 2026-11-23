@@ -20,6 +20,11 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     const [value, setValue] = useControlledState(valueProp, defaultValue, onUpdate);
 
     const [anchorDate, setAnchorDateState] = React.useState<DateTime>();
+    const [preservedPreview, setPreservedPreview] = React.useState<{
+        end: DateTime;
+        focusedDate: DateTime;
+        mode: CalendarLayout;
+    }>();
 
     const inputTimeZone = useDefaultTimeZone(
         valueProp?.start || defaultValue?.start || props.focusedValue || props.defaultFocusedValue,
@@ -27,8 +32,21 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     const timeZone = props.timeZone || inputTimeZone;
 
     const calendar = useCalendarState({...calendarProps, value: null, timeZone});
+    let previewEnd = calendar.focusedDate;
+    if (preservedPreview) {
+        if (
+            anchorDate &&
+            calendar.mode === preservedPreview.mode &&
+            calendar.focusedDate.isSame(preservedPreview.focusedDate)
+        ) {
+            previewEnd = preservedPreview.end;
+        } else {
+            setPreservedPreview(undefined);
+        }
+    }
+
     const highlightedRange = anchorDate
-        ? makeRange(anchorDate, calendar.focusedDate, calendar.mode)
+        ? makeRange(anchorDate, previewEnd, calendar.mode)
         : ((value &&
               makeRange(
                   value.start.timeZone(timeZone),
@@ -81,6 +99,14 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         value,
         setValue: handleSetValue,
         selectDate,
+        selectFocusedDate() {
+            this.selectDate(previewEnd, true);
+        },
+        preservePreviewForFocus(focusedDate) {
+            if (anchorDate) {
+                setPreservedPreview({end: previewEnd, focusedDate, mode: calendar.mode});
+            }
+        },
         anchorDate,
         setAnchorDate: setAnchorDateState,
         highlightedRange,
@@ -98,6 +124,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         },
         highlightDate(date) {
             if (anchorDate) {
+                setPreservedPreview(undefined);
                 this.setFocusedDate(date);
             }
         },

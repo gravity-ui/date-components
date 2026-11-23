@@ -8,14 +8,22 @@ import {ArrowToggle, Button, useLang, useMobile} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import type {AccessibilityProps, DomProps, FocusEvents, StyleProps} from '../types';
-import {formatDateTime} from '../utils/dates';
+import {constrainValue, formatDateTime} from '../utils/dates';
 
 import type {RangeCalendarState} from './hooks/types';
 import {useCalendarCellProps} from './hooks/useCalendarCellProps';
 import {useCalendarGridProps} from './hooks/useCalendarGridProps';
 import {useCalendarProps} from './hooks/useCalendarProps';
 import type {CalendarState} from './hooks/useCalendarState';
-import {calendarLayouts, getDaysInPeriod, getWeekDays} from './utils';
+import {useCalendarSwipe} from './hooks/useCalendarSwipe';
+import {
+    calendarLayouts,
+    getDaysInPeriod,
+    getEndDate,
+    getPageDate,
+    getStartDate,
+    getWeekDays,
+} from './utils';
 
 import './Calendar.scss';
 
@@ -121,19 +129,56 @@ function CalendarGrid({state}: CalendarGridProps) {
     }
 
     const {gridProps} = useCalendarGridProps(state);
+    const {swipeProps, previewDirection, clearPreview, slideOffset, clearSlideOffset} =
+        useCalendarSwipe(state);
+    const previewDate =
+        !animation && previewDirection
+            ? constrainValue(
+                  getPageDate(state.focusedDate, state.mode, previewDirection).startOf(state.mode),
+                  state.minValue,
+                  state.maxValue,
+              )
+            : undefined;
+    let secondaryPanel:
+        Pick<ContentProps, 'state' | 'animation' | 'preview' | 'className'> | undefined;
+    if (animation) {
+        secondaryPanel = {state: prevState, animation, className: b('previous-state')};
+    } else if (previewDate) {
+        secondaryPanel = {
+            preview: previewDirection,
+            state: {
+                ...state,
+                isFocused: false,
+                focusedDate: previewDate,
+                startDate: getStartDate(previewDate, state.mode),
+                endDate: getEndDate(previewDate, state.mode),
+            },
+        };
+    }
+
+    const style: React.CSSProperties & {'--_--calendar-slide-start': string} = {
+        '--_--calendar-slide-start': slideOffset,
+    };
 
     return (
-        <div className={b('grid')} {...gridProps}>
-            {animation && (
-                <Content className={b('previous-state')} state={prevState} animation={animation} />
-            )}
+        <div className={b('grid')} style={style} {...gridProps} {...swipeProps}>
+            {secondaryPanel && <Content key="secondary" {...secondaryPanel} inactive />}
             <Content
                 key="current"
                 className={b('current-state')}
                 state={state}
                 animation={animation}
                 onAnimationEnd={() => {
+                    clearSlideOffset();
                     setPrevState({...state, isFocused: false});
+                }}
+                onTransitionEnd={(event) => {
+                    if (
+                        event.target === event.currentTarget &&
+                        event.propertyName === 'translate'
+                    ) {
+                        clearPreview();
+                    }
                 }}
             />
         </div>
@@ -144,19 +189,37 @@ interface ContentProps {
     className?: string;
     animation?: string;
     onAnimationEnd?: () => void;
+    onTransitionEnd?: React.TransitionEventHandler<HTMLDivElement>;
+    preview?: 'next' | 'previous';
+    inactive?: boolean;
     state: CalendarState | RangeCalendarState;
 }
-function Content({className, state, animation, onAnimationEnd}: ContentProps) {
+function Content({
+    className,
+    state,
+    animation,
+    onAnimationEnd,
+    onTransitionEnd,
+    preview,
+    inactive,
+}: ContentProps) {
     return (
         <div
-            className={b('content', {animation}, className)}
+            className={b('content', {animation, preview}, className)}
             onAnimationEnd={onAnimationEnd}
+            onTransitionEnd={onTransitionEnd}
+            ref={inactive ? makeInert : undefined}
+            aria-hidden={inactive || undefined}
             role="presentation"
         >
             {state.mode === 'days' && <Weekdays state={state} />}
             <CalendarGridCells state={state} />
         </div>
     );
+}
+
+function makeInert(element: HTMLDivElement | null) {
+    element?.setAttribute('inert', '');
 }
 
 interface WeekdaysProps {

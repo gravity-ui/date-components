@@ -55,8 +55,8 @@ export function useCalendarCellProps(date: DateTime, state: CalendarState | Rang
                   state.selectDate(date);
               }
             : undefined,
-        onPointerEnter() {
-            if ('highlightDate' in state && isSelectable) {
+        onPointerEnter(event) {
+            if (event.pointerType !== 'touch' && 'highlightDate' in state && isSelectable) {
                 if (isOutsideCurrentRange) {
                     const newDate = date.isBefore(state.focusedDate)
                         ? state.focusedDate.startOf('month')
