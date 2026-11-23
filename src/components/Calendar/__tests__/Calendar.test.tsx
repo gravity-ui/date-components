@@ -100,6 +100,21 @@ test('follows a short drag before release and returns without selecting a date',
     expect(onUpdate).not.toHaveBeenCalled();
 });
 
+test('keeps the outgoing period inert while keyboard focus moves to the new period', async () => {
+    const screen = await render(
+        <Calendar autoFocus defaultFocusedValue={dateTime({input: testDate})} />,
+    );
+    const grid = screen.getByRole('grid');
+    await expect.element(grid.getByRole('button', {name: /December 19, 1998/})).toHaveFocus();
+    await userEvent.keyboard('{PageDown}');
+
+    await expect.element(grid.getByRole('button', {name: /January 19, 1999/})).toHaveFocus();
+    expect(grid.element().querySelector('[inert][aria-hidden="true"]')).not.toBeNull();
+    await expect
+        .element(grid.getByRole('button', {name: /December 19, 1998/}))
+        .not.toBeInTheDocument();
+});
+
 test('does not reuse the drag offset after a controlled calendar rejects a swipe', async () => {
     const date = dateTime({input: testDate});
     const onFocusUpdate = vitest.fn();

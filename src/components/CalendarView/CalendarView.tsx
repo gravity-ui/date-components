@@ -15,6 +15,7 @@ import {useCalendarCellProps} from './hooks/useCalendarCellProps';
 import {useCalendarGridProps} from './hooks/useCalendarGridProps';
 import {useCalendarProps} from './hooks/useCalendarProps';
 import type {CalendarState} from './hooks/useCalendarState';
+import {useCalendarSwipe} from './hooks/useCalendarSwipe';
 import {
     calendarLayouts,
     getDaysInPeriod,
@@ -127,8 +128,9 @@ function CalendarGrid({state}: CalendarGridProps) {
         }
     }
 
-    const {gridProps, previewDirection, clearPreview, slideOffset, clearSlideOffset} =
-        useCalendarGridProps(state);
+    const {gridProps} = useCalendarGridProps(state);
+    const {swipeProps, previewDirection, clearPreview, slideOffset, clearSlideOffset} =
+        useCalendarSwipe(state);
     const previewDate =
         !animation && previewDirection
             ? constrainValue(
@@ -137,28 +139,30 @@ function CalendarGrid({state}: CalendarGridProps) {
                   state.maxValue,
               )
             : undefined;
+    let secondaryPanel:
+        Pick<ContentProps, 'state' | 'animation' | 'preview' | 'className'> | undefined;
+    if (animation) {
+        secondaryPanel = {state: prevState, animation, className: b('previous-state')};
+    } else if (previewDate) {
+        secondaryPanel = {
+            preview: previewDirection,
+            state: {
+                ...state,
+                isFocused: false,
+                focusedDate: previewDate,
+                startDate: getStartDate(previewDate, state.mode),
+                endDate: getEndDate(previewDate, state.mode),
+            },
+        };
+    }
+
     const style: React.CSSProperties & {'--_--calendar-slide-start': string} = {
         '--_--calendar-slide-start': slideOffset,
     };
 
     return (
-        <div className={b('grid')} style={style} {...gridProps}>
-            {animation && (
-                <Content className={b('previous-state')} state={prevState} animation={animation} />
-            )}
-            {previewDate && (
-                <Content
-                    key="preview"
-                    preview={previewDirection}
-                    state={{
-                        ...state,
-                        isFocused: false,
-                        focusedDate: previewDate,
-                        startDate: getStartDate(previewDate, state.mode),
-                        endDate: getEndDate(previewDate, state.mode),
-                    }}
-                />
-            )}
+        <div className={b('grid')} style={style} {...gridProps} {...swipeProps}>
+            {secondaryPanel && <Content key="secondary" {...secondaryPanel} inactive />}
             <Content
                 key="current"
                 className={b('current-state')}
@@ -187,6 +191,7 @@ interface ContentProps {
     onAnimationEnd?: () => void;
     onTransitionEnd?: React.TransitionEventHandler<HTMLDivElement>;
     preview?: 'next' | 'previous';
+    inactive?: boolean;
     state: CalendarState | RangeCalendarState;
 }
 function Content({
@@ -196,14 +201,15 @@ function Content({
     onAnimationEnd,
     onTransitionEnd,
     preview,
+    inactive,
 }: ContentProps) {
     return (
         <div
             className={b('content', {animation, preview}, className)}
             onAnimationEnd={onAnimationEnd}
             onTransitionEnd={onTransitionEnd}
-            ref={preview ? makeInert : undefined}
-            aria-hidden={preview ? true : undefined}
+            ref={inactive ? makeInert : undefined}
+            aria-hidden={inactive || undefined}
             role="presentation"
         >
             {state.mode === 'days' && <Weekdays state={state} />}
