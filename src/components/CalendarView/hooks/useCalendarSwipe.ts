@@ -1,5 +1,8 @@
 import React from 'react';
 
+import {constrainValue} from '../../utils/dates';
+import {getPageDate} from '../utils';
+
 import type {CalendarState, RangeCalendarState} from './types';
 
 const dragThreshold = 8;
@@ -151,6 +154,15 @@ export function useCalendarSwipe(state: CalendarState | RangeCalendarState) {
                     mode: state.mode,
                 });
             }
+            if ('preservePreviewForFocus' in state && state.anchorDate) {
+                const pageFocus = getPageDate(state.focusedDate, state.mode, direction).startOf(
+                    state.mode,
+                );
+                state.preservePreviewForFocus(
+                    constrainValue(pageFocus, state.minValue, state.maxValue),
+                );
+            }
+
             if (direction === 'next') {
                 state.focusNextPage();
             } else {

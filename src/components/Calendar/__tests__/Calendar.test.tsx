@@ -4,6 +4,7 @@ import {userEvent} from 'vitest/browser';
 
 import {render} from '#test-utils/utils.js';
 
+import {RangeCalendar} from '../../RangeCalendar/RangeCalendar';
 import {Calendar} from '../Calendar';
 
 const testDate = new Date(1998, 11, 19);
@@ -113,6 +114,51 @@ test('keeps the outgoing period inert while keyboard focus moves to the new peri
     await expect
         .element(grid.getByRole('button', {name: /December 19, 1998/}))
         .not.toBeInTheDocument();
+});
+
+test('swipes between months without extending an unfinished range', async () => {
+    const onUpdate = vitest.fn();
+    const screen = await render(
+        <RangeCalendar defaultFocusedValue={dateTime({input: testDate})} onUpdate={onUpdate} />,
+    );
+    const grid = screen.getByRole('grid');
+    await grid.getByRole('button', {name: /December 19, 1998/}).click();
+
+    swipe(grid.element(), -80);
+    await expect.element(grid).toHaveAccessibleName('January 1999');
+    const januaryDate = grid.getByRole('button', {name: /January 19, 1999/});
+    expect(januaryDate.element().parentElement?.getAttribute('aria-selected')).toBeNull();
+    expect(onUpdate).not.toHaveBeenCalled();
+
+    await januaryDate.click();
+    expect(onUpdate).toHaveBeenCalledOnce();
+    const [range] = onUpdate.mock.calls[0];
+    expect(range.start.format('YYYY-MM-DD')).toBe('1998-12-19');
+    expect(range.end.format('YYYY-MM-DD')).toBe('1999-01-19');
+});
+
+test('commits the preserved range endpoint on blur after a swipe', async () => {
+    const onUpdate = vitest.fn();
+    const screen = await render(
+        <div>
+            <RangeCalendar defaultFocusedValue={dateTime({input: testDate})} onUpdate={onUpdate} />
+            <button type="button">Outside</button>
+        </div>,
+    );
+    const grid = screen.getByRole('grid');
+    await grid.getByRole('button', {name: /December 19, 1998/}).click();
+    await grid.getByRole('button', {name: /December 22, 1998/}).hover();
+    await expect.element(grid.getByRole('button', {name: /December 22, 1998/})).toHaveFocus();
+
+    swipe(grid.element(), -80);
+    await expect.element(grid.getByRole('button', {name: /January 22, 1999/})).toHaveFocus();
+    expect(onUpdate).not.toHaveBeenCalled();
+
+    await screen.getByRole('button', {name: 'Outside'}).click();
+    expect(onUpdate).toHaveBeenCalledOnce();
+    const [range] = onUpdate.mock.calls[0];
+    expect(range.start.format('YYYY-MM-DD')).toBe('1998-12-19');
+    expect(range.end.format('YYYY-MM-DD')).toBe('1998-12-22');
 });
 
 test('does not reuse the drag offset after a controlled calendar rejects a swipe', async () => {

@@ -142,4 +142,6 @@ export interface RangeCalendarState extends CalendarStateBase {
     readonly highlightedRange: RangeValue<DateTime> | undefined;
     /** Highlights the given date during selection, e.g. by hovering. */
     highlightDate: (date: DateTime) => void;
+    /** Keeps the unfinished range endpoint when focus moves to the given date. */
+    preservePreviewForFocus: (date: DateTime) => void;
 }
