@@ -127,7 +127,7 @@ describe('RelativeDateField', () => {
 
         await userEvent.click(screen.container);
 
-        expect(input).toHaveValue('now - 1d');
+        await expect.element(screen.getByRole('textbox')).toHaveValue('now - 1d');
         expect(hiddenInput).toHaveValue('now - 1d');
         expect(onUpdate).not.toHaveBeenCalled();
     });

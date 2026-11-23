@@ -44,6 +44,7 @@ export function useDateFieldProps<T = DateTime>(
     const [, setInnerState] = React.useState({});
 
     const enteredKeys = React.useRef('');
+    const focusingWithMouse = React.useRef(false);
 
     const focusManager = useFocusManager({sections: state.sections});
 
@@ -302,13 +303,21 @@ export function useDateFieldProps<T = DateTime>(
             onFocus(e) {
                 props.onFocus?.(e);
 
+                const fromMouseDown = focusingWithMouse.current;
+                focusingWithMouse.current = false;
                 if (focusManager.selectedSectionIndexes !== null) {
                     setInnerState({});
                     return;
                 }
+                if (!fromMouseDown) {
+                    syncSelectionFromDOM();
+                    return;
+                }
+
+                // A mouse click places the native caret after focus.
                 const input = e.target;
                 setTimeout(() => {
-                    if (!input || input !== inputRef.current) {
+                    if (input !== inputRef.current || input !== input.ownerDocument.activeElement) {
                         return;
                     }
                     syncSelectionFromDOM();
@@ -376,7 +385,11 @@ export function useDateFieldProps<T = DateTime>(
                 onClick() {
                     syncSelectionFromDOM();
                 },
+                onMouseDown(e) {
+                    focusingWithMouse.current = e.button === 0;
+                },
                 onMouseUp(e: React.MouseEvent) {
+                    focusingWithMouse.current = false;
                     e.preventDefault();
                 },
                 onBeforeInput(e) {
