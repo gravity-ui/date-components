@@ -3,7 +3,12 @@
 import React from 'react';
 
 import {List, useDirection, useFocusWithin, useLayoutEffect} from '@gravity-ui/uikit';
-import type {ListSize} from '@gravity-ui/uikit';
+import type {
+    ListItemActionEvent,
+    ListItemContext,
+    ListItemHelpers,
+    ListSize,
+} from '@gravity-ui/uikit';
 
 import {block} from '../../utils/cn';
 import {filterDOMProps} from '../utils/filterDOMProps';
@@ -88,13 +93,31 @@ function getItemTextValue(item: TimeSelectionItem) {
     return item.label;
 }
 
+/** The row without the keyboard cursor: for a column that got focus after a click elsewhere */
+function renderItemWithoutCursor(
+    ctx: ListItemContext<TimeSelectionItem>,
+    helpers: ListItemHelpers,
+) {
+    return (
+        <List.ItemView {...helpers.getItemProps()} {...helpers.getItemViewProps()} active={false}>
+            {ctx.content}
+        </List.ItemView>
+    );
+}
+
 interface TimeSelectionColumnViewProps {
     column: TimeSelectionColumn;
+    cursorHidden: boolean;
     items: TimeSelectionItem[];
     label: string;
     onFocusColumn: (column: TimeSelectionColumn) => void;
     onMove: (column: TimeSelectionColumn, offset: -1 | 1) => void;
-    onSelect: (column: TimeSelectionColumn, item: TimeSelectionItem) => void;
+    onRevealCursor: (column: TimeSelectionColumn) => void;
+    onSelect: (
+        column: TimeSelectionColumn,
+        item: TimeSelectionItem,
+        event: ListItemActionEvent,
+    ) => void;
     readOnly: boolean;
     selectedId: string | undefined;
     size: ListSize;
@@ -102,10 +125,12 @@ interface TimeSelectionColumnViewProps {
 
 function TimeSelectionColumnView({
     column,
+    cursorHidden,
     items,
     label,
     onFocusColumn,
     onMove,
+    onRevealCursor,
     onSelect,
     readOnly,
     selectedId,
@@ -136,6 +161,7 @@ function TimeSelectionColumnView({
     }, []);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+        onRevealCursor(column);
         if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
             return;
         }
@@ -156,6 +182,7 @@ function TimeSelectionColumnView({
             items={items}
             getItemContent={getItemContent}
             getItemTextValue={getItemTextValue}
+            renderItem={cursorHidden ? renderItemWithoutCursor : undefined}
             selectionMode="single"
             selectedIds={selectedId === undefined ? [] : [selectedId]}
             activeItemId={activeId}
@@ -164,13 +191,14 @@ function TimeSelectionColumnView({
                     setActiveId(id);
                 }
             }}
-            onItemAction={(_id, item) => onSelect(column, item)}
+            onItemAction={(_id, item, event) => onSelect(column, item, event)}
             containerProps={{
                 'aria-readonly': readOnly || undefined,
                 'data-column': column,
                 onBlur: (event) => {
                     if (!event.currentTarget.contains(event.relatedTarget)) {
                         setActiveId(null);
+                        onRevealCursor(column);
                     }
                 },
                 onFocus: (event) => {
@@ -230,9 +258,21 @@ export function TimeSelection(props: TimeSelectionProps) {
         }
     };
 
-    const handleSelect = (column: TimeSelectionColumn, item: TimeSelectionItem) => {
+    // After a click focus still moves on, so the keys go on from the next column, but the
+    // column does not show the keyboard cursor until a key is pressed in it
+    const [quietColumn, setQuietColumn] = React.useState<TimeSelectionColumn>();
+    const handleRevealCursor = (column: TimeSelectionColumn) => {
+        setQuietColumn((current) => (current === column ? undefined : current));
+    };
+
+    const handleSelect = (
+        column: TimeSelectionColumn,
+        item: TimeSelectionItem,
+        event: ListItemActionEvent,
+    ) => {
         const next = getNeighbor(column, 1);
         if (state.selectItem(column, item) && next) {
+            setQuietColumn('key' in event ? undefined : next);
             setFocusRequest({column: next});
         }
     };
@@ -256,10 +296,12 @@ export function TimeSelection(props: TimeSelectionProps) {
                 <TimeSelectionColumnView
                     key={column}
                     column={column}
+                    cursorHidden={quietColumn === column}
                     items={items}
                     label={t(COLUMN_LABEL_KEYS[column])}
                     onFocusColumn={handleFocusColumn}
                     onMove={handleMove}
+                    onRevealCursor={handleRevealCursor}
                     onSelect={handleSelect}
                     readOnly={state.readOnly}
                     selectedId={selectedId}

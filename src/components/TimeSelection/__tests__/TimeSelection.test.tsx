@@ -474,6 +474,42 @@ describe('TimeSelection', () => {
             ]);
         });
 
+        describe('the keyboard cursor in the next column', () => {
+            const views: TimeSelectionView[] = ['hours', 'minutes', 'seconds'];
+            const background = (scope: Scope, columnName: string, name: string) =>
+                getComputedStyle(option(scope, columnName, name).element()).backgroundColor;
+
+            it('is hidden after a click until a key is pressed there', async () => {
+                const screen = await render(<Controlled value={value} views={views} />);
+                const selectedColor = background(screen, 'Minutes', '30');
+
+                await option(screen, 'Hours', '08').click();
+                await expect.poll(focused).toBe('Minutes 30');
+                expect(background(screen, 'Minutes', '30')).toBe(selectedColor);
+
+                // The keys go on from the option that got focus, and the cursor is back
+                await userEvent.keyboard('{ArrowDown}');
+                await expect.poll(focused).toBe('Minutes 31');
+                await expect
+                    .poll(() => background(screen, 'Minutes', '31'))
+                    .not.toBe(background(screen, 'Minutes', '33'));
+            });
+
+            it('is shown after a pick with the keyboard', async () => {
+                const screen = await render(
+                    <Controlled value={value} views={views} defaultFocusView="hours" />,
+                );
+                await expect.poll(focused).toBe('Hours 10');
+                const selectedColor = background(screen, 'Minutes', '30');
+
+                await userEvent.keyboard('{Enter}');
+                await expect.poll(focused).toBe('Minutes 30');
+                await expect
+                    .poll(() => background(screen, 'Minutes', '30'))
+                    .not.toBe(selectedColor);
+            });
+        });
+
         it('moves between the columns with left and right arrows without wrapping', async () => {
             const onUpdate = vi.fn();
             const onFocusViewUpdate = vi.fn();
