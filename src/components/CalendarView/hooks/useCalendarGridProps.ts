@@ -9,6 +9,7 @@ import type {CalendarState, RangeCalendarState} from './types';
 const dragThreshold = 8;
 const swipeThreshold = 40;
 const dragOffsetProperty = '--_--calendar-drag-offset';
+type SwipeDirection = 'next' | 'previous';
 
 export function useCalendarGridProps(state: CalendarState | RangeCalendarState) {
     const {focusWithinProps} = useFocusWithin({
@@ -24,8 +25,14 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
         y: number;
         isRtl: boolean;
         maxOffset: number;
+        previewDirection: SwipeDirection | null;
     } | null>(null);
     const suppressClick = React.useRef(false);
+    const [preview, setPreview] = React.useState<{
+        direction: SwipeDirection;
+        startDate: CalendarState['startDate'];
+        mode: CalendarState['mode'];
+    } | null>(null);
     const [swipeRelease, setSwipeRelease] = React.useState<{
         offset: string;
         startDate: CalendarState['startDate'];
@@ -37,26 +44,26 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
         swipeRelease.mode === state.mode &&
         !state.startDate.isSame(swipeRelease.startDate, 'days');
 
-    React.useLayoutEffect(() => {
-        if (swipeRelease && !swipeChangedPeriod) {
-            setSwipeRelease(null);
-        }
-    }, [swipeRelease, swipeChangedPeriod]);
+    if (swipeRelease && !swipeChangedPeriod) {
+        setSwipeRelease(null);
+    }
 
-    function getSwipeDirection(dx: number, isRtl: boolean) {
+    if (
+        preview &&
+        (preview.mode !== state.mode || !preview.startDate.isSame(state.startDate, 'days'))
+    ) {
+        setPreview(null);
+    }
+
+    function getSwipeDirection(dx: number, isRtl: boolean): SwipeDirection {
         return (isRtl ? dx > 0 : dx < 0) ? 'next' : 'previous';
     }
 
-    function canPage(direction: 'next' | 'previous') {
+    function canPage(direction: SwipeDirection) {
         return (
             !state.disabled &&
             !(direction === 'next' ? state.isNextPageInvalid() : state.isPreviousPageInvalid())
         );
-    }
-
-    function getDragOffset(dx: number, start: NonNullable<typeof swipeStart.current>) {
-        const allowed = canPage(getSwipeDirection(dx, start.isRtl));
-        return Math.sign(dx) * Math.min(Math.abs(dx) * (allowed ? 1 : 0.2), start.maxOffset);
     }
 
     function endDrag(grid: HTMLDivElement) {
@@ -82,6 +89,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
         onPointerDown: (event) => {
             suppressClick.current = false;
             endDrag(event.currentTarget);
+            setPreview(null);
             swipeStart.current =
                 !state.disabled && event.pointerType === 'touch' && event.isPrimary
                     ? {
@@ -90,6 +98,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
                           y: event.clientY,
                           isRtl: getComputedStyle(event.currentTarget).direction === 'rtl',
                           maxOffset: event.currentTarget.clientWidth / 3,
+                          previewDirection: null,
                       }
                     : null;
         },
@@ -112,11 +121,26 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
             }
 
             suppressClick.current = true;
+            const direction = getSwipeDirection(dx, start.isRtl);
+            const allowed = canPage(direction);
+            const previewDirection = allowed ? direction : null;
+            if (start.previewDirection !== previewDirection) {
+                start.previewDirection = previewDirection;
+                setPreview(
+                    previewDirection
+                        ? {
+                              direction: previewDirection,
+                              startDate: state.startDate,
+                              mode: state.mode,
+                          }
+                        : null,
+                );
+            }
+
+            const offset =
+                Math.sign(dx) * Math.min(Math.abs(dx) * (allowed ? 1 : 0.2), start.maxOffset);
             event.currentTarget.setAttribute('data-dragging', '');
-            event.currentTarget.style.setProperty(
-                dragOffsetProperty,
-                `${getDragOffset(dx, start)}px`,
-            );
+            event.currentTarget.style.setProperty(dragOffsetProperty, `${offset}px`);
         },
         onPointerCancel: (event) => {
             if (swipeStart.current?.pointerId === event.pointerId) {
@@ -129,7 +153,7 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
                 return;
             }
 
-            const preview = event.currentTarget.style.getPropertyValue(dragOffsetProperty);
+            const releaseOffset = event.currentTarget.style.getPropertyValue(dragOffsetProperty);
             endDrag(event.currentTarget);
             const dx = event.clientX - start.x;
             const dy = event.clientY - start.y;
@@ -144,9 +168,9 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
                 return;
             }
 
-            if (preview) {
+            if (releaseOffset) {
                 setSwipeRelease({
-                    offset: preview,
+                    offset: releaseOffset,
                     startDate: state.startDate,
                     mode: state.mode,
                 });
@@ -203,6 +227,12 @@ export function useCalendarGridProps(state: CalendarState | RangeCalendarState) 
 
     return {
         gridProps,
+        previewDirection: preview?.direction,
+        clearPreview: () => {
+            if (!swipeStart.current) {
+                setPreview(null);
+            }
+        },
         slideOffset: swipeChangedPeriod ? swipeRelease.offset : '0px',
         clearSlideOffset: () => setSwipeRelease(null),
     };

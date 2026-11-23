@@ -35,3 +35,50 @@ export function getWeekDays(state: CalendarState | RangeCalendarState) {
 }
 
 export const calendarLayouts: CalendarLayout[] = ['days', 'months', 'quarters', 'years'];
+
+export function getPageDate(
+    date: DateTime,
+    mode: CalendarLayout,
+    direction: 'next' | 'previous',
+    larger?: boolean,
+) {
+    const sign = direction === 'next' ? 1 : -1;
+    if (mode === 'days') {
+        return date.add({months: sign * (larger ? 12 : 1)});
+    }
+    if (mode === 'quarters') {
+        return date.add(sign * 4, 'years');
+    }
+    return date.add(sign * 12, mode);
+}
+
+export function getStartDate(date: DateTime, mode: CalendarLayout) {
+    if (mode === 'days') {
+        return date.startOf('month');
+    }
+
+    if (mode === 'months') {
+        return date.startOf('year');
+    }
+
+    const years = mode === 'quarters' ? 4 : 12;
+    const year = Math.floor(date.year() / years) * years;
+    return date.startOf('year').set('year', year);
+}
+
+export function getEndDate(date: DateTime, mode: CalendarLayout) {
+    if (mode === 'days') {
+        return date.endOf('month').startOf('day');
+    }
+
+    if (mode === 'months') {
+        return date.endOf('year').startOf('month');
+    }
+
+    const startDate = getStartDate(date, mode);
+    if (mode === 'quarters') {
+        return startDate.add(15, 'quarters');
+    }
+
+    return startDate.add({[mode]: 11});
+}

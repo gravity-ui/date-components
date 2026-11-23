@@ -1,5 +1,6 @@
 import {dateTime} from '@gravity-ui/date-utils';
 import {afterEach, describe, expect, test, vitest} from 'vitest';
+import {userEvent} from 'vitest/browser';
 
 import {render} from '#test-utils/utils.js';
 
@@ -81,12 +82,45 @@ test('follows a short drag before release and returns without selecting a date',
 
     expect(cell.getBoundingClientRect().x).toBeCloseTo(originalX - 25);
     await expect.element(grid).toHaveAccessibleName('December 1998');
+    await expect.poll(() => grid.element().querySelector('[inert]')).not.toBeNull();
+    const preview = grid.element().querySelector('[inert]');
+    expect(preview?.querySelector('[aria-label*="January 19, 1999"]')).not.toBeNull();
+    expect(preview?.getBoundingClientRect().left).toBeCloseTo(
+        grid.element().getBoundingClientRect().right - 25,
+    );
+    await expect
+        .element(grid.getByRole('button', {name: /January 19, 1999/}))
+        .not.toBeInTheDocument();
 
     cell.dispatchEvent(new PointerEvent('pointerup', {...options, clientX: 75}));
     cell.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, detail: 1}));
     await expect.poll(() => cell.getBoundingClientRect().x).toBeCloseTo(originalX);
+    await expect.poll(() => grid.element().querySelector('[inert]')).toBeNull();
     await expect.element(grid).toHaveAccessibleName('December 1998');
     expect(onUpdate).not.toHaveBeenCalled();
+});
+
+test('does not reuse the drag offset after a controlled calendar rejects a swipe', async () => {
+    const date = dateTime({input: testDate});
+    const onFocusUpdate = vitest.fn();
+    const screen = await render(<Calendar focusedValue={date} onFocusUpdate={onFocusUpdate} />);
+    const grid = screen.getByRole('grid');
+    const cell = grid.getByRole('button', {name: /December 19, 1998/}).element();
+
+    swipe(cell, -80);
+    expect(onFocusUpdate).toHaveBeenCalledOnce();
+    await expect.element(grid).toHaveAccessibleName('December 1998');
+
+    await screen.getByRole('button', {name: 'Next', exact: true}).click();
+    expect(onFocusUpdate).toHaveBeenCalledTimes(2);
+    await screen.rerender(
+        <Calendar focusedValue={date.add(1, 'month')} onFocusUpdate={onFocusUpdate} />,
+    );
+    await expect.element(grid).toHaveAccessibleName('January 1999');
+    const slideStart = getComputedStyle(grid.element()).getPropertyValue(
+        '--_--calendar-slide-start',
+    );
+    expect(slideStart).toBe('0px');
 });
 
 describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
@@ -128,6 +162,7 @@ describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
         });
 
         test('with focused date', async () => {
+            await userEvent.keyboard('{Tab}');
             const screen = await render(
                 <Calendar
                     data-qa="calendar"
@@ -136,6 +171,9 @@ describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
                 />,
                 options,
             );
+            const focusedDate = screen.getByRole('button', {name: /December 19, 1998/});
+            await expect.element(focusedDate).toHaveFocus();
+            expect(focusedDate.element().matches(':focus-visible')).toBe(true);
             await expect(screen.getByTestId('calendar')).toMatchScreenshot();
         });
 

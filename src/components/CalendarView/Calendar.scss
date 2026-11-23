@@ -191,7 +191,28 @@ $block: '.#{variables.$ns}calendar';
             }
         }
 
+        &_preview_next,
+        &_preview_previous {
+            display: none;
+
+            pointer-events: none;
+
+            @media (prefers-reduced-motion: no-preference) and (update: fast) {
+                display: grid;
+            }
+        }
+
+        &_preview_next {
+            inset-inline-start: 100%;
+        }
+
+        &_preview_previous {
+            inset-inline-start: -100%;
+        }
+
         @media (prefers-reduced-motion: no-preference) and (update: fast) {
+            &_preview_next,
+            &_preview_previous,
             &#{$block}__current-state:not([class*='animation_']) {
                 translate: var(--_--calendar-drag-offset, 0px);
 

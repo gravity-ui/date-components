@@ -7,7 +7,7 @@ import {useControlledState} from '@gravity-ui/uikit';
 import type {ValueBase} from '../../types';
 import {constrainValue, createPlaceholderValue, isWeekend, mergeDateTime} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
-import {calendarLayouts} from '../utils';
+import {calendarLayouts, getEndDate, getPageDate, getStartDate} from '../utils';
 
 import type {
     CalendarLayout,
@@ -218,22 +218,10 @@ export function useCalendarState<M extends SelectionMode = 'single'>(
             }
         },
         focusNextPage(larger?: boolean) {
-            if (this.mode === 'days') {
-                focusCell(focusedDate.add({months: larger ? 12 : 1}));
-            } else if (this.mode === 'quarters') {
-                focusCell(focusedDate.add(4, 'years'));
-            } else {
-                focusCell(focusedDate.add(12, this.mode));
-            }
+            focusCell(getPageDate(focusedDate, this.mode, 'next', larger));
         },
         focusPreviousPage(larger?: boolean) {
-            if (this.mode === 'days') {
-                focusCell(focusedDate.subtract({months: larger ? 12 : 1}));
-            } else if (this.mode === 'quarters') {
-                focusCell(focusedDate.subtract(4, 'years'));
-            } else {
-                focusCell(focusedDate.subtract(12, this.mode));
-            }
+            focusCell(getPageDate(focusedDate, this.mode, 'previous', larger));
         },
         focusSectionStart() {
             focusCell(getStartDate(focusedDate, this.mode));
@@ -305,41 +293,6 @@ export function useCalendarState<M extends SelectionMode = 'single'>(
         setMode,
         availableModes,
     };
-}
-
-function getStartDate(date: DateTime, mode: CalendarLayout) {
-    if (mode === 'days') {
-        return date.startOf('month');
-    }
-
-    if (mode === 'months') {
-        return date.startOf('year');
-    }
-
-    if (mode === 'quarters') {
-        const year = Math.floor(date.year() / 4) * 4;
-        return date.startOf('year').set('year', year);
-    }
-
-    const year = Math.floor(date.year() / 12) * 12;
-    return date.startOf('year').set('year', year);
-}
-
-function getEndDate(date: DateTime, mode: CalendarLayout) {
-    if (mode === 'days') {
-        return date.endOf('month').startOf('day');
-    }
-
-    if (mode === 'months') {
-        return date.endOf('year').startOf('month');
-    }
-
-    const startDate = getStartDate(date, mode);
-    if (mode === 'quarters') {
-        return startDate.add(15, 'quarters');
-    }
-
-    return startDate.add({[mode]: 11});
 }
 
 function isInvalid(
