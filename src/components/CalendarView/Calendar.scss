@@ -83,7 +83,7 @@ $block: '.#{variables.$ns}calendar';
 
         @keyframes calendar-forward {
             from {
-                transform: translateX(0);
+                transform: translateX(var(--_--calendar-slide-start, 0px));
             }
             to {
                 transform: translateX(calc(var(--g-flow-direction) * 100%));
@@ -92,7 +92,7 @@ $block: '.#{variables.$ns}calendar';
 
         @keyframes calendar-backward {
             from {
-                transform: translateX(0);
+                transform: translateX(var(--_--calendar-slide-start, 0px));
             }
             to {
                 transform: translateX(calc(var(--g-flow-direction) * -100%));
@@ -188,6 +188,18 @@ $block: '.#{variables.$ns}calendar';
             }
             &#{$block}__previous-state {
                 animation: calendar-zoom-out-hiding 0.25s ease forwards;
+            }
+        }
+
+        @media (prefers-reduced-motion: no-preference) and (update: fast) {
+            &#{$block}__current-state:not([class*='animation_']) {
+                translate: var(--_--calendar-drag-offset, 0px);
+
+                transition: translate 0.18s ease-out;
+
+                #{$block}__grid[data-dragging] > & {
+                    transition: none;
+                }
             }
         }
 

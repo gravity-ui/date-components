@@ -120,10 +120,13 @@ function CalendarGrid({state}: CalendarGridProps) {
         }
     }
 
-    const {gridProps} = useCalendarGridProps(state);
+    const {gridProps, slideOffset, clearSlideOffset} = useCalendarGridProps(state);
+    const style: React.CSSProperties & {'--_--calendar-slide-start': string} = {
+        '--_--calendar-slide-start': slideOffset,
+    };
 
     return (
-        <div className={b('grid')} {...gridProps}>
+        <div className={b('grid')} style={style} {...gridProps}>
             {animation && (
                 <Content className={b('previous-state')} state={prevState} animation={animation} />
             )}
@@ -133,6 +136,7 @@ function CalendarGrid({state}: CalendarGridProps) {
                 state={state}
                 animation={animation}
                 onAnimationEnd={() => {
+                    clearSlideOffset();
                     setPrevState({...state, isFocused: false});
                 }}
             />

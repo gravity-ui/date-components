@@ -10,6 +10,9 @@ const testDate = new Date(1998, 11, 19);
 function swipe(cell: Element, dx: number, dy = 0, end = 'pointerup') {
     const options = {bubbles: true, pointerType: 'touch', pointerId: 1, isPrimary: true};
     cell.dispatchEvent(new PointerEvent('pointerdown', {...options, clientX: 100, clientY: 100}));
+    cell.dispatchEvent(
+        new PointerEvent('pointermove', {...options, clientX: 100 + dx, clientY: 100 + dy}),
+    );
     cell.dispatchEvent(new PointerEvent(end, {...options, clientX: 100 + dx, clientY: 100 + dy}));
     cell.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, detail: 1}));
 }
@@ -62,6 +65,28 @@ test('does not page on short, vertical, or cancelled gestures', async () => {
     swipe(grid.element(), -50, 80);
     swipe(grid.element(), -80, 0, 'pointercancel');
     await expect.element(grid).toHaveAccessibleName('December 1998');
+});
+
+test('follows a short drag before release and returns without selecting a date', async () => {
+    const onUpdate = vitest.fn();
+    const screen = await render(
+        <Calendar defaultFocusedValue={dateTime({input: testDate})} onUpdate={onUpdate} />,
+    );
+    const grid = screen.getByRole('grid');
+    const cell = grid.getByRole('button', {name: /December 19, 1998/}).element();
+    const originalX = cell.getBoundingClientRect().x;
+    const options = {bubbles: true, pointerType: 'touch', pointerId: 1, isPrimary: true};
+    cell.dispatchEvent(new PointerEvent('pointerdown', {...options, clientX: 100}));
+    cell.dispatchEvent(new PointerEvent('pointermove', {...options, clientX: 75}));
+
+    expect(cell.getBoundingClientRect().x).toBeCloseTo(originalX - 25);
+    await expect.element(grid).toHaveAccessibleName('December 1998');
+
+    cell.dispatchEvent(new PointerEvent('pointerup', {...options, clientX: 75}));
+    cell.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, detail: 1}));
+    await expect.poll(() => cell.getBoundingClientRect().x).toBeCloseTo(originalX);
+    await expect.element(grid).toHaveAccessibleName('December 1998');
+    expect(onUpdate).not.toHaveBeenCalled();
 });
 
 describe.skipIf(!import.meta.env.VITE_CI).each([['light'], ['dark']])(
