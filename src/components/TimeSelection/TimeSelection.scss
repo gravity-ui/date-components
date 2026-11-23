@@ -6,6 +6,7 @@ $block: '.#{variables.$ns}time-selection';
     // The height of a row belongs to the List; it is repeated here only to count the default
     // height of a column
     --_--row-height: var(--g-list-item-view-min-height, 28px);
+    --_--column-width: 48px;
 
     display: inline-flex;
     gap: var(--g-spacing-1);
@@ -26,14 +27,34 @@ $block: '.#{variables.$ns}time-selection';
     }
 
     &__column {
+        --g-list-item-view-padding-inline: var(--g-spacing-1);
+
         // Makes the column the offset parent of its rows
         position: relative;
 
-        overflow: hidden auto;
+        // The scrollbar shows up under the pointer only. It takes its width from the column, so
+        // the rows keep a fixed width and go under it instead of shrinking
+        overflow: hidden;
         overscroll-behavior: contain;
         flex: 0 0 auto;
 
+        width: var(--_--column-width);
+
         scrollbar-width: thin;
+
+        & > [role='option'] {
+            width: var(--_--column-width);
+        }
+
+        @media (pointer: fine) {
+            &:hover {
+                overflow-y: auto;
+            }
+        }
+
+        @media (pointer: none), (pointer: coarse) {
+            overflow-y: auto;
+        }
     }
 
     &__item-text {

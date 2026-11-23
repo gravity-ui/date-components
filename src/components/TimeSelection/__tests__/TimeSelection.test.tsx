@@ -942,6 +942,27 @@ describe('TimeSelection', () => {
             expect(behaviors()).toEqual(['smooth', 'smooth']);
         });
 
+        it('shows the scrollbar only under the pointer and keeps the width of the rows', async () => {
+            const screen = await render(
+                <div>
+                    <TimeSelection value={middle} />
+                    <button type="button">Outside</button>
+                </div>,
+            );
+            const hours = column(screen, 'Hours').element();
+            const rowWidth = () =>
+                option(screen, 'Hours', '10').element().getBoundingClientRect().width;
+
+            await userEvent.hover(screen.getByRole('button', {name: 'Outside'}));
+            expect(getComputedStyle(hours).overflowY).toBe('hidden');
+            expect(hours.getBoundingClientRect().width).toBe(48);
+            expect(rowWidth()).toBe(48);
+
+            await userEvent.hover(option(screen, 'Hours', '10'));
+            expect(getComputedStyle(hours).overflowY).toBe('auto');
+            expect(rowWidth()).toBe(48);
+        });
+
         it('takes the height of the columns from the outside', async () => {
             const screen = await render(<TimeSelection value={middle} style={{height: 100}} />);
 
