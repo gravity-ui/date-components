@@ -6,7 +6,7 @@ import {getPageDate} from '../utils';
 import type {CalendarState, RangeCalendarState} from './types';
 
 const dragThreshold = 8;
-const swipeThreshold = 40;
+const swipeThresholdRatio = 1 / 3;
 const dragOffsetProperty = '--_--calendar-drag-offset';
 type SwipeDirection = 'next' | 'previous';
 
@@ -136,6 +136,7 @@ export function useCalendarSwipe(state: CalendarState | RangeCalendarState) {
             endDrag(event.currentTarget);
             const dx = event.clientX - start.x;
             const dy = event.clientY - start.y;
+            const swipeThreshold = start.maxOffset * swipeThresholdRatio;
             if (Math.abs(dx) < swipeThreshold || Math.abs(dx) <= Math.abs(dy)) {
                 return;
             }

@@ -101,6 +101,27 @@ test('follows a short drag before release and returns without selecting a date',
     expect(onUpdate).not.toHaveBeenCalled();
 });
 
+test.each(['m', 'xl'] as const)('requires a one-third-width swipe at size %s', async (size) => {
+    const onFocusUpdate = vitest.fn();
+    const screen = await render(
+        <Calendar
+            size={size}
+            defaultFocusedValue={dateTime({input: testDate})}
+            onFocusUpdate={onFocusUpdate}
+        />,
+    );
+    const grid = screen.getByRole('grid');
+    const threshold = grid.element().getBoundingClientRect().width / 3;
+
+    swipe(grid.element(), -threshold + 1);
+    expect(onFocusUpdate).not.toHaveBeenCalled();
+    await expect.element(grid).toHaveAccessibleName('December 1998');
+
+    swipe(grid.element(), -threshold - 1);
+    expect(onFocusUpdate).toHaveBeenCalledOnce();
+    await expect.element(grid).toHaveAccessibleName('January 1999');
+});
+
 test('follows a long swipe until the adjacent period fills the grid', async () => {
     const screen = await render(<Calendar defaultFocusedValue={dateTime({input: testDate})} />);
     const grid = screen.getByRole('grid');
