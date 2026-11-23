@@ -866,10 +866,14 @@ describe('TimeSelection', () => {
             expect(last.scrollTop).toBe(last.maxScrollTop);
         });
 
-        it('centers the first option while nothing is selected', async () => {
-            const screen = await render(<TimeSelection value={null} />);
+        it('starts from the first option at the top while nothing is selected', async () => {
+            const screen = await render(<Controlled value={null} />);
 
-            expect(isCentered(screen, 'Hours', '00')).toBe(true);
+            expect(getRowGaps(screen, 'Hours', '00').top).toBe(0);
+            expect(getRowGaps(screen, 'Minutes', '00').top).toBe(0);
+
+            await option(screen, 'Hours', '00').click();
+            await expect.poll(() => isCentered(screen, 'Hours', '00')).toBe(true);
         });
 
         it('centers the newly selected option', async () => {
@@ -944,7 +948,8 @@ describe('TimeSelection', () => {
 
             await option(screen, 'Hours', '05').click();
             await expect.poll(() => selectedLabels(column(screen, 'Hours'))).toEqual(['05']);
-            expect(behaviors()).toEqual(['smooth', 'smooth']);
+            // Both columns are put at their first row on mount, then both get a selection
+            expect(behaviors()).toEqual(['instant', 'instant', 'smooth', 'smooth']);
         });
 
         it('shows the scrollbar only under the pointer and keeps the width of the rows', async () => {

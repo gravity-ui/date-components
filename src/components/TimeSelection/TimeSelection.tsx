@@ -50,6 +50,10 @@ function centerSelectedOption(container: HTMLElement | null, state: ScrollState)
     const element = container.querySelector<HTMLElement>(SELECTED_OPTION_SELECTOR);
     if (element && element.id !== state.scrolledId) {
         scrollToCenter(container, element, state.shown);
+    } else if (!element && !state.shown) {
+        // Nothing is selected yet: the list starts from its first row, past the room above it
+        const first = container.querySelector<HTMLElement>('[role="option"]');
+        container.scrollTo({behavior: 'instant', top: first?.offsetTop ?? 0});
     }
     return {scrolledId: element?.id, shown: true};
 }
