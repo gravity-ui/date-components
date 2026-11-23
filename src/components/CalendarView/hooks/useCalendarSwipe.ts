@@ -76,7 +76,7 @@ export function useCalendarSwipe(state: CalendarState | RangeCalendarState) {
                           x: event.clientX,
                           y: event.clientY,
                           isRtl: getComputedStyle(event.currentTarget).direction === 'rtl',
-                          maxOffset: event.currentTarget.clientWidth / 3,
+                          maxOffset: event.currentTarget.getBoundingClientRect().width,
                           previewDirection: null,
                       }
                     : null;
@@ -116,8 +116,8 @@ export function useCalendarSwipe(state: CalendarState | RangeCalendarState) {
                 );
             }
 
-            const offset =
-                Math.sign(dx) * Math.min(Math.abs(dx) * (allowed ? 1 : 0.2), start.maxOffset);
+            const limit = allowed ? start.maxOffset : start.maxOffset / 3;
+            const offset = Math.sign(dx) * Math.min(Math.abs(dx) * (allowed ? 1 : 0.2), limit);
             event.currentTarget.setAttribute('data-dragging', '');
             event.currentTarget.style.setProperty(dragOffsetProperty, `${offset}px`);
         },

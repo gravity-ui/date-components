@@ -101,6 +101,25 @@ test('follows a short drag before release and returns without selecting a date',
     expect(onUpdate).not.toHaveBeenCalled();
 });
 
+test('follows a long swipe until the adjacent period fills the grid', async () => {
+    const screen = await render(<Calendar defaultFocusedValue={dateTime({input: testDate})} />);
+    const grid = screen.getByRole('grid');
+    const cell = grid.getByRole('button', {name: /December 19, 1998/}).element();
+    const {width, right, left} = grid.element().getBoundingClientRect();
+    const options = {bubbles: true, pointerType: 'touch', pointerId: 1, isPrimary: true};
+    const startX = right;
+    cell.dispatchEvent(new PointerEvent('pointerdown', {...options, clientX: startX}));
+    cell.dispatchEvent(new PointerEvent('pointermove', {...options, clientX: startX - width / 2}));
+
+    const preview = () => grid.element().querySelector('[inert]')?.getBoundingClientRect();
+    await expect.poll(() => preview()?.left).toBeCloseTo(right - width / 2);
+
+    cell.dispatchEvent(new PointerEvent('pointermove', {...options, clientX: startX - width - 20}));
+    expect(preview()?.left).toBeCloseTo(left);
+    cell.dispatchEvent(new PointerEvent('pointerup', {...options, clientX: startX - width - 20}));
+    await expect.element(grid).toHaveAccessibleName('January 1999');
+});
+
 test('keeps the outgoing period inert while keyboard focus moves to the new period', async () => {
     const screen = await render(
         <Calendar autoFocus defaultFocusedValue={dateTime({input: testDate})} />,
