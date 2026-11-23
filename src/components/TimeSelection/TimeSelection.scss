@@ -42,6 +42,16 @@ $block: '.#{variables.$ns}time-selection';
 
         scrollbar-width: thin;
 
+        // Room above the first row and below the last one, so that they reach the middle too
+        &::before,
+        &::after {
+            flex: 0 0 auto;
+
+            height: calc(50% - var(--_--row-height) / 2);
+
+            content: '';
+        }
+
         & > [role='option'] {
             width: var(--_--column-width);
         }

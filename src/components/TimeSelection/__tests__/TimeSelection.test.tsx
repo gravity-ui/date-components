@@ -91,7 +91,7 @@ function getRowGaps(scope: Scope, columnName: string, name: string) {
 
 function isCentered(scope: Scope, columnName: string, name: string) {
     const gaps = getRowGaps(scope, columnName, name);
-    return gaps.scrollTop > 0 && Math.abs(gaps.top - gaps.bottom) <= 1;
+    return Math.abs(gaps.top - gaps.bottom) <= 1;
 }
 
 function Controlled(props: TimeSelectionProps) {
@@ -855,16 +855,21 @@ describe('TimeSelection', () => {
             );
         });
 
-        it('leaves the first and the last option at the edge', async () => {
+        it('centers the first and the last option too', async () => {
             const screen = await render(<TimeSelection value={time('2024-01-15T00:59:00')} />);
 
-            const first = getRowGaps(screen, 'Hours', '00');
-            expect(first.scrollTop).toBe(0);
-            expect(first.top).toBe(0);
+            expect(isCentered(screen, 'Hours', '00')).toBe(true);
+            expect(getRowGaps(screen, 'Hours', '00').scrollTop).toBe(0);
 
             const last = getRowGaps(screen, 'Minutes', '59');
+            expect(isCentered(screen, 'Minutes', '59')).toBe(true);
             expect(last.scrollTop).toBe(last.maxScrollTop);
-            expect(Math.abs(last.bottom)).toBeLessThanOrEqual(1);
+        });
+
+        it('centers the first option while nothing is selected', async () => {
+            const screen = await render(<TimeSelection value={null} />);
+
+            expect(isCentered(screen, 'Hours', '00')).toBe(true);
         });
 
         it('centers the newly selected option', async () => {
