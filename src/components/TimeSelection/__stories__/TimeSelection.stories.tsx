@@ -99,7 +99,7 @@ export const Steps = Default.extend({
     },
     render: (args) => <TimeSelection {...args} defaultValue={sampleValue} />,
     parameters: {
-        controls: {exclude: ['value', 'defaultValue']},
+        controls: {exclude: ['value', 'defaultValue', 'maxValue', 'minValue', 'placeholderValue']},
     },
 });
 
@@ -116,6 +116,8 @@ export const MinMaxValue = Default.extend({
         </Flex>
     ),
     parameters: {
-        controls: {exclude: ['value', 'defaultValue', 'minValue', 'maxValue']},
+        controls: {
+            exclude: ['value', 'defaultValue', 'maxValue', 'minValue', 'placeholderValue'],
+        },
     },
 });

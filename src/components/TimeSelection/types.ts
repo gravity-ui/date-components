@@ -23,7 +23,8 @@ export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityP
      */
     focusedView?: TimeSelectionView;
     /**
-     * Callback that is called for each option of a column with the value the option would set.
+     * Callback that is called for each option of a column with the current value where the unit
+     * of the option is put in, before it is kept within `minValue` and `maxValue`.
      * If it returns true, then the option is unavailable. An AM/PM option is checked as the hour
      * it gives, with the `hours` view.
      */
@@ -37,8 +38,8 @@ export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityP
     /** Handler that is called when the value changes. */
     onUpdate?: (value: DateTime) => void;
     /**
-     * The date and the units that are not picked yet while the value is empty.
-     * Defaults to today's date at midnight.
+     * The date and the units that are not picked yet while the value is empty, kept within
+     * `minValue` and `maxValue`. Defaults to today's date at midnight.
      */
     placeholderValue?: DateTime;
     /** Whether the value is immutable. */

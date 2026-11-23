@@ -62,7 +62,7 @@ $block: '.#{variables.$ns}time-selection';
             }
         }
 
-        @media (pointer: none), (pointer: coarse) {
+        @media (pointer: none), (any-pointer: coarse) {
             overflow-y: auto;
         }
     }

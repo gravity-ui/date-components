@@ -25,7 +25,7 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 
 Picking an option changes only its unit: the date and the other units stay as they are. The value is a `DateTime`, so it always carries a date.
 
-While there is no value, nothing is selected, and the first pick is applied to `placeholderValue`. It defaults to today at midnight, so picking `14` in the hours column gives today, 14:00:00.
+While there is no value, nothing is selected, and the first pick is applied to `placeholderValue`. It defaults to today at midnight, so picking `14` in the hours column gives today, 14:00:00. The placeholder is kept within `minValue` and `maxValue` like any picked value.
 
 ```tsx
 <TimeSelection defaultValue={dateTimeParse('2024-01-15T10:30:00')} />
@@ -50,9 +50,9 @@ The `minValue` property allows you to specify the earliest date and time that ca
 
 ### Unavailable time
 
-`isTimeUnavailable` is called for each option with the value the option would set and the view of its column. If it returns `true`, the option is unavailable. An AM/PM option changes the hour, so it is checked with the `hours` view.
+`isTimeUnavailable` is called for each option with the current value where the unit of the option is put in (before it is kept within `minValue` and `maxValue`) and the view of its column. If it returns `true`, the option is unavailable. An AM/PM option changes the hour, so it is checked with the `hours` view.
 
-The callback is called for every option on each render where its reference changes, so keep the reference stable (`React.useCallback` or a function outside the component).
+The options are counted again whenever the reference of the callback, `value`, `minValue`, `maxValue` or `placeholderValue` changes, so keep those references stable between renders (`React.useCallback`, `React.useMemo` or values outside the component).
 
 ```tsx
 <TimeSelection isTimeUnavailable={(date, view) => view === 'hours' && date.hour() === 13} />
@@ -110,7 +110,7 @@ The selected option is scrolled to the middle of its column when the component m
 
 ## Focus
 
-The component does not take focus on its own. Pass `defaultFocusView` to move focus into a column when the component mounts, or `focusedView` to move it whenever the property changes. `focusedView` is a request, not a lock: the user can still move focus to another column, and `onFocusViewUpdate` is called when that happens — by the keyboard, by a click, or after a pick. A column is entered at its selected option, or at the first available one when nothing is selected.
+The component does not take focus on its own. Pass `defaultFocusView` to move focus into a column when the component mounts, or `focusedView` to move it whenever the property changes. `focusedView` is a request, not a lock: the user can still move focus to another column, and `onFocusViewUpdate` is called when that happens — by the keyboard, by a click, or after a pick. A column is entered at its selected option. When nothing is selected, it is entered at its first available option, or at the last one with `Shift+Tab`.
 
 After an option is picked, focus goes to the next column; in the last column it stays.
 

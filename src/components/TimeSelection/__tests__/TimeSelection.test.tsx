@@ -487,6 +487,10 @@ describe('TimeSelection', () => {
                 await expect.poll(focused).toBe('Minutes 30');
                 expect(background(screen, 'Minutes', '30')).toBe(selectedColor);
 
+                // A modifier alone is not a reason to show the cursor
+                await userEvent.keyboard('{Shift}');
+                expect(background(screen, 'Minutes', '30')).toBe(selectedColor);
+
                 // The keys go on from the option that got focus, and the cursor is back
                 await userEvent.keyboard('{ArrowDown}');
                 await expect.poll(focused).toBe('Minutes 31');
@@ -730,6 +734,26 @@ describe('TimeSelection', () => {
 
             await option(screen, 'Hours', '18').click();
             expect(lastValue(onUpdate)).toBe('2024-01-15T18:05:00');
+        });
+
+        it('keeps the placeholder within minValue and maxValue while the value is null', async () => {
+            const onUpdate = vi.fn();
+            const screen = await render(
+                <Controlled
+                    value={null}
+                    placeholderValue={time('2024-03-10T00:00:00')}
+                    minValue={time('2024-03-10T15:20:00')}
+                    onUpdate={onUpdate}
+                />,
+            );
+
+            // The options are counted from 15:20, not from the midnight that cannot be picked
+            expect(isDisabled(screen, 'Hours', '14')).toBe(true);
+            expect(isDisabled(screen, 'Minutes', '19')).toBe(true);
+            expect(isDisabled(screen, 'Minutes', '20')).toBe(false);
+
+            await option(screen, 'Minutes', '45').click();
+            expect(lastValue(onUpdate)).toBe('2024-03-10T15:45:00');
         });
 
         it('keeps a picked half of the day within minValue and maxValue', async () => {
@@ -1007,6 +1031,32 @@ describe('TimeSelection', () => {
             await userEvent.hover(option(screen, 'Hours', '10'));
             expect(getComputedStyle(hours).overflowY).toBe('auto');
             expect(rowWidth()).toBe(48);
+        });
+
+        it('centers the selected option again when its row moves', async () => {
+            const screen = await render(<TimeSelection value={middle} size="m" />);
+            expect(isCentered(screen, 'Hours', '10')).toBe(true);
+
+            await screen.rerender(<TimeSelection value={middle} size="xl" />);
+            await expect.poll(() => isCentered(screen, 'Hours', '10')).toBe(true);
+        });
+
+        it('centers the selected option again after the column was hidden and shown', async () => {
+            const ui = (display?: 'none') => (
+                <div style={{display}}>
+                    <TimeSelection value={middle} />
+                </div>
+            );
+            const screen = await render(ui());
+            column(screen, 'Hours').element().scrollTop = 0;
+
+            await screen.rerender(ui('none'));
+            // The column has to stay hidden for a frame to be seen as hidden
+            await new Promise((resolve) =>
+                requestAnimationFrame(() => requestAnimationFrame(resolve)),
+            );
+            await screen.rerender(ui());
+            await expect.poll(() => isCentered(screen, 'Hours', '10')).toBe(true);
         });
 
         it('takes the height of the columns from the outside', async () => {

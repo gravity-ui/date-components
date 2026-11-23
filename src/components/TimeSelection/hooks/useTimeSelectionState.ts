@@ -3,7 +3,7 @@ import React from 'react';
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
-import {createPlaceholderValue} from '../../utils/dates';
+import {constrainValue, createPlaceholderValue} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import type {TimeSelectionProps, TimeSelectionView} from '../types';
 import {applyUnitValue, getColumnItems, getColumns, getSelectedItemId} from '../utils';
@@ -77,8 +77,15 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
             maxValue: maxValueProp?.timeZone(timeZone),
             minValue: minValueProp?.timeZone(timeZone),
         };
+        // The placeholder is kept within the range like any picked value is: otherwise every
+        // option would be counted from a moment that cannot be picked
         const currentBase =
-            currentValue ?? createPlaceholderValue({placeholderValue, timeZone}).timeZone(timeZone);
+            currentValue ??
+            constrainValue(
+                createPlaceholderValue({placeholderValue, timeZone}).timeZone(timeZone),
+                range.minValue,
+                range.maxValue,
+            ).timeZone(timeZone);
         const columnKeys = columnsKey.split(',').filter(Boolean) as TimeSelectionColumn[];
 
         return {

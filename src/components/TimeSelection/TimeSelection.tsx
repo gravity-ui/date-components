@@ -42,25 +42,34 @@ function scrollToCenter(container: HTMLElement, element: HTMLElement, smooth: bo
 }
 
 interface ScrollState {
-    /** The option the column was last scrolled to: scrolling to it again would undo a manual scroll */
-    scrolledId?: string;
-    /** A column that has not been laid out yet (a hidden parent) has nothing to animate from */
+    /**
+     * The option the column was last scrolled to and where it was: scrolling to it again would
+     * undo a manual scroll, unless the row itself has moved (another size, another step)
+     */
+    scrolledTo?: string;
+    /** A column that is not laid out (a hidden parent) has nothing to animate from */
     shown: boolean;
 }
 
 function centerSelectedOption(container: HTMLElement | null, state: ScrollState): ScrollState {
-    if (!container || container.clientHeight === 0) {
+    if (!container) {
         return state;
     }
+    if (container.clientHeight === 0) {
+        return {shown: false};
+    }
     const element = container.querySelector<HTMLElement>(SELECTED_OPTION_SELECTOR);
-    if (element && element.id !== state.scrolledId) {
+    const target = element
+        ? `${element.id}|${element.offsetTop}|${element.offsetHeight}`
+        : undefined;
+    if (element && target !== state.scrolledTo) {
         scrollToCenter(container, element, state.shown);
     } else if (!element && !state.shown) {
         // Nothing is selected yet: the list starts from its first row, past the room above it
         const first = container.querySelector<HTMLElement>('[role="option"]');
         container.scrollTo({behavior: 'instant', top: first?.offsetTop ?? 0});
     }
-    return {scrolledId: element?.id, shown: true};
+    return {scrolledTo: target, shown: true};
 }
 
 /** The root of the List is not focusable, its rows are: the selected one, or the tab stop */
@@ -145,9 +154,9 @@ function TimeSelectionColumnView({
 
     useLayoutEffect(() => {
         scrollStateRef.current = centerSelectedOption(containerRef.current, scrollStateRef.current);
-    }, [selectedId]);
+    }, [items, selectedId, size]);
 
-    // A column that mounted hidden is centered when it gets its size
+    // A column that was hidden is centered when it gets its size; a row that has moved, too
     React.useEffect(() => {
         const container = containerRef.current;
         if (!container || typeof ResizeObserver === 'undefined') {
@@ -161,7 +170,10 @@ function TimeSelectionColumnView({
     }, []);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-        onRevealCursor(column);
+        const modifierOnly = ['Alt', 'Control', 'Meta', 'Shift'].includes(event.key);
+        if (!modifierOnly && !event.altKey && !event.ctrlKey && !event.metaKey) {
+            onRevealCursor(column);
+        }
         if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
             return;
         }
@@ -271,7 +283,9 @@ export function TimeSelection(props: TimeSelectionProps) {
         event: ListItemActionEvent,
     ) => {
         const next = getNeighbor(column, 1);
-        if (state.selectItem(column, item) && next) {
+        // A held Enter must not run focus through all the columns
+        const repeated = 'key' in event && event.repeat;
+        if (state.selectItem(column, item) && next && !repeated) {
             setQuietColumn('key' in event ? undefined : next);
             setFocusRequest({column: next});
         }
