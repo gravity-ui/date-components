@@ -62,6 +62,10 @@ $block: '.#{variables.$ns}calendar';
         height: var(--_--calendar-grid-height);
 
         user-select: none;
+
+        &:not([aria-disabled='true']) {
+            touch-action: pan-y pinch-zoom;
+        }
     }
 
     &__content {
@@ -82,7 +86,7 @@ $block: '.#{variables.$ns}calendar';
                 transform: translateX(0);
             }
             to {
-                transform: translateX(100%);
+                transform: translateX(calc(var(--g-flow-direction) * 100%));
             }
         }
 
@@ -91,7 +95,7 @@ $block: '.#{variables.$ns}calendar';
                 transform: translateX(0);
             }
             to {
-                transform: translateX(-100%);
+                transform: translateX(calc(var(--g-flow-direction) * -100%));
             }
         }
 
@@ -148,11 +152,11 @@ $block: '.#{variables.$ns}calendar';
         }
 
         &_animation_forward {
-            transform: translateX(-100%);
+            transform: translateX(calc(var(--g-flow-direction) * -100%));
             animation: calendar-forward 0.25s ease forwards;
 
             &#{$block}__current-state {
-                inset-inline-start: calc(var(--g-flow-direction) * -100%);
+                inset-inline-start: -100%;
             }
         }
 
@@ -161,7 +165,7 @@ $block: '.#{variables.$ns}calendar';
             animation: calendar-backward 0.25s ease forwards;
 
             &#{$block}__current-state {
-                inset-inline-start: calc(var(--g-flow-direction) * 100%);
+                inset-inline-start: 100%;
             }
         }
 
