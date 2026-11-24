@@ -106,7 +106,7 @@ To control the size of the rows use the `size` property. The columns are built o
 
 A column shows seven rows by default and scrolls the rest. Set the height from the outside with `style` or `className`.
 
-The selected option is scrolled to the middle of its column when the component mounts and when the selection changes. The first and the last options reach the middle too: there is empty room above and below the list for that.
+The selected option is scrolled to the middle of its column when the component mounts and when the selection changes. A pick in any column also brings the other columns back to their selected options if they were scrolled away. The first and the last options reach the middle too: there is empty room above and below the list for that.
 
 ## Focus
 

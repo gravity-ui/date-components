@@ -23,6 +23,8 @@ interface TimeSelectionState {
     readOnly: boolean;
     /** Returns false when the option cannot be picked */
     selectItem: (column: TimeSelectionColumn, item: TimeSelectionItem) => boolean;
+    /** The moment of the value, to tell when it changes */
+    valueKey: number | undefined;
 }
 
 type TimeSelectionStateOptions = Pick<
@@ -136,5 +138,5 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
         return true;
     };
 
-    return {columns, disabled, readOnly, selectItem};
+    return {columns, disabled, readOnly, selectItem, valueKey: displayValue?.valueOf()};
 }

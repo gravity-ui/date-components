@@ -964,19 +964,38 @@ describe('TimeSelection', () => {
             expect(behaviors()).toEqual(['instant', 'instant', 'smooth', 'instant']);
         });
 
-        it('does not scroll back to the option that stays selected', async () => {
+        it('brings a column scrolled away back to its option when another unit is picked', async () => {
+            const screen = await render(<Controlled value={middle} />);
+            const hours = column(screen, 'Hours').element();
+
+            await option(screen, 'Hours', '12').click();
+            await expect.poll(() => isCentered(screen, 'Hours', '12')).toBe(true);
+
+            // The selected hour is scrolled out of view by hand
+            hours.scrollTop = hours.scrollHeight;
+            await expect.poll(() => isCentered(screen, 'Hours', '12')).toBe(false);
+
+            await option(screen, 'Minutes', '31').click();
+            await expect.poll(() => isCentered(screen, 'Hours', '12')).toBe(true);
+            expect(isCentered(screen, 'Minutes', '31')).toBe(true);
+
+            // A pick of the option that is already selected does the same
+            hours.scrollTop = 0;
+            await option(screen, 'Minutes', '31').click();
+            await expect.poll(() => isCentered(screen, 'Hours', '12')).toBe(true);
+        });
+
+        it('keeps a manual scroll while the value stays the same', async () => {
             const screen = await render(<TimeSelection value={middle} />);
             const hours = column(screen, 'Hours').element();
 
             hours.scrollTop = 0;
-            await screen.rerender(<TimeSelection value={time('2024-01-15T10:45:00')} />);
-            await expect.poll(() => selectedLabels(column(screen, 'Minutes'))).toEqual(['45']);
+            await screen.rerender(<TimeSelection value={middle} aria-label="Time" />);
+            await expect.element(screen.getByRole('group', {name: 'Time'})).toBeInTheDocument();
             expect(hours.scrollTop).toBe(0);
 
             // A resize is not a reason to scroll back either
-            await screen.rerender(
-                <TimeSelection value={time('2024-01-15T10:45:00')} style={{height: 120}} />,
-            );
+            await screen.rerender(<TimeSelection value={middle} style={{height: 120}} />);
             await expect.poll(() => hours.clientHeight).toBe(120);
             await new Promise((resolve) => requestAnimationFrame(resolve));
             expect(hours.scrollTop).toBe(0);

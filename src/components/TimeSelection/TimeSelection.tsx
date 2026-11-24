@@ -32,26 +32,36 @@ const COLUMN_LABEL_KEYS = {
 
 const SELECTED_OPTION_SELECTOR = '[role="option"][aria-selected="true"]';
 
-function scrollToCenter(container: HTMLElement, element: HTMLElement, smooth: boolean) {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const top = Math.min(
+function getCenterTop(container: HTMLElement, element: HTMLElement) {
+    return Math.min(
         Math.max(element.offsetTop - (container.clientHeight - element.offsetHeight) / 2, 0),
         container.scrollHeight - container.clientHeight,
     );
-    container.scrollTo({behavior: smooth && !reducedMotion ? 'smooth' : 'instant', top});
+}
+
+function scrollToCenter(container: HTMLElement, element: HTMLElement, smooth: boolean) {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    container.scrollTo({
+        behavior: smooth && !reducedMotion ? 'smooth' : 'instant',
+        top: getCenterTop(container, element),
+    });
 }
 
 interface ScrollState {
     /**
-     * The option the column was last scrolled to and where it was: scrolling to it again would
-     * undo a manual scroll, unless the row itself has moved (another size, another step)
+     * The option the column was last scrolled to and where it was. A render or a resize does
+     * not scroll to it again, which would undo a manual scroll; a new value does
      */
     scrolledTo?: string;
     /** A column that is not laid out (a hidden parent) has nothing to animate from */
     shown: boolean;
 }
 
-function centerSelectedOption(container: HTMLElement | null, state: ScrollState): ScrollState {
+function centerSelectedOption(
+    container: HTMLElement | null,
+    state: ScrollState,
+    valueChanged = false,
+): ScrollState {
     if (!container) {
         return state;
     }
@@ -62,7 +72,11 @@ function centerSelectedOption(container: HTMLElement | null, state: ScrollState)
     const target = element
         ? `${element.id}|${element.offsetTop}|${element.offsetHeight}`
         : undefined;
-    if (element && target !== state.scrolledTo) {
+    const scrolledAway =
+        valueChanged &&
+        element &&
+        Math.abs(container.scrollTop - getCenterTop(container, element)) > 1;
+    if (element && (target !== state.scrolledTo || scrolledAway)) {
         scrollToCenter(container, element, state.shown);
     } else if (!element && !state.shown) {
         // Nothing is selected yet: the list starts from its first row, past the room above it
@@ -130,6 +144,8 @@ interface TimeSelectionColumnViewProps {
     readOnly: boolean;
     selectedId: string | undefined;
     size: ListSize;
+    /** Changes with the value and with every pick: both bring the column back to its option */
+    valueKey: string;
 }
 
 function TimeSelectionColumnView({
@@ -144,6 +160,7 @@ function TimeSelectionColumnView({
     readOnly,
     selectedId,
     size,
+    valueKey,
 }: TimeSelectionColumnViewProps) {
     const direction = useDirection();
     const containerRef = React.useRef<HTMLDivElement>(null);
@@ -152,9 +169,16 @@ function TimeSelectionColumnView({
     // is always entered at the selected option
     const [activeId, setActiveId] = React.useState<string | null>(null);
 
+    const scrolledValueKeyRef = React.useRef(valueKey);
     useLayoutEffect(() => {
-        scrollStateRef.current = centerSelectedOption(containerRef.current, scrollStateRef.current);
-    }, [items, selectedId, size]);
+        const valueChanged = scrolledValueKeyRef.current !== valueKey;
+        scrolledValueKeyRef.current = valueKey;
+        scrollStateRef.current = centerSelectedOption(
+            containerRef.current,
+            scrollStateRef.current,
+            valueChanged,
+        );
+    }, [items, selectedId, size, valueKey]);
 
     // A column that was hidden is centered when it gets its size; a row that has moved, too
     React.useEffect(() => {
@@ -273,6 +297,7 @@ export function TimeSelection(props: TimeSelectionProps) {
     // After a click focus still moves on, so the keys go on from the next column, but the
     // column does not show the keyboard cursor until a key is pressed in it
     const [quietColumn, setQuietColumn] = React.useState<TimeSelectionColumn>();
+    const [pickCount, setPickCount] = React.useState(0);
     const handleRevealCursor = (column: TimeSelectionColumn) => {
         setQuietColumn((current) => (current === column ? undefined : current));
     };
@@ -285,7 +310,11 @@ export function TimeSelection(props: TimeSelectionProps) {
         const next = getNeighbor(column, 1);
         // A held Enter must not run focus through all the columns
         const repeated = 'key' in event && event.repeat;
-        if (state.selectItem(column, item) && next && !repeated) {
+        if (!state.selectItem(column, item)) {
+            return;
+        }
+        setPickCount((count) => count + 1);
+        if (next && !repeated) {
             setQuietColumn('key' in event ? undefined : next);
             setFocusRequest({column: next});
         }
@@ -320,6 +349,7 @@ export function TimeSelection(props: TimeSelectionProps) {
                     readOnly={state.readOnly}
                     selectedId={selectedId}
                     size={size}
+                    valueKey={`${state.valueKey}|${pickCount}`}
                 />
             ))}
         </div>
