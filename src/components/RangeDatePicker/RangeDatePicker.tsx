@@ -12,6 +12,7 @@ import {useDatePickerProps} from '../DatePicker';
 import type {DatePickerProps} from '../DatePicker';
 import {StubButton} from '../DatePicker/StubButton';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
+import {PickerPopupContent} from '../PickerPopupContent/PickerPopupContent';
 import {RangeDateField} from '../RangeDateField';
 import type {RangeValue} from '../types';
 
@@ -38,18 +39,21 @@ export function RangeDatePicker({className, ...props}: RangeDatePickerProps) {
             {!isOnlyTime && (
                 <div ref={setAnchor} className={b('popup-anchor')}>
                     <Popup anchorElement={anchor} {...popupProps}>
-                        <div className={b('popup-content')}>
+                        <PickerPopupContent
+                            className={b('popup-content')}
+                            timePanel={
+                                state.formatInfo.hasTime ? (
+                                    <RangeDateField {...timeInputProps} />
+                                ) : null
+                            }
+                            timePanelClassName={b('time-field-wrapper')}
+                        >
                             {typeof props.children === 'function' ? (
                                 props.children({...calendarProps, value: state.value})
                             ) : (
                                 <RangeCalendar {...calendarProps} value={state.value} />
                             )}
-                            {state.formatInfo.hasTime && (
-                                <div className={b('time-field-wrapper')}>
-                                    <RangeDateField {...timeInputProps} />
-                                </div>
-                            )}
-                        </div>
+                        </PickerPopupContent>
                     </Popup>
                 </div>
             )}

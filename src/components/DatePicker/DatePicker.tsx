@@ -10,6 +10,7 @@ import {Calendar} from '../Calendar';
 import type {CalendarCommonProps} from '../Calendar';
 import {DateField} from '../DateField';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
+import {PickerPopupContent} from '../PickerPopupContent/PickerPopupContent';
 import type {
     AccessibilityProps,
     DomProps,
@@ -65,18 +66,21 @@ export function DatePicker({className, ...props}: DatePickerProps) {
                 !isOnlyTime && (
                     <div ref={setAnchor} className={b('popup-anchor')}>
                         <Popup anchorElement={anchor} {...popupProps}>
-                            <div className={b('popup-content')}>
+                            <PickerPopupContent
+                                className={b('popup-content')}
+                                timePanel={
+                                    state.formatInfo.hasTime ? (
+                                        <DateField {...timeInputProps} />
+                                    ) : null
+                                }
+                                timePanelClassName={b('time-field-wrapper')}
+                            >
                                 {typeof props.children === 'function' ? (
                                     props.children(calendarProps)
                                 ) : (
                                     <Calendar {...calendarProps} />
                                 )}
-                                {state.formatInfo.hasTime && (
-                                    <div className={b('time-field-wrapper')}>
-                                        <DateField {...timeInputProps} />
-                                    </div>
-                                )}
-                            </div>
+                            </PickerPopupContent>
                         </Popup>
                     </div>
                 )

@@ -6,6 +6,7 @@ import {block} from '../../utils/cn';
 import {Calendar} from '../Calendar';
 import {DateField} from '../DateField';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
+import {PickerPopupContent} from '../PickerPopupContent/PickerPopupContent';
 import type {
     AccessibilityProps,
     DomProps,
@@ -65,14 +66,17 @@ export function RelativeDateField(props: RelativeDateFieldProps) {
             />
             {!isMobile && (
                 <Popup {...popupProps} className={props.popupClassName} style={props.popupStyle}>
-                    <div className={b('popup-content')}>
-                        <Calendar {...calendarProps} />
-                        {props.hasTime ? (
-                            <div className={b('time-field-wrapper')}>
+                    <PickerPopupContent
+                        className={b('popup-content')}
+                        timePanel={
+                            props.hasTime ? (
                                 <DateField className={b('time-field')} {...timeInputProps} />
-                            </div>
-                        ) : null}
-                    </div>
+                            ) : null
+                        }
+                        timePanelClassName={b('time-field-wrapper')}
+                    >
+                        <Calendar {...calendarProps} />
+                    </PickerPopupContent>
                 </Popup>
             )}
         </div>

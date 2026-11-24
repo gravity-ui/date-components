@@ -22,16 +22,4 @@ $block: '.#{variables.$ns}date-picker';
         z-index: -1;
         inset: 0;
     }
-
-    &__popup-content {
-        outline: none;
-    }
-
-    &__time-field {
-        width: 100%;
-
-        &-wrapper {
-            padding: 10px;
-        }
-    }
 }

@@ -1,0 +1,11 @@
+@use '../variables';
+
+$block: '.#{variables.$ns}picker-popup-content';
+
+#{$block} {
+    outline: none;
+
+    &__time-panel {
+        padding: 10px;
+    }
+}

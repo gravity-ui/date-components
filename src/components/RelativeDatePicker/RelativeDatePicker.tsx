@@ -16,6 +16,7 @@ import {DateField} from '../DateField';
 import {MobileCalendar} from '../DatePicker/MobileCalendar';
 import {StubButton} from '../DatePicker/StubButton';
 import {HiddenInput} from '../HiddenInput/HiddenInput';
+import {PickerPopupContent} from '../PickerPopupContent/PickerPopupContent';
 import type {
     AccessibilityProps,
     DomProps,
@@ -135,18 +136,21 @@ export function RelativeDatePicker(props: RelativeDatePickerProps) {
             />
             {!isMobile && !isOnlyTime && (
                 <Popup {...popupProps} anchorElement={anchor}>
-                    <div className={b('popup-content')}>
+                    <PickerPopupContent
+                        className={b('popup-content')}
+                        timePanel={
+                            state.datePickerState.formatInfo.hasTime ? (
+                                <DateField {...timeInputProps} />
+                            ) : null
+                        }
+                        timePanelClassName={b('time-field-wrapper')}
+                    >
                         {typeof props.children === 'function' ? (
                             props.children(calendarProps)
                         ) : (
                             <Calendar {...calendarProps} />
                         )}
-                        {state.datePickerState.formatInfo.hasTime && (
-                            <div className={b('time-field-wrapper')}>
-                                <DateField {...timeInputProps} />
-                            </div>
-                        )}
-                    </div>
+                    </PickerPopupContent>
                 </Popup>
             )}
         </div>
