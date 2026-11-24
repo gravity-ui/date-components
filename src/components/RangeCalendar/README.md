@@ -194,6 +194,18 @@ LANDING_BLOCK-->
 
 <!--/GITHUB_BLOCK-->
 
+## Anchor date
+
+The anchor date is the date of the first click of a range selection. With `anchorDate` and `onUpdateAnchorDate` you can control it: `onUpdateAnchorDate` is called with the date when the selection starts and with `null` when it is completed. Pass `null`, not `undefined`, when there is no anchor.
+
+While the anchor is controlled, the selection is not completed when the calendar loses focus. To cancel it, set `anchorDate` to `null`.
+
+```tsx
+const [anchorDate, setAnchorDate] = React.useState<DateTime | null>(null);
+
+<RangeCalendar anchorDate={anchorDate} onUpdateAnchorDate={setAnchorDate} />;
+```
+
 ## Time zone
 
 `timeZone` is the property to set the time zone of the value in the input. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
@@ -202,6 +214,7 @@ LANDING_BLOCK-->
 
 | Name                                  | Description                                                                                                          |                               Type                               |                           Default                           |
 | :------------------------------------ | :------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------: | :---------------------------------------------------------: |
+| [anchorDate](#anchor-date)            | The date of the first click of a range selection, `null` if the selection is not started                             |                        `DateTime` `null`                         |                                                             |
 | aria-describedby                      | The control's `aria-describedby` attribute                                                                           |                             `string`                             |                                                             |
 | aria-details                          | The control's `aria-details` attribute                                                                               |                             `string`                             |                                                             |
 | aria-label                            | The control's `aria-label` attribute                                                                                 |                             `string`                             |                                                             |
@@ -224,6 +237,7 @@ LANDING_BLOCK-->
 | onFocus                               | Fires when the control gets focus. Provides focus event as a callback's argument                                     |          `((e: FocusEvent<Element, Element>) => void)`           |                                                             |
 | onFocusUpdate                         | Fires when the control's focused date changes.                                                                       |                   `((date: DateTime) => void)`                   |                                                             |
 | onUpdate                              | Fires when the value is changed.                                                                                     |                   `((value: DateTime) => void`                   |                                                             |
+| [onUpdateAnchorDate](#anchor-date)    | Fires when the range selection starts (with the date) and when it is completed (with `null`).                        |               `((date: DateTime \| null) => void)`               |                                                             |
 | onUpdateMode                          | Fires when the mode is changed.                                                                                      | `((value: 'days' \| 'months' \| 'quarters' \| 'years' ) => void` |                                                             |
 | [readOnly](#readonly)                 | Whether the calendar value is immutable.                                                                             |                            `boolean`                             |                           `false`                           |
 | [size](#size)                         | The size of the control                                                                                              |                        `"m"` `"l"` `"xl"`                        |                            `"m"`                            |

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type {DateTime} from '@gravity-ui/date-utils';
 import {useControlledState} from '@gravity-ui/uikit';
 
@@ -11,20 +9,40 @@ import type {CalendarLayout, RangeCalendarState} from './types';
 import {useCalendarState} from './useCalendarState';
 import type {CalendarStateOptions} from './useCalendarState';
 
-export interface RangeCalendarStateOptions extends CalendarStateOptions<RangeValue<DateTime>> {}
+export interface RangeCalendarStateOptions extends CalendarStateOptions<RangeValue<DateTime>> {
+    /**
+     * The date the range selection starts from (controlled).
+     * `null` means that the selection is not started, `undefined` leaves the anchor uncontrolled.
+     */
+    anchorDate?: DateTime | null;
+    /** Handler that is called with the date when the range selection starts, and with `null` when it is completed or reset. */
+    onUpdateAnchorDate?: (date: DateTime | null) => void;
+}
 
 export type {RangeCalendarState} from './types';
 
 export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCalendarState {
-    const {value: valueProp, defaultValue = null, onUpdate, ...calendarProps} = props;
+    const {
+        anchorDate: anchorDateProp,
+        defaultValue = null,
+        onUpdate,
+        onUpdateAnchorDate,
+        value: valueProp,
+        ...calendarProps
+    } = props;
     const [value, setValue] = useControlledState(valueProp, defaultValue, onUpdate);
-
-    const [anchorDate, setAnchorDateState] = React.useState<DateTime>();
 
     const inputTimeZone = useDefaultTimeZone(
         valueProp?.start || defaultValue?.start || props.focusedValue || props.defaultFocusedValue,
     );
     const timeZone = props.timeZone || inputTimeZone;
+
+    const [anchor, setAnchor] = useControlledState<DateTime | null>(
+        anchorDateProp ? anchorDateProp.timeZone(timeZone) : anchorDateProp,
+        null,
+        (date) => onUpdateAnchorDate?.(date ? date.timeZone(inputTimeZone) : null),
+    );
+    const anchorDate = anchor ?? undefined;
 
     const calendar = useCalendarState({...calendarProps, value: null, timeZone});
     const highlightedRange = anchorDate
@@ -70,9 +88,9 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         if (anchorDate) {
             const range = makeRange(anchorDate, newDate, calendar.mode);
             handleSetValue(range);
-            setAnchorDateState(undefined);
+            setAnchor(null);
         } else {
-            setAnchorDateState(newDate);
+            setAnchor(newDate);
         }
     };
 
@@ -82,7 +100,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         setValue: handleSetValue,
         selectDate,
         anchorDate,
-        setAnchorDate: setAnchorDateState,
+        setAnchorDate: (date) => setAnchor(date ?? null),
         highlightedRange,
         isSelected(date) {
             if (!highlightedRange) {
@@ -98,7 +116,12 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         },
         highlightDate(date) {
             if (anchorDate) {
+                const {isFocused} = this;
                 this.setFocusedDate(date);
+                if (anchorDateProp !== undefined && !isFocused) {
+                    // A controlled anchor outlives the focus, hovering must not take it back.
+                    this.setFocused(false);
+                }
             }
         },
     };

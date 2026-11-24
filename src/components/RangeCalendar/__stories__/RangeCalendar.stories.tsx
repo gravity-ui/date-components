@@ -2,7 +2,7 @@ import React from 'react';
 
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DateTime} from '@gravity-ui/date-utils';
-import {Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
+import {Button, Tab, TabList, TabPanel, TabProvider} from '@gravity-ui/uikit';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {action} from 'storybook/actions';
 
@@ -73,6 +73,9 @@ export const Default = meta.story({
         },
     },
     argTypes: {
+        anchorDate: {
+            control: false,
+        },
         minValue: {
             control: {
                 type: 'text',
@@ -171,5 +174,25 @@ export const Custom = Default.extend({
     },
     parameters: {
         controls: {exclude: ['mode', 'defaultMode', 'modes']},
+    },
+});
+
+export const ControlledAnchor = Default.extend({
+    render: function ControlledAnchor(args) {
+        const [anchorDate, setAnchorDate] = React.useState<DateTime | null>(null);
+
+        return (
+            <div>
+                <DefaultComponent
+                    {...args}
+                    anchorDate={anchorDate}
+                    onUpdateAnchorDate={setAnchorDate}
+                />
+                <div>Anchor date: {anchorDate ? anchorDate.format('L') : 'none'}</div>
+                <Button disabled={!anchorDate} onClick={() => setAnchorDate(null)}>
+                    Reset anchor
+                </Button>
+            </div>
+        );
     },
 });
