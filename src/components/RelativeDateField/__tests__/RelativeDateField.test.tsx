@@ -6,6 +6,7 @@ import {userEvent} from 'vitest/browser';
 
 import {render} from '#test-utils/utils';
 
+import {cleanString} from '../../DateField/utils';
 import {RelativeDateField} from '../RelativeDateField';
 
 function TestRelativeDateField() {
@@ -149,5 +150,23 @@ describe('RelativeDateField', () => {
 
         await expect.poll(() => screen.getByRole('grid')).not.toBeInTheDocument();
         expect(screen.getByText('Dialog content')).toBeInTheDocument();
+    });
+
+    it('shows the time of the value in the popup only when hasTime is set', async () => {
+        vitest.setSystemTime(new Date('2024-05-15T12:34:56Z'));
+        const getTexts = () =>
+            Array.from(document.querySelectorAll('input:not([type="hidden"])'), (input) =>
+                cleanString((input as HTMLInputElement).value),
+            );
+
+        const screen = await render(<RelativeDateField defaultValue="now" timeZone="UTC" />);
+        await userEvent.tab();
+        await expect.element(screen.getByRole('grid')).toBeInTheDocument();
+
+        expect(getTexts()).toEqual(['now']);
+
+        await screen.rerender(<RelativeDateField defaultValue="now" hasTime timeZone="UTC" />);
+
+        expect(getTexts()).toEqual(['now', '12:34:56 PM']);
     });
 });
