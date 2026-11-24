@@ -9,7 +9,6 @@ $block: '.#{variables.$ns}time-selection';
     --_--column-width: 48px;
 
     display: inline-flex;
-    gap: var(--g-spacing-1);
 
     box-sizing: border-box;
     height: calc(var(--_--row-height) * 7);
@@ -38,6 +37,7 @@ $block: '.#{variables.$ns}time-selection';
         overscroll-behavior: contain;
         flex: 0 0 auto;
 
+        box-sizing: content-box;
         width: var(--_--column-width);
 
         scrollbar-width: thin;
@@ -65,6 +65,14 @@ $block: '.#{variables.$ns}time-selection';
         @media (pointer: none), (any-pointer: coarse) {
             overflow-y: auto;
         }
+    }
+
+    // A line between the columns, with the same room on both sides of it
+    &__column:not(:first-child) {
+        margin-inline-start: var(--g-spacing-1);
+        padding-inline-start: var(--g-spacing-1);
+
+        border-inline-start: 1px solid var(--g-color-line-generic);
     }
 
     &__item-text {
