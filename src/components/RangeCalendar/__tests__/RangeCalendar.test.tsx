@@ -205,6 +205,21 @@ describe('RangeCalendar', () => {
                 start: '2024-01-10T00:00:00.000Z',
             });
         });
+
+        it('reports the anchor of an uncontrolled selection', async () => {
+            const onUpdateAnchorDate = vi.fn<(date: DateTime | null) => void>();
+            const {onBlur, onUpdate, screen} = await renderCalendar({onUpdateAnchorDate});
+
+            await userEvent.click(getCell(screen, '2024-01-10'));
+            expect(onUpdateAnchorDate.mock.calls[0][0]?.toISOString()).toBe(
+                '2024-01-10T00:00:00.000Z',
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: 'outside'}));
+            await expect.poll(() => onBlur).toHaveBeenCalled();
+            expect(onUpdate).toHaveBeenCalledTimes(1);
+            expect(onUpdateAnchorDate).toHaveBeenLastCalledWith(null);
+        });
     });
 
     describe('controlled anchor', () => {
@@ -312,6 +327,33 @@ describe('RangeCalendar', () => {
                 end: '2024-02-02T23:59:59.999Z',
                 start: '2024-01-30T00:00:00.000Z',
             });
+        });
+
+        it('keeps the selection in progress when the mode is changed', async () => {
+            const {onUpdate, onUpdateAnchorDate, screen} = await renderControlledCalendar();
+
+            await userEvent.click(getCell(screen, '2024-01-10'));
+            await userEvent.click(screen.getByRole('button', {exact: true, name: 'January 2024'}));
+            await waitForGridTransition(screen);
+            await userEvent.click(screen.getByRole('button', {exact: true, name: 'March 2024'}));
+            await waitForGridTransition(screen);
+            expect(onUpdate).not.toHaveBeenCalled();
+            expect(onUpdateAnchorDate).toHaveBeenCalledTimes(1);
+
+            await userEvent.click(getCell(screen, '2024-03-08'));
+            expect(iso(onUpdate.mock.calls[0][0])).toEqual({
+                end: '2024-03-08T23:59:59.999Z',
+                start: '2024-01-10T00:00:00.000Z',
+            });
+        });
+
+        it('moves focus to the hovered date while the grid is focused', async () => {
+            const {screen} = await renderControlledCalendar();
+
+            await userEvent.click(getCell(screen, '2024-01-10'));
+            await userEvent.hover(getCell(screen, '2024-01-13'));
+
+            await expect.element(getCell(screen, '2024-01-13')).toHaveFocus();
         });
 
         it('cancels the selection when the anchor is reset to null', async () => {
@@ -424,18 +466,5 @@ describe('RangeCalendar', () => {
 
             expect(result.current.anchorDate).toBeUndefined();
         });
-    });
-
-    it('reports the anchor of an uncontrolled selection', async () => {
-        const onUpdateAnchorDate = vi.fn<(date: DateTime | null) => void>();
-        const {onBlur, onUpdate, screen} = await renderCalendar({onUpdateAnchorDate});
-
-        await userEvent.click(getCell(screen, '2024-01-10'));
-        expect(onUpdateAnchorDate.mock.calls[0][0]?.toISOString()).toBe('2024-01-10T00:00:00.000Z');
-
-        await userEvent.click(screen.getByRole('button', {name: 'outside'}));
-        await expect.poll(() => onBlur).toHaveBeenCalled();
-        expect(onUpdate).toHaveBeenCalledTimes(1);
-        expect(onUpdateAnchorDate).toHaveBeenLastCalledWith(null);
     });
 });

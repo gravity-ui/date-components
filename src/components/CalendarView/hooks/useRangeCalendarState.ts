@@ -116,9 +116,8 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         },
         highlightDate(date) {
             if (anchorDate) {
-                const {isFocused} = this;
                 this.setFocusedDate(date);
-                if (anchorDateProp !== undefined && !isFocused) {
+                if (anchorDateProp !== undefined && !calendar.isFocused) {
                     // A controlled anchor outlives the focus, hovering must not take it back.
                     this.setFocused(false);
                 }
