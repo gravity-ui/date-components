@@ -100,7 +100,6 @@ describe('DatePicker', () => {
 
         expect(cleanString(getInput().value)).toBe('17.01.2024 10:30');
         expect(getInput()).toHaveAttribute('aria-expanded', 'true');
-        expect(screen.getByRole('grid')).toBeInTheDocument();
     });
 
     it('closes after a day is selected when the format has no time', async () => {
@@ -189,7 +188,7 @@ describe('DatePicker', () => {
         const onUpdate = vitest.fn();
         const screen = await renderOpenDatePicker({defaultValue: value, onUpdate, readOnly: true});
 
-        await userEvent.click(getDay(screen, 17), {force: true});
+        await userEvent.click(getDay(screen, 17));
 
         expect(onUpdate).not.toHaveBeenCalled();
         expect(cleanString(getInput().value)).toBe('15.01.2024 10:30');

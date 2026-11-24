@@ -8,7 +8,6 @@ interface PickerPopupContentProps {
     /** Calendar or the result of `children(calendarProps)` */
     children: React.ReactNode;
     className?: string;
-    /** Full-width footer */
     footer?: React.ReactNode;
     timePanel?: React.ReactNode;
     /** Class name of the time panel wrapper */

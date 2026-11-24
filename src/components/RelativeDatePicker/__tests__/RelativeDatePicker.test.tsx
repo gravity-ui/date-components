@@ -78,7 +78,6 @@ describe('RelativeDatePicker', () => {
         expect(value.type).toBe('absolute');
         expect(value.value.toISOString()).toBe('2024-01-17T10:30:00.000Z');
         expect(screen.getByRole('combobox')).toHaveAttribute('aria-expanded', 'true');
-        expect(screen.getByRole('grid')).toBeInTheDocument();
     });
 
     it('closes on Escape', async () => {

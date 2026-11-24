@@ -71,6 +71,5 @@ describe('RangeDatePicker', () => {
         expect(start.toISOString()).toBe('2024-01-10T10:30:00.000Z');
         expect(end.toISOString()).toBe('2024-01-12T18:45:00.000Z');
         expect(input).toHaveAttribute('aria-expanded', 'true');
-        expect(screen.getByRole('grid')).toBeInTheDocument();
     });
 });

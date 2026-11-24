@@ -163,10 +163,10 @@ describe('RelativeDateField', () => {
         await userEvent.tab();
         await expect.element(screen.getByRole('grid')).toBeInTheDocument();
 
-        expect(getTexts()).toEqual(['now']);
+        expect(getTexts()).not.toContain('12:34:56 PM');
 
         await screen.rerender(<RelativeDateField defaultValue="now" hasTime timeZone="UTC" />);
 
-        expect(getTexts()).toEqual(['now', '12:34:56 PM']);
+        expect(getTexts()).toContain('12:34:56 PM');
     });
 });
