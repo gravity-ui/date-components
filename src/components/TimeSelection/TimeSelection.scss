@@ -67,12 +67,16 @@ $block: '.#{variables.$ns}time-selection';
         }
     }
 
-    // A line between the columns, with the same room on both sides of it
+    // A line between the columns, with the same room on both sides of it. The room is inside the
+    // columns, so the scrollbar of a column sits right at the line
     &__column:not(:first-child) {
-        margin-inline-start: var(--g-spacing-1);
         padding-inline-start: var(--g-spacing-1);
 
         border-inline-start: 1px solid var(--g-color-line-generic);
+    }
+
+    &__column:not(:last-child) {
+        padding-inline-end: var(--g-spacing-1);
     }
 
     &__item-text {

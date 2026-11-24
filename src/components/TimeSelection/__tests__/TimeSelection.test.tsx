@@ -1044,7 +1044,8 @@ describe('TimeSelection', () => {
 
             await userEvent.hover(screen.getByRole('button', {name: 'Outside'}));
             expect(getComputedStyle(hours).overflowY).toBe('hidden');
-            expect(hours.getBoundingClientRect().width).toBe(48);
+            // 48px of the rows and the room before the line of the next column
+            expect(hours.getBoundingClientRect().width).toBe(52);
             expect(rowWidth()).toBe(48);
 
             await userEvent.hover(option(screen, 'Hours', '10'));
