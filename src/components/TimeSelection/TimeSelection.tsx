@@ -49,8 +49,8 @@ function scrollToCenter(container: HTMLElement, element: HTMLElement, smooth: bo
 
 interface ScrollState {
     /**
-     * The option the column was last scrolled to and where it was. A render or a resize does
-     * not scroll to it again, which would undo a manual scroll; a new value does
+     * The option the column was last scrolled to and where it was. A render does not scroll to
+     * it again, which would undo a manual scroll; a new value or a row that has moved does
      */
     scrolledTo?: string;
     /** A column that is not laid out (a hidden parent) has nothing to animate from */
@@ -69,8 +69,11 @@ function centerSelectedOption(
         return {shown: false};
     }
     const element = container.querySelector<HTMLElement>(SELECTED_OPTION_SELECTOR);
+    // Where the row is within the list, not within the column: the room above the list
+    // changes with the height of the column, and a resize is not a reason to scroll
+    const first = container.querySelector<HTMLElement>('[role="option"]');
     const target = element
-        ? `${element.id}|${element.offsetTop}|${element.offsetHeight}`
+        ? `${element.id}|${element.offsetTop - (first?.offsetTop ?? 0)}|${element.offsetHeight}`
         : undefined;
     const scrolledAway =
         valueChanged &&
@@ -80,7 +83,6 @@ function centerSelectedOption(
         scrollToCenter(container, element, state.shown);
     } else if (!element && !state.shown) {
         // Nothing is selected yet: the list starts from its first row, past the room above it
-        const first = container.querySelector<HTMLElement>('[role="option"]');
         container.scrollTo({behavior: 'instant', top: first?.offsetTop ?? 0});
     }
     return {scrolledTo: target, shown: true};
@@ -106,6 +108,14 @@ function focusColumn(root: HTMLElement | null, column: TimeSelectionColumn) {
     if (!visible) {
         scrollToCenter(container, target, false);
     }
+}
+
+function hasAvailableOption(root: HTMLElement | null, column: TimeSelectionColumn) {
+    return Boolean(
+        root?.querySelector(
+            `[data-column="${column}"] [role="option"]:not([aria-disabled="true"])`,
+        ),
+    );
 }
 
 function getItemContent(item: TimeSelectionItem) {
@@ -180,14 +190,17 @@ function TimeSelectionColumnView({
         );
     }, [items, selectedId, size, valueKey]);
 
-    // A column that was hidden is centered when it gets its size; a row that has moved, too
+    // A column that was hidden is centered when it gets its size. A resize of a visible column
+    // is not a reason to scroll: that would undo a manual scroll
     React.useEffect(() => {
         const container = containerRef.current;
         if (!container || typeof ResizeObserver === 'undefined') {
             return undefined;
         }
         const observer = new ResizeObserver(() => {
-            scrollStateRef.current = centerSelectedOption(container, scrollStateRef.current);
+            if (container.clientHeight === 0 || !scrollStateRef.current.shown) {
+                scrollStateRef.current = centerSelectedOption(container, scrollStateRef.current);
+            }
         });
         observer.observe(container);
         return () => observer.disconnect();
@@ -221,7 +234,7 @@ function TimeSelectionColumnView({
             renderItem={cursorHidden ? renderItemWithoutCursor : undefined}
             selectionMode="single"
             selectedIds={selectedId === undefined ? [] : [selectedId]}
-            activeItemId={activeId}
+            activeItemId={items.some((item) => item.id === activeId) ? activeId : null}
             onActiveItemUpdate={(id) => {
                 if (containerRef.current?.contains(document.activeElement)) {
                     setActiveId(id);
@@ -307,14 +320,13 @@ export function TimeSelection(props: TimeSelectionProps) {
         item: TimeSelectionItem,
         event: ListItemActionEvent,
     ) => {
-        const next = getNeighbor(column, 1);
-        // A held Enter must not run focus through all the columns
-        const repeated = 'key' in event && event.repeat;
-        if (!state.selectItem(column, item)) {
+        // A held Enter must neither run focus through the columns nor pick in the next one
+        if (('key' in event && event.repeat) || !state.selectItem(column, item)) {
             return;
         }
         setPickCount((count) => count + 1);
-        if (next && !repeated) {
+        const next = getNeighbor(column, 1);
+        if (next && hasAvailableOption(rootRef.current, next)) {
             setQuietColumn('key' in event ? undefined : next);
             setFocusRequest({column: next});
         }

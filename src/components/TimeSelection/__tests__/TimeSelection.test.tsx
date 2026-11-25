@@ -456,6 +456,25 @@ describe('TimeSelection', () => {
             expect(onFocusViewUpdate).not.toHaveBeenCalled();
         });
 
+        it('does not pick in the next column while Enter is held', async () => {
+            const onUpdate = vi.fn();
+            await render(
+                <Controlled
+                    value={time('2024-01-15T10:20:00')}
+                    timeSteps={{minutes: 15}}
+                    defaultFocusView="hours"
+                    onUpdate={onUpdate}
+                />,
+            );
+            await expect.poll(focused).toBe('Hours 10');
+
+            // Nothing is selected in minutes, so focus lands on the first option there
+            await userEvent.keyboard('{Enter>3}{/Enter}');
+
+            expect(onUpdate).not.toHaveBeenCalled();
+            await expect.poll(focused).toBe('Minutes 00');
+        });
+
         it('moves focus to the next column after a click', async () => {
             const onFocusViewUpdate = vi.fn();
             const screen = await render(
@@ -756,6 +775,26 @@ describe('TimeSelection', () => {
             expect(lastValue(onUpdate)).toBe('2024-03-10T15:45:00');
         });
 
+        it('takes the units of the first pick from the placeholder when that is in range', async () => {
+            const onUpdate = vi.fn();
+            const screen = await render(
+                <TimeSelection
+                    value={null}
+                    placeholderValue={time('2024-03-10T00:00:00')}
+                    minValue={time('2024-03-10T15:20:37.123')}
+                    onUpdate={onUpdate}
+                />,
+            );
+
+            // 18:00 is in range, so nothing comes from the bound
+            await option(screen, 'Hours', '18').click();
+            expect(lastValue(onUpdate, MS_FORMAT)).toBe('2024-03-10T18:00:00.000');
+
+            // 00:45 is not: the hour comes from the bound, the units below the minute do not
+            await option(screen, 'Minutes', '45').click();
+            expect(lastValue(onUpdate, MS_FORMAT)).toBe('2024-03-10T15:45:00.000');
+        });
+
         it('keeps a picked half of the day within minValue and maxValue', async () => {
             const onUpdate = vi.fn();
             const screen = await render(
@@ -878,6 +917,37 @@ describe('TimeSelection', () => {
 
             expect(optionLabels(screen, 'Hours')).toEqual(['09', '10', '11', '12']);
             expect(optionLabels(screen, 'Minutes')).toHaveLength(60);
+        });
+
+        it('moves focus into a column whose options have changed with the pick', async () => {
+            const screen = await render(
+                <Controlled
+                    value={time('2024-01-15T11:30:00')}
+                    maxValue={time('2024-01-15T12:00:00')}
+                    skipDisabled
+                />,
+            );
+            expect(optionLabels(screen, 'Minutes')).toHaveLength(60);
+
+            // 12:30 is out of range: the value becomes 12:00, and only that minute is left
+            await option(screen, 'Hours', '12').click();
+            await expect.poll(() => optionLabels(screen, 'Minutes')).toEqual(['00']);
+            await expect.poll(focused).toBe('Minutes 00');
+            expect(selectedLabels(screen)).toEqual(['12', '00']);
+        });
+
+        it('keeps focus where it is when the next column has no options', async () => {
+            const screen = await render(
+                <Controlled
+                    value={time('2024-01-15T10:30:00')}
+                    isTimeUnavailable={(_date, view) => view === 'minutes'}
+                    skipDisabled
+                />,
+            );
+            expect(optionLabels(screen, 'Minutes')).toEqual([]);
+
+            await option(screen, 'Hours', '12').click();
+            await expect.poll(focused).toBe('Hours 12');
         });
 
         it('selects nothing when the option of the value is left out', async () => {
@@ -1042,7 +1112,7 @@ describe('TimeSelection', () => {
 
             await option(screen, 'Minutes', '31').click();
             await expect.poll(() => isCentered(screen, 'Hours', '12')).toBe(true);
-            expect(isCentered(screen, 'Minutes', '31')).toBe(true);
+            await expect.poll(() => isCentered(screen, 'Minutes', '31')).toBe(true);
 
             // A pick of the option that is already selected does the same
             hours.scrollTop = 0;
@@ -1051,19 +1121,32 @@ describe('TimeSelection', () => {
         });
 
         it('keeps a manual scroll while the value stays the same', async () => {
+            const settle = () => new Promise((resolve) => setTimeout(resolve, 400));
+            const screen = await render(<TimeSelection value={middle} />);
+            const hours = column(screen, 'Hours').element();
+
+            // Another object of the same moment, as a controlled parent often passes
+            hours.scrollTop = 0;
+            await screen.rerender(<TimeSelection value={time('2024-01-15T10:30:00')} />);
+            await settle();
+            expect(hours.scrollTop).toBe(0);
+
+            // A resize is not a reason to scroll back either
+            await screen.rerender(
+                <TimeSelection value={time('2024-01-15T10:30:00')} style={{height: 120}} />,
+            );
+            await expect.poll(() => hours.clientHeight).toBe(120);
+            await settle();
+            expect(hours.scrollTop).toBe(0);
+        });
+
+        it('brings a column scrolled away back when the value changes from the outside', async () => {
             const screen = await render(<TimeSelection value={middle} />);
             const hours = column(screen, 'Hours').element();
 
             hours.scrollTop = 0;
-            await screen.rerender(<TimeSelection value={middle} aria-label="Time" />);
-            await expect.element(screen.getByRole('group', {name: 'Time'})).toBeInTheDocument();
-            expect(hours.scrollTop).toBe(0);
-
-            // A resize is not a reason to scroll back either
-            await screen.rerender(<TimeSelection value={middle} style={{height: 120}} />);
-            await expect.poll(() => hours.clientHeight).toBe(120);
-            await new Promise((resolve) => requestAnimationFrame(resolve));
-            expect(hours.scrollTop).toBe(0);
+            await screen.rerender(<TimeSelection value={time('2024-01-15T10:45:00')} />);
+            await expect.poll(() => isCentered(screen, 'Hours', '10')).toBe(true);
         });
 
         it('does not animate the first centering of a column that was hidden', async () => {

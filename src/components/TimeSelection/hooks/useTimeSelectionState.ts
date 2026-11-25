@@ -6,7 +6,13 @@ import {useControlledState} from '@gravity-ui/uikit';
 import {constrainValue, createPlaceholderValue} from '../../utils/dates';
 import {useDefaultTimeZone} from '../../utils/useDefaultTimeZone';
 import type {TimeSelectionProps, TimeSelectionView} from '../types';
-import {applyUnitValue, getColumnItems, getColumns, getSelectedItemId} from '../utils';
+import {
+    applyFirstUnitValue,
+    applyUnitValue,
+    getColumnItems,
+    getColumns,
+    getSelectedItemId,
+} from '../utils';
 import type {TimeSelectionColumn, TimeSelectionItem} from '../utils';
 
 const DEFAULT_VIEWS: TimeSelectionView[] = ['hours', 'minutes'];
@@ -74,22 +80,21 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
     // The only memo here: it keeps the items of the columns the same objects between renders,
     // so the List does not re-render every row (a thousand of them for milliseconds). Its inputs
     // are compared as primitives because `views` and `timeSteps` are usually passed inline
-    const {base, columns, displayValue, maxValue, minValue} = React.useMemo(() => {
+    const {base, columns, displayValue, maxValue, minValue, placeholder} = React.useMemo(() => {
         const steps = {hours, milliseconds, minutes, seconds};
         const currentValue = value ? value.timeZone(timeZone) : null;
         const range = {
             maxValue: maxValueProp?.timeZone(timeZone),
             minValue: minValueProp?.timeZone(timeZone),
         };
-        // The placeholder is kept within the range like any picked value is: otherwise every
-        // option would be counted from a moment that cannot be picked
+        const currentPlaceholder = createPlaceholderValue({placeholderValue, timeZone}).timeZone(
+            timeZone,
+        );
+        // The options are counted from the placeholder kept within the range: otherwise they
+        // would be counted from a moment that cannot be picked
         const currentBase =
             currentValue ??
-            constrainValue(
-                createPlaceholderValue({placeholderValue, timeZone}).timeZone(timeZone),
-                range.minValue,
-                range.maxValue,
-            ).timeZone(timeZone);
+            constrainValue(currentPlaceholder, range.minValue, range.maxValue).timeZone(timeZone);
         const columnKeys = columnsKey.split(',').filter(Boolean) as TimeSelectionColumn[];
 
         return {
@@ -113,6 +118,7 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
                 };
             }),
             displayValue: currentValue,
+            placeholder: currentPlaceholder,
         };
     }, [
         ampm,
@@ -135,7 +141,9 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
         if (disabled || readOnly || item.disabled) {
             return false;
         }
-        const next = applyUnitValue(base, column, ampm, item.value, minValue, maxValue);
+        const next = displayValue
+            ? applyUnitValue(base, column, ampm, item.value, minValue, maxValue)
+            : applyFirstUnitValue(placeholder, base, column, ampm, item.value, minValue, maxValue);
         if (!displayValue || !next.isSame(displayValue)) {
             setValue(next.timeZone(inputTimeZone));
         }

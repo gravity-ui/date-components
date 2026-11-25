@@ -23,8 +23,9 @@ export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityP
      */
     focusedView?: TimeSelectionView;
     /**
-     * Callback that is called for each option of a column with the current value where the unit
-     * of the option is put in, before it is kept within `minValue` and `maxValue`.
+     * Callback that is called for each option of a column with the current value (the
+     * placeholder while it is empty) where the unit of the option is put in, before it is kept
+     * within `minValue` and `maxValue`.
      * If it returns true, then the option is unavailable. An AM/PM option is checked as the hour
      * it gives, with the `hours` view.
      */
@@ -38,22 +39,23 @@ export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityP
     /** Handler that is called when the value changes. */
     onUpdate?: (value: DateTime) => void;
     /**
-     * The date and the units that are not picked yet while the value is empty, kept within
-     * `minValue` and `maxValue`. Defaults to today's date at midnight.
+     * The date and the units that are not picked yet while the value is empty. When the first
+     * pick lands out of `minValue` and `maxValue` with them, they are taken from the bound.
+     * Defaults to today's date at midnight.
      */
     placeholderValue?: DateTime;
     /** Whether the value is immutable. */
     readOnly?: boolean;
     /**
-     * Whether to leave the unavailable options out instead of showing them as disabled.
-     * @default false
-     */
-    skipDisabled?: boolean;
-    /**
      * The size of the rows, the size of the uikit `List`.
      * @default 'm'
      */
     size?: ListSize;
+    /**
+     * Whether to leave the unavailable options out instead of showing them as disabled.
+     * @default false
+     */
+    skipDisabled?: boolean;
     /** Steps between the options of a column. Defaults to 1 for every unit. */
     timeSteps?: Partial<Record<TimeSelectionView, number>>;
     /**

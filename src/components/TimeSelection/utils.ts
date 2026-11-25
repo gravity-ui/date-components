@@ -182,3 +182,38 @@ export function applyUnitValue(
     const next = constrainValue(setUnitValue(base, column, ampm, value), minValue, maxValue);
     return next.timeZone(base.timeZone());
 }
+
+function isOutOfRange(
+    date: DateTime,
+    minValue: DateTime | undefined,
+    maxValue: DateTime | undefined,
+) {
+    return Boolean((minValue && date.isBefore(minValue)) || (maxValue && maxValue.isBefore(date)));
+}
+
+/**
+ * The first pick, while there is no value. The units that are not picked come from the
+ * placeholder. Only when that lands out of the range they come from its bound: first without the
+ * units below the picked one, then with them
+ */
+export function applyFirstUnitValue(
+    placeholder: DateTime,
+    base: DateTime,
+    column: TimeSelectionColumn,
+    ampm: boolean,
+    value: number,
+    minValue: DateTime | undefined,
+    maxValue: DateTime | undefined,
+) {
+    const fromPlaceholder = setUnitValue(placeholder, column, ampm, value);
+    if (!isOutOfRange(fromPlaceholder, minValue, maxValue)) {
+        return fromPlaceholder;
+    }
+    if (column !== 'meridiem' && column !== 'milliseconds') {
+        const rounded = setUnitValue(base, column, ampm, value).startOf(UNIT_OF_VIEW[column]);
+        if (!isOutOfRange(rounded, minValue, maxValue)) {
+            return rounded;
+        }
+    }
+    return applyUnitValue(base, column, ampm, value, minValue, maxValue);
+}

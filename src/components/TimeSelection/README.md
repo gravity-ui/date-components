@@ -25,7 +25,7 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 
 Picking an option changes only its unit: the date and the other units stay as they are. The value is a `DateTime`, so it always carries a date.
 
-While there is no value, nothing is selected, and the first pick is applied to `placeholderValue`. It defaults to today at midnight, so picking `14` in the hours column gives today, 14:00:00. The placeholder is kept within `minValue` and `maxValue` like any picked value.
+While there is no value, nothing is selected, and the first pick is applied to `placeholderValue`. It defaults to today at midnight, so picking `14` in the hours column gives today, 14:00:00. If the first pick lands out of `minValue` and `maxValue` with the units of the placeholder, they are taken from the bound instead, the date included.
 
 ```tsx
 <TimeSelection defaultValue={dateTimeParse('2024-01-15T10:30:00')} />
@@ -60,7 +60,7 @@ The options are counted again whenever the reference of the callback, `value`, `
 
 ### Hiding unavailable options
 
-By default the unavailable options stay in the columns and are shown as disabled. With `skipDisabled` they are left out. Together with `isTimeUnavailable` it gives a column any set of options:
+By default the unavailable options stay in the columns and are shown as disabled. With `skipDisabled` they are left out. Together with `isTimeUnavailable` it gives a column any set of options. A value whose unit is not in the set is still valid: the column just has nothing selected.
 
 ```tsx
 const MINUTES = [0, 10, 25, 40];
@@ -185,8 +185,8 @@ Inside a column the keys are those of the uikit `List`: see [the keyboard of the
 | onUpdate                                    | Fires when the value is changed.                                                                                     |               `((value: DateTime) => void)`               |                        |
 | [placeholderValue](#value)                  | The date and the units that are not picked yet while the value is empty                                              |                        `DateTime`                         |   today at midnight    |
 | [readOnly](#readonly)                       | Whether the value is immutable.                                                                                      |                         `boolean`                         |        `false`         |
-| [skipDisabled](#hiding-unavailable-options) | Whether to leave the unavailable options out instead of showing them as disabled                                     |                         `boolean`                         |        `false`         |
 | [size](#size)                               | The size of the rows                                                                                                 |                 `"s"` `"m"` `"l"` `"xl"`                  |         `"m"`          |
+| [skipDisabled](#hiding-unavailable-options) | Whether to leave the unavailable options out instead of showing them as disabled                                     |                         `boolean`                         |        `false`         |
 | style                                       | Sets inline style for the element.                                                                                   |                      `CSSProperties`                      |                        |
 | [timeSteps](#steps)                         | Steps between the options of a column                                                                                |       `Partial<Record<TimeSelectionView, number>>`        |                        |
 | [timeZone](#time-zone)                      | Sets the time zone. [Learn more about time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) |                         `string`                          |                        |
