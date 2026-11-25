@@ -45,6 +45,11 @@ export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityP
     /** Whether the value is immutable. */
     readOnly?: boolean;
     /**
+     * Whether to leave the unavailable options out instead of showing them as disabled.
+     * @default false
+     */
+    skipDisabled?: boolean;
+    /**
      * The size of the rows, the size of the uikit `List`.
      * @default 'm'
      */

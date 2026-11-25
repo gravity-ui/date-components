@@ -842,6 +842,71 @@ describe('TimeSelection', () => {
         });
     });
 
+    describe('skipDisabled', () => {
+        const MINUTES = [0, 10, 25, 40];
+        const isTimeUnavailable = (date: DateTime, view: TimeSelectionView) =>
+            view === 'minutes' && !MINUTES.includes(date.minute());
+
+        it('leaves out the options isTimeUnavailable rejects', async () => {
+            const onUpdate = vi.fn();
+            const screen = await render(
+                <Controlled
+                    value={time('2024-01-15T10:25:00')}
+                    isTimeUnavailable={isTimeUnavailable}
+                    skipDisabled
+                    onUpdate={onUpdate}
+                />,
+            );
+
+            expect(optionLabels(screen, 'Minutes')).toEqual(['00', '10', '25', '40']);
+            expect(optionLabels(screen, 'Hours')).toHaveLength(24);
+            expect(selectedLabels(screen)).toEqual(['10', '25']);
+
+            await option(screen, 'Minutes', '40').click();
+            expect(lastValue(onUpdate)).toBe('2024-01-15T10:40:00');
+        });
+
+        it('leaves out the options out of minValue and maxValue', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={time('2024-01-15T10:30:00')}
+                    minValue={time('2024-01-15T09:15:00')}
+                    maxValue={time('2024-01-15T12:00:00')}
+                    skipDisabled
+                />,
+            );
+
+            expect(optionLabels(screen, 'Hours')).toEqual(['09', '10', '11', '12']);
+            expect(optionLabels(screen, 'Minutes')).toHaveLength(60);
+        });
+
+        it('selects nothing when the option of the value is left out', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={time('2024-01-15T10:30:00')}
+                    isTimeUnavailable={isTimeUnavailable}
+                    skipDisabled
+                />,
+            );
+
+            expect(selectedLabels(screen)).toEqual(['10']);
+        });
+
+        it('still leaves them out when the component is disabled', async () => {
+            const screen = await render(
+                <TimeSelection
+                    value={time('2024-01-15T10:25:00')}
+                    isTimeUnavailable={isTimeUnavailable}
+                    skipDisabled
+                    disabled
+                />,
+            );
+
+            expect(optionLabels(screen, 'Minutes')).toEqual(['00', '10', '25', '40']);
+            expect(allDisabled(screen)).toBe(true);
+        });
+    });
+
     describe('readOnly and disabled', () => {
         it('keeps the options navigable but not selectable when readOnly', async () => {
             const onUpdate = vi.fn();

@@ -38,6 +38,7 @@ type TimeSelectionStateOptions = Pick<
     | 'onUpdate'
     | 'placeholderValue'
     | 'readOnly'
+    | 'skipDisabled'
     | 'timeSteps'
     | 'timeZone'
     | 'value'
@@ -53,6 +54,7 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
         minValue: minValueProp,
         placeholderValue,
         readOnly = false,
+        skipDisabled = false,
         timeSteps,
         views = DEFAULT_VIEWS,
     } = props;
@@ -101,6 +103,7 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
                     column,
                     disabled,
                     isTimeUnavailable,
+                    skipDisabled,
                     step: column === 'meridiem' ? undefined : steps[column],
                 });
                 return {
@@ -123,6 +126,7 @@ export function useTimeSelectionState(props: TimeSelectionStateOptions): TimeSel
         minutes,
         placeholderValue,
         seconds,
+        skipDisabled,
         timeZone,
         value,
     ]);
