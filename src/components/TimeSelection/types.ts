@@ -55,7 +55,7 @@ export interface TimeSelectionProps extends DomProps, StyleProps, AccessibilityP
      * Whether to leave the unavailable options out instead of showing them as disabled.
      * @default false
      */
-    skipDisabled?: boolean;
+    skipUnavailable?: boolean;
     /** Steps between the options of a column. Defaults to 1 for every unit. */
     timeSteps?: Partial<Record<TimeSelectionView, number>>;
     /**

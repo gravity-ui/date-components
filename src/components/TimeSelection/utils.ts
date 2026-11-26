@@ -120,7 +120,7 @@ interface ColumnItemsOptions {
     maxValue?: DateTime;
     minValue?: DateTime;
     /** Leaves the unavailable options out instead of showing them as disabled */
-    skipDisabled?: boolean;
+    skipUnavailable?: boolean;
     step?: number;
 }
 
@@ -132,7 +132,7 @@ export function getColumnItems({
     isTimeUnavailable,
     maxValue,
     minValue,
-    skipDisabled,
+    skipUnavailable,
     step,
 }: ColumnItemsOptions): TimeSelectionItem[] {
     const items: TimeSelectionItem[] = [];
@@ -140,7 +140,7 @@ export function getColumnItems({
         let unavailable = false;
         // A disabled component shows every option as disabled; which of them are unavailable
         // matters only when those are to be left out
-        if (!disabled || skipDisabled) {
+        if (!disabled || skipUnavailable) {
             const candidate = setUnitValue(base, column, ampm, value);
             // A half of the day changes the hour, so its option answers for the hour it gives
             const view = column === 'meridiem' ? 'hours' : column;
@@ -148,7 +148,7 @@ export function getColumnItems({
                 isIntervalOutOfRange(candidate, column, minValue, maxValue) ||
                 Boolean(isTimeUnavailable?.(candidate, view));
         }
-        if (unavailable && skipDisabled) {
+        if (unavailable && skipUnavailable) {
             continue;
         }
         const label = getItemLabel(column, ampm, value);

@@ -881,7 +881,7 @@ describe('TimeSelection', () => {
         });
     });
 
-    describe('skipDisabled', () => {
+    describe('skipUnavailable', () => {
         const MINUTES = [0, 10, 25, 40];
         const isTimeUnavailable = (date: DateTime, view: TimeSelectionView) =>
             view === 'minutes' && !MINUTES.includes(date.minute());
@@ -892,7 +892,7 @@ describe('TimeSelection', () => {
                 <Controlled
                     value={time('2024-01-15T10:25:00')}
                     isTimeUnavailable={isTimeUnavailable}
-                    skipDisabled
+                    skipUnavailable
                     onUpdate={onUpdate}
                 />,
             );
@@ -911,7 +911,7 @@ describe('TimeSelection', () => {
                     value={time('2024-01-15T10:30:00')}
                     minValue={time('2024-01-15T09:15:00')}
                     maxValue={time('2024-01-15T12:00:00')}
-                    skipDisabled
+                    skipUnavailable
                 />,
             );
 
@@ -924,7 +924,7 @@ describe('TimeSelection', () => {
                 <Controlled
                     value={time('2024-01-15T11:30:00')}
                     maxValue={time('2024-01-15T12:00:00')}
-                    skipDisabled
+                    skipUnavailable
                 />,
             );
             expect(optionLabels(screen, 'Minutes')).toHaveLength(60);
@@ -941,7 +941,7 @@ describe('TimeSelection', () => {
                 <Controlled
                     value={time('2024-01-15T10:30:00')}
                     isTimeUnavailable={(_date, view) => view === 'minutes'}
-                    skipDisabled
+                    skipUnavailable
                 />,
             );
             expect(optionLabels(screen, 'Minutes')).toEqual([]);
@@ -955,7 +955,7 @@ describe('TimeSelection', () => {
                 <TimeSelection
                     value={time('2024-01-15T10:30:00')}
                     isTimeUnavailable={isTimeUnavailable}
-                    skipDisabled
+                    skipUnavailable
                 />,
             );
 
@@ -967,7 +967,7 @@ describe('TimeSelection', () => {
                 <TimeSelection
                     value={time('2024-01-15T10:25:00')}
                     isTimeUnavailable={isTimeUnavailable}
-                    skipDisabled
+                    skipUnavailable
                     disabled
                 />,
             );
