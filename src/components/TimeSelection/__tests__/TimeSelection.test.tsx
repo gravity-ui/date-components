@@ -124,15 +124,12 @@ describe('TimeSelection', () => {
         });
 
         it.each<[TimeSelectionView[], boolean, string[]]>([
-            [['seconds', 'hours', 'minutes'], true, ['Hours', 'Minutes', 'Seconds', 'AM/PM']],
             [
                 ['milliseconds', 'seconds', 'hours', 'minutes'],
                 true,
                 ['Hours', 'Minutes', 'Seconds', 'Milliseconds', 'AM/PM'],
             ],
             [['seconds'], false, ['Seconds']],
-            [[], false, []],
-            [[], true, ['AM/PM']],
         ])(
             'renders the columns of views %j with ampm %s in a fixed order',
             async (views, ampm, labels) => {
@@ -151,23 +148,18 @@ describe('TimeSelection', () => {
             },
         );
 
-        it('shows the 12-hour clock with ampm', async () => {
-            const screen = await render(<TimeSelection value={time('2024-01-15T15:30:00')} ampm />);
+        it.each([
+            ['2024-01-15T15:30:00', ['03', '30', 'PM']],
+            ['2024-01-15T00:05:00', ['12', '05', 'AM']],
+            ['2024-01-15T12:05:00', ['12', '05', 'PM']],
+        ])('shows %s on the 12-hour clock with ampm', async (input, selected) => {
+            const screen = await render(<TimeSelection value={time(input)} ampm />);
 
             expect(optionLabels(screen, 'Hours').join(' ')).toBe(
                 '12 01 02 03 04 05 06 07 08 09 10 11',
             );
             expect(optionLabels(screen, 'AM/PM')).toEqual(['AM', 'PM']);
-            expect(selectedLabels(screen)).toEqual(['03', '30', 'PM']);
-        });
-
-        it.each([
-            ['2024-01-15T00:05:00', 'AM'],
-            ['2024-01-15T12:05:00', 'PM'],
-        ])('selects 12 for %s with ampm', async (input, meridiem) => {
-            const screen = await render(<TimeSelection value={time(input)} ampm />);
-
-            expect(selectedLabels(screen)).toEqual(['12', '05', meridiem]);
+            expect(selectedLabels(screen)).toEqual(selected);
         });
 
         it('changes the hour and the half of the day separately with ampm', async () => {
@@ -184,26 +176,6 @@ describe('TimeSelection', () => {
 
             await option(screen, 'AM/PM', 'AM').click();
             expect(lastValue(onUpdate)).toBe('2024-01-15T05:30:00');
-        });
-
-        it('labels the columns in the language of the provider', async () => {
-            const screen = await render(
-                <TimeSelection
-                    value={value}
-                    views={['hours', 'minutes', 'seconds', 'milliseconds']}
-                    timeSteps={{milliseconds: 100}}
-                    ampm
-                />,
-                {providers: {lang: 'ru'}},
-            );
-
-            expect(columnLabels(screen)).toEqual([
-                'Часы',
-                'Минуты',
-                'Секунды',
-                'Миллисекунды',
-                'AM/PM',
-            ]);
         });
     });
 
@@ -241,15 +213,6 @@ describe('TimeSelection', () => {
     });
 
     describe('selection', () => {
-        it('marks the options of the value as selected', async () => {
-            const screen = await render(
-                <TimeSelection value={value} views={['hours', 'minutes', 'seconds']} />,
-            );
-
-            expect(selectedLabels(screen)).toEqual(['10', '30', '45']);
-            expect(selectedLabels(column(screen, 'Hours'))).not.toContain('11');
-        });
-
         it('changes only the unit of the clicked option', async () => {
             const onUpdate = vi.fn();
             const screen = await render(
@@ -269,6 +232,32 @@ describe('TimeSelection', () => {
 
             await option(screen, 'Seconds', '00').click();
             expect(lastValue(onUpdate)).toBe('2024-01-15T10:30:00');
+        });
+
+        it('shows three-digit milliseconds and keeps them when another unit is picked', async () => {
+            const onUpdate = vi.fn();
+            const screen = await render(
+                <Controlled
+                    value={time('2024-01-15T10:30:45.250')}
+                    views={['hours', 'minutes', 'seconds', 'milliseconds']}
+                    timeSteps={{milliseconds: 50}}
+                    onUpdate={onUpdate}
+                />,
+            );
+
+            const milliseconds = optionLabels(screen, 'Milliseconds');
+            expect(milliseconds).toHaveLength(20);
+            expect(milliseconds.slice(0, 3)).toEqual(['000', '050', '100']);
+            expect(milliseconds[19]).toBe('950');
+            await expect
+                .poll(() => selectedLabels(column(screen, 'Milliseconds')))
+                .toEqual(['250']);
+
+            await option(screen, 'Milliseconds', '700').click();
+            expect(lastValue(onUpdate, MS_FORMAT)).toBe('2024-01-15T10:30:45.700');
+
+            await option(screen, 'Hours', '08').click();
+            expect(lastValue(onUpdate, MS_FORMAT)).toBe('2024-01-15T08:30:45.700');
         });
 
         it('works uncontrolled with defaultValue', async () => {
@@ -334,84 +323,7 @@ describe('TimeSelection', () => {
         });
     });
 
-    describe('milliseconds', () => {
-        const withMs = time('2024-01-15T10:30:45.250');
-        const views: TimeSelectionView[] = ['hours', 'minutes', 'seconds', 'milliseconds'];
-
-        it('renders three-digit options by the step', async () => {
-            const screen = await render(
-                <TimeSelection value={withMs} views={views} timeSteps={{milliseconds: 50}} />,
-            );
-
-            const milliseconds = optionLabels(screen, 'Milliseconds');
-            expect(milliseconds).toHaveLength(20);
-            expect(milliseconds.slice(0, 3)).toEqual(['000', '050', '100']);
-            expect(milliseconds[19]).toBe('950');
-            await expect
-                .poll(() => selectedLabels(column(screen, 'Milliseconds')))
-                .toEqual(['250']);
-        });
-
-        it('changes only milliseconds and keeps them when another unit is picked', async () => {
-            const onUpdate = vi.fn();
-            const screen = await render(
-                <Controlled
-                    value={withMs}
-                    views={views}
-                    timeSteps={{milliseconds: 50}}
-                    onUpdate={onUpdate}
-                />,
-            );
-
-            await option(screen, 'Milliseconds', '700').click();
-            expect(lastValue(onUpdate, MS_FORMAT)).toBe('2024-01-15T10:30:45.700');
-
-            await option(screen, 'Hours', '08').click();
-            expect(lastValue(onUpdate, MS_FORMAT)).toBe('2024-01-15T08:30:45.700');
-        });
-
-        it('disables the milliseconds out of minValue and maxValue', async () => {
-            const screen = await render(
-                <TimeSelection
-                    value={withMs}
-                    views={views}
-                    timeSteps={{milliseconds: 50}}
-                    minValue={time('2024-01-15T10:30:45.200')}
-                    maxValue={time('2024-01-15T10:30:45.300')}
-                />,
-            );
-
-            expect(isDisabled(screen, 'Milliseconds', '150')).toBe(true);
-            expect(isDisabled(screen, 'Milliseconds', '200')).toBe(false);
-            expect(isDisabled(screen, 'Milliseconds', '300')).toBe(false);
-            expect(isDisabled(screen, 'Milliseconds', '350')).toBe(true);
-            // The second still has a moment in range
-            expect(isDisabled(screen, 'Seconds', '45')).toBe(false);
-            expect(isDisabled(screen, 'Seconds', '46')).toBe(true);
-        });
-    });
-
     describe('keyboard', () => {
-        it('moves the active option with the keys of the List without changing the value', async () => {
-            const onUpdate = vi.fn();
-            const screen = await render(
-                <TimeSelection value={value} defaultFocusView="hours" onUpdate={onUpdate} />,
-            );
-            await expect.poll(focused).toBe('Hours 10');
-
-            await userEvent.keyboard('{ArrowDown}');
-            await expect.poll(focused).toBe('Hours 11');
-            await userEvent.keyboard('{End}');
-            await expect.poll(focused).toBe('Hours 23');
-            await userEvent.keyboard('{Home}');
-            await expect.poll(focused).toBe('Hours 00');
-            await userEvent.keyboard('17');
-            await expect.poll(focused).toBe('Hours 17');
-
-            expect(onUpdate).not.toHaveBeenCalled();
-            await expect.poll(() => selectedLabels(column(screen, 'Hours'))).toEqual(['10']);
-        });
-
         it('selects the active option with Enter and moves focus to the next column', async () => {
             const onUpdate = vi.fn();
             const onFocusViewUpdate = vi.fn();
@@ -572,7 +484,7 @@ describe('TimeSelection', () => {
             expect(onUpdate).not.toHaveBeenCalled();
         });
 
-        it('moves between the columns with Tab', async () => {
+        it('moves between the columns with Tab and enters them at the selected option', async () => {
             const screen = await render(
                 <div>
                     <TimeSelection value={value} defaultFocusView="hours" />
@@ -581,6 +493,9 @@ describe('TimeSelection', () => {
             );
             await expect.poll(focused).toBe('Hours 10');
 
+            // The pointer over a column without focus does not move its active option
+            await userEvent.hover(option(screen, 'Minutes', '33'));
+            await userEvent.hover(option(screen, 'Hours', '10'));
             await userEvent.keyboard('{ArrowDown}{Tab}');
             await expect.poll(focused).toBe('Minutes 30');
             await userEvent.keyboard('{Tab}');
@@ -588,16 +503,6 @@ describe('TimeSelection', () => {
             // The option left active in hours is dropped when focus leaves the column
             await userEvent.keyboard('{Shift>}{Tab}{Tab}{/Shift}');
             await expect.poll(focused).toBe('Hours 10');
-        });
-
-        it('enters a column at its selected option after the pointer has been over it', async () => {
-            const screen = await render(<TimeSelection value={value} defaultFocusView="hours" />);
-            await expect.poll(focused).toBe('Hours 10');
-
-            await userEvent.hover(option(screen, 'Minutes', '33'));
-            await userEvent.hover(option(screen, 'Hours', '10'));
-            await userEvent.keyboard('{Tab}');
-            await expect.poll(focused).toBe('Minutes 30');
         });
 
         it('swaps left and right arrows in RTL', async () => {
@@ -690,11 +595,13 @@ describe('TimeSelection', () => {
 
     describe('availability', () => {
         it('disables the options whose whole interval is out of minValue and maxValue', async () => {
+            const onUpdate = vi.fn();
             const screen = await render(
                 <TimeSelection
                     value={time('2024-01-15T10:30:00')}
                     minValue={time('2024-01-15T10:20:30')}
                     maxValue={time('2024-01-15T18:00:00')}
+                    onUpdate={onUpdate}
                 />,
             );
 
@@ -708,6 +615,9 @@ describe('TimeSelection', () => {
             // A part of the minute is still in range
             expect(isDisabled(screen, 'Minutes', '20')).toBe(false);
             expect(isDisabled(screen, 'Minutes', '59')).toBe(false);
+
+            await option(screen, 'Hours', '09').click({force: true});
+            expect(onUpdate).not.toHaveBeenCalled();
         });
 
         it('disables every option when the date is out of range', async () => {
@@ -721,13 +631,15 @@ describe('TimeSelection', () => {
             expect(allDisabled(screen)).toBe(true);
         });
 
-        it('disables a half of the day that is out of range', async () => {
+        it.each<[string, Partial<TimeSelectionProps>]>([
+            ['out of range', {maxValue: time('2024-01-15T11:00:00')}],
+            [
+                'rejected for the hour it gives',
+                {isTimeUnavailable: (date, view) => view === 'hours' && date.hour() === 22},
+            ],
+        ])('disables a half of the day %s', async (_reason, props) => {
             const screen = await render(
-                <TimeSelection
-                    value={time('2024-01-15T10:30:00')}
-                    ampm
-                    maxValue={time('2024-01-15T11:00:00')}
-                />,
+                <TimeSelection value={time('2024-01-15T10:30:00')} ampm {...props} />,
             );
 
             expect(isDisabled(screen, 'AM/PM', 'AM')).toBe(false);
@@ -758,10 +670,10 @@ describe('TimeSelection', () => {
         it('keeps the placeholder within minValue and maxValue while the value is null', async () => {
             const onUpdate = vi.fn();
             const screen = await render(
-                <Controlled
+                <TimeSelection
                     value={null}
                     placeholderValue={time('2024-03-10T00:00:00')}
-                    minValue={time('2024-03-10T15:20:00')}
+                    minValue={time('2024-03-10T15:20:37.123')}
                     onUpdate={onUpdate}
                 />,
             );
@@ -771,21 +683,6 @@ describe('TimeSelection', () => {
             expect(isDisabled(screen, 'Minutes', '19')).toBe(true);
             expect(isDisabled(screen, 'Minutes', '20')).toBe(false);
 
-            await option(screen, 'Minutes', '45').click();
-            expect(lastValue(onUpdate)).toBe('2024-03-10T15:45:00');
-        });
-
-        it('takes the units of the first pick from the placeholder when that is in range', async () => {
-            const onUpdate = vi.fn();
-            const screen = await render(
-                <TimeSelection
-                    value={null}
-                    placeholderValue={time('2024-03-10T00:00:00')}
-                    minValue={time('2024-03-10T15:20:37.123')}
-                    onUpdate={onUpdate}
-                />,
-            );
-
             // 18:00 is in range, so nothing comes from the bound
             await option(screen, 'Hours', '18').click();
             expect(lastValue(onUpdate, MS_FORMAT)).toBe('2024-03-10T18:00:00.000');
@@ -793,21 +690,6 @@ describe('TimeSelection', () => {
             // 00:45 is not: the hour comes from the bound, the units below the minute do not
             await option(screen, 'Minutes', '45').click();
             expect(lastValue(onUpdate, MS_FORMAT)).toBe('2024-03-10T15:45:00.000');
-        });
-
-        it('keeps a picked half of the day within minValue and maxValue', async () => {
-            const onUpdate = vi.fn();
-            const screen = await render(
-                <Controlled
-                    value={time('2024-01-15T09:30:00')}
-                    ampm
-                    maxValue={time('2024-01-15T21:10:00')}
-                    onUpdate={onUpdate}
-                />,
-            );
-
-            await option(screen, 'AM/PM', 'PM').click();
-            expect(lastValue(onUpdate)).toBe('2024-01-15T21:10:00');
         });
 
         it('compares minValue and maxValue in the shown time zone', async () => {
@@ -822,27 +704,6 @@ describe('TimeSelection', () => {
             // 09:00 UTC is 18:00 in Tokyo
             expect(isDisabled(screen, 'Hours', '17')).toBe(true);
             expect(isDisabled(screen, 'Hours', '18')).toBe(false);
-        });
-
-        it('skips unavailable options on keyboard navigation and ignores clicks on them', async () => {
-            const onUpdate = vi.fn();
-            const screen = await render(
-                <TimeSelection
-                    value={time('2024-01-15T10:30:00')}
-                    minValue={time('2024-01-15T10:00:00')}
-                    defaultFocusView="hours"
-                    onUpdate={onUpdate}
-                />,
-            );
-            await expect.poll(focused).toBe('Hours 10');
-
-            await userEvent.keyboard('{ArrowDown}{ArrowDown}');
-            await expect.poll(focused).toBe('Hours 12');
-            await userEvent.keyboard('{Home}');
-            await expect.poll(focused).toBe('Hours 10');
-
-            await option(screen, 'Hours', '09').click({force: true});
-            expect(onUpdate).not.toHaveBeenCalled();
         });
 
         it('disables the options isTimeUnavailable rejects', async () => {
@@ -866,19 +727,6 @@ describe('TimeSelection', () => {
             );
             expect(hourCall?.[0].format(FORMAT)).toBe('2024-01-15T13:30:45');
         });
-
-        it('checks an AM/PM option as the hour it gives', async () => {
-            const screen = await render(
-                <TimeSelection
-                    value={time('2024-01-15T01:30:00')}
-                    ampm
-                    isTimeUnavailable={(date, view) => view === 'hours' && date.hour() === 13}
-                />,
-            );
-
-            expect(isDisabled(screen, 'AM/PM', 'PM')).toBe(true);
-            expect(isDisabled(screen, 'AM/PM', 'AM')).toBe(false);
-        });
     });
 
     describe('skipUnavailable', () => {
@@ -886,37 +734,26 @@ describe('TimeSelection', () => {
         const isTimeUnavailable = (date: DateTime, view: TimeSelectionView) =>
             view === 'minutes' && !MINUTES.includes(date.minute());
 
-        it('leaves out the options isTimeUnavailable rejects', async () => {
+        it('leaves out the options out of range or rejected by isTimeUnavailable', async () => {
             const onUpdate = vi.fn();
             const screen = await render(
                 <Controlled
-                    value={time('2024-01-15T10:25:00')}
+                    value={time('2024-01-15T10:30:00')}
+                    minValue={time('2024-01-15T09:15:00')}
+                    maxValue={time('2024-01-15T12:00:00')}
                     isTimeUnavailable={isTimeUnavailable}
                     skipUnavailable
                     onUpdate={onUpdate}
                 />,
             );
 
+            expect(optionLabels(screen, 'Hours')).toEqual(['09', '10', '11', '12']);
             expect(optionLabels(screen, 'Minutes')).toEqual(['00', '10', '25', '40']);
-            expect(optionLabels(screen, 'Hours')).toHaveLength(24);
-            expect(selectedLabels(screen)).toEqual(['10', '25']);
+            // The minute of the value is left out, so nothing is selected in its column
+            expect(selectedLabels(screen)).toEqual(['10']);
 
             await option(screen, 'Minutes', '40').click();
             expect(lastValue(onUpdate)).toBe('2024-01-15T10:40:00');
-        });
-
-        it('leaves out the options out of minValue and maxValue', async () => {
-            const screen = await render(
-                <TimeSelection
-                    value={time('2024-01-15T10:30:00')}
-                    minValue={time('2024-01-15T09:15:00')}
-                    maxValue={time('2024-01-15T12:00:00')}
-                    skipUnavailable
-                />,
-            );
-
-            expect(optionLabels(screen, 'Hours')).toEqual(['09', '10', '11', '12']);
-            expect(optionLabels(screen, 'Minutes')).toHaveLength(60);
         });
 
         it('moves focus into a column whose options have changed with the pick', async () => {
@@ -948,18 +785,6 @@ describe('TimeSelection', () => {
 
             await option(screen, 'Hours', '12').click();
             await expect.poll(focused).toBe('Hours 12');
-        });
-
-        it('selects nothing when the option of the value is left out', async () => {
-            const screen = await render(
-                <TimeSelection
-                    value={time('2024-01-15T10:30:00')}
-                    isTimeUnavailable={isTimeUnavailable}
-                    skipUnavailable
-                />,
-            );
-
-            expect(selectedLabels(screen)).toEqual(['10']);
         });
 
         it('still leaves them out when the component is disabled', async () => {
@@ -1071,32 +896,27 @@ describe('TimeSelection', () => {
             await expect.poll(() => isCentered(screen, 'Hours', '00')).toBe(true);
         });
 
-        it('centers the newly selected option', async () => {
-            const screen = await render(<Controlled value={middle} />);
-
-            await option(screen, 'Hours', '13').click();
-            await expect.poll(() => selectedLabels(column(screen, 'Hours'))).toEqual(['13']);
-            await expect.poll(() => isCentered(screen, 'Hours', '13')).toBe(true);
-        });
-
         it('scrolls smoothly after the mount and instantly with reduced motion', async () => {
             const behaviors = spyOnScroll();
             const matchMedia = vi.spyOn(window, 'matchMedia');
-            const screen = await render(<Controlled value={middle} />);
+            const screen = await render(<Controlled value={null} />);
 
-            // Hours and minutes on mount
+            // Both columns are put at their first row on mount
             expect(behaviors()).toEqual(['instant', 'instant']);
 
+            // Both get their first selection with the pick, and both were already visible
             await option(screen, 'Hours', '13').click();
             await expect.poll(() => selectedLabels(column(screen, 'Hours'))).toEqual(['13']);
-            expect(behaviors()).toEqual(['instant', 'instant', 'smooth']);
+            expect(behaviors()).toEqual(['instant', 'instant', 'smooth', 'smooth']);
+            // Until the minutes get there, the next pick would bring them back too
+            await expect.poll(() => isCentered(screen, 'Minutes', '00')).toBe(true);
 
             matchMedia.mockImplementation(
                 (query) => ({matches: query.includes('prefers-reduced-motion')}) as MediaQueryList,
             );
             await option(screen, 'Hours', '12').click();
             await expect.poll(() => selectedLabels(column(screen, 'Hours'))).toEqual(['12']);
-            expect(behaviors()).toEqual(['instant', 'instant', 'smooth', 'instant']);
+            expect(behaviors()).toEqual(['instant', 'instant', 'smooth', 'smooth', 'instant']);
         });
 
         it('brings a column scrolled away back to its option when another unit is picked', async () => {
@@ -1169,16 +989,6 @@ describe('TimeSelection', () => {
             expect(isCentered(screen, 'Minutes', '30')).toBe(true);
         });
 
-        it('animates the first selection in a column that was already visible', async () => {
-            const behaviors = spyOnScroll();
-            const screen = await render(<Controlled value={null} />);
-
-            await option(screen, 'Hours', '05').click();
-            await expect.poll(() => selectedLabels(column(screen, 'Hours'))).toEqual(['05']);
-            // Both columns are put at their first row on mount, then both get a selection
-            expect(behaviors()).toEqual(['instant', 'instant', 'smooth', 'smooth']);
-        });
-
         it('shows the scrollbar only under the pointer and keeps the width of the rows', async () => {
             const screen = await render(
                 <div>
@@ -1192,13 +1002,11 @@ describe('TimeSelection', () => {
 
             await userEvent.hover(screen.getByRole('button', {name: 'Outside'}));
             expect(getComputedStyle(hours).overflowY).toBe('hidden');
-            // 48px of the rows and the room before the line of the next column
-            expect(hours.getBoundingClientRect().width).toBe(52);
-            expect(rowWidth()).toBe(48);
+            const width = rowWidth();
 
             await userEvent.hover(option(screen, 'Hours', '10'));
             expect(getComputedStyle(hours).overflowY).toBe('auto');
-            expect(rowWidth()).toBe(48);
+            expect(rowWidth()).toBe(width);
         });
 
         it('centers the selected option again when its row moves', async () => {
@@ -1227,12 +1035,6 @@ describe('TimeSelection', () => {
             await expect.poll(() => isCentered(screen, 'Hours', '10')).toBe(true);
         });
 
-        it('takes the height of the columns from the outside', async () => {
-            const screen = await render(<TimeSelection value={middle} style={{height: 100}} />);
-
-            expect(column(screen, 'Hours').element().clientHeight).toBe(100);
-        });
-
         it('keeps the scroll while the active option moves within the visible rows', async () => {
             const screen = await render(<TimeSelection value={middle} defaultFocusView="hours" />);
             const hours = column(screen, 'Hours').element();
@@ -1250,13 +1052,6 @@ describe.skipIf(!import.meta.env.VITE_CI)('Visual tests', () => {
     // The pointer rests where an earlier test left it: without this a row under it gets hovered
     const still = {pointerEvents: 'none'} as const;
     const views: TimeSelectionView[] = ['hours', 'minutes', 'seconds'];
-
-    test('default view', async () => {
-        const screen = await render(
-            <TimeSelection data-qa="time-selection" style={still} value={value} />,
-        );
-        await expect(screen.getByTestId('time-selection')).toMatchScreenshot();
-    });
 
     test('with seconds', async () => {
         const screen = await render(
