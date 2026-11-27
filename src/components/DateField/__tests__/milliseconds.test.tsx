@@ -86,8 +86,19 @@ describe('millisecond precision', () => {
             <DateField defaultValue={value} format={format} onUpdate={onUpdate} />,
         );
         const input = screen.getByRole('textbox');
+        await userEvent.keyboard('{Tab}');
+        // On focus the field reads the selected section from the DOM in a timeout: keys sent
+        // before it fires are applied to a section that is then reset. Wait for the year section
+        await expect
+            .poll(() => {
+                const element = input.element() as HTMLInputElement;
+                return cleanString(
+                    element.value.slice(element.selectionStart ?? 0, element.selectionEnd ?? 0),
+                );
+            })
+            .toBe('2024');
         await userEvent.keyboard(
-            '{Tab}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}007',
+            '{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}007',
         );
         expect(inputValue(input.element())).toBe('2024-06-15 12:34:56.007');
         expect(onUpdate.mock.lastCall?.[0].millisecond()).toBe(7);

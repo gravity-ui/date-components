@@ -18,6 +18,16 @@
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
+    },
+    "./unstable": {
+      "import": {
+        "types": "./dist/esm/unstable.d.ts",
+        "default": "./dist/esm/unstable.js"
+      },
+      "require": {
+        "types": "./dist/cjs/unstable.d.ts",
+        "default": "./dist/cjs/unstable.js"
+      }
     }
   },
   "imports": {

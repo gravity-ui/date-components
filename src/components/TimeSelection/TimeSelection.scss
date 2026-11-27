@@ -1,0 +1,89 @@
+@use '../variables';
+
+$block: '.#{variables.$ns}time-selection';
+
+#{$block} {
+    // The height of a row belongs to the List; it is repeated here only to count the default
+    // height of a column
+    --_--row-height: var(--g-list-item-view-min-height, 28px);
+    --_--column-width: 48px;
+
+    display: inline-flex;
+
+    box-sizing: border-box;
+    height: calc(var(--_--row-height) * 7);
+
+    &_size_s {
+        --_--row-height: var(--g-list-item-view-min-height, 24px);
+    }
+
+    &_size_l {
+        --_--row-height: var(--g-list-item-view-min-height, 36px);
+    }
+
+    &_size_xl {
+        --_--row-height: var(--g-list-item-view-min-height, 44px);
+    }
+
+    &__column {
+        --g-list-item-view-padding-inline: var(--g-spacing-1);
+
+        // Makes the column the offset parent of its rows
+        position: relative;
+
+        // The scrollbar shows up under the pointer only. It takes its width from the column, so
+        // the rows keep a fixed width and go under it instead of shrinking
+        overflow: hidden;
+        overscroll-behavior: contain;
+        flex: 0 0 auto;
+
+        box-sizing: content-box;
+        width: var(--_--column-width);
+
+        scrollbar-width: thin;
+
+        // Room above the first row and below the last one, so that they reach the middle too
+        &::before,
+        &::after {
+            flex: 0 0 auto;
+
+            height: calc(50% - var(--_--row-height) / 2);
+
+            content: '';
+        }
+
+        & > [role='option'] {
+            width: var(--_--column-width);
+        }
+
+        @media (pointer: fine) {
+            &:hover {
+                overflow-y: auto;
+            }
+        }
+
+        @media (pointer: none), (any-pointer: coarse) {
+            overflow-y: auto;
+        }
+    }
+
+    // A line between the columns, with the same room on both sides of it. The room is inside the
+    // columns, so the scrollbar of a column sits right at the line
+    &__column:not(:first-child) {
+        padding-inline-start: var(--g-spacing-1);
+
+        border-inline-start: 1px solid var(--g-color-line-generic);
+    }
+
+    &__column:not(:last-child) {
+        padding-inline-end: var(--g-spacing-1);
+    }
+
+    &__item-text {
+        flex: 1 1 auto;
+
+        font-variant-numeric: tabular-nums;
+
+        text-align: center;
+    }
+}
